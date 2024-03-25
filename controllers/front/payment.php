@@ -29,6 +29,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 {
     public $ssl = true;
 
+    public $controller_type = 'front';
+
+    public $display_footer = false;
+
+    public $display_header = true;
+
+    private $orderPageUrl;
+
     /**
      * @var PayPalOrderId
      */
@@ -39,9 +47,24 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         return $this->context->customer && $this->context->customer->isLogged() && $this->context->cart;
     }
 
+    public function initContent() {
+        $this->orderPageUrl = $this->context->link->getPageLink('order');
+        parent::initContent();
+        $this->setTemplate('module:ps_checkout/views/templates/front/payment.tpl');
+        $this->context->smarty->assign('css_url', $this->module->getPathUri() . 'views/css/payment.css');
+        $this->context->smarty->assign('order_url', $this->orderPageUrl);
+    }
+
+    public function setMedia()
+    {
+        $this->registerStylesheet('ps_checkout_payment', '/modules/ps_checkout/views/css/payment.css');
+        parent::setMedia();
+    }
+
     public function postProcess()
     {
         $orderId = Tools::getValue('orderID');
+        $orderId = 'A1234966';
 
         if (!$orderId) {
             $this->redirectToOrderPage();
@@ -56,6 +79,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
+            /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
+            $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
@@ -74,9 +99,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             }
 
             if ($payPalOrder->getStatus() === 'PAYER_ACTION_REQUIRED') {
-                /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
-                $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
-
                 // Delete from cache so when user is redirected from 3DS authentication page the order is fetched from PayPal
                 if ($payPalOrderCache->has($this->paypalOrderId->getValue())) {
                     $payPalOrderCache->delete($this->paypalOrderId->getValue());
@@ -89,13 +111,19 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                     Tools::redirect($payerActionLinks[0]['href'] . '&return_url=' . urlencode($this->context->link->getModuleLink('ps_checkout', 'payment', ['orderID' => $this->paypalOrderId->getValue()])));
                 }
             }
+
+            // WHEN 3DS fails
+            if ($payPalOrder->getStatus() === 'CREATED') {
+
+            }
         } catch (Exception $exception) {
+            $this->context->smarty->assign('error', $exception->getMessage());
         }
     }
 
     private function redirectToOrderPage()
     {
-        Tools::redirect($this->context->link->getPageLink('order'));
+        Tools::redirect($this->orderPageUrl);
     }
 
     /**
