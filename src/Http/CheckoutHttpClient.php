@@ -27,6 +27,7 @@ use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckoutHttpClientInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -140,13 +141,15 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
     }
 
     /**
-     * @param string $payload
+     * @param string $merchantId
+     * @param PaymentTokenId $paymentTokenId
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function deletePaymentToken($payload, array $options = [])
+    public function deletePaymentToken($merchantId, PaymentTokenId $paymentTokenId, array $options = [])
     {
-        return $this->sendRequest(new Request('DELETE', '/vault/payment-tokens', $options, $payload));
+        $tokenId = $paymentTokenId->getValue();
+        return $this->sendRequest(new Request('DELETE', "/payment-token/$merchantId/$tokenId", $options));
     }
 }

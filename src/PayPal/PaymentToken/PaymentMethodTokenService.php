@@ -25,6 +25,7 @@ use GuzzleHttp\Psr7\Request;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 class PaymentMethodTokenService
 {
@@ -33,11 +34,16 @@ class PaymentMethodTokenService
      * @var CheckoutHttpClient
      */
     private $checkoutHttpClient;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
 
-    public function __construct($httpClient, CheckoutHttpClient $checkoutHttpClient)
+    public function __construct($httpClient, CheckoutHttpClient $checkoutHttpClient, PayPalConfiguration $payPalConfiguration)
     {
         $this->httpClient = $httpClient;
         $this->checkoutHttpClient = $checkoutHttpClient;
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -68,7 +74,7 @@ class PaymentMethodTokenService
     public function deletePaymentToken(PaymentTokenId $paymentTokenId)
     {
         try {
-            $response = $this->checkoutHttpClient->deletePaymentToken(json_encode(['vaultId' => $paymentTokenId->getValue()]));
+            $response = $this->checkoutHttpClient->deletePaymentToken($this->payPalConfiguration->getMerchantId(), $paymentTokenId);
 
             if ($response->getStatusCode() !== 200) {
                 throw new Exception('Failed to delete payment token', $response->getStatusCode());

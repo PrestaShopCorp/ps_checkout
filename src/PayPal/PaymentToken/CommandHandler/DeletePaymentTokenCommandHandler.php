@@ -53,8 +53,7 @@ class DeletePaymentTokenCommandHandler
         }
 
         if ($tokenBelongsToCustomer) {
-            // TODO: Uncomment when we have delete token specifications
-//            $this->paymentMethodTokenService->deletePaymentToken($command->getPaymentTokenId());
+            $this->paymentMethodTokenService->deletePaymentToken($command->getPaymentTokenId());
             $this->paymentTokenRepository->deleteById($command->getPaymentTokenId());
         } else {
             throw new Exception("Failed to remove saved payment token");

@@ -13,14 +13,19 @@ class OAuthHttpClient extends PsrHttpClientAdapter
         parent::__construct($configurationBuilder->build());
     }
 
-    public function getUserIdToken($merchantId, PayPalCustomerId $payPalCustomerId = null, $options = [], $body = null)
+    public function getUserIdToken($merchantId, PayPalCustomerId $payPalCustomerId = null, $options = [])
     {
+        $payload = [
+            'payer_id' => $merchantId,
+            'customer_id' => $payPalCustomerId ? $payPalCustomerId->getValue() : null,
+        ];
+
         return $this->sendRequest(
             new Request(
                 'POST',
-                "/oauth2/token/$merchantId" . ($payPalCustomerId ? "/{$payPalCustomerId->getValue()}":''),
+                '/oauth2/token',
                 $options,
-                $body
+                json_encode($payload)
             )
         );
     }
