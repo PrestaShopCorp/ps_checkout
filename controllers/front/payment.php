@@ -67,7 +67,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         $orderId = Tools::getValue('orderID');
-        $orderId = 'A1234966';
 
         if (!$orderId) {
             $this->redirectToOrderPage();

@@ -358,6 +358,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
             'return_url' => $router->getCheckoutValidateLink(),
+            'cancel_url' => $router->getCheckoutCancelLink(),
         ];
 
         $this->getPayload()->addAndMergeItems($node);

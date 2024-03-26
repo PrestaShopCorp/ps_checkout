@@ -91,7 +91,8 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
-                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+//                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
                 'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts

@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Http;
 
+use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\HttpClientConfigurationBuilderInterface;
+
 class HttpClientFactory
 {
     /**

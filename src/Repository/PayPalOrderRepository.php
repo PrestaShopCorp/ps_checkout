@@ -81,7 +81,7 @@ class PayPalOrderRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrder::TABLE, 'o')
-            ->where('o.`id_order` = "' . pSQL($payPalOrderId->getValue()) . '"');
+            ->where('o.`id` = "' . pSQL($payPalOrderId->getValue()) . '"');
         $queryResult = $this->db->getRow($query);
 
         if (!$queryResult) {
