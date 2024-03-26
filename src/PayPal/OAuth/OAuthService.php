@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
-use PrestaShop\Module\PrestashopCheckout\Http\OAuthHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class OAuthService

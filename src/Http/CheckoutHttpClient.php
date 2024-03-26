@@ -35,7 +35,7 @@ use Psr\Http\Message\ResponseInterface;
 class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpClientInterface
 {
     const SUFFIX_IDENTITY = '/v1/identity';
-    const SUFFIX_ORDER= '/v1/order';
+    const SUFFIX_ORDER = '/v1/order';
     const SUFFIX_VAULT = '/v1/vault-merchant';
 
     public function __construct(CheckoutClientConfigurationBuilder $configurationBuilder)
@@ -172,8 +172,6 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
 
         return $this->sendRequest(new Request('DELETE', self::SUFFIX_VAULT . "/payment-token/$merchantId/$tokenId", $options));
     }
-
-
 
     public function getUserIdToken($merchantId, PayPalCustomerId $payPalCustomerId = null, $options = [])
     {

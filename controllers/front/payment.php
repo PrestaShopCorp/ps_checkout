@@ -47,7 +47,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         return $this->context->customer && $this->context->customer->isLogged() && $this->context->cart;
     }
 
-    public function initContent() {
+    public function initContent()
+    {
         $this->orderPageUrl = $this->context->link->getPageLink('order');
         parent::initContent();
         $this->setTemplate('module:ps_checkout/views/templates/front/payment.tpl');
@@ -114,7 +115,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             // WHEN 3DS fails
             if ($payPalOrder->getStatus() === 'CREATED') {
-
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
