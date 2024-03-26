@@ -20,15 +20,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderAuthorization;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderPurchaseUnit;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderRefund;
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
-use src\PayPal\Order\Command\SavePayPalOrderCommand;
 
 class SavePayPalOrderCommandHandler
 {
@@ -51,7 +51,7 @@ class SavePayPalOrderCommandHandler
             $payPalOrder->setStatus($order['status'])
             ->setPaymentSource($order['payment_source']);
             $this->payPalOrderRepository->updatePayPalOrder($payPalOrder);
-        } catch (EntityNotFoundException $exception) {
+        } catch (Exception $exception) {
             $payPalOrder = new PayPalOrder(
                 $order['id'],
                 $command->getCartId()->getValue(),

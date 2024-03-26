@@ -21,8 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class SavePaymentTokenCommandHandler

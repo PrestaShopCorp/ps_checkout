@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
@@ -33,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
@@ -111,23 +111,26 @@ class CreatePayPalOrderCommandHandler
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
-//        $cart = $this->cartRepository->getCartById($command->getCartId());
-//
-//        if ($command->getPaymentTokenId()) {
-//            $paymentToken = $this->paymentTokenRepository->findById($command->getPaymentTokenId());
-//            $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId($cart->getCustomer()->id);
-//            if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId()->getValue() !== $payPalCustomerId->getValue()) {
-//                throw new Exception('Payment token does not belong to the customer');
-//            }
-//        }
-//
-//        $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource(), $command->vault(), $command->getPaymentTokenId());
-//        $order = $this->paymentService->createOrder($payload);
-
         $cartPresenter = (new CartPresenter())->present();
         $builder = new OrderPayloadBuilder($cartPresenter);
+
+        if ($command->getPaymentTokenId()) {
+            $paymentToken = $this->paymentTokenRepository->findById($command->getPaymentTokenId());
+            $cart = new \Cart($command->getCartId()->getValue());
+            $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
+
+            if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId()->getValue() !== $payPalCustomerId->getValue()) {
+                throw new Exception('Payment token does not belong to the customer');
+            }
+
+            $builder->setPaypalVaultId($command->getPaymentTokenId()->getValue());
+            $builder->setPaypalCustomerId($payPalCustomerId->getValue());
+        }
+
         $builder->setIsCard($command->getFundingSource() === 'card');
         $builder->setExpressCheckout($command->isExpressCheckout());
+        $builder->setFundingSource($command->getFundingSource());
+        $builder->setSavePaymentMethod($command->vault());
 
         if ($this->shopContext->isShop17()) {
             // Build full payload in 1.7

@@ -475,4 +475,4 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\OAuthHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'

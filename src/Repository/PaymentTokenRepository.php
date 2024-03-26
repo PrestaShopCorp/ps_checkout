@@ -22,8 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Db;
 use DbQuery;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShopDatabaseException;
 

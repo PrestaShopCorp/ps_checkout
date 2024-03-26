@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 
 class GetCustomerPaymentTokensQueryResult
 {

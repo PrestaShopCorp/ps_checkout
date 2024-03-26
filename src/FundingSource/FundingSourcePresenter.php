@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 
 class FundingSourcePresenter

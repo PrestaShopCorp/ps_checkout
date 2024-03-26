@@ -23,11 +23,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 use Db;
 use DbQuery;
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderAuthorization;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderPurchaseUnit;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderRefund;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShopDatabaseException;
 
@@ -55,7 +55,7 @@ class PayPalOrderRepository
         return $this->db->insert(
             PayPalOrder::TABLE,
             [
-                'id' => pSQL($payPalOrder->getId()),
+                'id' => pSQL($payPalOrder->getId()->getValue()),
                 'id_cart' => (int) $payPalOrder->getIdCart(),
                 'status' => pSQL($payPalOrder->getStatus()),
                 'intent' => pSQL($payPalOrder->getIntent()),
@@ -150,23 +150,23 @@ class PayPalOrderRepository
                 'is_card_fields' => $payPalOrder->isCardFields(),
                 'is_express_checkout' => $payPalOrder->isExpressCheckout(),
             ],
-            '`id` = ' . pSQL($payPalOrder->getId())
+            '`id` = "' . pSQL($payPalOrder->getId()->getValue() . '"')
         );
     }
 
     /**
-     * @param string $payPalOrderId
+     * @param PayPalOrderId $payPalOrderId
      *
      * @return bool
      */
-    public function deletePayPalOrder($payPalOrderId)
+    public function deletePayPalOrder(PayPalOrderId $payPalOrderId)
     {
-        $orderId = pSQL($payPalOrderId);
-        $sql = 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrder::TABLE . "` WHERE `id` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderAuthorization::TABLE . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderRefund::TABLE . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderCapture::TABLE . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderPurchaseUnit::TABLE . "` WHERE `id_order` = $orderId;";
+        $orderId = pSQL($payPalOrderId->getValue());
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrder::TABLE . "` WHERE `id` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderAuthorization::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderRefund::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderCapture::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderPurchaseUnit::TABLE . "` WHERE `id_order` = \"$orderId\";";
 
         return $this->db->execute($sql);
     }
@@ -205,7 +205,7 @@ class PayPalOrderRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrderAuthorization::TABLE, 'a')
-            ->where('a.`id_order` = ' . pSQL($payPalOrderId));
+            ->where('a.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
             throw new Exception('PayPal Order not found');
@@ -236,7 +236,7 @@ class PayPalOrderRepository
                 'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
                 'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
             ],
-            '`id` = ' . pSQL($payPalOrderAuthorization->getId())
+            '`id` = "' . pSQL($payPalOrderAuthorization->getId() . '"')
         );
     }
 
@@ -277,7 +277,7 @@ class PayPalOrderRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrderCapture::TABLE, 'c')
-            ->where('c.`id_order` = ' . pSQL($payPalOrderId));
+            ->where('c.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
             throw new Exception('PayPal Order not found');
@@ -314,7 +314,7 @@ class PayPalOrderRepository
                 'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
                 'seller_receivable_breakdown' => pSQL(json_encode($payPalOrderCapture->getSellerReceivableBreakdown())),
             ],
-            '`id` = ' . pSQL($payPalOrderCapture->getId())
+            '`id` = "' . pSQL($payPalOrderCapture->getId() . '"')
         );
     }
 
@@ -355,7 +355,7 @@ class PayPalOrderRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrderRefund::TABLE, 'r')
-            ->where('r.`id_order` = ' . pSQL($payPalOrderId));
+            ->where('r.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
             throw new Exception('PayPal Order not found');
@@ -389,9 +389,9 @@ class PayPalOrderRepository
                 'invoice_id' => pSQL($payPalOrderRefund->getInvoiceId()),
                 'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
                 'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
-                'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
+                'seller_payable_breakdown' => pSQL(json_encode($payPalOrderRefund->getSellerPayableBreakdown())),
             ],
-            '`id` = ' . pSQL($payPalOrderRefund->getId())
+            '`id` = "' . pSQL($payPalOrderRefund->getId() . '"')
         );
     }
 
@@ -421,7 +421,7 @@ class PayPalOrderRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrderPurchaseUnit::TABLE, 'p')
-            ->where('p.`id_order` = ' . pSQL($payPalOrderId));
+            ->where('p.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
             throw new Exception('PayPal Order not found');
@@ -450,7 +450,7 @@ class PayPalOrderRepository
                 'checksum' => $payPalOrderPurchaseUnit->getChecksum(),
                 'items' => $payPalOrderPurchaseUnit->getItems(),
             ],
-            '`id_order` = ' . pSQL($payPalOrderPurchaseUnit->getIdOrder() . ' AND `reference_id` = ' . $payPalOrderPurchaseUnit->getReferenceId())
+            '`id_order` = "' . pSQL($payPalOrderPurchaseUnit->getIdOrder() . '" AND `reference_id` = "' . $payPalOrderPurchaseUnit->getReferenceId() . '"')
         );
     }
 }

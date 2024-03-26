@@ -102,29 +102,29 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
             ],
         ];
 
-        if (
-            $this->loggerConfiguration->isHttpEnabled()
-            && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
-            && class_exists(HandlerStack::class)
-            && class_exists(LogMiddleware::class)
-        ) {
-            $handlerStack = HandlerStack::create();
-            $handlerStack->push(new LogMiddleware($this->logger));
-            $configuration['handler'] = $handlerStack;
-        } elseif (
-            $this->loggerConfiguration->isHttpEnabled()
-            && defined('\GuzzleHttp\ClientInterface::VERSION')
-            && class_exists(Emitter::class)
-            && class_exists(LogSubscriber::class)
-            && class_exists(Formatter::class)
-        ) {
-            $emitter = new Emitter();
-            $emitter->attach(new LogSubscriber(
-                $this->logger,
-                Formatter::DEBUG
-            ));
+        if ($this->loggerConfiguration->isHttpEnabled()) {
+            if (
+                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+                && class_exists(HandlerStack::class)
+                && class_exists(LogMiddleware::class)
+            ) {
+                $handlerStack = HandlerStack::create();
+                $handlerStack->push(new LogMiddleware($this->logger));
+                $configuration['handler'] = $handlerStack;
+            } elseif (
+                defined('\GuzzleHttp\ClientInterface::VERSION')
+                && class_exists(Emitter::class)
+                && class_exists(LogSubscriber::class)
+                && class_exists(Formatter::class)
+            ) {
+                $emitter = new Emitter();
+                $emitter->attach(new LogSubscriber(
+                    $this->logger,
+                    Formatter::DEBUG
+                ));
 
-            $configuration['emitter'] = $emitter;
+                $configuration['emitter'] = $emitter;
+            }
         }
 
         return $configuration;

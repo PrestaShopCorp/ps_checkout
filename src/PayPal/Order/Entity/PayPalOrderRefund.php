@@ -18,55 +18,55 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Entity;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity;
 
-class PayPalOrderCapture
+class PayPalOrderRefund
 {
-    const TABLE = 'pscheckout_capture';
+    const TABLE = 'pscheckout_refund';
 
     /**
-     * @var string
+     * @var string|null
      */
     private $id;
     /**
-     * @var string
+     * @var string|null
      */
     private $idOrder;
     /**
-     * @var string
+     * @var string|null
      */
     private $status;
     /**
-     * @var bool
+     * @var string|null
      */
-    private $finalCapture;
+    private $invoiceId;
     /**
-     * @var string
+     * @var string|null
      */
-    private $createdAt;
+    private $customId;
     /**
-     * @var string
+     * @var string|null
      */
-    private $updatedAt;
-    /**
-     * @var string
-     */
-    private $sellerProtection;
+    private $acquirerReferenceNumber;
     /**
      * @var array
      */
-    private $sellerReceivableBreakdown;
+    private $sellerPayableBreakdown;
+    /**
+     * @var int
+     */
+    private $idOrderSlip;
 
-    public function __construct($id, $idOrder, $status, $createdAt, $updatedAt, $sellerProtection, $sellerReceivableBreakdown, $finalCapture = false)
+    public function __construct($id = null, $idOrder = null, $status = null, $invoiceId = null, $customId = null, $acquirerReferenceNumber = null, $sellerPayableBreakdown = [], $idOrderSlip = null)
     {
         $this->id = $id;
         $this->idOrder = $idOrder;
         $this->status = $status;
-        $this->finalCapture = (bool) $finalCapture;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
-        $this->sellerProtection = $sellerProtection;
-        $this->sellerReceivableBreakdown = $sellerReceivableBreakdown;
+        $this->invoiceId = $invoiceId;
+        $this->customId = $customId;
+        $this->acquirerReferenceNumber = $acquirerReferenceNumber;
+        $this->sellerPayableBreakdown = $sellerPayableBreakdown;
+        $this->idOrderSlip = $idOrderSlip;
     }
 
     /**
@@ -80,7 +80,7 @@ class PayPalOrderCapture
     /**
      * @param string|null $id
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
     public function setId($id)
     {
@@ -100,7 +100,7 @@ class PayPalOrderCapture
     /**
      * @param string|null $idOrder
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
     public function setIdOrder($idOrder)
     {
@@ -120,7 +120,7 @@ class PayPalOrderCapture
     /**
      * @param string|null $status
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
     public function setStatus($status)
     {
@@ -130,21 +130,21 @@ class PayPalOrderCapture
     }
 
     /**
-     * @return bool|mixed
+     * @return string|null
      */
-    public function getFinalCapture()
+    public function getInvoiceId()
     {
-        return $this->finalCapture;
+        return $this->invoiceId;
     }
 
     /**
-     * @param bool $finalCapture
+     * @param string|null $invoiceId
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
-    public function setFinalCapture($finalCapture)
+    public function setInvoiceId($invoiceId)
     {
-        $this->finalCapture = (bool) $finalCapture;
+        $this->invoiceId = $invoiceId;
 
         return $this;
     }
@@ -152,19 +152,19 @@ class PayPalOrderCapture
     /**
      * @return string|null
      */
-    public function getCreatedAt()
+    public function getCustomId()
     {
-        return $this->createdAt;
+        return $this->customId;
     }
 
     /**
-     * @param string|null $createdAt
+     * @param string|null $customId
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
-    public function setCreatedAt($createdAt)
+    public function setCustomId($customId)
     {
-        $this->createdAt = $createdAt;
+        $this->customId = $customId;
 
         return $this;
     }
@@ -172,39 +172,19 @@ class PayPalOrderCapture
     /**
      * @return string|null
      */
-    public function getUpdatedAt()
+    public function getAcquirerReferenceNumber()
     {
-        return $this->updatedAt;
+        return $this->acquirerReferenceNumber;
     }
 
     /**
-     * @param string|null $updatedAt
+     * @param string|null $acquirerReferenceNumber
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
-    public function setUpdatedAt($updatedAt)
+    public function setAcquirerReferenceNumber($acquirerReferenceNumber)
     {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSellerProtection()
-    {
-        return $this->sellerProtection;
-    }
-
-    /**
-     * @param string $sellerProtection
-     *
-     * @return PayPalOrderCapture
-     */
-    public function setSellerProtection($sellerProtection)
-    {
-        $this->sellerProtection = $sellerProtection;
+        $this->acquirerReferenceNumber = $acquirerReferenceNumber;
 
         return $this;
     }
@@ -212,19 +192,39 @@ class PayPalOrderCapture
     /**
      * @return array
      */
-    public function getSellerReceivableBreakdown()
+    public function getSellerPayableBreakdown()
     {
-        return $this->sellerReceivableBreakdown;
+        return $this->sellerPayableBreakdown;
     }
 
     /**
-     * @param array $sellerReceivableBreakdown
+     * @param array $sellerPayableBreakdown
      *
-     * @return PayPalOrderCapture
+     * @return PayPalOrderRefund
      */
-    public function setSellerReceivableBreakdown($sellerReceivableBreakdown)
+    public function setSellerPayableBreakdown($sellerPayableBreakdown)
     {
-        $this->sellerReceivableBreakdown = $sellerReceivableBreakdown;
+        $this->sellerPayableBreakdown = $sellerPayableBreakdown;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIdOrderSlip()
+    {
+        return $this->idOrderSlip;
+    }
+
+    /**
+     * @param int $idOrderSlip
+     *
+     * @return PayPalOrderRefund
+     */
+    public function setIdOrderSlip($idOrderSlip)
+    {
+        $this->idOrderSlip = (int) $idOrderSlip;
 
         return $this;
     }

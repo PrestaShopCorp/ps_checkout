@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Entity;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity;
 
 class PayPalOrderPurchaseUnit
 {
@@ -37,11 +37,11 @@ class PayPalOrderPurchaseUnit
      */
     private $referenceId;
     /**
-     * @var string|null
+     * @var array
      */
     private $items;
 
-    public function __construct($idOrder = null, $checksum = null, $referenceId = null, $items = null)
+    public function __construct($idOrder = null, $checksum = null, $referenceId = null, $items = [])
     {
         $this->idOrder = $idOrder;
         $this->checksum = $checksum;

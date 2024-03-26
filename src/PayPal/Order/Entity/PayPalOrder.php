@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Entity;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
@@ -29,7 +29,7 @@ class PayPalOrder
     const CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
 
     /**
-     * @var string
+     * @var PayPalOrderId
      */
     private $id;
     /**

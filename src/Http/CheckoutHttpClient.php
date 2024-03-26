@@ -27,7 +27,6 @@ use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckoutHttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

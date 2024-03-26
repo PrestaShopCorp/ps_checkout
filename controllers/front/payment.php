@@ -21,6 +21,8 @@
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
@@ -91,7 +93,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
 
-            if ($payPalOrder->getStatus() === 'COMPLETED') {
+            if ($payPalOrderFromCache['status'] === 'COMPLETED') {
                 $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
                 if ($capture['status'] === 'COMPLETED') {
                     $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
@@ -99,25 +101,53 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 }
             }
 
-            if ($payPalOrder->getStatus() === 'PAYER_ACTION_REQUIRED') {
+            if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
                 // Delete from cache so when user is redirected from 3DS authentication page the order is fetched from PayPal
                 if ($payPalOrderCache->has($this->paypalOrderId->getValue())) {
                     $payPalOrderCache->delete($this->paypalOrderId->getValue());
                 }
 
-                $payerActionLinks = array_filter($payPalOrderFromCache['links'], function ($link) {
-                    return $link['rel'] === 'payer-action';
-                });
-                if (!empty($payerActionLinks)) {
-                    Tools::redirect($payerActionLinks[0]['href'] . '&return_url=' . urlencode($this->context->link->getModuleLink('ps_checkout', 'payment', ['orderID' => $this->paypalOrderId->getValue()])));
-                }
+                $this->redirectTo3DSVerification($payPalOrderFromCache);
             }
 
             // WHEN 3DS fails
-            if ($payPalOrder->getStatus() === 'CREATED') {
+            if ($payPalOrderFromCache['status'] === 'CREATED') {
+                $card3DSecure = new Card3DSecure();
+                switch ($card3DSecure->continueWithAuthorization($payPalOrderFromCache)) {
+                    case Card3DSecure::RETRY:
+                        $this->redirectTo3DSVerification($payPalOrderFromCache);
+                        break;
+                    case Card3DSecure::PROCEED:
+                        $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
+                        $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
+                        if ($capture['status'] === 'COMPLETED') {
+                            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+                            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
+                        }
+                        break;
+                    case Card3DSecure::NO_DECISION:
+                    default:
+                        break;
+                }
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param array $order
+     *
+     * @return void
+     */
+    private function redirectTo3DSVerification($order)
+    {
+        $payerActionLinks = array_filter($order['links'], function ($link) {
+            return $link['rel'] === 'payer-action';
+        });
+        if (!empty($payerActionLinks)) {
+            Tools::redirect($payerActionLinks[0]['href'] . '&return_url=' . urlencode($this->context->link->getModuleLink('ps_checkout', 'payment', ['orderID' => $this->paypalOrderId->getValue()])));
         }
     }
 
@@ -141,7 +171,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         $orders->where('id_cart', '=', $cartId);
 
         if (!$orders->count()) {
-            return null;
+            return;
         }
 
         /** @var Order $order */
