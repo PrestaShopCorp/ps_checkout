@@ -259,7 +259,7 @@ class AdvancedCheckoutEligibility
      */
     public function getSupportedCardBrands()
     {
-        return array_unique(array_merge(...array_values(self::SUPPORTED_CARD_BRANDS_BY_COUNTRY)));
+        return array_values(array_unique(array_merge(...array_values(self::SUPPORTED_CARD_BRANDS_BY_COUNTRY))));
     }
 
     /**
@@ -271,16 +271,16 @@ class AdvancedCheckoutEligibility
     public function getSupportedCardBrandsByContext($country, $currency)
     {
         if ($this->hasSupportedCardBrandsByCountryAndCurrency($country)) {
-            return array_intersect(
+            return array_values(array_intersect(
                 $this->getSupportedCardBrandsByCountry($country),
                 $this->getSupportedCardBrandsByCurrency($currency),
                 $this->getSupportedCardBrandsByCountryAndCurrency($country, $currency)
-            );
+            ));
         }
 
-        return array_intersect(
+        return array_values(array_intersect(
             $this->getSupportedCardBrandsByCountry($country),
             $this->getSupportedCardBrandsByCurrency($currency)
-        );
+        ));
     }
 }
