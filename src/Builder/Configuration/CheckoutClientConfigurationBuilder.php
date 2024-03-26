@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
-class PaymentClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
@@ -87,18 +87,18 @@ class PaymentClientConfigurationBuilder implements HttpClientConfigurationBuilde
     public function build()
     {
         $configuration = [
-            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
+            'base_url' => $this->paymentEnv->getCheckoutApiUrl(),
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
                 'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
-                'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
-                'Hook-Url' => $this->router->getDispatchWebhookLink($this->prestaShopContext->getShopId()),
-                'Bn-Code' => $this->shopContext->getBnCode(),
-                'Module-Version' => Ps_checkout::VERSION, // version of the module
-                'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
+                'Checkout-Hook-Url' => $this->router->getDispatchWebhookLink($this->prestaShopContext->getShopId()),
+                'Checkout-Bn-Code' => $this->shopContext->getBnCode(),
+                'Checkout-Module-Version' => Ps_checkout::VERSION, // version of the module
+                'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];
 

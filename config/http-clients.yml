@@ -9,13 +9,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
-
-  PrestaShop\Module\PrestashopCheckout\Http\OAuthHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\OAuthHttpClient'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\OauthHttpClientConfigurationBuilder'
+      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder'
 
   PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder'
@@ -40,8 +34,8 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder'
 
-  PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
+  PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
@@ -51,15 +45,3 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
       - "@ps_checkout.logger"
-
-  PrestaShop\Module\PrestashopCheckout\Builder\Configuration\OauthHttpClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\OauthHttpClientConfigurationBuilder'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
-      - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
-      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-      - '@ps_checkout.logger'

@@ -27,11 +27,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 interface CheckoutHttpClientInterface
 {
     /**
-     * @param CreatePayPalOrderRequest $payload
+     * @param string $payload
      *
      * @return CreatePayPalOrderResponse
      *
      * @throws PayPalOrderException
      */
-    public function createOrder(CreatePayPalOrderRequest $payload);
+    public function createOrder($payload);
 }

@@ -25,7 +25,8 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
-use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
+use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckoutHttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use Psr\Http\Message\RequestInterface;
@@ -33,7 +34,11 @@ use Psr\Http\Message\ResponseInterface;
 
 class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpClientInterface
 {
-    public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
+    const SUFFIX_IDENTITY = '/v1/identity';
+    const SUFFIX_ORDER= '/v1/order';
+    const SUFFIX_VAULT = '/v1/vault-merchant';
+
+    public function __construct(CheckoutClientConfigurationBuilder $configurationBuilder)
     {
         parent::__construct($configurationBuilder->build());
     }
@@ -147,10 +152,43 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
      *
      * @return ResponseInterface
      */
+    public function getPaymentTokenStatus($merchantId, PaymentTokenId $paymentTokenId, array $options = [])
+    {
+        $tokenId = $paymentTokenId->getValue();
+
+        return $this->sendRequest(new Request('GET', self::SUFFIX_VAULT . "/payment-token/$merchantId/$tokenId/status", $options));
+    }
+
+    /**
+     * @param string $merchantId
+     * @param PaymentTokenId $paymentTokenId
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
     public function deletePaymentToken($merchantId, PaymentTokenId $paymentTokenId, array $options = [])
     {
         $tokenId = $paymentTokenId->getValue();
 
-        return $this->sendRequest(new Request('DELETE', "/payment-token/$merchantId/$tokenId", $options));
+        return $this->sendRequest(new Request('DELETE', self::SUFFIX_VAULT . "/payment-token/$merchantId/$tokenId", $options));
+    }
+
+
+
+    public function getUserIdToken($merchantId, PayPalCustomerId $payPalCustomerId = null, $options = [])
+    {
+        $payload = [
+            'payer_id' => $merchantId,
+            'customer_id' => $payPalCustomerId ? $payPalCustomerId->getValue() : null,
+        ];
+
+        return $this->sendRequest(
+            new Request(
+                'POST',
+                self::SUFFIX_IDENTITY . '/oauth2/token',
+                $options,
+                json_encode($payload)
+            )
+        );
     }
 }
