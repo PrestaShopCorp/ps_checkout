@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class SavePayPalOrderCommandHandler
@@ -49,8 +47,10 @@ class SavePayPalOrderCommandHandler
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($order['id']));
             $payPalOrder->setStatus($order['status'])
+            ->setIntent($order['intent'])
+            ->setFundingSource(array_keys($order['payment_source'])[0])
             ->setPaymentSource($order['payment_source']);
-            $this->payPalOrderRepository->updatePayPalOrder($payPalOrder);
+            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         } catch (Exception $exception) {
             $payPalOrder = new PayPalOrder(
                 $order['id'],
@@ -64,7 +64,7 @@ class SavePayPalOrderCommandHandler
                 $command->isExpressCheckout(),
                 $command->getCustomerIntent()
             );
-            $this->payPalOrderRepository->createPayPalOrder($payPalOrder);
+            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         }
 
         if (!empty($order['purchase_units'])) {
@@ -76,7 +76,7 @@ class SavePayPalOrderCommandHandler
                     $purchaseUnit['items']
                 );
 
-                $this->payPalOrderRepository->createPayPalOrderPurchaseUnit($payPalPurchaseUnit);
+                $this->payPalOrderRepository->savePayPalOrderPurchaseUnit($payPalPurchaseUnit);
 
                 if (!empty($purchaseUnit['payments']['captures'])) {
                     foreach ($purchaseUnit['payments']['captures'] as $capture) {
@@ -90,7 +90,7 @@ class SavePayPalOrderCommandHandler
                             $capture['seller_receivable_breakdown'],
                             (bool) $capture['final_capture']
                         );
-                        $this->payPalOrderRepository->createPayPalOrderCapture($payPalCapture);
+                        $this->payPalOrderRepository->savePayPalOrderCapture($payPalCapture);
                     }
                 }
 
@@ -103,7 +103,7 @@ class SavePayPalOrderCommandHandler
                             $authorization['expiration_time'],
                             $authorization['seller_protection']['status']
                         );
-                        $this->payPalOrderRepository->createPayPalOrderAuthorization($payPalAuthorization);
+                        $this->payPalOrderRepository->savePayPalOrderAuthorization($payPalAuthorization);
                     }
                 }
 
@@ -118,7 +118,7 @@ class SavePayPalOrderCommandHandler
                             $refund['acquirer_reference_number'],
                             $refund['seller_payable_breakdown']
                         );
-                        $this->payPalOrderRepository->createPayPalOrderRefund($payPalRefund);
+                        $this->payPalOrderRepository->savePayPalOrderRefund($payPalRefund);
                     }
                 }
             }

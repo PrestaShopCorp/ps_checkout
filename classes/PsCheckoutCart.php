@@ -124,7 +124,7 @@ class PsCheckoutCart extends ObjectModel
             'paypal_status' => [
                 'type' => self::TYPE_STRING,
                 'validate' => 'isGenericName',
-                'size' => 20,
+                'size' => 30,
                 'allow_null' => true,
                 'required' => false,
             ],

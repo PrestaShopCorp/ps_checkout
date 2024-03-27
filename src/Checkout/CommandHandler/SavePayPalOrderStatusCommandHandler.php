@@ -56,7 +56,7 @@ class SavePayPalOrderStatusCommandHandler
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderPayPalId());
             $payPalOrder->setStatus($command->getOrderPayPalStatus());
-            $this->payPalOrderRepository->updatePayPalOrder($payPalOrder);
+            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         } catch (Exception $exception) {
         }
 

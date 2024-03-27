@@ -185,8 +185,7 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
         return $this->sendRequest(
             new Request(
                 'POST',
-//                self::SUFFIX_IDENTITY .
-                '/oauth2/token',
+                self::SUFFIX_IDENTITY . '/oauth2/token',
                 $options,
                 json_encode($payload)
             )
