@@ -58,19 +58,8 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.modal = null;
     this.data.iframe = null;
 
-    window.document.addEventListener('3DS-success', this.validateOrder)
-    window.document.addEventListener('3DS-close', (event) => {this.data.iframe.hide();})
-  }
-
-  validateOrder(e) {
-    console.log(e);
-    this.data.iframe.hide();
-    // this.psCheckoutApi.postValidateOrder(
-    //   {
-    //     fundingSource: this.getVaultFormData().fundingSource,
-    //     orderID: this.data.orderId
-    //   }
-    // ).catch((error) => this.handleError(error));
+    window.document.addEventListener('3DS-success', (e) => this.validateOrder(), false);
+    window.document.addEventListener('3DS-close', (e) => this.hideIframe(), false);
   }
 
   showModal() {
@@ -98,8 +87,7 @@ export class PaymentTokenComponent extends BaseComponent {
 
   showIframe() {
     const confirmationUrl = new URL(this.config.paymentUrl);
-    // confirmationUrl.searchParams.append('orderID', this.data.orderId);
-    confirmationUrl.searchParams.append('orderID', '4H913400R2970140U');
+    confirmationUrl.searchParams.append('orderID', this.data.orderId);
 
     if (!this.data.iframe) {
       this.data.iframe = new IframeComponent(this.app, {
@@ -109,6 +97,10 @@ export class PaymentTokenComponent extends BaseComponent {
       this.data.iframe.reload(confirmationUrl.toString());
     }
     this.data.iframe.show();
+  }
+
+  hideIframe() {
+    this.data.iframe.hide();
   }
 
   onDeleteConfirm() {
@@ -171,15 +163,19 @@ export class PaymentTokenComponent extends BaseComponent {
     this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;
-        this.redirectToPaymentPage();
+        this.showIframe();
       })
       .catch((error) => this.handleError(error));
   }
 
-  redirectToPaymentPage() {
-    const confirmationUrl = new URL(this.config.paymentUrl);
-    confirmationUrl.searchParams.append('orderID', this.data.orderId);
-    window.location.href = confirmationUrl.toString();
+  validateOrder() {
+    this.hideIframe();
+    this.psCheckoutApi.postValidateOrder(
+      {
+        fundingSource: this.getVaultFormData().fundingSource,
+        orderID: this.data.orderId
+      }
+    ).catch((error) => this.handleError(error));
   }
 
   renderButton() {
@@ -202,11 +198,10 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementButton.addEventListener('click', (event) => {
       event.preventDefault();
 
-      // this.data.loader.show();
+      this.data.loader.show();
       this.data.HTMLElementButton.setAttribute('disabled', '');
 
-      this.showIframe();
-      // this.createOrder();
+      this.createOrder();
     });
   }
 
