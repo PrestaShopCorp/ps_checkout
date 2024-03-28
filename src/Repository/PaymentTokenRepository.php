@@ -176,7 +176,7 @@ class PaymentTokenRepository
     public function getCount($customerId = null)
     {
         $query = new DbQuery();
-        $query->select('COUNT(t.*)')
+        $query->select('COUNT(t.id)')
             ->from(PaymentToken::TABLE, 't');
 
         if ($customerId) {
