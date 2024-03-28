@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 
 class FundingSourcePresenter
@@ -61,6 +62,38 @@ class FundingSourcePresenter
             $isAdmin ? $this->country->getCountryNames($entity->getCountries()) : $entity->getCountries(),
             $entity->getIsEnabled(),
             $entity->getIsToggleable()
+        );
+    }
+
+    /**
+     * @param PaymentToken $paymentToken
+     *
+     * @return FundingSource
+     */
+    public function presentPaymentToken(PaymentToken $paymentToken)
+    {
+        if ($paymentToken->getPaymentSource() === 'card') {
+            $cardDetails = $paymentToken->getData()['payment_source']['card'];
+            $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
+                true,
+                $cardDetails['brand'] . ' *' . $cardDetails['last_digits']
+            );
+        } else {
+            $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
+                false,
+                $paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()]['email_address']
+            );
+        }
+
+        return new FundingSource(
+            'token-' . $paymentToken->getId()->getValue(),
+            $fundingSourceName,
+            0,
+            [],
+            true,
+            false,
+            $paymentToken->getPaymentSource(),
+            $paymentToken->isFavorite()
         );
     }
 }

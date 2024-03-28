@@ -48,7 +48,7 @@ export class MarkComponent extends BaseComponent {
     const src = this.config.customMark[this.data.name];
     let logoList = [];
 
-    if (this.config.cardSupportedBrands && this.config.cardLogoBrands) {
+    if (this.data.name === 'card' && this.config.cardSupportedBrands && this.config.cardLogoBrands) {
       this.config.cardSupportedBrands.forEach(brand => {
         if (this.config.cardLogoBrands[brand]) {
           let customMarkImg = document.createElement('img');

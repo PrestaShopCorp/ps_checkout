@@ -22,14 +22,17 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\CartInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 interface CreatePayPalOrderPayloadBuilderInterface
 {
     /**
      * @param CartInterface $cart
      * @param string $fundingSource
+     * @param bool $vault
+     * @param PaymentTokenId|null $vaultId
      *
      * @return CreatePayPalOrderRequest
      */
-    public function build(CartInterface $cart, $fundingSource);
+    public function build(CartInterface $cart, $fundingSource, $vault = false, $vaultId = null);
 }

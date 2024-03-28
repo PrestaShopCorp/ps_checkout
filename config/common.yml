@@ -2,6 +2,7 @@ imports:
   - { resource: ./accounts.yml }
   - { resource: ./cache.yml }
   - { resource: ./command-handlers.yml }
+  - { resource: ./http-clients.yml }
   - { resource: ./logger.yml }
   - { resource: ./query-handlers.yml }
   - { resource: ./repository.yml }
@@ -86,6 +87,12 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Customer\Command\SavePayPalCustomerCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
@@ -126,11 +133,11 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
+      - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
       - "@ps_checkout.cache.paypal.capture"
       - "@ps_checkout.cache.paypal.order"
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
-      - "@ps_checkout.bus.command"
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
@@ -142,6 +149,13 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
 
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber'
+    arguments:
+      - '@ps_checkout.module'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'
     factory: [ '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory', "create" ]
@@ -151,7 +165,8 @@ services:
         '@PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber',
-        '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
+        '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber',
+        '@PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber'
       ]
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter:
@@ -217,11 +232,13 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder'
     public: true
     arguments:
+      - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
       - '@PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
   PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
@@ -329,6 +346,13 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
 
   PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator'
@@ -430,56 +454,25 @@ services:
     arguments:
       - "@ps_checkout.logger"
 
-  PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
-      - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
-      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-      - "@ps_checkout.logger"
-
-  PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
-
   PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
   PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
     class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
-  PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
-      - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
-      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-      - "@ps_checkout.logger"
+      - '@?'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
-  PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory'
-    public: true
-
-  ps_checkout.http.client:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface'
-    public: true
-    factory: ['@PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory', "create"]
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
-
-  PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+  PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
     public: true
     arguments:
-      - "@ps_checkout.http.client"
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'

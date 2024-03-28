@@ -22,6 +22,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   static Inject = {
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
+    prestashopService: 'PrestashopService',
     $: '$'
   };
 
@@ -88,7 +89,22 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   createOrder(data) {
-    const extraData = this.props?.data ? this.props.data : {};
+    let extraData = {};
+
+    if (this.prestashopService.isProductPage()) {
+      let {
+        id_product,
+        id_product_attribute,
+        id_customization,
+        quantity_wanted
+      } = this.prestashopService.getProductDetails();
+      extraData = {
+        id_product,
+        id_product_attribute,
+        id_customization,
+        quantity_wanted
+      };
+    }
 
     return this.psCheckoutApi
       .postCreateOrder({

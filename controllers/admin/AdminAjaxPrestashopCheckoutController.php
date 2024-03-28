@@ -42,6 +42,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 use PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator;
@@ -964,6 +965,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->exitWithResponse([
             'status' => true,
             'orderStates' => $orderStates,
+        ]);
+    }
+
+    public function ajaxProcessGetPaymentTokenCount()
+    {
+        /** @var PaymentTokenRepository $paymentTokenRepository */
+        $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
+
+        $this->exitWithResponse([
+            'status' => true,
+            'count' => $paymentTokenRepository->getCount(),
         ]);
     }
 

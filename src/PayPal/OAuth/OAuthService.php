@@ -21,14 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth;
 
 use Exception;
-use GuzzleHttp\Psr7\Request;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class OAuthService
 {
     private $httpClient;
 
-    public function __construct($httpClient)
+    public function __construct(CheckoutHttpClient $httpClient)
     {
         $this->httpClient = $httpClient;
     }
@@ -40,17 +40,10 @@ class OAuthService
      *
      * @throws Exception
      */
-    public function getUserIdToken(PayPalCustomerId $customerId = null)
+    public function getUserIdToken($merchantId, PayPalCustomerId $customerId = null)
     {
         try {
-            $body = 'grant_type=client_credentials&response_type=id_token';
-
-            if ($customerId) {
-                $body .= '&target_customer_id=' . $customerId->getValue();
-            }
-
-            $request = new Request('POST', '', [], $body);
-            $response = $this->httpClient->sendRequest($request);
+            $response = $this->httpClient->getUserIdToken($merchantId, $customerId);
 
             $data = json_decode($response->getBody()->getContents(), true);
 

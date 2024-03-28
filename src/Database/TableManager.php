@@ -59,7 +59,7 @@ class TableManager
               `id_cart` int unsigned NOT NULL,
               `paypal_intent` varchar(20) DEFAULT "CAPTURE",
               `paypal_order` varchar(20) NULL,
-              `paypal_status` varchar(20) NULL,
+              `paypal_status` varchar(30) NULL,
               `paypal_funding` varchar(20) NULL,
               `paypal_token` text DEFAULT NULL,
               `paypal_token_expire` datetime NULL,
@@ -92,18 +92,22 @@ class TableManager
             `paypal_customer_id` varchar(50) NOT NULL,
             `payment_source` varchar(50) NOT NULL,
             `data` text NOT NULL,
-            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+            `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+            `merchant_id` varchar(50) NOT NULL,
+            PRIMARY KEY (`id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
             `id` varchar(50) NOT NULL,
             `id_cart` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
-            `final_capture` tinyint(1) NOT NULL,,
+            `intent` varchar(50) DEFAULT "CAPTURE",
+            `funding_source` varchar(50) NOT NULL,
             `payment_source` text,
             `environment` varchar(50) NOT NULL,
             `is_card_fields` tinyint(1) NOT NULL,
             `is_express_checkout` tinyint(1) NOT NULL,
+            `customer_intent` varchar(50),
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
@@ -146,6 +150,22 @@ class TableManager
             `reference_id` varchar(50) NOT NULL,
             `items` text,
             PRIMARY KEY (`reference_id`, `id_order`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
+            `id_customer` int unsigned NOT NULL,
+            `paypal_customer_id` varchar(50) NOT NULL,
+            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
+            `id` varchar(50) NOT NULL,
+            `paypal_customer_id` varchar(50) NOT NULL,
+            `payment_source` varchar(50) NOT NULL,
+            `data` text NOT NULL,
+            `merchant_id` varchar(50) NOT NULL,
+            `status` varchar(50) NOT NULL,
+            PRIMARY KEY (`id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 

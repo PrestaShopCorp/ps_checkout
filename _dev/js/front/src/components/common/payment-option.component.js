@@ -23,6 +23,7 @@ import { SmartButtonComponent } from './smart-button.component';
 import { PaymentFieldsComponent } from "./payment-fields.component";
 import {CardFieldsComponent} from "./card-fields.component";
 import {PS_VERSION_1_6} from "../../constants/ps-version.constants";
+import {PaymentTokenComponent} from "./payment-token.component";
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -72,6 +73,11 @@ export class PaymentOptionComponent extends BaseComponent {
       APMEligible &&
       document.getElementById(container)
     );
+  }
+
+  getPaymentForm() {
+    const container = `pay-with-${this.data.HTMLElement.id}-form`;
+    return document.getElementById(container);
   }
 
   getLabel() {
@@ -170,7 +176,14 @@ export class PaymentOptionComponent extends BaseComponent {
       this.data.HTMLElementCardFields.style.display = 'none';
     }
 
-    if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
+    if (this.props.fundingSource.name.includes('token')) {
+      this.children.paymentToken = new PaymentTokenComponent(this.app, {
+        fundingSource: this.props.fundingSource,
+        HTMLElementRadio: this.data.HTMLElement,
+        HTMLElementContainer: this.data.HTMLElementContainer,
+        HTMLElementForm: this.getPaymentForm()
+      }).render();
+    } else if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
       this.data.HTMLElementCardFields.style.display = '';
       this.children.cardFields = new CardFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,

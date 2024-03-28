@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 class RefundPayPalCaptureCommandHandler
 {
     /**
-     * @var CheckoutHttpClient
+     * @var MaaslandHttpClient
      */
     private $checkoutHttpClient;
     /**
@@ -55,7 +55,7 @@ class RefundPayPalCaptureCommandHandler
     private $eventDispatcher;
 
     public function __construct(
-        CheckoutHttpClient $checkoutHttpClient,
+        MaaslandHttpClient $checkoutHttpClient,
         PayPalConfiguration $payPalConfiguration,
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
