@@ -18,8 +18,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
@@ -97,8 +99,10 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 throw new Exception('PayPal order does not belong to this customer');
             }
 
-            $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
-
+//            $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
+            $payPalOrderFromCache = [
+                'status' => 'TEST'
+            ];
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
                 $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
                 if ($capture['status'] === 'COMPLETED') {
@@ -118,28 +122,26 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             // WHEN 3DS fails
             if ($payPalOrderFromCache['status'] === 'CREATED') {
-                $card3DSecure = new Card3DSecure();
-                switch ($card3DSecure->continueWithAuthorization($payPalOrderFromCache)) {
-                    case Card3DSecure::RETRY:
-                        $this->redirectTo3DSVerification($payPalOrderFromCache);
-                        break;
-                    case Card3DSecure::PROCEED:
-                        $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
-                        $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
-                        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-                        if ($capture['status'] === 'COMPLETED') {
-                            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-                            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
-                        }
-                        break;
-                    case Card3DSecure::NO_DECISION:
-                    default:
-                        break;
+                /** @var CheckoutChecker $checkoutChecker */
+                $checkoutChecker = $this->module->getService(CheckoutChecker::class);
+
+                try {
+                    $checkoutChecker->continueWithAuthorization($payPalOrder->getIdCart(), $payPalOrderFromCache);
+                    $this->context->smarty->assign('success3DS', true);
+                } catch (PsCheckoutException $exception) {
+                    switch ($exception->getCode()) {
+                        case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN:
+                            $this->redirectTo3DSVerification($payPalOrderFromCache);
+                            break;
+                        default:
+                            throw $exception;
+                    }
                 }
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
         }
+//        $this->context->smarty->assign('success3DS', true);
     }
 
     /**

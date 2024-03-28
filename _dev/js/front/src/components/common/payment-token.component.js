@@ -18,6 +18,7 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import {ModalComponent} from "./modal.component";
+import {IframeComponent} from "./iframe.component";
 
 /**
  * @typedef PaymentTokenComponentProps
@@ -55,6 +56,21 @@ export class PaymentTokenComponent extends BaseComponent {
 
     this.data.disabled = false;
     this.data.modal = null;
+    this.data.iframe = null;
+
+    window.document.addEventListener('3DS-success', this.validateOrder)
+    window.document.addEventListener('3DS-close', (event) => {this.data.iframe.hide();})
+  }
+
+  validateOrder(e) {
+    console.log(e);
+    this.data.iframe.hide();
+    // this.psCheckoutApi.postValidateOrder(
+    //   {
+    //     fundingSource: this.getVaultFormData().fundingSource,
+    //     orderID: this.data.orderId
+    //   }
+    // ).catch((error) => this.handleError(error));
   }
 
   showModal() {
@@ -78,6 +94,21 @@ export class PaymentTokenComponent extends BaseComponent {
       }).render();
     }
     this.data.modal.show();
+  }
+
+  showIframe() {
+    const confirmationUrl = new URL(this.config.paymentUrl);
+    // confirmationUrl.searchParams.append('orderID', this.data.orderId);
+    confirmationUrl.searchParams.append('orderID', '4H913400R2970140U');
+
+    if (!this.data.iframe) {
+      this.data.iframe = new IframeComponent(this.app, {
+        src: confirmationUrl.toString()
+      }).render();
+    } else {
+      this.data.iframe.reload(confirmationUrl.toString());
+    }
+    this.data.iframe.show();
   }
 
   onDeleteConfirm() {
@@ -171,10 +202,11 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementButton.addEventListener('click', (event) => {
       event.preventDefault();
 
-      this.data.loader.show();
+      // this.data.loader.show();
       this.data.HTMLElementButton.setAttribute('disabled', '');
 
-      this.createOrder();
+      this.showIframe();
+      // this.createOrder();
     });
   }
 
