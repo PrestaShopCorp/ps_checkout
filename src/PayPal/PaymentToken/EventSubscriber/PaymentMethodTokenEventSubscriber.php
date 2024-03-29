@@ -21,11 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
@@ -81,16 +84,16 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 
         if ($orderId) {
             try {
-                $order = $this->payPalOrderRepository->getPayPalOrderById($orderId);
+                $order = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
                 $setFavorite = strpos($order->getCustomerIntent(), PayPalOrder::CUSTOMER_INTENT_FAVORITE) !== false;
             } catch (\Exception $exception) {
             }
         }
 
         $this->commandBus->handle(new SavePaymentTokenCommand(
-            $resource['id'],
-            $resource['customer']['id'],
-            $resource['payment_source']['verification_status'],
+            new PaymentTokenId($resource['id']),
+            new PayPalCustomerId($resource['customer']['id']),
+            $resource['payment_source'][array_keys($resource['payment_source'])[0]]['verification_status'],
             array_keys($resource['payment_source'])[0],
             $resource,
             $event->getMerchantId(),

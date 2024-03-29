@@ -46,6 +46,7 @@ class SavePaymentTokenCommandHandler
             $command->getPaymentSource(),
             $command->getPaymentTokenData(),
             $command->getMerchantId(),
+            $command->getStatus(),
             $command->isFavorite()
         );
         $this->paymentTokenRepository->save($token);

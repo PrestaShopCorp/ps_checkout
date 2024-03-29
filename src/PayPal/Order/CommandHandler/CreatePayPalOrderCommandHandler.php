@@ -114,10 +114,15 @@ class CreatePayPalOrderCommandHandler
         $cartPresenter = (new CartPresenter())->present();
         $builder = new OrderPayloadBuilder($cartPresenter);
 
+        $cart = new \Cart($command->getCartId()->getValue());
+        $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
+
+        if ($payPalCustomerId) {
+            $builder->setPaypalCustomerId($payPalCustomerId->getValue());
+        }
+
         if ($command->getPaymentTokenId()) {
             $paymentToken = $this->paymentTokenRepository->findById($command->getPaymentTokenId());
-            $cart = new \Cart($command->getCartId()->getValue());
-            $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
 
             if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId()->getValue() !== $payPalCustomerId->getValue()) {
                 throw new Exception('Payment token does not belong to the customer');

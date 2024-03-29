@@ -139,7 +139,7 @@ class PaymentTokenRepository
         $query = new DbQuery();
         $query->select('*')
             ->from(PaymentToken::TABLE)
-            ->where('id = ' . $id->getValue());
+            ->where('id = "' . $id->getValue() . '"');
         $result = $this->db->getRow($query);
 
         if ($result && is_array($result)) {
@@ -159,8 +159,8 @@ class PaymentTokenRepository
         $token = $this->findById($id);
         if ($token) {
             $customerId = $token->getPayPalCustomerId()->getValue();
-            $sql = 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 0 WHERE id_customer = $customerId;";
-            $sql .= 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 1 WHERE id = {$id->getValue()};";
+            $sql = 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 0 WHERE paypal_customer_id = \"$customerId\";";
+            $sql .= 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 1 WHERE id = \"{$id->getValue()}\";";
 
             return $this->db->execute($sql);
         }

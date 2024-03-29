@@ -76,7 +76,7 @@ class PaymentMethodTokenService
         try {
             $response = $this->checkoutHttpClient->deletePaymentToken($this->payPalConfiguration->getMerchantId(), $paymentTokenId);
 
-            if ($response->getStatusCode() !== 200) {
+            if ($response->getStatusCode() !== 204) {
                 throw new Exception('Failed to delete payment token', $response->getStatusCode());
             }
         } catch (Exception $exception) {

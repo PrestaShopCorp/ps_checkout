@@ -58,7 +58,7 @@ class SavePayPalOrderCommandHandler
                 $order['id'],
                 $command->getCartId()->getValue(),
                 $order['intent'],
-                array_keys($order['payment_source'])[0],
+                $command->getFundingSource(),
                 $order['status'],
                 $order['payment_source'],
                 $command->getPaymentMode(),

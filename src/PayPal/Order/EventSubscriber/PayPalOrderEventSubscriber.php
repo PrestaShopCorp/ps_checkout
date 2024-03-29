@@ -160,6 +160,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new SavePayPalOrderCommand(
             $order,
             $event->getCartId(),
+            $event->getFundingSource(),
             $this->payPalConfiguration->getPaymentMode(),
             $event->getCustomerIntent(),
             $event->isExpressCheckout(),

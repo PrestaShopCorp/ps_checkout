@@ -48,11 +48,15 @@ class SavePayPalOrderCommand
      * @var bool|null
      */
     private $isCardFields;
+    /**
+     * @var null
+     */
+    private $fundingSource;
 
     /**
      * @param array $order
      */
-    public function __construct($order, CartId $cartId = null, $paymentMode = null, $customerIntent = null, $isExpressCheckout = null, $isCardFields = null)
+    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = null, $isExpressCheckout = null, $isCardFields = null)
     {
         $this->order = $order;
         $this->cartId = $cartId;
@@ -60,6 +64,7 @@ class SavePayPalOrderCommand
         $this->customerIntent = $customerIntent;
         $this->isExpressCheckout = $isExpressCheckout;
         $this->isCardFields = $isCardFields;
+        $this->fundingSource = $fundingSource;
     }
 
     /**
@@ -108,5 +113,13 @@ class SavePayPalOrderCommand
     public function isCardFields()
     {
         return $this->isCardFields;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFundingSource()
+    {
+        return $this->fundingSource;
     }
 }
