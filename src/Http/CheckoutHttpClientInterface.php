@@ -20,15 +20,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Http;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use Psr\Http\Message\ResponseInterface;
 
 interface CheckoutHttpClientInterface
 {
     /**
      * @param string $payload
      *
-     * @return CreatePayPalOrderResponse
+     * @return ResponseInterface
      *
      * @throws PayPalOrderException
      */
