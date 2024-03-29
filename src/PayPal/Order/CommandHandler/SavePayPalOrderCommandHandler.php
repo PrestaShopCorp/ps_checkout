@@ -20,12 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class SavePayPalOrderCommandHandler

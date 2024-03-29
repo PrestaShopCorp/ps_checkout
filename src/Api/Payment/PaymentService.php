@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class PaymentService
 {
     /**
-     * @var CheckoutHttpClient
+     * @var CheckoutHttpClientInterface
      */
     private $client;
     /**

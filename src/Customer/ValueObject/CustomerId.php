@@ -36,9 +36,9 @@ class CustomerId
      */
     public function __construct($customerId)
     {
-        $this->assertIntegerIsGreaterThanZero($customerId);
+        $this->assertIntegerIsGreaterThanZero((int) $customerId);
 
-        $this->customerId = $customerId;
+        $this->customerId = (int) $customerId;
     }
 
     /**

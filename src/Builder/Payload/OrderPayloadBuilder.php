@@ -86,7 +86,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private $paypalVaultId;
 
     /**
-     * @var `bool
+     * @var bool
      */
     private $savePaymentMethod;
 
