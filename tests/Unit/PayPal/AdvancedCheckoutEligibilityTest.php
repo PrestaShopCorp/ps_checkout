@@ -35,7 +35,7 @@ class AdvancedCheckoutEligibilityTest extends TestCase
     public function testGetSupportedCountries()
     {
         $this->assertEquals(
-            [0 => 'AU', 1 => 'AT', 2 => 'BE', 3 => 'BG', 4 => 'CA', 5 => 'CY', 6 => 'CZ', 7 => 'DK', 8 => 'EE', 9 => 'FI', 10 => 'FR', 11 => 'DE', 12 => 'GR', 13 => 'HU', 14 => 'IE', 15 => 'IT', 16 => 'JP', 17 => 'LV', 18 => 'LI', 19 => 'LT', 20 => 'LU', 21 => 'MT', 22 => 'MX', 23 => 'NL', 24 => 'NO', 25 => 'PL', 26 => 'PT', 27 => 'RO', 28 => 'SK', 29 => 'SI', 30 => 'ES', 31 => 'SE', 32 => 'GB', 33 => 'US'],
+            ['AU', 'AT', 'BE', 'BG', 'CA', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             $this->advancedCheckoutEligibility->getSupportedCountries()
         );
     }
@@ -43,27 +43,27 @@ class AdvancedCheckoutEligibilityTest extends TestCase
     public function testGetSupportedCurrenciesByCountry()
     {
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'CAD', 2 => 'EUR', 3 => 'GBP', 4 => 'JPY', 5 => 'USD'],
+            ['AUD', 'CAD', 'EUR', 'GBP', 'JPY', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('US')
         );
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'BRL', 2 => 'CAD', 3 => 'CHF', 4 => 'CZK', 5 => 'DKK', 6 => 'EUR', 7 => 'GBP', 8 => 'HKD', 9 => 'HUF', 10 => 'ILS', 11 => 'JPY', 12 => 'MXN', 13 => 'NOK', 14 => 'NZD', 15 => 'PHP', 16 => 'PLN', 17 => 'SEK', 18 => 'SGD', 19 => 'THB', 20 => 'TWD', 21 => 'USD'],
+            ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('AU')
         );
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'BRL', 2 => 'CAD', 3 => 'CHF', 4 => 'CZK', 5 => 'DKK', 6 => 'EUR', 7 => 'GBP', 8 => 'HKD', 9 => 'HUF', 10 => 'ILS', 11 => 'JPY', 12 => 'MXN', 13 => 'NOK', 14 => 'NZD', 15 => 'PHP', 16 => 'PLN', 17 => 'SEK', 18 => 'SGD', 19 => 'THB', 20 => 'TWD', 21 => 'USD'],
+            ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('CA')
         );
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'BRL', 2 => 'CAD', 3 => 'CHF', 4 => 'CZK', 5 => 'DKK', 6 => 'EUR', 7 => 'GBP', 8 => 'HKD', 9 => 'HUF', 10 => 'ILS', 11 => 'JPY', 12 => 'MXN', 13 => 'NOK', 14 => 'NZD', 15 => 'PHP', 16 => 'PLN', 17 => 'SEK', 18 => 'SGD', 19 => 'THB', 20 => 'TWD', 21 => 'USD'],
+            ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('FR')
         );
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'BRL', 2 => 'CAD', 3 => 'CHF', 4 => 'CZK', 5 => 'DKK', 6 => 'EUR', 7 => 'GBP', 8 => 'HKD', 9 => 'HUF', 10 => 'ILS', 11 => 'JPY', 12 => 'MXN', 13 => 'NOK', 14 => 'NZD', 15 => 'PHP', 16 => 'PLN', 17 => 'SEK', 18 => 'SGD', 19 => 'THB', 20 => 'TWD', 21 => 'USD'],
+            ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('DE')
         );
         $this->assertEquals(
-            [0 => 'AUD', 1 => 'BRL', 2 => 'CAD', 3 => 'CHF', 4 => 'CZK', 5 => 'DKK', 6 => 'EUR', 7 => 'GBP', 8 => 'HKD', 9 => 'HUF', 10 => 'ILS', 11 => 'JPY', 12 => 'MXN', 13 => 'NOK', 14 => 'NZD', 15 => 'PHP', 16 => 'PLN', 17 => 'SEK', 18 => 'SGD', 19 => 'THB', 20 => 'TWD', 21 => 'USD'],
+            ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             $this->advancedCheckoutEligibility->getSupportedCurrenciesByCountry('IT')
         );
         $this->assertEquals(
@@ -224,7 +224,11 @@ class AdvancedCheckoutEligibilityTest extends TestCase
     {
         $this->assertEquals(
             ['MASTERCARD', 'VISA', 'AMEX', 'JCB', 'CB_NATIONALE', 'DISCOVER'],
-            array_values($this->advancedCheckoutEligibility->getSupportedCardBrands())
+            $this->advancedCheckoutEligibility->getSupportedCardBrands()
+        );
+        $this->assertEquals(
+            '["MASTERCARD","VISA","AMEX","JCB","CB_NATIONALE","DISCOVER"]',
+            json_encode($this->advancedCheckoutEligibility->getSupportedCardBrands())
         );
     }
 
@@ -304,6 +308,10 @@ class AdvancedCheckoutEligibilityTest extends TestCase
         $this->assertEquals(
             [],
             $this->advancedCheckoutEligibility->getSupportedCardBrandsByContext('BO', 'JPY')
+        );
+        $this->assertEquals(
+            '["MASTERCARD","VISA","AMEX","JCB"]',
+            json_encode($this->advancedCheckoutEligibility->getSupportedCardBrandsByContext('JP', 'JPY'))
         );
     }
 }
