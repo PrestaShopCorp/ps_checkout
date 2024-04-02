@@ -20,14 +20,14 @@ export class PrestashopPs1_6Service {
   static getProductDetails() {
     const id_product = document.getElementById('product_page_product_id');
     const id_product_attribute = document.getElementById('idCombination');
-    const id_customization = window.customizationId;
+    const id_customization = window?.customizationId;
     const quantity_wanted = document.getElementById('quantity_wanted');
 
     return {
-      id_product: id_product.value || '',
-      id_product_attribute: id_product_attribute.value || '',
+      id_product: id_product?.value || '',
+      id_product_attribute: id_product_attribute?.value || '',
       id_customization: id_customization || '',
-      quantity_wanted: quantity_wanted.value || ''
+      quantity_wanted: quantity_wanted?.value || ''
     };
   }
 

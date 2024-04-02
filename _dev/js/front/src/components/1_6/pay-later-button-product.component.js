@@ -47,24 +47,11 @@ export class PayLaterButtonProductComponent extends BaseComponent {
       buttonContainer.append(this.checkoutExpressButton);
     }
 
-    const {
-      id_product,
-      id_product_attribute,
-      id_customization,
-      quantity_wanted
-    } = this.prestashopService.getProductDetails();
-
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paylater',
-        querySelector: '#ps-checkout-express-button',
-        data: {
-          id_product,
-          id_product_attribute,
-          id_customization,
-          quantity_wanted
-        }
+        querySelector: '#ps-checkout-express-button'
       }
     ).render();
 
