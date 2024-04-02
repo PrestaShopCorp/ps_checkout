@@ -100,7 +100,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             }
 
             $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
-            $payPalOrderFromCache = ['status' => 'TEST'];
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
                 $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
@@ -140,7 +139,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
         }
-        $this->context->smarty->assign('success3DS', true);
     }
 
     /**
