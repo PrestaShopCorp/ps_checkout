@@ -43,7 +43,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Construct the client used to make call to maasland
  */
-class PaymentClient extends GenericClient
+class OldPaymentClient extends GenericClient
 {
     /**
      * @param Link $link

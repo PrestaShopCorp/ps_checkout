@@ -80,6 +80,20 @@ class TableManager
             PRIMARY KEY (`name`, `id_shop`),
             INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
+            `id_customer` int unsigned NOT NULL,
+            `paypal_customer_id` varchar(50) NOT NULL,
+            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
+            `id` varchar(50) NOT NULL,
+            `paypal_customer_id` varchar(50) NOT NULL,
+            `payment_source` varchar(50) NOT NULL,
+            `data` text NOT NULL,
+            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 
         $this->checkTable();
