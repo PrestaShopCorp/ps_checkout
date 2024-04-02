@@ -53,14 +53,6 @@ class Router
     }
 
     /**
-     * @return string
-     */
-    public function getCheckoutPaymentLink($cartId)
-    {
-        return $this->context->link->getModuleLink('ps_checkout', 'payment', ['cartId' => $cartId], true, $this->context->language->id, $this->context->shop->id);
-    }
-
-    /**
      * @param int|null $orderId
      *
      * @return string

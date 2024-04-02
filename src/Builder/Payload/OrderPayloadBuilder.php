@@ -371,7 +371,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 (int) $context->shop->id
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
-            'return_url' => $this->vault ? $router->getCheckoutPaymentLink($this->cart['cart']['id']) : $router->getCheckoutValidateLink(),
+            'return_url' => $router->getCheckoutValidateLink(),
             'cancel_url' => $router->getCheckoutCancelLink(),
         ];
 
