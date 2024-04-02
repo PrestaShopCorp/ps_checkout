@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
@@ -40,7 +41,6 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 
 class CreatePayPalOrderCommandHandler
 {
@@ -117,25 +117,27 @@ class CreatePayPalOrderCommandHandler
         $cart = new \Cart($command->getCartId()->getValue());
         $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
 
+        $customerIntent = [];
+
         if ($payPalCustomerId) {
             $builder->setPaypalCustomerId($payPalCustomerId->getValue());
         }
 
         if ($command->getPaymentTokenId()) {
+            $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_USES_VAULTING;
             $paymentToken = $this->paymentTokenRepository->findById($command->getPaymentTokenId());
 
             if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId()->getValue() !== $payPalCustomerId->getValue()) {
                 throw new Exception('Payment token does not belong to the customer');
             }
-
             $builder->setPaypalVaultId($command->getPaymentTokenId()->getValue());
-            $builder->setPaypalCustomerId($payPalCustomerId->getValue());
         }
 
         $builder->setIsCard($command->getFundingSource() === 'card');
         $builder->setExpressCheckout($command->isExpressCheckout());
         $builder->setFundingSource($command->getFundingSource());
         $builder->setSavePaymentMethod($command->vault());
+        $builder->setVault($command->getPaymentTokenId() || $command->vault());
 
         if ($this->shopContext->isShop17()) {
             // Build full payload in 1.7
@@ -148,19 +150,9 @@ class CreatePayPalOrderCommandHandler
         $response = $this->maaslandHttpClient->createOrder($builder->presentPayload()->getArray());
         $order = json_decode($response->getBody(), true);
 
-        $customerIntent = [];
-
         if ($command->vault()) {
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_VAULT;
-
-            if (isset($order['payment_source']['paypal']['attributes']['vault']['customer']['id'])) {
-                try {
-                    $payPalCustomerId = new PayPalCustomerId($order['payment_source']['paypal']['attributes']['vault']['customer']['id']);
-                    $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
-                    $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (\Exception $exception) {
-                }
-            }
+            $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_USES_VAULTING;
         }
 
         if ($command->favorite()) {
@@ -177,7 +169,7 @@ class CreatePayPalOrderCommandHandler
             $command->getFundingSource(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),
-            !empty($customerIntent) ? implode(',', $customerIntent) : null
+            $customerIntent
         ));
     }
 }

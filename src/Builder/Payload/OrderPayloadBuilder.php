@@ -91,6 +91,11 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private $savePaymentMethod;
 
     /**
+     * @var bool
+     */
+    private $vault = false;
+
+    /**
      * @param bool $savePaymentMethod
      */
     public function setSavePaymentMethod($savePaymentMethod)
@@ -120,6 +125,14 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function setPaypalVaultId($paypalVaultId)
     {
         $this->paypalVaultId = $paypalVaultId;
+    }
+
+    /**
+     * @param bool $vault
+     */
+    public function setVault($vault)
+    {
+        $this->vault = $vault;
     }
 
     /**
@@ -231,6 +244,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'payee' => [
                 'merchant_id' => $merchantId,
             ],
+            'vault' => $this->vault,
         ];
 
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
@@ -357,7 +371,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 (int) $context->shop->id
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
-            'return_url' => $router->getCheckoutValidateLink(),
+            'return_url' => $this->vault ? $router->getCheckoutPaymentLink($this->cart['cart']['id']) : $router->getCheckoutValidateLink(),
             'cancel_url' => $router->getCheckoutCancelLink(),
         ];
 
@@ -481,6 +495,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         }
 
         if ($this->paypalVaultId) {
+            unset($node['payment_source']['card']['billing_address']);
             $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
         }
 

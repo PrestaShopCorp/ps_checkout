@@ -67,16 +67,23 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         $orderId = Tools::getValue('orderID');
+        $cartId = (int) Tools::getValue('cartId');
+
+        if ((!$orderId && !$cartId) || ($cartId && $cartId !== (int) $this->context->cart->id)) {
+            $this->redirectToOrderPage();
+        }
+
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
 
         if (!$orderId) {
-            $this->redirectToOrderPage();
+            $order = $payPalOrderRepository->getPayPalOrderByCartId((int) $cartId);
+            $orderId = $order->getId()->getValue();
         }
 
         try {
             $this->paypalOrderId = new PayPalOrderId($orderId);
 
-            /** @var PayPalOrderRepository $payPalOrderRepository */
-            $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
             /** @var PayPalOrderProvider $payPalOrderProvider */
             $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
             /** @var CommandBusInterface $commandBus */
@@ -146,7 +153,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             return $link['rel'] === 'payer-action';
         });
         if (!empty($payerActionLinks)) {
-            Tools::redirect($payerActionLinks[0]['href'] . '&return_url=' . urlencode($this->context->link->getModuleLink('ps_checkout', 'payment', ['orderID' => $this->paypalOrderId->getValue()])));
+            Tools::redirect(reset($payerActionLinks)['href']);
         }
     }
 

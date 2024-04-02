@@ -37,7 +37,7 @@ class SavePayPalOrderCommand
      */
     private $paymentMode;
     /**
-     * @var string|null
+     * @var array
      */
     private $customerIntent;
     /**
@@ -56,7 +56,7 @@ class SavePayPalOrderCommand
     /**
      * @param array $order
      */
-    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = null, $isExpressCheckout = null, $isCardFields = null)
+    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = [], $isExpressCheckout = null, $isCardFields = null)
     {
         $this->order = $order;
         $this->cartId = $cartId;
@@ -92,7 +92,7 @@ class SavePayPalOrderCommand
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getCustomerIntent()
     {

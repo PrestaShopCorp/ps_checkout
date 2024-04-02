@@ -85,7 +85,7 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
         if ($orderId) {
             try {
                 $order = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
-                $setFavorite = strpos($order->getCustomerIntent(), PayPalOrder::CUSTOMER_INTENT_FAVORITE) !== false;
+                $setFavorite = $order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE);
             } catch (\Exception $exception) {
             }
         }

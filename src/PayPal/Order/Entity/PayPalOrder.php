@@ -27,6 +27,7 @@ class PayPalOrder
     const TABLE = 'pscheckout_order';
     const CUSTOMER_INTENT_VAULT = 'VAULT';
     const CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
+    const CUSTOMER_INTENT_USES_VAULTING = 'USES_VAULTING';
 
     /**
      * @var PayPalOrderId
@@ -65,11 +66,11 @@ class PayPalOrder
      */
     private $isExpressCheckout;
     /**
-     * @var string|null
+     * @var array
      */
     private $customerIntent;
 
-    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = null)
+    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = [])
     {
         $this->id = new PayPalOrderId($id);
         $this->idCart = $idCart;
@@ -264,7 +265,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getCustomerIntent()
     {
@@ -272,7 +273,7 @@ class PayPalOrder
     }
 
     /**
-     * @param string $customerIntent
+     * @param array $customerIntent
      *
      * @return PayPalOrder
      */
@@ -281,5 +282,17 @@ class PayPalOrder
         $this->customerIntent = $customerIntent;
 
         return $this;
+    }
+
+    /**
+     * Checks if customer intent contains an intent property and returns boolean value
+     *
+     * @param self::CUSTOMER_INTENT_VAULT|self::CUSTOMER_INTENT_FAVORITE|self::CUSTOMER_INTENT_USES_VAULTING $intent
+     *
+     * @return bool
+     */
+    public function checkCustomerIntent($intent)
+    {
+        return in_array($intent, $this->customerIntent);
     }
 }

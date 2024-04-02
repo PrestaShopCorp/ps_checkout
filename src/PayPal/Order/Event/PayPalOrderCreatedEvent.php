@@ -44,7 +44,7 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
      */
     private $fundingSource;
     /**
-     * @var null
+     * @var array
      */
     private $customerIntent;
 
@@ -59,7 +59,7 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
      * @throws CartException
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPal, $cartId, $fundingSource, $isCardFields, $isExpressCheckout, $customerIntent = null)
+    public function __construct($orderPayPalId, $orderPayPal, $cartId, $fundingSource, $isCardFields, $isExpressCheckout, $customerIntent = [])
     {
         parent::__construct($orderPayPalId, $orderPayPal);
         $this->cartId = new CartId($cartId);
@@ -102,7 +102,7 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getCustomerIntent()
     {

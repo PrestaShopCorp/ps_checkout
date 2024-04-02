@@ -64,7 +64,7 @@ class PayPalOrderRepository
                 'environment' => pSQL($payPalOrder->getEnvironment()),
                 'is_card_fields' => $payPalOrder->isCardFields(),
                 'is_express_checkout' => $payPalOrder->isExpressCheckout(),
-                'customer_intent' => pSQL($payPalOrder->getCustomerIntent()),
+                'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
             ],
             false,
             true,
@@ -101,7 +101,7 @@ class PayPalOrderRepository
             $queryResult['environment'],
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
-            $queryResult['customer_intent']
+            explode(',', $queryResult['customer_intent'])
         );
     }
 
@@ -133,7 +133,7 @@ class PayPalOrderRepository
             $queryResult['environment'],
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
-            $queryResult['customer_intent']
+            explode(',', $queryResult['customer_intent'])
         );
     }
 

@@ -61,6 +61,7 @@ services:
       - "@ps_checkout.cache.paypal.order"
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'

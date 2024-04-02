@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
@@ -39,6 +40,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureSta
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Psr\SimpleCache\CacheInterface;
 
 class CapturePayPalOrderCommandHandler
@@ -65,19 +67,25 @@ class CapturePayPalOrderCommandHandler
      * @var PayPalCustomerRepository
      */
     private $payPalCustomerRepository;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     public function __construct(
         MaaslandHttpClient $httpClient,
         EventDispatcherInterface $eventDispatcher,
         CacheInterface $orderPayPalCache,
         PrestaShopContext $prestaShopContext,
-        PayPalCustomerRepository $payPalCustomerRepository
+        PayPalCustomerRepository $payPalCustomerRepository,
+        PayPalOrderRepository $payPalOrderRepository
     ) {
         $this->httpClient = $httpClient;
         $this->eventDispatcher = $eventDispatcher;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->prestaShopContext = $prestaShopContext;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
@@ -85,13 +93,16 @@ class CapturePayPalOrderCommandHandler
         $context = Context::getContext();
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
 
-        $response = $this->httpClient->captureOrder([
+        $payload = [
             'mode' => $capturePayPalOrderCommand->getFundingSource(),
             'orderId' => $capturePayPalOrderCommand->getOrderId()->getValue(),
-            'payee' => [
-                'merchant_id' => $merchantId,
-            ],
-        ]);
+        ];
+
+        $order = $this->payPalOrderRepository->getPayPalOrderById($capturePayPalOrderCommand->getOrderId());
+
+        $payload = array_merge($payload, $order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING) ? ['vault' => true, 'payee' => ['merchant_id' => $merchantId]] : []);
+
+        $response = $this->httpClient->captureOrder($payload);
 
         $orderPayPal = json_decode($response->getBody(), true);
 
