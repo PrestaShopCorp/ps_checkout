@@ -18,6 +18,7 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import {ModalComponent} from "./modal.component";
+import {IframeComponent} from "./iframe.component";
 
 /**
  * @typedef PaymentTokenComponentProps
@@ -55,6 +56,10 @@ export class PaymentTokenComponent extends BaseComponent {
 
     this.data.disabled = false;
     this.data.modal = null;
+    this.data.iframe = null;
+
+    window.document.addEventListener('3DS-success', (e) => this.validateOrder(), false);
+    window.document.addEventListener('3DS-close', (e) => this.hideIframe(), false);
   }
 
   showModal() {
@@ -78,6 +83,24 @@ export class PaymentTokenComponent extends BaseComponent {
       }).render();
     }
     this.data.modal.show();
+  }
+
+  showIframe() {
+    const confirmationUrl = new URL(this.config.paymentUrl);
+    confirmationUrl.searchParams.append('orderID', this.data.orderId);
+
+    if (!this.data.iframe) {
+      this.data.iframe = new IframeComponent(this.app, {
+        src: confirmationUrl.toString()
+      }).render();
+    } else {
+      this.data.iframe.reload(confirmationUrl.toString());
+    }
+    this.data.iframe.show();
+  }
+
+  hideIframe() {
+    this.data.iframe.hide();
   }
 
   onDeleteConfirm() {
@@ -140,15 +163,19 @@ export class PaymentTokenComponent extends BaseComponent {
     this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;
-        this.redirectToPaymentPage();
+        this.showIframe();
       })
       .catch((error) => this.handleError(error));
   }
 
-  redirectToPaymentPage() {
-    const confirmationUrl = new URL(this.config.paymentUrl);
-    confirmationUrl.searchParams.append('orderID', this.data.orderId);
-    window.location.href = confirmationUrl.toString();
+  validateOrder() {
+    this.hideIframe();
+    this.psCheckoutApi.postValidateOrder(
+      {
+        fundingSource: this.getVaultFormData().fundingSource,
+        orderID: this.data.orderId
+      }
+    ).catch((error) => this.handleError(error));
   }
 
   renderButton() {

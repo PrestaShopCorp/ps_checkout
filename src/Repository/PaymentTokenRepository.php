@@ -84,7 +84,7 @@ class PaymentTokenRepository
         $query->select('t.*')
             ->from(PaymentToken::TABLE, 't')
             ->leftJoin('pscheckout_customer', 'c', 't.`paypal_customer_id` = c.`paypal_customer_id`')
-            ->where('c.`id_customer` =' . (int) $psCustomerId)
+            ->where('c.`id_customer` = ' . (int) $psCustomerId)
             ->orderBy('t.`is_favorite` DESC')
             ->orderBy('t.`id` ASC');
 

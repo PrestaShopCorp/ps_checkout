@@ -269,7 +269,7 @@
   opacity: 100;
 }
 
-.ps-checkout.popup, .ps-checkout.ps-checkout-modal {
+.ps-checkout.popup, .ps-checkout.ps-checkout-modal, .ps-checkout.ps-checkout-iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -285,7 +285,12 @@
   border-radius: 15px;
 }
 
-.ps-checkout.ps-checkout-modal {
+.ps-checkout.ps-checkout-iframe {
+  width: 500px;
+  border: none;
+}
+
+.ps-checkout.ps-checkout-modal, .ps-checkout.ps-checkout-iframe {
   border-radius: 0;
   height: fit-content;
 }

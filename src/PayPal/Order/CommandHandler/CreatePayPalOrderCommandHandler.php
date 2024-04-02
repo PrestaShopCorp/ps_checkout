@@ -115,7 +115,7 @@ class CreatePayPalOrderCommandHandler
         $builder = new OrderPayloadBuilder($cartPresenter);
 
         $cart = new \Cart($command->getCartId()->getValue());
-        $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
+        $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId((int) $cart->id_customer));
 
         $customerIntent = [];
 

@@ -29,18 +29,20 @@
 }
 
 .ps-checkout.content {
-  width: 500px;
-  height: 250px;
-  max-width: 90%;
-  border-radius: 15px;
+  width: 100%;
+  height: 100%;
   border: 2px solid #AAAAAA;
   padding: 50px;
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  background-color: #FFFFFF;
 }
 
 .ps-checkout.order-link {
   text-align: center;
+}
+
+#wrapper {
+  background-color: transparent;
 }
