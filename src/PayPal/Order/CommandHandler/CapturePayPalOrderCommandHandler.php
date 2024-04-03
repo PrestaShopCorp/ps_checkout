@@ -96,11 +96,14 @@ class CapturePayPalOrderCommandHandler
         $payload = [
             'mode' => $capturePayPalOrderCommand->getFundingSource(),
             'orderId' => $capturePayPalOrderCommand->getOrderId()->getValue(),
+            'payee' => ['merchant_id' => $merchantId]
         ];
 
         $order = $this->payPalOrderRepository->getPayPalOrderById($capturePayPalOrderCommand->getOrderId());
 
-        $payload = array_merge($payload, $order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING) ? ['vault' => true, 'payee' => ['merchant_id' => $merchantId]] : []);
+        if($order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)) {
+            $payload['vault'] = true;
+        }
 
         $response = $this->httpClient->captureOrder($payload);
 
