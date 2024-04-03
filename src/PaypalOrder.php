@@ -24,11 +24,11 @@ use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder as PayPalOrderEntity;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder as PayPalOrderEntity;
 
 /**
  * Allow to instantiate a paypal order
@@ -79,7 +79,7 @@ class PaypalOrder
                     'vault' => true,
                     'payee' => [
                         'merchant_id' => $payPalConfiguration->getMerchantId(),
-                    ]
+                    ],
                 ]);
             }
             $response = $maaslandHttpClient->fetchOrder($payload);
