@@ -34,6 +34,8 @@ class PaymentEnv extends Env
      */
     private $paymentApiUrl;
 
+    private $checkoutApiUrl;
+
     public function __construct()
     {
         parent::__construct();
@@ -44,9 +46,11 @@ class PaymentEnv extends Env
     private function setEnvDependingOnMode()
     {
         $this->setPaymentApiUrl($this->getEnv('PAYMENT_API_URL_LIVE'));
+        $this->setCheckoutApiUrl($this->getEnv('CHECKOUT_API_URL_LIVE'));
 
         if (Mode::SANDBOX === $this->mode) {
             $this->setPaymentApiUrl($this->getEnv('PAYMENT_API_URL_SANDBOX'));
+            $this->setCheckoutApiUrl($this->getEnv('CHECKOUT_API_URL_SANDBOX'));
         }
     }
 
@@ -66,5 +70,21 @@ class PaymentEnv extends Env
     private function setPaymentApiUrl($url)
     {
         $this->paymentApiUrl = $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckoutApiUrl()
+    {
+        return $this->checkoutApiUrl;
+    }
+
+    /**
+     * @param string $checkoutApiUrl
+     */
+    public function setCheckoutApiUrl($checkoutApiUrl)
+    {
+        $this->checkoutApiUrl = $checkoutApiUrl;
     }
 }

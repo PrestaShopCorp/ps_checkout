@@ -35,17 +35,20 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
-      - '@?'
-      - '@?'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
 
@@ -53,11 +56,12 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - "@ps_checkout.cache.paypal.order"
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'
@@ -76,6 +80,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'
@@ -87,8 +92,33 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHandler\RefundPayPalCaptureCommandHandler'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'

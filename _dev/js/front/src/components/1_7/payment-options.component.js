@@ -69,7 +69,8 @@ export class PaymentOptionsComponent extends BaseComponent {
         if (
           this.config.expressCheckout.active &&
           'ps_checkout-' + this.payPalService.getFundingSource() !==
-            radio.dataset.moduleName
+            radio.dataset.moduleName &&
+          this.payPalService.getOrderId()
         ) {
           this.psCheckoutApi
             .postCancelOrder({

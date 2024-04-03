@@ -71,6 +71,71 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private $isCard = false;
 
     /**
+     * @var string
+     */
+    private $fundingSource;
+
+    /**
+     * @var string
+     */
+    private $paypalCustomerId;
+
+    /**
+     * @var string
+     */
+    private $paypalVaultId;
+
+    /**
+     * @var bool
+     */
+    private $savePaymentMethod;
+
+    /**
+     * @var bool
+     */
+    private $vault = false;
+
+    /**
+     * @param bool $savePaymentMethod
+     */
+    public function setSavePaymentMethod($savePaymentMethod)
+    {
+        $this->savePaymentMethod = $savePaymentMethod;
+    }
+
+    /**
+     * @param string $fundingSource
+     */
+    public function setFundingSource($fundingSource)
+    {
+        $this->fundingSource = $fundingSource;
+    }
+
+    /**
+     * @param string $paypalCustomerId
+     */
+    public function setPaypalCustomerId($paypalCustomerId)
+    {
+        $this->paypalCustomerId = $paypalCustomerId;
+    }
+
+    /**
+     * @param string $paypalVaultId
+     */
+    public function setPaypalVaultId($paypalVaultId)
+    {
+        $this->paypalVaultId = $paypalVaultId;
+    }
+
+    /**
+     * @param bool $vault
+     */
+    public function setVault($vault)
+    {
+        $this->vault = $vault;
+    }
+
+    /**
      * @param array $cart
      * @param bool $isPatch
      */
@@ -109,8 +174,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         }
 
         if ($this->isCard) {
-            $this->buildPaymentSourceNode();
+            $this->buildCardPaymentSourceNode();
             $this->buildSupplementaryDataNode();
+        }
+
+        if ($this->fundingSource === 'paypal') {
+            $this->buildPayPalPaymentSourceNode();
         }
     }
 
@@ -140,7 +209,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         }
 
         if ($this->isCard) {
-            $this->buildPaymentSourceNode();
+            $this->buildCardPaymentSourceNode();
             $this->buildSupplementaryDataNode();
         }
     }
@@ -175,17 +244,11 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'payee' => [
                 'merchant_id' => $merchantId,
             ],
+            'vault' => $this->vault,
         ];
 
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('id_cart', '=', (int) Context::getContext()->cart->id);
-
-        /** @var \PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-        if (false === $this->isPatch && false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
-            $node['token'] = $psCheckoutCart->paypal_token;
-        }
 
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
@@ -302,6 +365,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
             'return_url' => $router->getCheckoutValidateLink(),
+            'cancel_url' => $router->getCheckoutCancelLink(),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
@@ -403,7 +467,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
-    private function buildPaymentSourceNode()
+    private function buildCardPaymentSourceNode()
     {
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
@@ -423,6 +487,23 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $node['payment_source']['card']['attributes']['verification']['method'] = $paypalConfiguration->getHostedFieldsContingencies();
         }
 
+        if ($this->paypalVaultId) {
+            unset($node['payment_source']['card']['billing_address']);
+            $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
+        }
+
+        if ($this->paypalCustomerId) {
+            $node['payment_source']['card']['attributes']['customer'] = [
+                'id' => $this->paypalCustomerId,
+            ];
+        }
+
+        if ($this->savePaymentMethod) {
+            $node['payment_source']['card']['attributes']['vault'] = [
+                'store_in_vault' => 'ON_SUCCESS',
+            ];
+        }
+
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -433,7 +514,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'supplementary_data' => [
                 'card' => [
                     'level_2' => [
-//                        'invoice_id' => '',
                         'tax_total' => $payload['amount']['breakdown']['tax_total'],
                     ],
                     'level_3' => [
@@ -612,5 +692,42 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function getExpressCheckout()
     {
         return $this->expressCheckout;
+    }
+
+    private function buildPayPalPaymentSourceNode()
+    {
+        $data = [];
+
+        if ($this->paypalVaultId) {
+            $data['vault_id'] = $this->paypalVaultId;
+        }
+
+        if ($this->paypalCustomerId) {
+            $data['attributes']['customer'] = [
+                'id' => $this->paypalCustomerId,
+            ];
+        }
+
+        if ($this->savePaymentMethod) {
+            $data['attributes']['vault'] = [
+                'store_in_vault' => 'ON_SUCCESS',
+                'usage_pattern' => 'IMMEDIATE',
+                'usage_type' => 'MERCHANT',
+                'customer_type' => 'CONSUMER',
+                'permit_multiple_payment_tokens' => true,
+            ];
+        }
+
+        if (empty($data)) {
+            return;
+        }
+
+        $node = [
+            'payment_source' => [
+                'paypal' => $data,
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
     }
 }

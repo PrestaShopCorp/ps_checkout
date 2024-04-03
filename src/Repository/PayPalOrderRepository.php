@@ -22,22 +22,17 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Db;
 use DbQuery;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderAuthorization;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderPurchaseUnit;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderRefund;
-use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShopDatabaseException;
 
 class PayPalOrderRepository
 {
-    const TABLE_ORDER = 'pscheckout_order';
-    const TABLE_CAPTURE = 'pscheckout_capture';
-    const TABLE_REFUND = 'pscheckout_refund';
-    const TABLE_AUTHORIZATION = 'pscheckout_authorization';
-    const TABLE_PURCHASE_UNIT = 'pscheckout_purchase_unit';
-
     /**
      * @var Db
      */
@@ -55,42 +50,59 @@ class PayPalOrderRepository
      *
      * @throws PrestaShopDatabaseException
      */
-    public function createPayPalOrder(PayPalOrder $payPalOrder)
+    public function savePayPalOrder(PayPalOrder $payPalOrder)
     {
         return $this->db->insert(
-            self::TABLE_ORDER,
+            PayPalOrder::TABLE,
             [
-                'id' => pSQL($payPalOrder->getId()),
+                'id' => pSQL($payPalOrder->getId()->getValue()),
                 'id_cart' => (int) $payPalOrder->getIdCart(),
-                'funding_source' => pSQL($payPalOrder->getFundingSource()),
                 'status' => pSQL($payPalOrder->getStatus()),
-                'payment_source' => pSQL($payPalOrder->getPaymentSource()),
+                'intent' => pSQL($payPalOrder->getIntent()),
+                'funding_source' => pSQL($payPalOrder->getFundingSource()),
+                'payment_source' => json_encode($payPalOrder->getPaymentSource()),
                 'environment' => pSQL($payPalOrder->getEnvironment()),
                 'is_card_fields' => $payPalOrder->isCardFields(),
                 'is_express_checkout' => $payPalOrder->isExpressCheckout(),
-            ]
+                'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
+            ],
+            false,
+            true,
+            Db::REPLACE
         );
     }
 
     /**
-     * @param string $payPalOrderId
+     * @param PayPalOrderId $payPalOrderId
      *
      * @return PayPalOrder
      *
-     * @throws EntityNotFoundException
+     * @throws Exception
      */
-    public function getPayPalOrderById($payPalOrderId)
+    public function getPayPalOrderById(PayPalOrderId $payPalOrderId)
     {
         $query = new DbQuery();
         $query->select('*')
-            ->from(self::TABLE_ORDER, 'o')
-            ->where('o.`id_order` = ' . pSQL($payPalOrderId));
+            ->from(PayPalOrder::TABLE, 'o')
+            ->where('o.`id` = "' . pSQL($payPalOrderId->getValue()) . '"');
         $queryResult = $this->db->getRow($query);
+
         if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
+            throw new Exception('PayPal Order not found');
         }
 
-        return new PayPalOrder($queryResult['id'], (int) $queryResult['id_cart'], $queryResult['funding_source'], $queryResult['status'], $queryResult['payment_source']);
+        return new PayPalOrder(
+            $queryResult['id'],
+            (int) $queryResult['id_cart'],
+            $queryResult['intent'],
+            $queryResult['funding_source'],
+            $queryResult['status'],
+            json_decode($queryResult['payment_source'], true),
+            $queryResult['environment'],
+            $queryResult['is_card_fields'],
+            $queryResult['is_express_checkout'],
+            explode(',', $queryResult['customer_intent'])
+        );
     }
 
     /**
@@ -98,55 +110,46 @@ class PayPalOrderRepository
      *
      * @return PayPalOrder
      *
-     * @throws EntityNotFoundException
+     * @throws Exception
      */
     public function getPayPalOrderByCartId($cartId)
     {
         $query = new DbQuery();
         $query->select('*')
-            ->from(self::TABLE_ORDER, 'o')
+            ->from(PayPalOrder::TABLE, 'o')
             ->where('o.`id_cart` = ' . (int) $cartId);
         $queryResult = $this->db->getRow($query);
         if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
+            throw new Exception('PayPal Order not found');
         }
 
-        return new PayPalOrder($queryResult['id'], (int) $queryResult['id_cart'], $queryResult['funding_source'], $queryResult['status'], $queryResult['payment_source']);
-    }
-
-    /**
-     * @param PayPalOrder $payPalOrder
-     *
-     * @return bool
-     */
-    public function updatePayPalOrder(PayPalOrder $payPalOrder)
-    {
-        return $this->db->update(
-            self::TABLE_ORDER,
-            [
-                'funding_source' => pSQL($payPalOrder->getFundingSource()),
-                'status' => pSQL($payPalOrder->getStatus()),
-                'payment_source' => pSQL($payPalOrder->getPaymentSource()),
-                'is_card_fields' => $payPalOrder->isCardFields(),
-                'is_express_checkout' => $payPalOrder->isExpressCheckout(),
-            ],
-            '`id` = ' . pSQL($payPalOrder->getId())
+        return new PayPalOrder(
+            $queryResult['id'],
+            (int) $queryResult['id_cart'],
+            $queryResult['intent'],
+            $queryResult['funding_source'],
+            $queryResult['status'],
+            json_decode($queryResult['payment_source'], true),
+            $queryResult['environment'],
+            $queryResult['is_card_fields'],
+            $queryResult['is_express_checkout'],
+            explode(',', $queryResult['customer_intent'])
         );
     }
 
     /**
-     * @param string $payPalOrderId
+     * @param PayPalOrderId $payPalOrderId
      *
      * @return bool
      */
-    public function deletePayPalOrder($payPalOrderId)
+    public function deletePayPalOrder(PayPalOrderId $payPalOrderId)
     {
-        $orderId = pSQL($payPalOrderId);
-        $sql = 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_ORDER . "` WHERE `id` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_AUTHORIZATION . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_REFUND . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_CAPTURE . "` WHERE `id_order` = $orderId;"
-            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_PURCHASE_UNIT . "` WHERE `id_order` = $orderId;";
+        $orderId = pSQL($payPalOrderId->getValue());
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrder::TABLE . "` WHERE `id` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderAuthorization::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderRefund::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderCapture::TABLE . "` WHERE `id_order` = \"$orderId\";"
+            . 'DELETE FROM `' . _DB_PREFIX_ . PayPalOrderPurchaseUnit::TABLE . "` WHERE `id_order` = \"$orderId\";";
 
         return $this->db->execute($sql);
     }
@@ -158,17 +161,20 @@ class PayPalOrderRepository
      *
      * @throws PrestaShopDatabaseException
      */
-    public function createPayPalOrderAuthorization(PayPalOrderAuthorization $payPalOrderAuthorization)
+    public function savePayPalOrderAuthorization(PayPalOrderAuthorization $payPalOrderAuthorization)
     {
         return $this->db->insert(
-            self::TABLE_AUTHORIZATION,
+            PayPalOrderAuthorization::TABLE,
             [
                 'id' => pSQL($payPalOrderAuthorization->getId()),
                 'id_order' => pSQL($payPalOrderAuthorization->getIdOrder()),
                 'status' => pSQL($payPalOrderAuthorization->getStatus()),
                 'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
                 'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
-            ]
+            ],
+            false,
+            true,
+            Db::REPLACE
         );
     }
 
@@ -177,22 +183,18 @@ class PayPalOrderRepository
      *
      * @return PayPalOrderAuthorization[]
      *
-     * @throws EntityNotFoundException
+     * @throws Exception
      * @throws PrestaShopDatabaseException
      */
     public function getPayPalOrderAuthorizations($payPalOrderId)
     {
         $query = new DbQuery();
         $query->select('*')
-            ->from(self::TABLE_AUTHORIZATION, 'a')
-            ->where('a.`id_order` = ' . pSQL($payPalOrderId));
+            ->from(PayPalOrderAuthorization::TABLE, 'a')
+            ->where('a.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
-        }
-
-        if (array_key_exists(0, $queryResult)) {
-            $queryResult = [$queryResult];
+            throw new Exception('PayPal Order not found');
         }
 
         return array_map(function ($authorization) {
@@ -207,34 +209,16 @@ class PayPalOrderRepository
     }
 
     /**
-     * @param PayPalOrderAuthorization $payPalOrderAuthorization
-     *
-     * @return bool
-     */
-    public function updateAuthorization(PayPalOrderAuthorization $payPalOrderAuthorization)
-    {
-        return $this->db->update(
-            self::TABLE_AUTHORIZATION,
-            [
-                'status' => pSQL($payPalOrderAuthorization->getStatus()),
-                'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
-                'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
-            ],
-            '`id` = ' . pSQL($payPalOrderAuthorization->getId())
-        );
-    }
-
-    /**
      * @param PayPalOrderCapture $payPalOrderCapture
      *
      * @return bool
      *
      * @throws PrestaShopDatabaseException
      */
-    public function createPayPalOrderCapture(PayPalOrderCapture $payPalOrderCapture)
+    public function savePayPalOrderCapture(PayPalOrderCapture $payPalOrderCapture)
     {
         return $this->db->insert(
-            self::TABLE_CAPTURE,
+            PayPalOrderCapture::TABLE,
             [
                 'id' => pSQL($payPalOrderCapture->getId()),
                 'id_order' => pSQL($payPalOrderCapture->getIdOrder()),
@@ -243,8 +227,11 @@ class PayPalOrderRepository
                 'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
                 'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
                 'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
-                'seller_receivable_breakdown' => pSQL($payPalOrderCapture->getSellerReceivableBreakdown()),
-            ]
+                'seller_receivable_breakdown' => pSQL(json_encode($payPalOrderCapture->getSellerReceivableBreakdown())),
+            ],
+            false,
+            true,
+            Db::REPLACE
         );
     }
 
@@ -253,22 +240,18 @@ class PayPalOrderRepository
      *
      * @return PayPalOrderCapture[]
      *
-     * @throws EntityNotFoundException
+     * @throws Exception
      * @throws PrestaShopDatabaseException
      */
     public function getPayPalOrderCaptures($payPalOrderId)
     {
         $query = new DbQuery();
         $query->select('*')
-            ->from(self::TABLE_CAPTURE, 'c')
-            ->where('c.`id_order` = ' . pSQL($payPalOrderId));
+            ->from(PayPalOrderCapture::TABLE, 'c')
+            ->where('c.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
-        }
-
-        if (array_key_exists(0, $queryResult)) {
-            $queryResult = [$queryResult];
+            throw new Exception('PayPal Order not found');
         }
 
         return array_map(function ($capture) {
@@ -280,30 +263,9 @@ class PayPalOrderRepository
                 $capture['created_at'],
                 $capture['updated_at'],
                 $capture['seller_protection'],
-                $capture['seller_receivable_breakdown']
+                json_decode($capture['seller_receivable_breakdown'], true)
             );
         }, $queryResult);
-    }
-
-    /**
-     * @param PayPalOrderCapture $payPalOrderCapture
-     *
-     * @return bool
-     */
-    public function updateCapture(PayPalOrderCapture $payPalOrderCapture)
-    {
-        return $this->db->update(
-            self::TABLE_CAPTURE,
-            [
-                'status' => pSQL($payPalOrderCapture->getStatus()),
-                'final_capture' => pSQL($payPalOrderCapture->getFinalCapture()),
-                'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
-                'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
-                'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
-                'seller_receivable_breakdown' => pSQL($payPalOrderCapture->getSellerReceivableBreakdown()),
-            ],
-            '`id` = ' . pSQL($payPalOrderCapture->getId())
-        );
     }
 
     /**
@@ -313,10 +275,10 @@ class PayPalOrderRepository
      *
      * @throws PrestaShopDatabaseException
      */
-    public function createPayPalOrderRefund(PayPalOrderRefund $payPalOrderRefund)
+    public function savePayPalOrderRefund(PayPalOrderRefund $payPalOrderRefund)
     {
         return $this->db->insert(
-            self::TABLE_REFUND,
+            PayPalOrderRefund::TABLE,
             [
                 'id' => pSQL($payPalOrderRefund->getId()),
                 'id_order' => pSQL($payPalOrderRefund->getIdOrder()),
@@ -324,9 +286,12 @@ class PayPalOrderRepository
                 'invoice_id' => pSQL($payPalOrderRefund->getStatus()),
                 'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
                 'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
-                'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
+                'seller_payable_breakdown' => pSQL(json_encode($payPalOrderRefund->getSellerPayableBreakdown())),
                 'id_order_slip' => (int) $payPalOrderRefund->getIdOrderSlip(),
-            ]
+            ],
+            false,
+            true,
+            Db::REPLACE
         );
     }
 
@@ -335,21 +300,18 @@ class PayPalOrderRepository
      *
      * @return PayPalOrderRefund[]
      *
-     * @throws EntityNotFoundException
+     * @throws Exception
      * @throws PrestaShopDatabaseException
      */
     public function getPayPalOrderRefunds($payPalOrderId)
     {
         $query = new DbQuery();
         $query->select('*')
-            ->from(self::TABLE_REFUND, 'r')
-            ->where('r.`id_order` = ' . pSQL($payPalOrderId));
+            ->from(PayPalOrderRefund::TABLE, 'r')
+            ->where('r.`id_order` = "' . pSQL($payPalOrderId) . '"');
         $queryResult = $this->db->executeS($query);
         if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
-        }
-        if (array_key_exists(0, $queryResult)) {
-            $queryResult = [$queryResult];
+            throw new Exception('PayPal Order not found');
         }
 
         return array_map(function ($refund) {
@@ -360,73 +322,8 @@ class PayPalOrderRepository
                 $refund['invoice_id'],
                 $refund['custom_id'],
                 $refund['acquirer_reference_number'],
-                $refund['seller_payable_breakdown'],
+                json_decode($refund['seller_payable_breakdown'], true),
                 $refund['id_order_slip']
-            );
-        }, $queryResult);
-    }
-
-    /**
-     * @param PayPalOrderRefund $payPalOrderRefund
-     *
-     * @return bool
-     */
-    public function updateRefund(PayPalOrderRefund $payPalOrderRefund)
-    {
-        return $this->db->update(
-            self::TABLE_REFUND,
-            [
-                'status' => pSQL($payPalOrderRefund->getStatus()),
-                'invoice_id' => pSQL($payPalOrderRefund->getInvoiceId()),
-                'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
-                'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
-                'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
-            ],
-            '`id` = ' . pSQL($payPalOrderRefund->getId())
-        );
-    }
-
-    public function createPayPalOrderPurchaseUnit(PayPalOrderPurchaseUnit $payPalOrderPurchaseUnit)
-    {
-        return $this->db->insert(
-            self::TABLE_REFUND,
-            [
-                'id_order' => pSQL($payPalOrderPurchaseUnit->getIdOrder()),
-                'checksum' => pSQL($payPalOrderPurchaseUnit->getChecksum()),
-                'reference_id' => pSQL($payPalOrderPurchaseUnit->getReferenceId()),
-                'items' => pSQL($payPalOrderPurchaseUnit->getItems()),
-            ]
-        );
-    }
-
-    /**
-     * @param string $payPalOrderId
-     *
-     * @return PayPalOrderPurchaseUnit[]
-     *
-     * @throws EntityNotFoundException
-     * @throws PrestaShopDatabaseException
-     */
-    public function getPayPalOrderPurchaseUnits($payPalOrderId)
-    {
-        $query = new DbQuery();
-        $query->select('*')
-            ->from(self::TABLE_PURCHASE_UNIT, 'p')
-            ->where('p.`id_order` = ' . pSQL($payPalOrderId));
-        $queryResult = $this->db->executeS($query);
-        if (!$queryResult) {
-            throw new EntityNotFoundException('PayPal Order not found');
-        }
-        if (array_key_exists(0, $queryResult)) {
-            $queryResult = [$queryResult];
-        }
-
-        return array_map(function ($purchaseUnit) {
-            return new PayPalOrderPurchaseUnit(
-                $purchaseUnit['id_order'],
-                $purchaseUnit['checksum'],
-                $purchaseUnit['reference_id'],
-                $purchaseUnit['items']
             );
         }, $queryResult);
     }
@@ -435,16 +332,52 @@ class PayPalOrderRepository
      * @param PayPalOrderPurchaseUnit $payPalOrderPurchaseUnit
      *
      * @return bool
+     *
+     * @throws PrestaShopDatabaseException
      */
-    public function updatePurchaseUnit(PayPalOrderPurchaseUnit $payPalOrderPurchaseUnit)
+    public function savePayPalOrderPurchaseUnit(PayPalOrderPurchaseUnit $payPalOrderPurchaseUnit)
     {
-        return $this->db->update(
-            self::TABLE_PURCHASE_UNIT,
+        return $this->db->insert(
+            PayPalOrderPurchaseUnit::TABLE,
             [
-                'checksum' => $payPalOrderPurchaseUnit->getChecksum(),
-                'items' => $payPalOrderPurchaseUnit->getItems(),
+                'id_order' => pSQL($payPalOrderPurchaseUnit->getIdOrder()),
+                'checksum' => pSQL($payPalOrderPurchaseUnit->getChecksum()),
+                'reference_id' => pSQL($payPalOrderPurchaseUnit->getReferenceId()),
+                'items' => pSQL(json_encode($payPalOrderPurchaseUnit->getItems())),
             ],
-            '`id_order` = ' . pSQL($payPalOrderPurchaseUnit->getIdOrder() . ' AND `reference_id` = ' . $payPalOrderPurchaseUnit->getReferenceId())
+            false,
+            true,
+            Db::REPLACE
         );
+    }
+
+    /**
+     * @param string $payPalOrderId
+     *
+     * @return PayPalOrderPurchaseUnit[]
+     *
+     * @throws Exception
+     * @throws PrestaShopDatabaseException
+     */
+    public function getPayPalOrderPurchaseUnits($payPalOrderId)
+    {
+        $query = new DbQuery();
+        $query->select('*')
+            ->from(PayPalOrderPurchaseUnit::TABLE, 'p')
+            ->where('p.`id_order` = "' . pSQL($payPalOrderId) . '"');
+        $queryResult = $this->db->executeS($query);
+
+        if (!$queryResult) {
+            throw new Exception('PayPal Order not found');
+        }
+
+        return array_map(function ($purchaseUnit) {
+            return new PayPalOrderPurchaseUnit(
+                $purchaseUnit['id_order'],
+                $purchaseUnit['checksum'],
+                $purchaseUnit['reference_id'],
+                json_decode($purchaseUnit['items'], true)
+            );
+        }, $queryResult);
     }
 }

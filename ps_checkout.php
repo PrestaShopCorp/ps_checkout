@@ -607,15 +607,41 @@ class Ps_checkout extends PaymentModule
 
         $paymentOptions = [];
 
-        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+        $vaultingEnabled = $configurationPayPal->isVaultingEnabled();
+
+        foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
             $paymentOption->setBinary(true);
 
+            $this->context->smarty->assign([
+                'paymentIdentifier' => $fundingSource->name,
+                'fundingSource' => $fundingSource->paymentSource,
+                'isFavorite' => $fundingSource->isFavorite,
+                'label' => $fundingSource->label,
+                'vaultId' => explode('-', $fundingSource->name)[1],
+            ]);
+            $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
+
+            $paymentOptions[] = $paymentOption;
+        }
+
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
+            $paymentOption->setCallToActionText($fundingSource->label);
+            $paymentOption->setBinary(true);
+            $this->context->smarty->assign([
+                'vaultingEnabled' => $vaultingEnabled,
+                'paymentIdentifier' => $fundingSource->name,
+            ]);
+
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
+            } elseif (in_array($fundingSource->name, ['paypal'/*'venmo'*/])) {
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
@@ -914,6 +940,13 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
+        $vaultedPaymentMarks = [];
+
+        foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
+            $fundingSourcesSorted[] = $fundingSource->name;
+            $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+            $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() . 'views/img/' . $fundingSource->paymentSource . '.svg';
+        }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
@@ -952,6 +985,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
+            $this->name . 'VaultedPaymentMarks' => $vaultedPaymentMarks,
             $this->name . 'CardLogos' => [
                 'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
                 'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),
@@ -970,6 +1004,8 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
             $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
+            $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
+            $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
@@ -1033,6 +1069,11 @@ class Ps_checkout extends PaymentModule
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
+                'ok' => $this->l('Ok'),
+                'cancel' => $this->l('Cancel'),
+                'checkout.payment.token.delete.modal.header' => $this->l('Delete this payment method?'),
+                'checkout.payment.token.delete.modal.content' => $this->l('The following payment method will be deleted from your account:'),
+                'checkout.payment.token.delete.modal.confirm-button' => $this->l('Delete payment method'),
             ],
         ]);
 
@@ -1436,6 +1477,10 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
         $paymentOptions = [];
+
+        foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
+            $paymentOptions[] = $fundingSource->name;
+        }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $paymentOptions[] = $fundingSource->name;
