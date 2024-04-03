@@ -90,6 +90,17 @@ function upgrade_module_8_4_0_0($module)
             PRIMARY KEY (`reference_id`, `id_order`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
+        $db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
+            `id` varchar(50) NOT NULL,
+            `paypal_customer_id` varchar(50) NOT NULL,
+            `payment_source` varchar(50) NOT NULL,
+            `data` text NOT NULL,
+            `merchant_id` varchar(50) NOT NULL,
+            `status` varchar(50) NOT NULL,
+            PRIMARY KEY (`id`, `paypal_customer_id`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ');
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
