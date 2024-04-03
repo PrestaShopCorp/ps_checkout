@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
@@ -113,8 +114,12 @@ class CreatePayPalOrderCommandHandler
         $cartPresenter = (new CartPresenter())->present();
         $builder = new OrderPayloadBuilder($cartPresenter);
 
-        $cart = new \Cart($command->getCartId()->getValue());
-        $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($cart->id_customer));
+        try {
+            $customerId = $this->prestaShopContext->getCustomerId();
+            $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($customerId));
+        } catch (CustomerException $exception) {
+            $payPalCustomerId = null;
+        }
 
         $customerIntent = [];
 

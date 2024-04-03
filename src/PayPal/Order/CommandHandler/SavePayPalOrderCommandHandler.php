@@ -46,10 +46,11 @@ class SavePayPalOrderCommandHandler
     {
         $order = $command->getOrder();
 
+        $intent = isset($order['intent']) ? $order['intent'] : 'CAPTURE';
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($order['id']));
             $payPalOrder->setStatus($order['status'])
-            ->setIntent($order['intent'])
+            ->setIntent($intent)
             ->setFundingSource(array_keys($order['payment_source'])[0])
             ->setPaymentSource($order['payment_source']);
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
@@ -57,7 +58,7 @@ class SavePayPalOrderCommandHandler
             $payPalOrder = new PayPalOrder(
                 $order['id'],
                 $command->getCartId()->getValue(),
-                $order['intent'],
+                $intent,
                 $command->getFundingSource(),
                 $order['status'],
                 $order['payment_source'],
