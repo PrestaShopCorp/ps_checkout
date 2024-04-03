@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -39,7 +38,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
-use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class CreatePayPalOrderCommandHandler
@@ -52,14 +50,6 @@ class CreatePayPalOrderCommandHandler
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
-    /**
-     * @var PaymentService
-     */
-    private $paymentService;
-    /**
-     * @var ObjectSerializerInterface
-     */
-    private $objectSerializer;
     /**
      * @var PayPalCustomerRepository
      */
@@ -82,16 +72,12 @@ class CreatePayPalOrderCommandHandler
         ShopContext $shopContext,
         PrestaShopContext $prestaShopContext,
         EventDispatcherInterface $eventDispatcher,
-        PaymentService $paymentService,
-        ObjectSerializerInterface $objectSerializer,
         PayPalCustomerRepository $payPalCustomerRepository,
         PaymentTokenRepository $paymentTokenRepository
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->shopContext = $shopContext;
         $this->eventDispatcher = $eventDispatcher;
-        $this->paymentService = $paymentService;
-        $this->objectSerializer = $objectSerializer;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->paymentTokenRepository = $paymentTokenRepository;
         $this->prestaShopContext = $prestaShopContext;

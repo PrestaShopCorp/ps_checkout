@@ -454,15 +454,6 @@ services:
     arguments:
       - "@ps_checkout.logger"
 
-  PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
-      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
-
-  PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
-    class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
-
   PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
     public: true

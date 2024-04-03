@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use Exception;
 use Http\Client\Exception\HttpException;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequestInterface;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\UpdatePayPalOrderRequestInterface;
@@ -467,34 +466,6 @@ class PaymentService
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
-        }
-    }
-
-    /**
-     * @param string $merchantId
-     *
-     * @return ResponseInterface
-     *
-     * @throws Exception
-     */
-    public function getIdentityToken($merchantId)
-    {
-        $payload = [
-            'return_payload' => true,
-            'payee' => [
-                'merchant_id' => $merchantId,
-            ],
-        ];
-
-        try {
-            return $this->client->generateClientToken($this->serializer->serialize($payload, JsonEncoder::FORMAT, true));
-        } catch (HttpException $exception) {
-            $response = $exception->getResponse();
-            $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
-            // Il y a rien dans la doc PayPal pour les erreurs sur IdentityToken
-            throw new Exception('Temp exception');
-        } catch (Exception $exception) {
-            throw $exception;
         }
     }
 

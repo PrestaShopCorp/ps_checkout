@@ -39,8 +39,6 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
-      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
-      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
 
