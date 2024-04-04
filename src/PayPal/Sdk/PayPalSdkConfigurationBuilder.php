@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTo
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use Psr\Log\LoggerInterface;
 
 /**
  * Build sdk link
@@ -69,6 +70,10 @@ class PayPalSdkConfigurationBuilder
      * @var PrestaShopContext
      */
     private $prestaShopContext;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @param \Ps_checkout $module
@@ -78,6 +83,7 @@ class PayPalSdkConfigurationBuilder
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
      * @param ShopContext $shopContext
      * @param PrestaShopContext $prestaShopContext
+     * @param LoggerInterface $logger
      */
     public function __construct(
         \Ps_checkout $module,
@@ -86,7 +92,8 @@ class PayPalSdkConfigurationBuilder
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
         ShopContext $shopContext,
-        PrestaShopContext $prestaShopContext
+        PrestaShopContext $prestaShopContext,
+        LoggerInterface $logger
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
@@ -95,6 +102,7 @@ class PayPalSdkConfigurationBuilder
         $this->shopContext = $shopContext;
         $this->commandBus = $module->getService('ps_checkout.bus.command');
         $this->prestaShopContext = $prestaShopContext;
+        $this->logger = $logger;
     }
 
     /**
@@ -137,6 +145,7 @@ class PayPalSdkConfigurationBuilder
                 $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
                 $params['dataUserIdToken'] = $queryResult->getUserIdToken();
             } catch (Exception $exception) {
+                $this->logger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
             }
         }
 

@@ -239,6 +239,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+      - '@ps_checkout.logger'
 
   PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
