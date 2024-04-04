@@ -171,7 +171,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $event->getCartId()->getValue(),
             $event->getOrderPayPalId()->getValue(),
             $order['status'],
-            $order['intent'],
+            isset($order['intent']) ? $order['intent'] : $this->payPalConfiguration->getIntent(),
             $event->getFundingSource(),
             $event->isExpressCheckout(),
             $event->isCardFields(),
