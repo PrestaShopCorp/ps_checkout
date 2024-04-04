@@ -24,6 +24,7 @@ use Db;
 use DbQuery;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class PayPalCustomerRepository
@@ -46,7 +47,7 @@ class PayPalCustomerRepository
      *
      * @return PayPalCustomerId|null
      *
-     * @throws Exception
+     * @throws PsCheckoutException
      */
     public function findPayPalCustomerIdByCustomerId(CustomerId $customerId)
     {
@@ -54,12 +55,12 @@ class PayPalCustomerRepository
             $query = new DbQuery();
             $query->select('`paypal_customer_id`');
             $query->from('pscheckout_customer');
-            $query->where('`id_customer` = ' . (int) $customerId->getValue());
+            $query->where(sprintf('`id_customer` = %d', (int) $customerId->getValue()));
             $customerIdPayPal = $this->db->getValue($query);
 
             return $customerIdPayPal ? new PayPalCustomerId($customerIdPayPal) : null;
         } catch (Exception $exception) {
-            throw new Exception('Failed to find PayPal Customer ID', 0, $exception);
+            throw new PsCheckoutException('Failed to find PayPal Customer ID', 0, $exception);
         }
     }
 
@@ -69,7 +70,7 @@ class PayPalCustomerRepository
      *
      * @return void
      *
-     * @throws Exception
+     * @throws PsCheckoutException
      */
     public function save(CustomerId $customerId, PayPalCustomerId $paypalCustomerId)
     {
@@ -82,7 +83,7 @@ class PayPalCustomerRepository
             ]
         );
         } catch (Exception $exception) {
-            throw new Exception('Failed to save PayPal Customer ID', 0, $exception);
+            throw new PsCheckoutException('Failed to save PayPal Customer ID', 0, $exception);
         }
     }
 }
