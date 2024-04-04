@@ -104,7 +104,7 @@ class SavePayPalOrderCommandHandler
                             $order['id'],
                             $authorization['status'],
                             $authorization['expiration_time'],
-                            $authorization['seller_protection']['status']
+                            $authorization['seller_protection']
                         );
                         $this->payPalOrderRepository->savePayPalOrderAuthorization($payPalAuthorization);
                     }

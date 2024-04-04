@@ -41,11 +41,11 @@ class PayPalOrderAuthorization
      */
     private $expirationTime;
     /**
-     * @var string|null
+     * @var array
      */
     private $sellerProtection;
 
-    public function __construct($id = null, $idOrder = null, $status = null, $expirationTime = null, $sellerProtection = null)
+    public function __construct($id = null, $idOrder = null, $status = null, $expirationTime = null, $sellerProtection = [])
     {
         $this->id = $id;
         $this->idOrder = $idOrder;
@@ -135,7 +135,7 @@ class PayPalOrderAuthorization
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getSellerProtection()
     {
@@ -143,7 +143,7 @@ class PayPalOrderAuthorization
     }
 
     /**
-     * @param string|null $sellerProtection
+     * @param array $sellerProtection
      *
      * @return PayPalOrderAuthorization
      */

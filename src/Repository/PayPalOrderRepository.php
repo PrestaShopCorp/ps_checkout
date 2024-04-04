@@ -190,7 +190,7 @@ class PayPalOrderRepository
                     'id_order' => pSQL($payPalOrderAuthorization->getIdOrder()),
                     'status' => pSQL($payPalOrderAuthorization->getStatus()),
                     'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
-                    'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
+                    'seller_protection' => pSQL(json_encode($payPalOrderAuthorization->getSellerProtection())),
                 ],
                 false,
                 true,
@@ -230,7 +230,7 @@ class PayPalOrderRepository
                 $authorization['id_order'],
                 $authorization['status'],
                 $authorization['expiration_time'],
-                $authorization['seller_protection']
+                json_decode($authorization['seller_protection'], true)
             );
         }, $queryResult);
     }
@@ -254,7 +254,7 @@ class PayPalOrderRepository
                     'final_capture' => (int) $payPalOrderCapture->getFinalCapture(),
                     'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
                     'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
-                    'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
+                    'seller_protection' => pSQL(json_encode($payPalOrderCapture->getSellerProtection())),
                     'seller_receivable_breakdown' => pSQL(json_encode($payPalOrderCapture->getSellerReceivableBreakdown())),
                 ],
                 false,
@@ -297,7 +297,7 @@ class PayPalOrderRepository
                 $capture['final_capture'],
                 $capture['created_at'],
                 $capture['updated_at'],
-                $capture['seller_protection'],
+                json_decode($capture['seller_protection'], true),
                 json_decode($capture['seller_receivable_breakdown'], true)
             );
         }, $queryResult);

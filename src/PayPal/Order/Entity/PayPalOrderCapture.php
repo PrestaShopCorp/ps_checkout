@@ -49,7 +49,7 @@ class PayPalOrderCapture
      */
     private $updatedAt;
     /**
-     * @var string
+     * @var array
      */
     private $sellerProtection;
     /**
@@ -190,7 +190,7 @@ class PayPalOrderCapture
     }
 
     /**
-     * @return string|null
+     * @return array|null
      */
     public function getSellerProtection()
     {
@@ -198,7 +198,7 @@ class PayPalOrderCapture
     }
 
     /**
-     * @param string $sellerProtection
+     * @param array $sellerProtection
      *
      * @return PayPalOrderCapture
      */

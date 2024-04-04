@@ -55,7 +55,7 @@ function upgrade_module_8_4_0_0($module)
             `final_capture` tinyint(1) NOT NULL,
             `created_at` varchar(50) NOT NULL,
             `updated_at` varchar(50) NOT NULL,
-            `seller_protection` varchar(50) NOT NULL,
+            `seller_protection` text,
             `seller_receivable_breakdown` text,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
@@ -79,7 +79,7 @@ function upgrade_module_8_4_0_0($module)
             `id_order` varchar(50) NOT NULL,
             `status` varchar(30) NOT NULL,
             `expiration_time` varchar(50) NOT NULL,
-            `seller_protection` varchar(50) NOT NULL,
+            `seller_protection` text,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
