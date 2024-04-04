@@ -134,17 +134,6 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
     }
 
     /**
-     * @param string $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     */
-    public function generateClientToken($payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, $payload));
-    }
-
-    /**
      * @param string $merchantId
      * @param PaymentTokenId $paymentTokenId
      * @param array $options
