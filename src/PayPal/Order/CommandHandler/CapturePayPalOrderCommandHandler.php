@@ -126,19 +126,21 @@ class CapturePayPalOrderCommandHandler
                 }
             }
 
-            $resource = $vault;
-            $resource['metadata'] = [
-                'order_id' => $orderPayPal['id'],
-            ];
-            $paymentSource = $orderPayPal['payment_source'];
-            unset($paymentSource[$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault']);
-            $resource['payment_source'] = $paymentSource;
-            $resource['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['verification_status'] = $resource['status'];
+            if (isset($vault['id'])) {
+                $resource = $vault;
+                $resource['metadata'] = [
+                    'order_id' => $orderPayPal['id'],
+                ];
+                $paymentSource = $orderPayPal['payment_source'];
+                unset($paymentSource[$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault']);
+                $resource['payment_source'] = $paymentSource;
+                $resource['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['verification_status'] = $resource['status'];
 
-            $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent(
-                $resource,
-                $merchantId
-            ));
+                $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent(
+                    $resource,
+                    $merchantId
+                ));
+            }
         }
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
