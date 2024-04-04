@@ -92,15 +92,16 @@ class TableManager
             `paypal_customer_id` varchar(50) NOT NULL,
             `payment_source` varchar(50) NOT NULL,
             `data` text NOT NULL,
-            `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
             `merchant_id` varchar(50) NOT NULL,
+            `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+            `status` varchar(50) NOT NULL,
             PRIMARY KEY (`id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
             `id` varchar(50) NOT NULL,
-            `id_cart` varchar(50) NOT NULL,
-            `status` varchar(50) NOT NULL,
+            `id_cart` int unsigned NOT NULL,
+            `status` varchar(30) NOT NULL,
             `intent` varchar(50) DEFAULT "CAPTURE",
             `funding_source` varchar(50) NOT NULL,
             `payment_source` text,
@@ -114,7 +115,7 @@ class TableManager
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_capture` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
-            `status` varchar(50) NOT NULL,
+            `status` varchar(30) NOT NULL,
             `final_capture` tinyint(1) NOT NULL,
             `created_at` varchar(50) NOT NULL,
             `updated_at` varchar(50) NOT NULL,
@@ -126,19 +127,19 @@ class TableManager
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_refund` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
-            `status` varchar(50) NOT NULL,
+            `status` varchar(30) NOT NULL,
             `invoice_id` varchar(50) NOT NULL,
             `custom_id` varchar(50) NOT NULL,
             `acquirer_reference_number` varchar(50) NOT NULL,
             `seller_payable_breakdown` text,
-            `id_order_slip` INT(10) UNSIGNED,
+            `id_order_slip` INT UNSIGNED,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_authorization` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
-            `status` varchar(50) NOT NULL,
+            `status` varchar(30) NOT NULL,
             `expiration_time` varchar(50) NOT NULL,
             `seller_protection` varchar(50) NOT NULL,
             PRIMARY KEY (`id`)
