@@ -63,6 +63,8 @@
   visibility: hidden !important;
 }
 
+#conditions-to-approve label,
+.payment-options label,
 .paypal-label {
   cursor: pointer;
 }
