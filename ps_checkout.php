@@ -926,6 +926,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository $paymentTokenRepository */
+        $paymentTokenRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository::class);
+
         $advancedCheckoutEligibility = new \PrestaShop\Module\PrestashopCheckout\PayPal\AdvancedCheckoutEligibility();
         $supportedCardBrands = $advancedCheckoutEligibility->getSupportedCardBrands();
 
@@ -945,7 +948,7 @@ class Ps_checkout extends PaymentModule
         foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
-            $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() . 'views/img/' . $fundingSource->paymentSource . '.svg';
+            $vaultedPaymentMarks[$fundingSource->name] = $fundingSource->customMark;
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {

@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
 use Ps_checkout;
 use PsCheckoutCart;
 
@@ -381,32 +382,7 @@ class OrderPresenter
     private function getPaymentSourceLogo(array $orderPayPal)
     {
         if (isset($orderPayPal['payment_source'])) {
-            $paymentSourceName = key($orderPayPal['payment_source']);
-
-            if ($paymentSourceName === 'card' && isset($orderPayPal['payment_source']['card']['brand'])) {
-                switch ($orderPayPal['payment_source']['card']['brand']) {
-                    case 'CB_NATIONALE':
-                        return $this->module->getPathUri() . 'views/img/cb.svg';
-                    case 'VISA':
-                        return $this->module->getPathUri() . 'views/img/visa.svg';
-                    case 'MASTERCARD':
-                        return $this->module->getPathUri() . 'views/img/mastercard.svg';
-                    case 'AMEX':
-                        return $this->module->getPathUri() . 'views/img/amex.svg';
-                    case 'DISCOVER':
-                        return $this->module->getPathUri() . 'views/img/discover.svg';
-                    case 'JCB':
-                        return $this->module->getPathUri() . 'views/img/jcb.svg';
-                    case 'DINERS':
-                        return $this->module->getPathUri() . 'views/img/diners.svg';
-                    case 'UNIONPAY':
-                        return $this->module->getPathUri() . 'views/img/unionpay.svg';
-                    case 'MAESTRO':
-                        return $this->module->getPathUri() . 'views/img/maestro.svg';
-                }
-            }
-
-            return $this->module->getPathUri() . 'views/img/' . $paymentSourceName . '.svg';
+            return (new PaymentMethodLogoProvider($this->module))->getLogoByPaymentSource($orderPayPal['payment_source']);
         }
 
         return '';

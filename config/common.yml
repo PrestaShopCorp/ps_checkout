@@ -333,6 +333,7 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider'
 
   PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollection:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollection'
@@ -467,3 +468,9 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+
+  PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider:
+    class: 'PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.module'

@@ -60,6 +60,10 @@ class FundingSource
      * @var bool
      */
     public $isFavorite;
+    /**
+     * @var string|null
+     */
+    public $customMark;
 
     /**
      * @param string $name
@@ -70,7 +74,7 @@ class FundingSource
      * @param bool $isToggleable
      * @param string|null $paymentSource
      */
-    public function __construct($name, $label, $position, $countries, $isEnabled, $isToggleable, $paymentSource = null, $isFavorite = false)
+    public function __construct($name, $label, $position, $countries, $isEnabled, $isToggleable, $paymentSource = null, $isFavorite = false, $customMark = null)
     {
         $this->name = $name;
         $this->label = $label;
@@ -80,5 +84,6 @@ class FundingSource
         $this->isToggleable = $isToggleable;
         $this->paymentSource = $paymentSource;
         $this->isFavorite = $isFavorite;
+        $this->customMark = $customMark;
     }
 }

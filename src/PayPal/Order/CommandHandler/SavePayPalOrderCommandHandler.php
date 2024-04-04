@@ -51,7 +51,7 @@ class SavePayPalOrderCommandHandler
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($order['id']));
             $payPalOrder->setStatus($order['status'])
             ->setIntent($intent)
-            ->setFundingSource(array_keys($order['payment_source'])[0])
+            ->setFundingSource(key($order['payment_source']))
             ->setPaymentSource($order['payment_source']);
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         } catch (Exception $exception) {

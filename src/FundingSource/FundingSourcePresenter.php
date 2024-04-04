@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
+use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 
 class FundingSourcePresenter
@@ -34,15 +35,20 @@ class FundingSourcePresenter
      * @var CountryRepository
      */
     private $country;
+    /**
+     * @var PaymentMethodLogoProvider
+     */
+    private $paymentMethodLogoProvider;
 
     /**
      * @param FundingSourceTranslationProvider $translation
      * @param CountryRepository $country
      */
-    public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country)
+    public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country, PaymentMethodLogoProvider $paymentMethodLogoProvider)
     {
         $this->translation = $translation;
         $this->country = $country;
+        $this->paymentMethodLogoProvider = $paymentMethodLogoProvider;
     }
 
     /**
@@ -93,7 +99,8 @@ class FundingSourcePresenter
             true,
             false,
             $paymentToken->getPaymentSource(),
-            $paymentToken->isFavorite()
+            $paymentToken->isFavorite(),
+            $this->paymentMethodLogoProvider->getLogoByPaymentSource($paymentToken->getData()['payment_source'])
         );
     }
 }
