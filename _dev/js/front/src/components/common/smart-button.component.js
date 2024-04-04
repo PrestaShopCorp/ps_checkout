@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import {ModalComponent} from "./modal.component";
+
 
 /**
  * @typedef SmartButtonComponentProps
@@ -32,7 +34,8 @@ export class SmartButtonComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
-    psCheckoutApi: 'PsCheckoutApi'
+    psCheckoutApi: 'PsCheckoutApi',
+    $: '$'
   };
 
   created() {
@@ -44,6 +47,24 @@ export class SmartButtonComponent extends BaseComponent {
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.loader = this.app.root.children.loader;
     this.data.notification = this.app.root.children.notification;
+    this.data.cancelModal = null;
+  }
+
+  showCancelOrderModal(onConfirm) {
+    const modalContent = document.createElement('p');
+    modalContent.innerText = this.$('checkout.payment.cancel.modal.content');
+
+    this.data.cancelModal = new ModalComponent(this.app, {
+      header: this.$('checkout.payment.cancel.modal.header'),
+      content: modalContent,
+      confirmText: this.$('checkout.payment.cancel.modal.ok'),
+      cancelText: this.$('checkout.payment.cancel.modal.cancel'),
+      cancelType: 'danger',
+      onCancel: (() => {this.data.cancelModal.hide()}),
+      onConfirm: (() => {onConfirm()})
+    }).render();
+
+    this.data.cancelModal.show();
   }
 
   renderPayPalButton() {
@@ -141,19 +162,21 @@ export class SmartButtonComponent extends BaseComponent {
         },
         onCancel: (data) => {
           this.data.loader.hide();
-          this.data.notification.showCanceled();
+          // this.data.notification.showCanceled();
 
-          return this.psCheckoutApi
-            .postCancelOrder({
-              ...data,
-              fundingSource: this.data.name,
-              isExpressCheckout: this.config.expressCheckout.active,
-              reason: 'checkout_cancelled'
-            })
-            .catch((error) => {
-              this.data.loader.hide();
-              this.data.notification.showError(error.message);
-            });
+          this.showCancelOrderModal(() => {
+            this.psCheckoutApi
+              .postCancelOrder({
+                ...data,
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active,
+                reason: 'checkout_cancelled'
+              })
+              .catch((error) => {
+                this.data.loader.hide();
+                this.data.notification.showError(error.message);
+              });
+          });
         },
         createOrder: (data) => {
           return this.psCheckoutApi
