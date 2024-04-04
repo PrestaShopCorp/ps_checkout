@@ -56,7 +56,7 @@ class PaymentTokenRepository
                     'id' => pSQL($paymentToken->getId()->getValue()),
                     'paypal_customer_id' => pSQL($paymentToken->getPayPalCustomerId()->getValue()),
                     'payment_source' => pSQL($paymentToken->getPaymentSource()),
-                    'data' => json_encode($paymentToken->getData()),
+                    'data' => pSQL(json_encode($paymentToken->getData())),
                     'merchant_id' => pSQL($paymentToken->getMerchantId()),
                     'status' => pSQL($paymentToken->getStatus()),
                     'is_favorite' => (int) $paymentToken->isFavorite(),
