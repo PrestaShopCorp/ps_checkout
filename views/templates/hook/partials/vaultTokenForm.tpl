@@ -33,7 +33,7 @@
   <div class="col-xs-12">
     {if !$isFavorite}
       <label for="ps_checkout-favorite-payment-{$paymentIdentifier}">
-        <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}">
+        <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
         {l s='Make this my preferred payment method' mod='ps_checkout'}
       </label>
     {/if}
