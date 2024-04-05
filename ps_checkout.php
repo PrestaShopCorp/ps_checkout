@@ -607,7 +607,8 @@ class Ps_checkout extends PaymentModule
 
         $paymentOptions = [];
 
-        $vaultingEnabled = $configurationPayPal->isVaultingEnabled();
+        $vaultingEnabled = $configurationPayPal->isVaultingEnabled()
+            && $this->context->customer->isLogged();
 
         foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
