@@ -10,6 +10,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -23,7 +24,7 @@ class PaymentServiceGetOrderTest extends TestCase
      */
     public function testNotAuthorizedErrorsGetOrder($errorName, $errorCode)
     {
-        $this->testErrorsGetOrder(401, $errorName, $errorCode);
+        $this->handleErrorsGetOrder(401, $errorName, $errorCode);
     }
 
     /**
@@ -33,7 +34,7 @@ class PaymentServiceGetOrderTest extends TestCase
      *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
-    private function testErrorsGetOrder($statusCode, $errorName, $errorCode)
+    private function handleErrorsGetOrder($statusCode, $errorName, $errorCode)
     {
         if ($errorName === 'invalid_token') {
             $error = $this->getInvalidTokenError();
@@ -54,7 +55,7 @@ class PaymentServiceGetOrderTest extends TestCase
         $clientMock->method('fetchOrder')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
 
         $this->expectExceptionCode($errorCode);
-        $paymentService = new PaymentService($clientMock);
+        $paymentService = new PaymentService($clientMock, new ObjectSerializer());
         $paymentService->getOrder('LUX8l091NV');
     }
 

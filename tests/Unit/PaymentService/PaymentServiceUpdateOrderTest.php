@@ -11,6 +11,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -24,7 +25,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
      */
     public function testInvalidRequestErrorsUpdateOrder($errorName, $errorCode)
     {
-        $this->testErrorsUpdateOrder(400, $errorName, $errorCode);
+        $this->handleErrorsUpdateOrder(400, $errorName, $errorCode);
     }
 
     /**
@@ -34,7 +35,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
      */
     public function testNotAuthorizedErrorsUpdateOrder($errorName, $errorCode)
     {
-        $this->testErrorsUpdateOrder(401, $errorName, $errorCode);
+        $this->handleErrorsUpdateOrder(401, $errorName, $errorCode);
     }
 
     /**
@@ -44,7 +45,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
      */
     public function testUnprocessableEntityErrorsUpdateOrder($errorName, $errorCode)
     {
-        $this->testErrorsUpdateOrder(422, $errorName, $errorCode);
+        $this->handleErrorsUpdateOrder(422, $errorName, $errorCode);
     }
 
     /**
@@ -54,7 +55,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
      *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
-    private function testErrorsUpdateOrder($statusCode, $errorName, $errorCode)
+    private function handleErrorsUpdateOrder($statusCode, $errorName, $errorCode)
     {
         switch ($statusCode) {
             case 400:
@@ -82,8 +83,10 @@ class PaymentServiceUpdateOrderTest extends TestCase
         $clientMock = $this->createMock(CheckoutHttpClient::class);
         $clientMock->method('updateOrder')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
 
+        $objectSerializer = new ObjectSerializer();
+
         $this->expectExceptionCode($errorCode);
-        $paymentService = new PaymentService($clientMock);
+        $paymentService = new PaymentService($clientMock, $objectSerializer);
         $paymentService->updateOrder($updateRequestMock);
     }
 
