@@ -82,12 +82,14 @@ class FundingSourcePresenter
             $cardDetails = $paymentToken->getData()['payment_source']['card'];
             $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
                 true,
-                $cardDetails['brand'] . ' *' . $cardDetails['last_digits']
+                (isset($cardDetails['brand']) ? $cardDetails['brand'] : '') . (isset($cardDetails['last_digits']) ? ' *' . $cardDetails['last_digits'] : '')
             );
         } else {
             $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
                 false,
-                $paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()]['email_address']
+                isset($paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()]['email_address']) ?
+                    $paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()]['email_address'] :
+                    ''
             );
         }
 
