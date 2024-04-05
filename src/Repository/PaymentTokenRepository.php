@@ -80,7 +80,7 @@ class PaymentTokenRepository
     public function deleteById(PaymentTokenId $paymentTokenId)
     {
         try {
-            return $this->db->delete(PaymentToken::TABLE, sprintf('`id` = %s', pSQL($paymentTokenId->getValue())));
+            return $this->db->delete(PaymentToken::TABLE, sprintf('`id` = "%s"', pSQL($paymentTokenId->getValue())));
         } catch (Exception $exception) {
             throw new PsCheckoutException('Error while deleting PayPal Payment Token', 0, $exception);
         }
