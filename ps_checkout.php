@@ -764,14 +764,14 @@ class Ps_checkout extends PaymentModule
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
         $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
         $isShop17 = $shopContext->isShop17();
-        $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
+        $isFullyOnboarded = $psAccountRepository->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
             if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
@@ -1310,13 +1310,13 @@ class Ps_checkout extends PaymentModule
         $shop = $params['object'];
         $now = date('Y-m-d H:i:s');
 
-        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
-        $toggleShopConfigurationCommandHandler->handle(
-            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
-                (int) Configuration::get('PS_SHOP_DEFAULT'),
-                (bool) Shop::isFeatureActive()
-            )
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+        $commandBus = $this->getService('ps_checkout.bus.command');
+
+        $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+            (int) Configuration::get('PS_SHOP_DEFAULT'),
+            (bool) Shop::isFeatureActive()
+        ));
 
         foreach ($this->configurationList as $name => $value) {
             if (Configuration::hasKey($name, null, (int) $shop->id_shop_group, (int) $shop->id)) {

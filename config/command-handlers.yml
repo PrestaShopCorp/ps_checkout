@@ -120,3 +120,8 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler'
+    arguments:
+      - '@ps_checkout.db'

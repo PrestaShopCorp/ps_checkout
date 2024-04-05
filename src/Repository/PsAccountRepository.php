@@ -30,47 +30,19 @@ use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
  */
 class PsAccountRepository
 {
-    /** @var PrestaShopConfiguration */
-    private $configuration;
-
     private $psAccountsService;
 
     /**
      * @param PrestaShopConfiguration $configuration
      * @param PsAccounts $psAccountsFacade
      */
-    public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
+    public function __construct(PsAccounts $psAccountsFacade)
     {
-        $this->configuration = $configuration;
         try {
             $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
         } catch (Exception $exception) {
             $this->psAccountsService = false;
         }
-    }
-
-    /**
-     * Get current onboarded prestashop account
-     *
-     * @return PsAccount
-     */
-    public function getOnboardedAccount()
-    {
-        return new PsAccount(
-            $this->getIdToken(),
-            $this->getRefreshToken(),
-            $this->getEmail()
-        );
-    }
-
-    /**
-     * @deprecated 3.0.0 Moved to PS Accounts
-     *
-     * @return bool
-     */
-    public function psxFormIsCompleted()
-    {
-        return true;
     }
 
     /**
@@ -116,20 +88,6 @@ class PsAccountRepository
     }
 
     /**
-     * @deprecated PS Accounts v5.1.1
-     *
-     * @return string|bool
-     */
-    public function getLocalId()
-    {
-        if (!$this->psAccountsService) {
-            return false;
-        }
-
-        return $this->psAccountsService->getUserUuidV4();
-    }
-
-    /**
      * Get firebase refreshToken from database
      *
      * @return string|bool
@@ -141,18 +99,6 @@ class PsAccountRepository
         }
 
         return $this->psAccountsService->getRefreshToken();
-    }
-
-    /**
-     * Get psx form from database
-     *
-     * @param bool $toArray
-     *
-     * @return string|array
-     */
-    public function getPsxForm($toArray = false)
-    {
-        return $toArray ? '' : [];
     }
 
     /**

@@ -23,7 +23,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
       - "@ps_accounts.facade"
 
   PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository:

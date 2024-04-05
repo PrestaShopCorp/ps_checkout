@@ -1,0 +1,47 @@
+services:
+  ps_checkout.tactician.bus:
+    class: 'League\Tactician\CommandBus'
+    factory: [ '@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create" ]
+
+  ps_checkout.bus.command:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
+    public: true
+    arguments:
+      - "@ps_checkout.tactician.bus"
+
+  PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+      - "@ps_checkout.logger"
+      - PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\AddOrderPaymentCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand: 'PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler\UpdateOrderMatriceCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Checkout\Command\CancelCheckoutCommand: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\CancelCheckoutCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SavePayPalOrderStatusCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Checkout\Command\UpdatePaymentMethodSelectedCommand: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHandler\RefundPayPalCaptureCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQuery: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForApprovalReversedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCartIdQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Customer\Command\SavePayPalCustomerCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand: 'PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler'
