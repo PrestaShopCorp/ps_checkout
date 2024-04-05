@@ -402,6 +402,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
 
   PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
