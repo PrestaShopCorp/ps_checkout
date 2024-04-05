@@ -150,7 +150,7 @@ class PaypalOrderDataProvider
         return isset($paymentSource['attributes']['vault']['id']) &&
             isset($paymentSource['attributes']['vault']['status']) &&
             $paymentSource['attributes']['vault']['status'] === 'VAULTED';
-   }
+    }
 
     public function getPaymentTokenIdentifier()
     {
