@@ -24,25 +24,25 @@ export class ConditionsCheckboxComponent extends BaseComponent {
   };
 
   created() {
-    this.conditionsCheckboxes = this.querySelectorService.getConditionsCheckboxes();
+    this.conditionsCheckboxes =
+      this.querySelectorService.getConditionsCheckboxes();
   }
 
   isActive() {
-    return this.conditionsCheckboxes.length > 0;
+    return this.conditionsCheckboxes?.length > 0;
   }
 
   isChecked() {
-    return this.isActive()
-      ? this.conditionsCheckboxes
-          .map(({ checked }) => checked)
-          .filter((value) => !value).length === 0
-      : true;
+    if (this.isActive()) {
+      return this.conditionsCheckboxes?.every(({ checked }) => checked);
+    }
+
+    return true;
   }
 
   onChange(listener) {
-    this.isActive() &&
-      this.conditionsCheckboxes.forEach((checkbox) =>
-        checkbox.addEventListener('change', () => listener())
-      );
+    this.conditionsCheckboxes?.forEach((checkbox) =>
+      checkbox.addEventListener('change', listener)
+    );
   }
 }
