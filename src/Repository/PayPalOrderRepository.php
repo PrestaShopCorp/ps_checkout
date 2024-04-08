@@ -126,7 +126,6 @@ class PayPalOrderRepository
             $query = new DbQuery();
             $query->select('*');
             $query->from(PayPalOrder::TABLE, 'o');
-            $query->where('o.`id_cart` = ' . (int) $cartId);
             $query->where(sprintf('o.`id_cart` = %d', (int) $cartId));
             $queryResult = $this->db->getRow($query);
         } catch (Exception $exception) {
@@ -161,11 +160,11 @@ class PayPalOrderRepository
     public function deletePayPalOrder(PayPalOrderId $payPalOrderId)
     {
         try {
-            $this->db->delete(PayPalOrder::TABLE, sprintf('`id` = %s', pSQL($payPalOrderId->getValue())));
-            $this->db->delete(PayPalOrderAuthorization::TABLE, sprintf('`id_order` = %s', pSQL($payPalOrderId->getValue())));
-            $this->db->delete(PayPalOrderRefund::TABLE, sprintf('`id_order` = %s', pSQL($payPalOrderId->getValue())));
-            $this->db->delete(PayPalOrderCapture::TABLE, sprintf('`id_order` = %s', pSQL($payPalOrderId->getValue())));
-            $this->db->delete(PayPalOrderPurchaseUnit::TABLE, sprintf('`id_order` = %s', pSQL($payPalOrderId->getValue())));
+            $this->db->delete(PayPalOrder::TABLE, sprintf('`id` = "%s"', pSQL($payPalOrderId->getValue())));
+            $this->db->delete(PayPalOrderAuthorization::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
+            $this->db->delete(PayPalOrderRefund::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
+            $this->db->delete(PayPalOrderCapture::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
+            $this->db->delete(PayPalOrderPurchaseUnit::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
         } catch (Exception $exception) {
             throw new PsCheckoutException('Error while deleting PayPal Order', 0, $exception);
         }
