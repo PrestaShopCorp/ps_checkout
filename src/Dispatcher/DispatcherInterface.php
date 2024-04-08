@@ -18,28 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-class GetPayPalGetUserIdTokenQueryResult
+interface DispatcherInterface
 {
     /**
-     * @var string
+     * @param array $payload
+     *
+     * @return bool
      */
-    private $userIdToken;
-
-    /**
-     * @param string $userIdToken
-     */
-    public function __construct($userIdToken)
-    {
-        $this->userIdToken = $userIdToken;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUserIdToken()
-    {
-        return $this->userIdToken;
-    }
+    public function dispatchEventType($payload);
 }

@@ -18,11 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
-class ExpressCheckout
+use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+
+class GetPayPalUserIdTokenQuery
 {
-    const PS_CHECKOUT_EC_PRODUCT_PAGE = 'PS_CHECKOUT_EC_PRODUCT_PAGE';
-    const PS_CHECKOUT_EC_ORDER_PAGE = 'PS_CHECKOUT_EC_ORDER_PAGE';
-    const PS_CHECKOUT_EC_CHECKOUT_PAGE = 'PS_CHECKOUT_EC_CHECKOUT_PAGE';
+    /**
+     * @var CustomerId|null
+     */
+    private $customerId;
+
+    /**
+     * @param CustomerId|null $customerId
+     */
+    public function __construct(CustomerId $customerId = null)
+    {
+        $this->customerId = $customerId;
+    }
+
+    /**
+     * @return CustomerId|null
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
 }

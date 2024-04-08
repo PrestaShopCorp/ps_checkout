@@ -20,28 +20,26 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
-use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-
-class GetPayPalGetUserIdTokenQuery
+class GetPayPalUserIdTokenQueryResult
 {
     /**
-     * @var CustomerId|null
+     * @var string
      */
-    private $customerId;
+    private $userIdToken;
 
     /**
-     * @param CustomerId|null $customerId
+     * @param string $userIdToken
      */
-    public function __construct(CustomerId $customerId = null)
+    public function __construct($userIdToken)
     {
-        $this->customerId = $customerId;
+        $this->userIdToken = $userIdToken;
     }
 
     /**
-     * @return CustomerId|null
+     * @return string
      */
-    public function getCustomerId()
+    public function getUserIdToken()
     {
-        return $this->customerId;
+        return $this->userIdToken;
     }
 }

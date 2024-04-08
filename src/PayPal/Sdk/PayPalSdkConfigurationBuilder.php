@@ -27,8 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
-use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalUserIdTokenQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalUserIdTokenQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
@@ -147,8 +147,8 @@ class PayPalSdkConfigurationBuilder
 
         if ($this->configuration->isVaultingEnabled() && $this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
             try {
-                /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
-                $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
+                /** @var GetPayPalUserIdTokenQueryResult $queryResult */
+                $queryResult = $this->commandBus->handle(new GetPayPalUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
                 $params['dataUserIdToken'] = $queryResult->getUserIdToken();
             } catch (Exception $exception) {
                 $this->logger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);

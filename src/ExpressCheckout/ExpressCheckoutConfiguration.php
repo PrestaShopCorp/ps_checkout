@@ -25,6 +25,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class ExpressCheckoutConfiguration
 {
+    const PS_CHECKOUT_EC_PRODUCT_PAGE = 'PS_CHECKOUT_EC_PRODUCT_PAGE';
+    const PS_CHECKOUT_EC_ORDER_PAGE = 'PS_CHECKOUT_EC_ORDER_PAGE';
+    const PS_CHECKOUT_EC_CHECKOUT_PAGE = 'PS_CHECKOUT_EC_CHECKOUT_PAGE';
+
     /**
      * @var PrestaShopConfiguration
      */
@@ -37,17 +41,17 @@ class ExpressCheckoutConfiguration
 
     public function isOrderPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_EC_ORDER_PAGE);
     }
 
     public function isCheckoutPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_EC_CHECKOUT_PAGE);
     }
 
     public function isProductPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_EC_PRODUCT_PAGE);
     }
 
     /**
@@ -57,7 +61,7 @@ class ExpressCheckoutConfiguration
      */
     public function setProductPage($status)
     {
-        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE, $status);
+        $this->configuration->set(static::PS_CHECKOUT_EC_PRODUCT_PAGE, $status);
     }
 
     /**
@@ -67,7 +71,7 @@ class ExpressCheckoutConfiguration
      */
     public function setOrderPage($status)
     {
-        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE, $status);
+        $this->configuration->set(static::PS_CHECKOUT_EC_ORDER_PAGE, $status);
     }
 
     /**
@@ -77,6 +81,6 @@ class ExpressCheckoutConfiguration
      */
     public function setCheckoutPage($status)
     {
-        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE, $status);
+        $this->configuration->set(static::PS_CHECKOUT_EC_CHECKOUT_PAGE, $status);
     }
 }

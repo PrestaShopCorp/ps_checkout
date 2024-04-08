@@ -227,6 +227,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function dispatchWebHook()
     {
+        /** @var OrderDispatcher $orderDispatcher */
+        $orderDispatcher = $this->module->getService(OrderDispatcher::class);
+
         $this->module->getLogger()->info(
             'DispatchWebHook',
             [
@@ -238,7 +241,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            return (new OrderDispatcher())->dispatchEventType($this->payload);
+            return $orderDispatcher->dispatchEventType($this->payload);
         }
 
         $this->module->getLogger()->info(

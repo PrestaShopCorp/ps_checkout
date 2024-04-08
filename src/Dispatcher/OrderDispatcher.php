@@ -41,7 +41,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
-class OrderDispatcher implements Dispatcher
+class OrderDispatcher implements DispatcherInterface
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
     const PS_CHECKOUT_PAYMENT_REFUNDED = 'PaymentCaptureRefunded';
@@ -55,6 +55,26 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED = 'VaultPaymentTokenCreated';
     const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED = 'VaultPaymentTokenDeleted';
     const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED = 'VaultPaymentTokenDeletionInitiated';
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, PayPalConfiguration $payPalConfiguration)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
+        $this->payPalConfiguration = $payPalConfiguration;
+    }
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -71,54 +91,42 @@ class OrderDispatcher implements Dispatcher
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 
-        /** @var Ps_checkout $module */
-        $module = Module::getInstanceByName('ps_checkout');
-
-        /** @var EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $module->getService(SymfonyEventDispatcherAdapter::class);
-
-        /** @var LoggerInterface $logger */
-        $logger = $module->getService('ps_checkout.logger');
-
-        /** @var PayPalConfiguration $payPalConfiguration */
-        $payPalConfiguration = $module->get('ps_checkout.paypal.configuration');
-
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_PENDING:
-                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_DENIED:
-                $eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_REFUNDED:
-                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_REVERSED:
-                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_ORDER_APPROVED:
-                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_ORDER_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
-                $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED:
-                $eventDispatcher->dispatch(new PaymentTokenCreatedEvent($payload['resource'], $payPalConfiguration->getMerchantId()));
+                $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent($payload['resource'], $this->payPalConfiguration->getMerchantId()));
                 break;
             case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED:
-                $eventDispatcher->dispatch(new PaymentTokenDeletedEvent($payload['resource']));
+                $this->eventDispatcher->dispatch(new PaymentTokenDeletedEvent($payload['resource']));
                 break;
             case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED:
-                $eventDispatcher->dispatch(new PaymentTokenDeletionInitiatedEvent($payload['resource']));
+                $this->eventDispatcher->dispatch(new PaymentTokenDeletionInitiatedEvent($payload['resource']));
                 break;
             default:
-                $logger->warning(
+                $this->logger->warning(
                     'Unknown webhook, cannot be processed.',
                     [
                         'payload' => $payload,

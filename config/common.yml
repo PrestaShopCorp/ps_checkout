@@ -378,10 +378,6 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
 
-  PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus'
-    public: true
-
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService'
     public: true
@@ -428,3 +424,11 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
+
+  PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher:
+    class: 'PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+      - '@ps_checkout.logger'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
