@@ -177,16 +177,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
         ];
 
-        $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('id_cart', '=', (int) Context::getContext()->cart->id);
-
-        /** @var \PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-        if (false === $this->isPatch && false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
-            $node['token'] = $psCheckoutCart->paypal_token;
-        }
-
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
