@@ -27,6 +27,8 @@ export class ModalComponent extends BaseComponent {
 
   created() {
     this.data.parent = this.querySelectorService.getLoaderParent();
+    this.data.icon = this.props.icon || null;
+    this.data.iconType = this.props.iconType || 'info'
     this.data.header = this.props.header || null;
     this.data.content = this.props.content || null;
     this.data.confirmText = this.props.confirmText || this.$('ok');
@@ -34,6 +36,7 @@ export class ModalComponent extends BaseComponent {
     this.data.cancelText = this.props.cancelText || this.$('cancel');
     this.data.cancelType = this.props.cancelType || 'primary';
     this.data.onConfirm = this.props.onConfirm || (() => {});
+    this.data.Cancel = this.props.Cancel || (() => {});
     this.data.onClose = this.props.onClose || (() => {});
   }
 
@@ -51,13 +54,37 @@ export class ModalComponent extends BaseComponent {
     this.modal = document.createElement('div');
     this.modal.classList.add('ps-checkout', 'ps-checkout-modal');
 
-    if (this.data.header) {
-      this.header = document.createElement('h1');
-      this.header.classList.add('ps-checkout', 'text');
-      this.header.innerHTML = this.data.header;
+    this.closeButton = document.createElement('button');
+    this.closeButton.classList.add('ps-checkout-modal', 'close-button');
+    this.closeButtonIcon = document.createElement('img');
+    this.closeButtonIcon.src = this.config.iconPath + 'close.svg';
+    this.closeButton.append(this.closeButtonIcon);
 
-      this.modal.append(this.header);
+    this.closeButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.data.onClose();
+      this.hide();
+    })
+
+    this.modal.append(this.closeButton);
+
+    this.header = document.createElement('h1');
+    this.header.classList.add('ps-checkout', 'header');
+
+    if (this.data.icon) {
+      this.iconSpan = document.createElement('span');
+      this.iconSpan.classList.add('ps-checkout', 'ps-checkout-modal-icon', `icon-${this.data.iconType}`);
+      this.icon = document.createElement('img');
+      this.icon.src = this.config.iconPath + this.data.icon + '.svg'
+      this.iconSpan.append(this.icon);
+      this.header.append(this.iconSpan);
     }
+
+    if (this.data.header) {
+      this.header.append(this.data.header);
+    }
+
+    this.modal.append(this.header);
 
     if (this.data.content) {
       this.contentContainer = document.createElement('div');
@@ -74,7 +101,8 @@ export class ModalComponent extends BaseComponent {
     this.cancelButton.classList.add('ps-checkout', 'btn', this.data.cancelType);
 
     this.cancelButton.addEventListener('click', (event) => {
-      this.data.onClose();
+      event.preventDefault();
+      this.data.onCancel();
       this.hide();
     })
 
@@ -83,6 +111,7 @@ export class ModalComponent extends BaseComponent {
     this.confirmButton.classList.add('ps-checkout', 'btn', this.data.confirmType);
 
     this.confirmButton.addEventListener('click', (event) => {
+      event.preventDefault();
       this.data.onConfirm();
       this.hide();
     })

@@ -313,19 +313,58 @@
     width: 350px;
   }
 
-  .ps-checkout.text, .ps-checkout.content {
+  .ps-checkout.text, .ps-checkout.header, .ps-checkout.content {
     font-size: 20px;
   }
 }
 
-.ps-checkout.text, .ps-checkout.loader {
+.ps-checkout-modal .close-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ps-checkout.text, .ps-checkout.header, .ps-checkout.loader {
   display: block;
   margin: 0 auto;
   margin-top: 45px;
   text-align: center;
 }
 
-.ps-checkout.ps-checkout-modal .ps-checkout.text {
+.ps-checkout.header {
+  text-align: left;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon{
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  vertical-align: middle;
+  border-radius: 34px;
+  margin-right: 20px;
+  padding: 5px;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-danger {
+  background-color: #FFE4E6;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-alert {
+  background-color: #FFF5E5;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-success {
+  background-color: #EAF8EF;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-info {
+  background-color: #E8EDFD;
+}
+
+.ps-checkout.ps-checkout-modal .ps-checkout.header {
   margin: 40px 15px;
 }
 
@@ -561,4 +600,9 @@ form a.ps_checkout-vault-token-delete {
 
 .paypal-pay-later-banner > span {
   margin: auto;
+}
+
+.ps-checkout.icon-favorite {
+  width: 20px;
+  height: 20px;
 }

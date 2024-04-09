@@ -41,6 +41,7 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.name = this.props.fundingSource.name;
     this.data.orderId = this.payPalService.getOrderId();
 
+    this.data.HTMLElementLabel = this.props.HTMLElementLabel;
     this.data.HTMLElementRadio = this.props.HTMLElementRadio;
     this.data.HTMLElementContainer = this.props.HTMLElementContainer;
     this.data.HTMLElementForm = this.props.HTMLElementForm;
@@ -55,6 +56,7 @@ export class PaymentTokenComponent extends BaseComponent {
 
     this.data.disabled = false;
     this.data.modal = null;
+    console.log(this.data.HTMLElementLabel);
   }
 
   showModal() {
@@ -67,11 +69,16 @@ export class PaymentTokenComponent extends BaseComponent {
       modalContent.append(line1, paymentLabel);
 
       this.data.modal = new ModalComponent(this.app, {
+        icon: 'delete_forever',
+        iconType: 'danger',
         header: this.$('checkout.payment.token.delete.modal.header'),
         content: modalContent,
         confirmText: this.$('checkout.payment.token.delete.modal.confirm-button'),
         confirmType: 'danger',
         onClose: (() => {
+          this.data.HTMLElementButton.removeAttribute('disabled');
+        }),
+        onCancel: (() => {
           this.data.HTMLElementButton.removeAttribute('disabled');
         }),
         onConfirm: (() => {this.onDeleteConfirm()})
@@ -178,12 +185,26 @@ export class PaymentTokenComponent extends BaseComponent {
     });
   }
 
+  renderFavoriteImg() {
+    if (this.data.HTMLElementLabel) {
+      const img = document.createElement('img');
+      img.classList.add('ps-checkout', 'icon-favorite');
+      img.style.display = 'inline-block';
+      img.src = this.config.iconPath + (document.getElementById(`ps_checkout-favorite-payment-${this.data.name}`) ? 'favorite.svg' : 'favorite_fill.svg');
+
+      this.data.HTMLElementLabel.append(img);
+    }
+  }
+
   isSubmittable() {
     return (this.data.conditions ? this.data.conditions.isChecked() : false) && !this.data.disabled;
   }
 
   render() {
     this.renderButton();
+    this.renderFavoriteImg();
     return this;
   }
+
+
 }

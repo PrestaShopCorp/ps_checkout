@@ -622,6 +622,7 @@ class Ps_checkout extends PaymentModule
                 'isFavorite' => $fundingSource->isFavorite,
                 'label' => $fundingSource->label,
                 'vaultId' => explode('-', $fundingSource->name)[1],
+                'lockIcon' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/lock_fill.svg'),
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
 
@@ -1003,6 +1004,7 @@ class Ps_checkout extends PaymentModule
             ],
             $this->name . 'CardBrands' => $supportedCardBrands,
             $this->name . 'PaymentMethodLogosTitleImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/lock_checkout.svg'),
+            $this->name . 'IconsPath' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/'),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),

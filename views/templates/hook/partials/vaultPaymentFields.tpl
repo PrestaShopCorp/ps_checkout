@@ -31,6 +31,7 @@
     <label for="ps_checkout-vault-payment-{$paymentIdentifier}">
       <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$paymentIdentifier}" id="ps_checkout-vault-payment-{$paymentIdentifier}">
       {l s='Securely store payment details for future purchases' mod='ps_checkout'}
+      <img src="{$lockIcon}" alt="lock" width="15" height="15">
     </label>
   </div>
   <div class="col-xs-12">

@@ -41,6 +41,8 @@ export const PsCheckoutConfig = {
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
   vaultUrl: window.ps_checkoutVaultUrl,
 
+  iconPath: window.ps_checkoutIconsPath,
+
   hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
   hostedFieldsContingencies: window.ps_checkoutHostedFieldsContingencies,
 

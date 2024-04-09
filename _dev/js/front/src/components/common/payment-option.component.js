@@ -181,7 +181,8 @@ export class PaymentOptionComponent extends BaseComponent {
         fundingSource: this.props.fundingSource,
         HTMLElementRadio: this.data.HTMLElement,
         HTMLElementContainer: this.data.HTMLElementContainer,
-        HTMLElementForm: this.getPaymentForm()
+        HTMLElementForm: this.getPaymentForm(),
+        HTMLElementLabel: this.data.HTMLElementLabel
       }).render();
     } else if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
       this.data.HTMLElementCardFields.style.display = '';
