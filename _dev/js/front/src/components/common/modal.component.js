@@ -36,7 +36,7 @@ export class ModalComponent extends BaseComponent {
     this.data.cancelText = this.props.cancelText || this.$('cancel');
     this.data.cancelType = this.props.cancelType || 'primary';
     this.data.onConfirm = this.props.onConfirm || (() => {});
-    this.data.Cancel = this.props.Cancel || (() => {});
+    this.data.onCancel = this.props.onCancel || (() => {});
     this.data.onClose = this.props.onClose || (() => {});
   }
 

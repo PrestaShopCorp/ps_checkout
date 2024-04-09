@@ -69,7 +69,7 @@ export class PaymentTokenComponent extends BaseComponent {
       modalContent.append(line1, paymentLabel);
 
       this.data.modal = new ModalComponent(this.app, {
-        icon: 'delete_forever',
+        icon: 'delete_forever_fill',
         iconType: 'danger',
         header: this.$('checkout.payment.token.delete.modal.header'),
         content: modalContent,
