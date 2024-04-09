@@ -472,7 +472,7 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
+        if ($psCheckoutCart->isExpressCheckout || !$psCheckoutCart->isOrderAvailable() || !$this->context->cart->nbProducts()) {
             $this->context->cookie->__unset('paypalEmail');
         }
     }
@@ -529,7 +529,7 @@ class Ps_checkout extends PaymentModule
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
         $configurationPayPal = $this->getService('ps_checkout.paypal.configuration');
 
-        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout && $psCheckoutCart->isOrderAvailable();
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),
@@ -1349,7 +1349,7 @@ class Ps_checkout extends PaymentModule
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
-        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout && $psCheckoutCart->isOrderAvailable();
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),
