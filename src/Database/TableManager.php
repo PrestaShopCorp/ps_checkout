@@ -168,7 +168,8 @@ class TableManager
             `merchant_id` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
             `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 

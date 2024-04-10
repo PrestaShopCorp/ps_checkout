@@ -109,7 +109,8 @@ function upgrade_module_8_4_0_0($module)
             `merchant_id` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
             `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
         $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_status` `paypal_status` VARCHAR(30) NULL; ');
