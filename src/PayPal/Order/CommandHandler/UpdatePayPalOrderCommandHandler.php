@@ -78,7 +78,7 @@ class UpdatePayPalOrderCommandHandler
         $builder = new OrderPayloadBuilder($cartPresenter, true);
         $builder->setIsUpdate(true);
         $builder->setPaypalOrderId($command->getPayPalOrderId()->getValue());
-        $builder->setIsCard($command->getFundingSource() === 'card');
+        $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
         $builder->setExpressCheckout($command->isExpressCheckout());
 
         if ($this->shopContext->isShop17()) {
