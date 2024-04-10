@@ -56,7 +56,7 @@ export class PaymentTokenComponent extends BaseComponent {
 
     this.data.disabled = false;
     this.data.modal = null;
-    console.log(this.data.HTMLElementLabel);
+    console.log(this.data.HTMLElementContainer, this.data.HTMLElementRadio, this.data.HTMLElementForm);
   }
 
   showModal() {
@@ -91,10 +91,9 @@ export class PaymentTokenComponent extends BaseComponent {
     const vaultId = this.getVaultFormData().vaultId;
     this.psCheckoutApi.postDeleteVaultedToken({vaultId}).then(() => {
       this.data.disabled = true;
-      this.data.HTMLElementRadio.setAttribute('disabled', '');
-      this.data.HTMLElementRadio.classList.add('disabled');
-      this.data.HTMLElementContainer.style.display = 'none';
-      this.data.HTMLElementForm.style.display = 'none';
+      this.data.HTMLElementRadio.checked = false;
+      this.data.HTMLElementContainer.remove();
+      this.data.HTMLElementForm.remove();
     }).catch((error) => this.handleError(error));
   }
 

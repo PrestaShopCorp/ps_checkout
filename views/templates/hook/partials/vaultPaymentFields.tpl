@@ -36,7 +36,7 @@
   </div>
   <div class="col-xs-12">
     <label for="ps_checkout-favorite-payment-{$paymentIdentifier}">
-      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
+      <input type="checkbox" disabled value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
       {if $paymentIdentifier=='card'}
         {l s='Make this card favorite / default ' mod='ps_checkout'}
       {else}
@@ -44,4 +44,11 @@
       {/if}
     </label>
   </div>
+  <script>
+    const vaultCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-vault-payment-{$paymentIdentifier}');
+    const favoriteCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-favorite-payment-{$paymentIdentifier}');
+    vaultCheckbox{$paymentIdentifier}.addEventListener('change', (event) => {
+      favoriteCheckbox{$paymentIdentifier}.toggleAttribute('disabled', !event.target.checked);
+    });
+  </script>
 </div>

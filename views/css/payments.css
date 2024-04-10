@@ -578,12 +578,14 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   text-align: center;
 }
 
-form a.ps_checkout-vault-token-delete {
+form button.ps_checkout-vault-token-delete {
   cursor: pointer;
-  text-decoration: underline !important;
+  text-decoration: underline;
   font-size: 0.75rem;
   margin-bottom: 0.75rem;
   display: inline-block;
+  background-color: transparent;
+  border: none;
 }
 
 #ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {

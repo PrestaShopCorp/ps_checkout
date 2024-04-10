@@ -28,7 +28,7 @@
  *}
 <form id="ps_checkout-vault-token-form-{$paymentIdentifier}" class="form-horizontal ps_checkout-vault-token-form">
   <div class="col-xs-12">
-    <a id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</a>
+    <button type="button" id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</button>
   </div>
   <div class="col-xs-12">
     {if !$isFavorite}
