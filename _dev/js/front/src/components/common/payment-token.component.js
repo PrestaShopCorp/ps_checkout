@@ -18,6 +18,7 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import {ModalComponent} from "./modal.component";
+import {LoaderComponent} from "./loader.component";
 
 /**
  * @typedef PaymentTokenComponentProps
@@ -56,7 +57,6 @@ export class PaymentTokenComponent extends BaseComponent {
 
     this.data.disabled = false;
     this.data.modal = null;
-    console.log(this.data.HTMLElementContainer, this.data.HTMLElementRadio, this.data.HTMLElementForm);
   }
 
   showModal() {
@@ -89,12 +89,22 @@ export class PaymentTokenComponent extends BaseComponent {
 
   onDeleteConfirm() {
     const vaultId = this.getVaultFormData().vaultId;
+    const loader = new LoaderComponent(
+      this.app,
+      {text: this.$('checkout.payment.loader.processing-request')}
+    ).render();
+
+    loader.show();
     this.psCheckoutApi.postDeleteVaultedToken({vaultId}).then(() => {
       this.data.disabled = true;
       this.data.HTMLElementRadio.checked = false;
       this.data.HTMLElementContainer.remove();
       this.data.HTMLElementForm.remove();
-    }).catch((error) => this.handleError(error));
+      loader.destroy();
+    }).catch((error) => {
+      loader.destroy();
+      this.handleError(error);
+    });
   }
 
   getDeleteButton() {

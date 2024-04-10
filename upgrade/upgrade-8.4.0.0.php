@@ -101,13 +101,15 @@ function upgrade_module_8_4_0_0($module)
         ');
         $db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
-            `id` varchar(50) NOT NULL,
+            `id` INT UNSIGNED AUTO_INCREMENT,
+            `token_id` varchar(50) NOT NULL,
             `paypal_customer_id` varchar(50) NOT NULL,
             `payment_source` varchar(50) NOT NULL,
             `data` text NOT NULL,
             `merchant_id` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
-            PRIMARY KEY (`id`, `paypal_customer_id`)
+            `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+            PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
         $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_status` `paypal_status` VARCHAR(30) NULL; ');

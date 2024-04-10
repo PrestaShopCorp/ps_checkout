@@ -53,7 +53,7 @@ class PaymentTokenRepository
             return $this->db->insert(
                 PaymentToken::TABLE,
                 [
-                    'id' => pSQL($paymentToken->getId()->getValue()),
+                    'token_id' => pSQL($paymentToken->getId()->getValue()),
                     'paypal_customer_id' => pSQL($paymentToken->getPayPalCustomerId()->getValue()),
                     'payment_source' => pSQL($paymentToken->getPaymentSource()),
                     'data' => pSQL(json_encode($paymentToken->getData())),
@@ -80,7 +80,7 @@ class PaymentTokenRepository
     public function deleteById(PaymentTokenId $paymentTokenId)
     {
         try {
-            return $this->db->delete(PaymentToken::TABLE, sprintf('`id` = "%s"', pSQL($paymentTokenId->getValue())));
+            return $this->db->delete(PaymentToken::TABLE, sprintf('`token_id` = "%s"', pSQL($paymentTokenId->getValue())));
         } catch (Exception $exception) {
             throw new PsCheckoutException('Error while deleting PayPal Payment Token', 0, $exception);
         }
@@ -102,7 +102,7 @@ class PaymentTokenRepository
             $query->leftJoin('pscheckout_customer', 'c', 't.`paypal_customer_id` = c.`paypal_customer_id`');
             $query->where(sprintf('c.`id_customer` = %d', (int) $psCustomerId));
             $query->orderBy('t.`is_favorite` DESC');
-            $query->orderBy('t.`id` ASC');
+            $query->orderBy('t.`id` DESC');
 
             if ($onlyVaulted) {
                 $query->where('t.`status` = "VAULTED"');
@@ -165,7 +165,7 @@ class PaymentTokenRepository
             $query = new DbQuery();
             $query->select('*');
             $query->from(PaymentToken::TABLE);
-            $query->where(sprintf('`id` = "%s"', pSQL($id->getValue())));
+            $query->where(sprintf('`token_id` = "%s"', pSQL($id->getValue())));
             $result = $this->db->getRow($query);
         } catch (Exception $exception) {
             throw new PsCheckoutException('Error while fetching PayPal Payment Token', 0, $exception);
@@ -194,7 +194,7 @@ class PaymentTokenRepository
 
             try {
                 $this->db->update(PaymentToken::TABLE, ['is_favorite' => 0], sprintf('`paypal_customer_id` = "%s"', pSQL($customerId)));
-                $this->db->update(PaymentToken::TABLE, ['is_favorite' => 1], sprintf('`id` = "%s"', pSQL($paymentTokenId->getValue())));
+                $this->db->update(PaymentToken::TABLE, ['is_favorite' => 1], sprintf('`token_id` = "%s"', pSQL($paymentTokenId->getValue())));
             } catch (Exception $exception) {
                 throw new PsCheckoutException('Error while setting PayPal Payment Token as favorite', 0, $exception);
             }
@@ -238,7 +238,7 @@ class PaymentTokenRepository
     private function buildPaymentTokenObject(array $data)
     {
         return new PaymentToken(
-            $data['id'],
+            $data['token_id'],
             $data['paypal_customer_id'],
             $data['payment_source'],
             json_decode($data['data'], true),

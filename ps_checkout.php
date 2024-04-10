@@ -1080,6 +1080,7 @@ class Ps_checkout extends PaymentModule
                 'checkout.payment.token.delete.modal.header' => $this->l('Delete this payment method?'),
                 'checkout.payment.token.delete.modal.content' => $this->l('The following payment method will be deleted from your account:'),
                 'checkout.payment.token.delete.modal.confirm-button' => $this->l('Delete payment method'),
+                'checkout.payment.loader.processing-request' => $this->l('Please wait, we are processing your request'),
             ],
         ]);
 
