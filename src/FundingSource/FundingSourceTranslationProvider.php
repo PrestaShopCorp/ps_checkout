@@ -64,8 +64,7 @@ class FundingSourceTranslationProvider
             'maxima' => 'Maxima',
             'mercadopago' => 'Mercado Pago',
             'sepa' => 'SEPA',
-            'token-card' => $module->l('Saved payment method %s', 'fundingsourcetranslationprovider'),
-            'token-account' => $module->l('Saved payment method PayPal %s', 'fundingsourcetranslationprovider'),
+            'token' => $module->l('Pay with %s', 'fundingsourcetranslationprovider'),
         ];
 
         $payByTranslation = $module->l('Pay by %s', 'fundingsourcetranslationprovider');
@@ -101,13 +100,13 @@ class FundingSourceTranslationProvider
     }
 
     /**
-     * @param bool $isCard
+     * @param string $identifier
      *
      * @return string
      */
-    public function getVaultedPaymentMethodName($isCard, $data)
+    public function getVaultedPaymentMethodName($identifier)
     {
-        return str_replace('%s', $data, $this->fundingSourceNames['token-' . ($isCard ? 'card' : 'account')]);
+        return str_replace('%s', $identifier, $this->fundingSourceNames['token']);
     }
 
     /**

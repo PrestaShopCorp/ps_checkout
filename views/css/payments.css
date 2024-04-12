@@ -586,6 +586,7 @@ form button.ps_checkout-vault-token-delete {
   display: inline-block;
   background-color: transparent;
   border: none;
+  padding: 0;
 }
 
 #ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
