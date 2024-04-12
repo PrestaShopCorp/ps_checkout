@@ -177,16 +177,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
         ];
 
-        $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('id_cart', '=', (int) Context::getContext()->cart->id);
-
-        /** @var \PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-        if (false === $this->isPatch && false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
-            $node['token'] = $psCheckoutCart->paypal_token;
-        }
-
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
@@ -232,9 +222,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'given_name' => (string) $this->cart['addresses']['invoice']->firstname,
                 'surname' => (string) $this->cart['addresses']['invoice']->lastname,
             ],
-            'email_address' => (string) $this->cart['customer']->email,
             'address' => $this->getAddressPortable('invoice'),
         ];
+
+        if (\Validate::isEmail($this->cart['customer']->email)) {
+            $node['payer']['email_address'] = (string) $this->cart['customer']->email;
+        }
 
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {

@@ -70,7 +70,7 @@ class CreatePayPalOrderCommandHandler
     {
         $cartPresenter = (new CartPresenter())->present();
         $builder = new OrderPayloadBuilder($cartPresenter);
-        $builder->setIsCard($command->getFundingSource() === 'card');
+        $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
         $builder->setExpressCheckout($command->isExpressCheckout());
 
         if ($this->shopContext->isShop17()) {
