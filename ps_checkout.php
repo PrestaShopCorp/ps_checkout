@@ -112,7 +112,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.3.6.2';
+    const VERSION = '8.3.6.3';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -133,7 +133,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.3.6.2';
+        $this->version = '8.3.6.3';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -497,7 +497,7 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
+        if ($psCheckoutCart->isExpressCheckout || !$psCheckoutCart->isOrderAvailable() || !$this->context->cart->nbProducts()) {
             $this->context->cookie->__unset('paypalEmail');
         }
     }
@@ -554,7 +554,7 @@ class Ps_checkout extends PaymentModule
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
         $configurationPayPal = $this->getService('ps_checkout.paypal.configuration');
 
-        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout && $psCheckoutCart->isOrderAvailable();
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),
@@ -1374,7 +1374,7 @@ class Ps_checkout extends PaymentModule
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
-        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout && $psCheckoutCart->isOrderAvailable();
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),

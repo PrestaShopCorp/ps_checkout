@@ -27,6 +27,9 @@ module.exports = merge(common, {
     minimizer: [
       new TerserPlugin({
         terserOptions: {
+          format: {
+            comments: false
+          },
           parse: {
             // We want terser to parse ecma 8 code. However, we don't want it
             // to apply any minification steps that turns valid ecma 5 code
@@ -62,7 +65,8 @@ module.exports = merge(common, {
             // https://github.com/facebook/create-react-app/issues/2488
             ascii_only: true
           }
-        }
+        },
+        extractComments: false
       })
     ]
   }
