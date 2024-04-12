@@ -48,6 +48,9 @@
     const vaultCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-vault-payment-{$paymentIdentifier}');
     const favoriteCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-favorite-payment-{$paymentIdentifier}');
     vaultCheckbox{$paymentIdentifier}.addEventListener('change', (event) => {
+      if (!event.target.checked) {
+        favoriteCheckbox{$paymentIdentifier}.checked = false;
+      }
       favoriteCheckbox{$paymentIdentifier}.toggleAttribute('disabled', !event.target.checked);
     });
   </script>

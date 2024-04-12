@@ -610,6 +610,8 @@ class Ps_checkout extends PaymentModule
         $vaultingEnabled = $configurationPayPal->isVaultingEnabled()
             && $this->context->customer->isLogged();
 
+        $this->context->smarty->assign('lockIcon', Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/lock_fill.svg'));
+
         foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
@@ -622,7 +624,6 @@ class Ps_checkout extends PaymentModule
                 'isFavorite' => $fundingSource->isFavorite,
                 'label' => $fundingSource->label,
                 'vaultId' => explode('-', $fundingSource->name)[1],
-                'lockIcon' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/lock_fill.svg'),
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
 
