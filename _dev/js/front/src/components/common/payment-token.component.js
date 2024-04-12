@@ -195,11 +195,11 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   renderFavoriteImg() {
-    if (this.data.HTMLElementLabel) {
+    if (this.data.HTMLElementLabel && !document.getElementById(`ps_checkout-favorite-payment-${this.data.name}`)) {
       const img = document.createElement('img');
       img.classList.add('ps-checkout', 'icon-favorite');
       img.style.display = 'inline-block';
-      img.src = this.config.iconPath + (document.getElementById(`ps_checkout-favorite-payment-${this.data.name}`) ? 'favorite.svg' : 'favorite_fill.svg');
+      img.src = this.config.iconPath + 'favorite_fill.svg';
 
       this.data.HTMLElementLabel.append(img);
     }
