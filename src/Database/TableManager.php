@@ -222,6 +222,10 @@ class TableManager
                 if ($field['Field'] === 'paypal_token' && $field['Type'] !== 'text') {
                     $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
                 }
+
+                if ($field['Field'] === 'paypal_status' && $field['Type'] !== 'varchar(30)') {
+                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_status` `paypal_status` varchar(30) NULL;');
+                }
             }
         }
 
