@@ -973,9 +973,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var PaymentTokenRepository $paymentTokenRepository */
         $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
 
+        /** @var PayPalConfiguration $payPalConfiguration */
+        $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
+
         $this->exitWithResponse([
             'status' => true,
-            'count' => $paymentTokenRepository->getCount(),
+            'count' => $paymentTokenRepository->getCount(null, $payPalConfiguration->getMerchantId()),
         ]);
     }
 

@@ -93,7 +93,7 @@ class PaymentTokenRepository
      *
      * @throws PsCheckoutException
      */
-    public function findByPrestaShopCustomerId($psCustomerId, $onlyVaulted = false)
+    public function findByPrestaShopCustomerId($psCustomerId, $onlyVaulted = false, $merchantId = null)
     {
         try {
             $query = new DbQuery();
@@ -103,6 +103,10 @@ class PaymentTokenRepository
             $query->where(sprintf('c.`id_customer` = %d', (int) $psCustomerId));
             $query->orderBy('t.`is_favorite` DESC');
             $query->orderBy('t.`id` DESC');
+
+            if ($merchantId) {
+                $query->where(sprintf('t.`merchant_id` = "%s"', pSQL($merchantId)));
+            }
 
             if ($onlyVaulted) {
                 $query->where('t.`status` = "VAULTED"');
@@ -212,12 +216,16 @@ class PaymentTokenRepository
      *
      * @throws PsCheckoutException
      */
-    public function getCount($customerId = null)
+    public function getCount($customerId = null, $merchantId = null)
     {
         try {
             $query = new DbQuery();
             $query->select('COUNT(t.id)');
             $query->from(PaymentToken::TABLE, 't');
+
+            if ($merchantId) {
+                $query->where(sprintf('t.`merchant_id` = "%s"', pSQL($merchantId)));
+            }
 
             if ($customerId) {
                 $query->leftJoin('pscheckout_customer', 'c', 't.`paypal_customer_id` = c.`paypal_customer_id`');
