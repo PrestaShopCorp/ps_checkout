@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class SavePayPalOrderCommand
 {
@@ -52,11 +53,15 @@ class SavePayPalOrderCommand
      * @var null
      */
     private $fundingSource;
+    /**
+     * @var PaymentTokenId|null
+     */
+    private $paymentTokenId;
 
     /**
      * @param array $order
      */
-    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = [], $isExpressCheckout = null, $isCardFields = null)
+    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = [], $isExpressCheckout = null, $isCardFields = null, $paymentTokenId = null)
     {
         $this->order = $order;
         $this->cartId = $cartId;
@@ -65,6 +70,7 @@ class SavePayPalOrderCommand
         $this->isExpressCheckout = $isExpressCheckout;
         $this->isCardFields = $isCardFields;
         $this->fundingSource = $fundingSource;
+        $this->paymentTokenId = $paymentTokenId;
     }
 
     /**
@@ -121,5 +127,13 @@ class SavePayPalOrderCommand
     public function getFundingSource()
     {
         return $this->fundingSource;
+    }
+
+    /**
+     * @return PaymentTokenId|null
+     */
+    public function getPaymentTokenId()
+    {
+        return $this->paymentTokenId;
     }
 }

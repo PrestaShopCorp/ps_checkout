@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderPurchaseUnit;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderRefund;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class PayPalOrderRepository
 {
@@ -66,6 +67,7 @@ class PayPalOrderRepository
                 'is_card_fields' => (int) $payPalOrder->isCardFields(),
                 'is_express_checkout' => (int) $payPalOrder->isExpressCheckout(),
                 'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
+                'payment_token_id' => $payPalOrder->getPaymentTokenId() ? pSQL($payPalOrder->getPaymentTokenId()->getValue()) : null,
             ],
             false,
             true,
@@ -109,7 +111,8 @@ class PayPalOrderRepository
             $queryResult['environment'],
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
-            explode(',', $queryResult['customer_intent'])
+            explode(',', $queryResult['customer_intent']),
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
         );
     }
 
@@ -146,7 +149,8 @@ class PayPalOrderRepository
             $queryResult['environment'],
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
-            explode(',', $queryResult['customer_intent'])
+            explode(',', $queryResult['customer_intent']),
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
         );
     }
 

@@ -147,9 +147,6 @@ class CreatePayPalOrderCommandHandler
 
         if ($command->favorite()) {
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
-            if ($command->getPaymentTokenId()) {
-                $this->paymentTokenRepository->setTokenFavorite($command->getPaymentTokenId());
-            }
         }
 
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
@@ -159,7 +156,8 @@ class CreatePayPalOrderCommandHandler
             $command->getFundingSource(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),
-            $customerIntent
+            $customerIntent,
+            $command->getPaymentTokenId()
         ));
     }
 }

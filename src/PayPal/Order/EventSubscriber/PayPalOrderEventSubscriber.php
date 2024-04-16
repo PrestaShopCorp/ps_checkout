@@ -164,7 +164,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $this->payPalConfiguration->getPaymentMode(),
             $event->getCustomerIntent(),
             $event->isExpressCheckout(),
-            $event->isCardFields()
+            $event->isCardFields(),
+            $event->getPaymentTokenId()
         ));
 
         $this->commandBus->handle(new SaveCheckoutCommand(

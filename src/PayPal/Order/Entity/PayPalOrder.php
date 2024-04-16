@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class PayPalOrder
 {
@@ -69,8 +70,12 @@ class PayPalOrder
      * @var array
      */
     private $customerIntent;
+    /**
+     * @var PaymentTokenId|null
+     */
+    private $paymentTokenId;
 
-    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = [])
+    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = [], $paymentTokenId = null)
     {
         $this->id = new PayPalOrderId($id);
         $this->idCart = $idCart;
@@ -82,6 +87,7 @@ class PayPalOrder
         $this->isCardFields = (bool) $isCardFields;
         $this->isExpressCheckout = (bool) $isExpressCheckout;
         $this->customerIntent = $customerIntent;
+        $this->paymentTokenId = $paymentTokenId;
     }
 
     /**
@@ -294,5 +300,21 @@ class PayPalOrder
     public function checkCustomerIntent($intent)
     {
         return in_array($intent, $this->customerIntent);
+    }
+
+    /**
+     * @return PaymentTokenId|null
+     */
+    public function getPaymentTokenId()
+    {
+        return $this->paymentTokenId;
+    }
+
+    /**
+     * @param PaymentTokenId|null $paymentTokenId
+     */
+    public function setPaymentTokenId($paymentTokenId)
+    {
+        $this->paymentTokenId = $paymentTokenId;
     }
 }

@@ -65,7 +65,8 @@ class SavePayPalOrderCommandHandler
                 $command->getPaymentMode(),
                 $command->isCardFields(),
                 $command->isExpressCheckout(),
-                $command->getCustomerIntent()
+                $command->getCustomerIntent(),
+                $command->getPaymentTokenId()
             );
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         }

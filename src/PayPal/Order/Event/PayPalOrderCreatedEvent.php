@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class PayPalOrderCreatedEvent extends PayPalOrderEvent
 {
@@ -47,6 +48,10 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
      * @var array
      */
     private $customerIntent;
+    /**
+     * @var PaymentTokenId|null
+     */
+    private $paymentTokenId;
 
     /**
      * @param string $orderPayPalId
@@ -59,7 +64,7 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
      * @throws CartException
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPal, $cartId, $fundingSource, $isCardFields, $isExpressCheckout, $customerIntent = [])
+    public function __construct($orderPayPalId, $orderPayPal, $cartId, $fundingSource, $isCardFields, $isExpressCheckout, $customerIntent = [], $paymentTokenId = null)
     {
         parent::__construct($orderPayPalId, $orderPayPal);
         $this->cartId = new CartId($cartId);
@@ -67,6 +72,7 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
         $this->isExpressCheckout = $isExpressCheckout;
         $this->fundingSource = $fundingSource;
         $this->customerIntent = $customerIntent;
+        $this->paymentTokenId = $paymentTokenId;
     }
 
     /**
@@ -107,5 +113,13 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     public function getCustomerIntent()
     {
         return $this->customerIntent;
+    }
+
+    /**
+     * @return PaymentTokenId|null
+     */
+    public function getPaymentTokenId()
+    {
+        return $this->paymentTokenId;
     }
 }

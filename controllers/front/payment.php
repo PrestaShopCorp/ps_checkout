@@ -20,11 +20,15 @@
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
@@ -93,11 +97,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
-                $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-                if ($capture['status'] === 'COMPLETED') {
-                    $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-                    $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
-                }
+                $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
@@ -119,11 +119,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                     case Card3DSecure::PROCEED:
                         $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
                         $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
-                        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-                        if ($capture['status'] === 'COMPLETED') {
-                            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-                            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
-                        }
+                        $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         break;
                     case Card3DSecure::NO_DECISION:
                     default:
@@ -132,6 +128,33 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param array $payPalOrderFromCache
+     * @param PayPalOrder$payPalOrder
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     * @throws PsCheckoutException
+     * @throws PayPalOrderException
+     */
+    private function createOrder($payPalOrderFromCache, $payPalOrder)
+    {
+        /** @var CommandBusInterface $commandBus */
+        $commandBus = $this->module->getService('ps_checkout.bus.command');
+
+        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
+        if ($capture['status'] === 'COMPLETED') {
+            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+            if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
+                /** @var PaymentTokenRepository $paymentTokenRepository */
+                $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
+                $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
+            }
+            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
         }
     }
 
