@@ -69,7 +69,7 @@
           "@php ./vendor/bin/php-cs-fixer fix"
         ],
         "auto-index": [
-          "@php ./vendor/bin/autoindex --exclude=_dev,vendor"
+          "@php ./vendor/bin/autoindex --exclude=_dev,vendor,tests"
         ]
     },
     "author": "PrestaShop"
