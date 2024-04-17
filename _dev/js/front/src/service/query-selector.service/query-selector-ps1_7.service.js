@@ -180,12 +180,10 @@ export class QuerySelectorPs1_7Service {
   }
 
   static querySelectorAll(selector) {
-    let elements = Array.prototype.slice.call(
-      document.querySelectorAll(selector)
-    );
+    const elements = [...document.querySelectorAll(selector)];
 
-    if (!elements || elements.length === 0) {
-      console.error('HTMLElement selector ' + selector + ' not found.');
+    if (elements.length === 0) {
+      console.error(`HTMLElement selector ${selector} not found.`);
     }
 
     return elements;

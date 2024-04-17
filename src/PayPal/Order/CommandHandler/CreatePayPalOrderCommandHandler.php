@@ -123,7 +123,7 @@ class CreatePayPalOrderCommandHandler
             $builder->setPaypalVaultId($command->getPaymentTokenId()->getValue());
         }
 
-        $builder->setIsCard($command->getFundingSource() === 'card');
+        $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
         $builder->setExpressCheckout($command->isExpressCheckout());
         $builder->setFundingSource($command->getFundingSource());
         $builder->setSavePaymentMethod($command->vault());

@@ -65,9 +65,7 @@ export class QuerySelectorPs1_6Service {
   }
 
   static getExpressCheckoutButtonContainerCart() {
-    return this.querySelector(
-      SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
-    );
+    return this.querySelector(SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE);
   }
 
   static getExpressCheckoutButtonContainerCheckout() {
@@ -83,72 +81,56 @@ export class QuerySelectorPs1_6Service {
   }
 
   static getCardFieldsFormContainer() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.FORM
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.FORM);
   }
 
   static getCardFieldsNameInputContainer() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.NAME
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.NAME);
   }
 
   static getCardFieldsNameError() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.NAME_ERROR
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.NAME_ERROR);
   }
 
   static getCardFieldsNumberInputContainer() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.NUMBER
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.NUMBER);
   }
 
   static getCardFieldsNumberError() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.NUMBER_ERROR
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.NUMBER_ERROR);
   }
 
   static getCardFieldsVendorError() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.VENDOR_ERROR
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.VENDOR_ERROR);
   }
 
   static getCardFieldsExpiryInputContainer() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.EXPIRY
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.EXPIRY);
   }
 
   static getCardFieldsExpiryError() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.EXPIRY_ERROR
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.EXPIRY_ERROR);
   }
 
   static getCardFieldsCvvInputContainer() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.CVV
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.CVV);
   }
 
   static getCardFieldsCvvError() {
-    return this.querySelector(
-      SELECTORS.CARD_FIELDS.CVV_ERROR
-    );
+    return this.querySelector(SELECTORS.CARD_FIELDS.CVV_ERROR);
   }
 
   static getPayLaterOfferMessageContainerSelector(placement) {
     switch (placement) {
       case 'product':
-        return this.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
+        return this.querySelector(
+          SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT
+        );
       case 'cart':
       case 'payment':
-        return this.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
+        return this.querySelector(
+          SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY
+        );
       default:
         return;
     }
@@ -178,12 +160,10 @@ export class QuerySelectorPs1_6Service {
   }
 
   static querySelectorAll(selector) {
-    let elements = Array.prototype.slice.call(
-      document.querySelectorAll(selector)
-    );
+    const elements = [...document.querySelectorAll(selector)];
 
-    if (!elements || elements.length === 0) {
-      console.error('HTMLElement selector ' + selector + ' not found.');
+    if (elements.length === 0) {
+      console.error(`HTMLElement selector ${selector} not found.`);
     }
 
     return elements;
@@ -192,9 +172,13 @@ export class QuerySelectorPs1_6Service {
   static getPaymentMethodLogoContainer(placement) {
     switch (placement) {
       case 'product':
-        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER);
+        return document.querySelector(
+          SELECTORS.PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER
+        );
       case 'cart':
-        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_CART_CONTAINER);
+        return document.querySelector(
+          SELECTORS.PAYMENT_METHOD_LOGO_CART_CONTAINER
+        );
       default:
         return;
     }

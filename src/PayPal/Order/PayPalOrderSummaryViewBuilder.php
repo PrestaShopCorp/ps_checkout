@@ -117,6 +117,10 @@ class PayPalOrderSummaryViewBuilder
             $orderPayPal = [];
         }
 
+        if ($orderPayPal === false) {
+            throw new PsCheckoutException('Unable to retrieve PayPal order data');
+        }
+
         $orderPayPalDataProvider = new PaypalOrderDataProvider($orderPayPal, $payPalOrder);
         $checkoutDataProvider = new PsCheckoutDataProvider($psCheckoutCart);
 
