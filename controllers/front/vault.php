@@ -100,8 +100,4 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
             $this->exitWithExceptionMessage($exception);
         }
     }
-
-    private function deleteToken()
-    {
-    }
 }
