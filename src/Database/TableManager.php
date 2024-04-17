@@ -92,7 +92,6 @@ class TableManager
             `is_card_fields` tinyint(1) NOT NULL,
             `is_express_checkout` tinyint(1) NOT NULL,
             `customer_intent` varchar(50),
-            `customer_intent` varchar(50),
             `payment_token_id` varchar(50),
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
