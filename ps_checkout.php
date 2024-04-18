@@ -827,8 +827,9 @@ class Ps_checkout extends PaymentModule
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
+        $controller = Tools::getValue('controller');
 
-        if ('AdminPayment' === Tools::getValue('controller')) {
+        if ('AdminPayment' === $controller) {
             $this->context->controller->addCss(
                 $this->_path . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion(),
                 'all',
@@ -837,7 +838,7 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        if ('AdminCountries' === Tools::getValue('controller')) {
+        if ('AdminCountries' === $controller) {
             $this->context->controller->addCss(
                 $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
                 'all',
@@ -846,7 +847,7 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        if ('AdminCurrencies' === Tools::getValue('controller')) {
+        if ('AdminCurrencies' === $controller) {
             $this->context->controller->addCss(
                 $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
                 'all',
@@ -855,7 +856,7 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        if ('AdminOrders' === Tools::getValue('controller') || 'AdminOrders' === Tools::getValue('tab')) {
+        if ('AdminOrders' === $controller || 'AdminOrders' === Tools::getValue('tab')) {
             $this->context->controller->addJS(
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $version->getSemVersion(),
                 false
