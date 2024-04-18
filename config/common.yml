@@ -440,3 +440,11 @@ services:
       - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
       - '@PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider'
+
+  PrestaShop\Module\PrestashopCheckout\Provider\PaymentOptionProvider:
+    class: 'PrestaShop\Module\PrestashopCheckout\Provider\PaymentOptionProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.module'
+      - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'

@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
@@ -89,7 +90,7 @@ class FundingSourceProvider
      *
      * @return FundingSource[]
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PsCheckoutException
      */
     public function getSavedTokens($customerId)
     {
