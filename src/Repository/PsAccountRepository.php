@@ -33,7 +33,6 @@ class PsAccountRepository
     private $psAccountsService;
 
     /**
-     * @param PrestaShopConfiguration $configuration
      * @param PsAccounts $psAccountsFacade
      */
     public function __construct(PsAccounts $psAccountsFacade)

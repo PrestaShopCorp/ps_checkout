@@ -25,13 +25,13 @@ use Ps_checkout;
 class PaymentMethodLogoProvider
 {
     /**
-     * @var Ps_checkout
+     * @var string
      */
-    private $module;
+    private $modulePathUri;
 
-    public function __construct(Ps_checkout $module)
+    public function __construct($modulePathUri)
     {
-        $this->module = $module;
+        $this->modulePathUri = $modulePathUri;
     }
 
     /**
@@ -46,26 +46,26 @@ class PaymentMethodLogoProvider
         if ($paymentSourceName === 'card' && isset($paymentSource['card']['brand'])) {
             switch ($paymentSource['card']['brand']) {
                 case 'CB_NATIONALE':
-                    return $this->module->getPathUri() . 'views/img/cb.svg';
+                    return $this->modulePathUri . 'views/img/cb.svg';
                 case 'VISA':
-                    return $this->module->getPathUri() . 'views/img/visa.svg';
+                    return $this->modulePathUri . 'views/img/visa.svg';
                 case 'MASTERCARD':
-                    return $this->module->getPathUri() . 'views/img/mastercard.svg';
+                    return $this->modulePathUri . 'views/img/mastercard.svg';
                 case 'AMEX':
-                    return $this->module->getPathUri() . 'views/img/amex.svg';
+                    return $this->modulePathUri . 'views/img/amex.svg';
                 case 'DISCOVER':
-                    return $this->module->getPathUri() . 'views/img/discover.svg';
+                    return $this->modulePathUri . 'views/img/discover.svg';
                 case 'JCB':
-                    return $this->module->getPathUri() . 'views/img/jcb.svg';
+                    return $this->modulePathUri . 'views/img/jcb.svg';
                 case 'DINERS':
-                    return $this->module->getPathUri() . 'views/img/diners.svg';
+                    return $this->modulePathUri . 'views/img/diners.svg';
                 case 'UNIONPAY':
-                    return $this->module->getPathUri() . 'views/img/unionpay.svg';
+                    return $this->modulePathUri . 'views/img/unionpay.svg';
                 case 'MAESTRO':
-                    return $this->module->getPathUri() . 'views/img/maestro.svg';
+                    return $this->modulePathUri . 'views/img/maestro.svg';
             }
         }
 
-        return $this->module->getPathUri() . 'views/img/' . $paymentSourceName . '.svg';
+        return $this->modulePathUri . 'views/img/' . $paymentSourceName . '.svg';
     }
 }

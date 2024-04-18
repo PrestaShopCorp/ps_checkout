@@ -81,6 +81,7 @@ class PayPalSdkConfigurationBuilder
 
     /**
      * @param \Ps_checkout $module
+     * @param Env $env
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository

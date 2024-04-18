@@ -42,25 +42,33 @@ class OrderPresenter
      * @var FundingSourceTranslationProvider
      */
     private $fundingSourceTranslationProvider;
+    /**
+     * @var PaymentMethodLogoProvider
+     */
+    private $paymentMethodLogoProvider;
 
     /**
      * @param Ps_checkout $module
-     * @param array $orderPayPal
+     * @param FundingSourceTranslationProvider $fundingSourceTranslationProvider
+     * @param PaymentMethodLogoProvider $paymentMethodLogoProvider
      */
-    public function __construct(Ps_checkout $module, array $orderPayPal)
-    {
+    public function __construct(
+        Ps_checkout $module,
+        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        PaymentMethodLogoProvider $paymentMethodLogoProvider
+    ) {
         $this->module = $module;
-        $this->orderPayPal = $orderPayPal;
-        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->paymentMethodLogoProvider = $paymentMethodLogoProvider;
     }
 
     /**
      * @return array
      */
-    public function present()
+    public function present(array $orderPayPal)
     {
+        $this->orderPayPal = $orderPayPal;
+
         if (empty($this->orderPayPal)) {
             return [];
         }
@@ -272,7 +280,7 @@ class OrderPresenter
                 continue;
             }
 
-            $total += (float) $purchase['amount']['value'];
+            $total += (float)$purchase['amount']['value'];
             $currency = $purchase['amount']['currency_code'];
         }
 
@@ -382,7 +390,7 @@ class OrderPresenter
     private function getPaymentSourceLogo(array $orderPayPal)
     {
         if (isset($orderPayPal['payment_source'])) {
-            return (new PaymentMethodLogoProvider($this->module))->getLogoByPaymentSource($orderPayPal['payment_source']);
+            return $this->paymentMethodLogoProvider->getLogoByPaymentSource($orderPayPal['payment_source']);
         }
 
         return '';

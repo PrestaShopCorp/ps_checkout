@@ -55,7 +55,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
-      - '@ps_checkout.bus.command'
+      - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
 
   PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber:
@@ -423,7 +423,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider'
     public: true
     arguments:
-      - '@ps_checkout.module'
+      - '@=service("ps_checkout.module").getPathUri()'
 
   PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher:
     class: 'PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher'
@@ -432,3 +432,11 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@ps_checkout.logger'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+
+  PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter'
+    public: true
+    arguments:
+      - '@ps_checkout.module'
+      - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
+      - '@PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider'
