@@ -28,26 +28,26 @@
  *}
 <form id="ps_checkout-vault-token-form-{$paymentIdentifier}" class="form-horizontal ps_checkout-vault-token-form">
   <div>
-    <p class="ps_checkout-token-explanation">
+    <span class="ps_checkout-token-explanation">
       {if $isFavorite}
         {l s='This payment method has been saved to your account and defined as favorite for future purchases.' mod='ps_checkout'}
       {else}
         {l s='This payment method has been saved to your account.' mod='ps_checkout'}
       {/if}
-    </p>
+    </span>
   </div>
   <div>
     <button type="button" id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</button>
   </div>
-  <div>
-    {if !$isFavorite}
-      <label for="ps_checkout-favorite-payment-{$paymentIdentifier}">
-        <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
-        {l s='Make this my preferred payment method' mod='ps_checkout'}
-      </label>
-    {/if}
-    <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
-    <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">
-    <input type="hidden" name="ps_checkout-vault-label-{$paymentIdentifier}" value="{$label}">
+  {if !$isFavorite}
+  <div class="ps_checkout-favorite-payment">
+    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" >
+      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
+      {l s='Make this my preferred payment method' mod='ps_checkout'}
+    </label>
   </div>
+  {/if}
+  <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
+  <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">
+  <input type="hidden" name="ps_checkout-vault-label-{$paymentIdentifier}" value="{$label}">
 </form>

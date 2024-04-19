@@ -27,14 +27,14 @@
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
 <div class="ps_checkout-vault-payment-container-{$paymentIdentifier} ps_checkout-vault-fields">
-  <div class="col-xs-12">
+  <div>
     <label for="ps_checkout-vault-payment-{$paymentIdentifier}" class="ps_checkout-vault-label">
       <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$paymentIdentifier}" id="ps_checkout-vault-payment-{$paymentIdentifier}">
       {l s='Securely store payment details for future purchases' mod='ps_checkout'}
       <img src="{$lockIcon}" alt="lock" width="15" height="15">
     </label>
   </div>
-  <div class="col-xs-12">
+  <div>
     <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" class="ps_checkout-vault-label">
       <input type="checkbox" disabled value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
       {if $paymentIdentifier=='card'}

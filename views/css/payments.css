@@ -420,14 +420,10 @@
   margin-top: 6px;
 }
 
-#ps_checkout-card-fields-form label,
-label[for="ps_checkout-hosted-fields-card-cvv"] {
-  white-space: nowrap;
-}
-
 .ps_checkout-payment-option span.custom-radio {
   float: none !important;
-  margin-right: 1.0rem !important;
+  /*TODO: Check if this margin is needed*/
+  /*margin-right: 1rem !important;*/
 }
 
 .ps_checkout-payment-option label {
@@ -437,6 +433,10 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 .ps_checkout-vault-fields .ps_checkout-vault-label {
   text-align: left;
+  white-space: normal;
+}
+.ps_checkout-vault-fields, .ps_checkout-favorite-payment{
+  margin-bottom: 1rem;
 }
 
 .ps_checkout-vault-token-form .ps_checkout-token-explanation {
