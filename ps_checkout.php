@@ -1679,8 +1679,9 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionObjectShopDeleteAfter(array $params)
     {
-        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
-        $toggleShopConfigurationCommandHandler->handle(
+        /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+        $commandBus = $this->getService('ps_checkout.bus.command');
+        $commandBus->handle(
             new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
                 (int) Configuration::get('PS_SHOP_DEFAULT'),
                 (bool) Shop::isFeatureActive()
