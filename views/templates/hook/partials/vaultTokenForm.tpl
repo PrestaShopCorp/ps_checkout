@@ -28,7 +28,7 @@
  *}
 <form id="ps_checkout-vault-token-form-{$paymentIdentifier}" class="form-horizontal ps_checkout-vault-token-form">
   <div>
-    <p>
+    <p class="ps_checkout-token-explanation">
       {if $isFavorite}
         {l s='This payment method has been saved to your account and defined as favorite for future purchases.' mod='ps_checkout'}
       {else}

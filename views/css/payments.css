@@ -435,6 +435,14 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   line-height: 2.5;
 }
 
+.ps_checkout-vault-fields .ps_checkout-vault-label {
+  text-align: left;
+}
+
+.ps_checkout-vault-token-form .ps_checkout-token-explanation {
+font-size: 0.75rem;
+}
+
 .js-payment-ps_checkout.disabled .ps_checkout-button[data-funding-source="card"] button:disabled {
   /*TODO: This causes the button to be seen as not disabled on hummingbird. Do we keep it?*/
   /*opacity: initial;*/
