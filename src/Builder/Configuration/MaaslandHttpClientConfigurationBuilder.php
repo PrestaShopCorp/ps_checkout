@@ -41,7 +41,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     /**
      * @var Env
      */
-    private $paymentEnv;
+    private $env;
 
     /**
      * @var Router
@@ -74,7 +74,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     private $logger;
 
     public function __construct(
-        Env $paymentEnv,
+        Env $env,
         Router $router,
         ShopContext $shopContext,
         PsAccountRepository $psAccountRepository,
@@ -82,7 +82,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
         LoggerConfiguration $loggerConfiguration,
         LoggerInterface $logger
     ) {
-        $this->paymentEnv = $paymentEnv;
+        $this->env = $env;
         $this->router = $router;
         $this->shopContext = $shopContext;
         $this->psAccountRepository = $psAccountRepository;
@@ -97,7 +97,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     public function build()
     {
         $configuration = [
-            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
+            'base_url' => $this->env->getPaymentApiUrl(),
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
