@@ -211,7 +211,7 @@ export class PaymentTokenComponent extends BaseComponent {
 
   render() {
     this.renderButton();
-    this.renderFavoriteImg();
+    // this.renderFavoriteImg();
     return this;
   }
 

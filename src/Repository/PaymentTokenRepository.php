@@ -101,8 +101,8 @@ class PaymentTokenRepository
             $query->from(PaymentToken::TABLE, 't');
             $query->leftJoin('pscheckout_customer', 'c', 't.`paypal_customer_id` = c.`paypal_customer_id`');
             $query->where(sprintf('c.`id_customer` = %d', (int) $psCustomerId));
-            $query->orderBy('t.`is_favorite` DESC');
-            $query->orderBy('t.`id` DESC');
+//            $query->orderBy('t.`is_favorite` DESC');
+            $query->orderBy('t.`id` ASC');
 
             if ($merchantId) {
                 $query->where(sprintf('t.`merchant_id` = "%s"', pSQL($merchantId)));

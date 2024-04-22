@@ -34,24 +34,24 @@
       <img src="{$lockIcon}" alt="lock" width="15" height="15">
     </label>
   </div>
-  <div>
-    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" class="ps_checkout-vault-label">
-      <input type="checkbox" disabled value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
-      {if $paymentIdentifier=='card'}
-        {l s='Make this card favorite / default ' mod='ps_checkout'}
-      {else}
-        {l s='Make this account favorite / default ' mod='ps_checkout'}
-      {/if}
-    </label>
-  </div>
-  <script>
-    const vaultCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-vault-payment-{$paymentIdentifier}');
-    const favoriteCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-favorite-payment-{$paymentIdentifier}');
-    vaultCheckbox{$paymentIdentifier}.addEventListener('change', (event) => {
-      if (!event.target.checked) {
-        favoriteCheckbox{$paymentIdentifier}.checked = false;
-      }
-      favoriteCheckbox{$paymentIdentifier}.toggleAttribute('disabled', !event.target.checked);
-    });
-  </script>
+{*  <div>*}
+{*    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" class="ps_checkout-vault-label">*}
+{*      <input type="checkbox" disabled value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">*}
+{*      {if $paymentIdentifier=='card'}*}
+{*        {l s='Make this card favorite / default ' mod='ps_checkout'}*}
+{*      {else}*}
+{*        {l s='Make this account favorite / default ' mod='ps_checkout'}*}
+{*      {/if}*}
+{*    </label>*}
+{*  </div>*}
+{*  <script>*}
+{*    const vaultCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-vault-payment-{$paymentIdentifier}');*}
+{*    const favoriteCheckbox{$paymentIdentifier} = document.getElementById('ps_checkout-favorite-payment-{$paymentIdentifier}');*}
+{*    vaultCheckbox{$paymentIdentifier}.addEventListener('change', (event) => {*}
+{*      if (!event.target.checked) {*}
+{*        favoriteCheckbox{$paymentIdentifier}.checked = false;*}
+{*      }*}
+{*      favoriteCheckbox{$paymentIdentifier}.toggleAttribute('disabled', !event.target.checked);*}
+{*    });*}
+{*  </script>*}
 </div>

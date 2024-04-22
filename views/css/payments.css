@@ -420,6 +420,10 @@
   margin-top: 6px;
 }
 
+#ps_checkout-card-fields-form label[for="ps_checkout-hosted-fields-card-cvv"] {
+  white-space: nowrap;
+}
+
 .ps_checkout-payment-option span.custom-radio {
   float: none !important;
   /*TODO: Check if this margin is needed*/

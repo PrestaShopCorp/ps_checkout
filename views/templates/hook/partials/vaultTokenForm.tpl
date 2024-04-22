@@ -39,14 +39,14 @@
   <div>
     <button type="button" id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</button>
   </div>
-  {if !$isFavorite}
-  <div class="ps_checkout-favorite-payment">
-    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" >
-      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">
-      {l s='Make this my preferred payment method' mod='ps_checkout'}
-    </label>
-  </div>
-  {/if}
+{*  {if !$isFavorite}*}
+{*  <div class="ps_checkout-favorite-payment">*}
+{*    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}" >*}
+{*      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}" id="ps_checkout-favorite-payment-{$paymentIdentifier}">*}
+{*      {l s='Make this my preferred payment method' mod='ps_checkout'}*}
+{*    </label>*}
+{*  </div>*}
+{*  {/if}*}
   <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
   <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">
   <input type="hidden" name="ps_checkout-vault-label-{$paymentIdentifier}" value="{$label}">
