@@ -46,6 +46,8 @@ class Ps_checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
         'displayOrderDetail',
+        'actionOrderSlipAdd',
+        'displayPDFOrderSlip',
     ];
 
     /**
@@ -1686,5 +1688,83 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
+    }
+
+    /**
+     * Refund based on OrderSlip
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
+     *
+     * @return void
+     */
+    public function hookActionOrderSlipAdd(array $params)
+    {
+        try {
+            /** @var Order $order */
+            $order = $params['order'];
+            if (!Validate::isLoadedObject($order)) {
+                throw new \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException('Unable to get the Order from params');
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->getService('ps_checkout.bus.command');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQueryResult $getPayPalRefundQueryResult */
+            $getPayPalRefundQueryResult = $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQuery(
+                $order
+            ));
+
+            $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand(
+                $getPayPalRefundQueryResult->getPayPalOrderId(),
+                $getPayPalRefundQueryResult->getPayPalCaptureId(),
+                $getPayPalRefundQueryResult->getCurrencyIsoCode(),
+                sprintf('%01.2F', $getPayPalRefundQueryResult->getAmount())
+            ));
+        } catch (Exception $exception) {
+            // Do not break the Admin process if an exception is thrown
+            $this->getLogger()->error(__FUNCTION__, [
+                'exception' => $exception,
+            ]);
+        }
+    }
+
+    /**
+     * Add content to the PDF OrderSlip.
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderSlip} $params
+     *
+     * @return string
+     */
+    public function hookDisplayPDFOrderSlip(array $params)
+    {
+        try {
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->getService('ps_checkout.bus.command');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundForPDFOrderSlipQueryResult $getPayPalRefundForPDFOrderSlipQueryResult */
+            $getPayPalRefundForPDFOrderSlipQueryResult = $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundForPDFOrderSlipQuery(
+                $params['object']
+            ));
+
+            $this->context->smarty->assign([
+                'refund_id' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundId(),
+                'refund_amount' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundAmount(),
+                'refund_currency' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundCurrency(),
+                'refund_currency_id' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundCurrencyId(),
+                'refund_status' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundStatus(),
+                'refund_note_to_payer' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundNote(),
+                'refund_create_time' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundCreateTime(),
+                'refund_update_time' => $getPayPalRefundForPDFOrderSlipQueryResult->getPaypalRefundUpdateTime(),
+            ]);
+
+            return $this->display(__FILE__, 'views/templates/hook/displayPDFOrderSlip.tpl');
+        } catch (Exception $exception) {
+            // Do not break the Admin process if an exception is thrown
+            $this->getLogger()->error(__FUNCTION__, [
+                'exception' => $exception,
+            ]);
+
+            return '';
+        }
     }
 }

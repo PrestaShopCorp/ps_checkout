@@ -63,6 +63,11 @@ class GetOrderForPaymentRefundedQueryResult
     private $currencyId;
 
     /**
+     * @var int[]
+     */
+    private $orderStateIdHistory;
+
+    /**
      * @param int $orderId
      * @param int $currentStateId
      * @param bool $hasBeenPaid
@@ -70,6 +75,7 @@ class GetOrderForPaymentRefundedQueryResult
      * @param string $totalAmount
      * @param string $totalRefund
      * @param int $currencyId
+     * @param int[] $orderStateIdHistory
      *
      * @throws OrderException
      * @throws OrderStateException
@@ -81,7 +87,8 @@ class GetOrderForPaymentRefundedQueryResult
         $hasBeenTotallyRefund,
         $totalAmount,
         $totalRefund,
-        $currencyId
+        $currencyId,
+        array $orderStateIdHistory = []
     ) {
         $this->orderId = new OrderId($orderId);
         $this->currentStateId = new OrderStateId($currentStateId);
@@ -90,6 +97,7 @@ class GetOrderForPaymentRefundedQueryResult
         $this->totalAmount = $totalAmount;
         $this->totalRefund = $totalRefund;
         $this->currencyId = $currencyId;
+        $this->orderStateIdHistory = $orderStateIdHistory;
     }
 
     /**
@@ -146,5 +154,13 @@ class GetOrderForPaymentRefundedQueryResult
     public function getCurrencyId()
     {
         return $this->currencyId;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getOrderStateIdHistory()
+    {
+        return $this->orderStateIdHistory;
     }
 }
