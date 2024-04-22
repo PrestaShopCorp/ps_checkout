@@ -929,9 +929,6 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository $paymentTokenRepository */
-        $paymentTokenRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository::class);
-
         $advancedCheckoutEligibility = new \PrestaShop\Module\PrestashopCheckout\PayPal\AdvancedCheckoutEligibility();
         $supportedCardBrands = $advancedCheckoutEligibility->getSupportedCardBrands();
 

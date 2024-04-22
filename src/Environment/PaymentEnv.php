@@ -87,4 +87,18 @@ class PaymentEnv extends Env
     {
         $this->checkoutApiUrl = $checkoutApiUrl;
     }
+
+    /**
+     * @return string
+     */
+    public function getBnCode()
+    {
+        $bnCode = $this->getEnv('PAYPAL_BN_CODE');
+
+        if (empty($bnCode)) {
+            $bnCode = 'PrestaShop_Cart_PSXO_PSDownload';
+        }
+
+        return $bnCode;
+    }
 }

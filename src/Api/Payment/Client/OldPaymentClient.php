@@ -69,6 +69,9 @@ class OldPaymentClient extends GenericClient
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
+            /** @var ShopContext $shopContext */
+            $shopContext = $module->getService(ShopContext::class);
+
             /** @var Router $router */
             $router = $module->getService(Router::class);
 
@@ -83,7 +86,7 @@ class OldPaymentClient extends GenericClient
                     'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
                     'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
                     'Hook-Url' => $router->getDispatchWebhookLink((int) Context::getContext()->shop->id),
-                    'Bn-Code' => (new ShopContext())->getBnCode(),
+                    'Bn-Code' => $shopContext->getBnCode(),
                     'Module-Version' => $version->getSemVersion(), // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],

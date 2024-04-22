@@ -20,11 +20,23 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+
 /**
  * Get the shop context
  */
 class ShopContext
 {
+    /**
+     * @var PaymentEnv
+     */
+    private $paymentEnv;
+
+    public function __construct(PaymentEnv $paymentEnv)
+    {
+        $this->paymentEnv = $paymentEnv;
+    }
+
     /**
      * Check if the module is installed on ready or download
      *
@@ -43,13 +55,11 @@ class ShopContext
      */
     public function getBnCode()
     {
-        $bnCode = 'PrestaShop_Cart_PSXO_PSDownload';
-
         if ($this->isReady()) { // if on ready send an empty bn-code
-            $bnCode = '';
+            return '';
         }
 
-        return $bnCode;
+        return $this->paymentEnv->getBnCode();
     }
 
     public function isShop17()

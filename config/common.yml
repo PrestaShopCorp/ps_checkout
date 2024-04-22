@@ -186,6 +186,8 @@ services:
   PrestaShop\Module\PrestashopCheckout\ShopContext:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
     public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
 
   PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
