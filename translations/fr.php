@@ -66,7 +66,7 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_f92103c13c44bded222d124f5b9743
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
-$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité est un code à';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Je valide ma commande';
@@ -90,7 +90,7 @@ $_MODULE['<{ps_checkout}prestashop>cardfields_2c2aaf0b855bf6d000b350c69acd2e78']
 $_MODULE['<{ps_checkout}prestashop>cardfields_462256f533f152fa6b05baabb7919473'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>cardfields_5284be11230ea808cbcb2bfa117eef0e'] = 'Date d\'expiration de la carte invalide.';
 $_MODULE['<{ps_checkout}prestashop>cardfields_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
-$_MODULE['<{ps_checkout}prestashop>cardfields_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>cardfields_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité est un code à';
 $_MODULE['<{ps_checkout}prestashop>cardfields_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
 $_MODULE['<{ps_checkout}prestashop>cardfields_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>cardfields_43da12b692a051ce433c2877b61d4c67'] = 'Code de sécurité invalide.';
