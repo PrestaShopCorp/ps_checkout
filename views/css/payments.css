@@ -420,7 +420,7 @@
   margin-top: 6px;
 }
 
-#ps_checkout-card-fields-form label[for="ps_checkout-hosted-fields-card-cvv"] {
+#ps_checkout-card-fields-form label[for="ps_checkout-card-fields-cvv"] {
   white-space: nowrap;
 }
 
