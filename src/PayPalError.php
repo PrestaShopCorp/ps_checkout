@@ -346,6 +346,8 @@ class PayPalError
                 throw new PayPalException('We can\'t process any refund at this moment due to technical reasons. Please try again later.', PayPalException::CANNOT_PROCESS_REFUNDS, $previous);
             case 'INVALID_REFUND_AMOUNT':
                 throw new PayPalException('The refund amount is invalid. Please check the refund amount and try again.', PayPalException::INVALID_REFUND_AMOUNT, $previous);
+            case 'NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE':
+                throw new PayPalException('The API Caller account is not setup to be able to vault payment sources. Please contact PayPal customer support.', PayPalException::NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE, $previous);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN, $previous);
         }

@@ -173,4 +173,5 @@ class PayPalException extends PsCheckoutException
     const PERMISSION_DENIED_FOR_DONATION_ITEMS = 148;
     const MALFORMED_REQUEST_JSON = 149;
     const PAYPAL_REQUEST_ID_REQUIRED = 150;
+    const NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE = 151;
 }
