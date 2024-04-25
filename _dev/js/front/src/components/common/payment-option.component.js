@@ -88,6 +88,25 @@ export class PaymentOptionComponent extends BaseComponent {
     return document.getElementById(container);
   }
 
+  getFormData(form) {
+    if (form) {
+      const name = form.id.startsWith('ps_checkout-vault-token-form-token')
+        ? form.id.replace('ps_checkout-vault-token-form-', '')
+        : '';
+
+      const formData = new FormData(form);
+      return {
+        fundingSource: formData.get(
+          `ps_checkout-funding-source-${name}`
+        ),
+        vaultId: formData.get(`ps_checkout-vault-id-${name}`),
+        favorite:
+          formData.get(`ps_checkout-favorite-payment-${name}`) === '1'
+      };
+    }
+    return {};
+  }
+
   getLabel() {
     const translationKey = `funding-source.name.${this.data.name}`;
     const label =
@@ -195,13 +214,21 @@ export class PaymentOptionComponent extends BaseComponent {
       this.data.HTMLElementCardFields.style.display = 'none';
     }
 
-    if (this.props.fundingSource.name.includes('token')) {
+    const paymentOptionForm = this.getPaymentForm();
+    const formData = this.getFormData(paymentOptionForm.getElementsByTagName('form')[0]);
+    const { vaultId } = formData
+
+    if (
+      this.props.fundingSource.name.includes('token') ||
+      (this.props.fundingSource.name.includes('paypal') && vaultId)
+    ) {
       this.children.paymentToken = new PaymentTokenComponent(this.app, {
         fundingSource: this.props.fundingSource,
         HTMLElement: this.data.HTMLElementSmartButton,
         HTMLElementRadio: this.data.HTMLElement,
         HTMLElementContainer: this.data.HTMLElementContainer,
-        HTMLElementForm: this.getPaymentForm(),
+        HTMLElementForm: paymentOptionForm,
+        HTMLElementFormData: formData,
         HTMLElementLabel: this.data.HTMLElementLabel
       }).render();
     } else if (

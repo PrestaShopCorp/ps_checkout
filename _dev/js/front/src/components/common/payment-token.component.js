@@ -48,6 +48,7 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementRadio = this.props.HTMLElementRadio;
     this.data.HTMLElementContainer = this.props.HTMLElementContainer;
     this.data.HTMLElementForm = this.props.HTMLElementForm;
+    this.data.HTMLElementFormData = this.props.HTMLElementFormData;
 
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.loader = this.app.root.children.loader;
@@ -71,6 +72,8 @@ export class PaymentTokenComponent extends BaseComponent {
       paymentLabel.innerText = this.getPaymentLabel();
       modalContent.append(line1, paymentLabel);
 
+      const myThis = this;
+
       this.data.modal = new ModalComponent(this.app, {
         icon: 'delete_forever_fill',
         iconType: 'danger',
@@ -81,13 +84,17 @@ export class PaymentTokenComponent extends BaseComponent {
         ),
         confirmType: 'danger',
         onClose: () => {
-          this.data.HTMLElementButton.removeAttribute('disabled');
+          if (myThis.data.HTMLElementButton) {
+            myThis.data.HTMLElementButton.removeAttribute('disabled');
+          }
         },
         onCancel: () => {
-          this.data.HTMLElementButton.removeAttribute('disabled');
+          if (myThis.data.HTMLElementButton) {
+            myThis.data.HTMLElementButton.removeAttribute('disabled');
+          }
         },
         onConfirm: () => {
-          this.onDeleteConfirm();
+          myThis.onDeleteConfirm();
         }
       }).render();
     }
@@ -95,7 +102,7 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   onDeleteConfirm() {
-    const { vaultId, fundingSource } = this.getVaultFormData();
+    const { vaultId, fundingSource } = this.data.HTMLElementFormData;
     const loader = new LoaderComponent(this.app, {
       text: this.$('checkout.payment.loader.processing-request')
     }).render();
@@ -121,7 +128,7 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   getDeleteButton() {
-    const button = document.querySelector(`#delete-${this.data.name}`);
+    const button = document.querySelector(`#delete-token-${this.data.HTMLElementFormData.vaultId}`);
 
     if (button) {
       button.addEventListener('click', (event) => {
@@ -147,7 +154,35 @@ export class PaymentTokenComponent extends BaseComponent {
   handleError(error) {
     this.data.loader.hide();
     this.data.notification.showError(error.message);
-    this.data.HTMLElementButton.removeAttribute('disabled');
+
+    if (this.data.HTMLElementButton) {
+      this.data.HTMLElementButton.removeAttribute('disabled');
+    }
+
+    let errorMessage = error;
+
+    if (error instanceof Error) {
+      if (error.message) {
+        errorMessage = error.message;
+
+        if (
+          error.message.includes('CURRENCY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')
+        ) {
+          errorMessage =
+            'Provided currency is not supported by the selected payment method.';
+        } else if (
+          error.message.includes('COUNTRY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')
+        ) {
+          errorMessage =
+            'Provided country is not supported by the selected payment method.';
+        } else if (error.message.includes('Detected popup close')) {
+          errorMessage =
+            'The payment failed because the payment window has been closed before the end of the payment process.';
+        }
+      }
+    }
+
+    return errorMessage;
   }
 
   getPaymentLabel() {
@@ -181,7 +216,7 @@ export class PaymentTokenComponent extends BaseComponent {
 
   createOrder() {
     this.psCheckoutApi
-      .postCreateOrder(this.getVaultFormData())
+      .postCreateOrder(this.data.HTMLElementFormData)
       .then((data) => {
         this.data.orderId = data;
         this.redirectToPaymentPage();
@@ -355,7 +390,7 @@ export class PaymentTokenComponent extends BaseComponent {
         createOrder: (data) => {
           return this.psCheckoutApi
             .postCreateOrder({
-              ...this.getVaultFormData(),
+              ...this.data.HTMLElementFormData,
               ...data,
               fundingSource: this.data.name,
               isExpressCheckout: this.config.expressCheckout.active
@@ -376,7 +411,7 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   render() {
-    const { fundingSource } = this.getVaultFormData();
+    const { fundingSource } = this.data.HTMLElementFormData;
     if (fundingSource === 'paypal') {
       this.renderPayPalButton();
     } else {
