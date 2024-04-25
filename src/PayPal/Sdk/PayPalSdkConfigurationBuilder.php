@@ -145,7 +145,7 @@ class PayPalSdkConfigurationBuilder
             'dataCspNonce' => $this->configuration->getCSPNonce(),
         ];
 
-        if ($this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
+        if ($this->configuration->isVaultingEnabled() && $this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
             try {
                 /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
                 $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
