@@ -59,8 +59,10 @@ class LinkAdapter
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         $shop = \Context::getContext()->shop;
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
         /** @var ShopContext $shopContext */
-        $shopContext = \Module::getInstanceByName('ps_checkout')->getService(ShopContext::class);
+        $shopContext = $module->getService(ShopContext::class);
 
         if ($shopContext->isShop17()) {
             $adminLink = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
