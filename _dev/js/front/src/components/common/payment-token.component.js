@@ -17,8 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
-import {ModalComponent} from "./modal.component";
-import {LoaderComponent} from "./loader.component";
+import { ModalComponent } from './modal.component';
+import { LoaderComponent } from './loader.component';
 
 /**
  * @typedef PaymentTokenComponentProps
@@ -42,6 +42,8 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.name = this.props.fundingSource.name;
     this.data.orderId = this.payPalService.getOrderId();
 
+    this.data.HTMLElement = this.props.HTMLElement;
+
     this.data.HTMLElementLabel = this.props.HTMLElementLabel;
     this.data.HTMLElementRadio = this.props.HTMLElementRadio;
     this.data.HTMLElementContainer = this.props.HTMLElementContainer;
@@ -50,7 +52,8 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.loader = this.app.root.children.loader;
     this.data.notification = this.app.root.children.notification;
-    this.data.HTMLElementBaseButton = this.querySelectorService.getBasePaymentConfirmation();
+    this.data.HTMLElementBaseButton =
+      this.querySelectorService.getBasePaymentConfirmation();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
     this.data.HTMLElementDeleteButton = this.getDeleteButton();
@@ -73,48 +76,65 @@ export class PaymentTokenComponent extends BaseComponent {
         iconType: 'danger',
         header: this.$('checkout.payment.token.delete.modal.header'),
         content: modalContent,
-        confirmText: this.$('checkout.payment.token.delete.modal.confirm-button'),
+        confirmText: this.$(
+          'checkout.payment.token.delete.modal.confirm-button'
+        ),
         confirmType: 'danger',
-        onClose: (() => {
+        onClose: () => {
           this.data.HTMLElementButton.removeAttribute('disabled');
-        }),
-        onCancel: (() => {
+        },
+        onCancel: () => {
           this.data.HTMLElementButton.removeAttribute('disabled');
-        }),
-        onConfirm: (() => {this.onDeleteConfirm()})
+        },
+        onConfirm: () => {
+          this.onDeleteConfirm();
+        }
       }).render();
     }
     this.data.modal.show();
   }
 
   onDeleteConfirm() {
-    const vaultId = this.getVaultFormData().vaultId;
-    const loader = new LoaderComponent(
-      this.app,
-      {text: this.$('checkout.payment.loader.processing-request')}
-    ).render();
+    const { vaultId, fundingSource } = this.getVaultFormData();
+    const loader = new LoaderComponent(this.app, {
+      text: this.$('checkout.payment.loader.processing-request')
+    }).render();
 
     loader.show();
-    this.psCheckoutApi.postDeleteVaultedToken({vaultId}).then(() => {
-      this.data.disabled = true;
-      this.data.HTMLElementRadio.checked = false;
-      this.data.HTMLElementContainer.remove();
-      this.data.HTMLElementForm.remove();
-      loader.destroy();
-    }).catch((error) => {
-      loader.destroy();
-      this.handleError(error);
-    });
+    this.psCheckoutApi
+      .postDeleteVaultedToken({ vaultId })
+      .then(() => {
+        this.data.disabled = true;
+        this.data.HTMLElementRadio.checked = false;
+        this.data.HTMLElementContainer.remove();
+        this.data.HTMLElementForm.remove();
+        if (fundingSource === 'paypal') {
+          window.location.reload();
+        } else {
+          loader.destroy();
+        }
+      })
+      .catch((error) => {
+        loader.destroy();
+        this.handleError(error);
+      });
   }
 
   getDeleteButton() {
     const button = document.querySelector(`#delete-${this.data.name}`);
 
-    button.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.data.HTMLElementButton.setAttribute('disabled', '');
-      this.showModal();
-    });
+    if (button) {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (this.data.HTMLElementButton) {
+          this.data.HTMLElementButton.setAttribute('disabled', '');
+        } else {
+          this.data.HTMLElement.setAttribute('disabled', '');
+        }
+
+        this.showModal();
+      });
+    }
 
     return button;
   }
@@ -131,7 +151,9 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   getPaymentLabel() {
-    const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
+    const form = document.querySelector(
+      `form#ps_checkout-vault-token-form-${this.data.name}`
+    );
     if (form) {
       const formData = new FormData(form);
       return formData.get(`ps_checkout-vault-label-${this.data.name}`);
@@ -140,20 +162,26 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   getVaultFormData() {
-    const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
+    const form = document.querySelector(
+      `form#ps_checkout-vault-token-form-${this.data.name}`
+    );
     if (form) {
       const formData = new FormData(form);
       return {
-        fundingSource: formData.get(`ps_checkout-funding-source-${this.data.name}`),
+        fundingSource: formData.get(
+          `ps_checkout-funding-source-${this.data.name}`
+        ),
         vaultId: formData.get(`ps_checkout-vault-id-${this.data.name}`),
-        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
+        favorite:
+          formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
       };
     }
     return {};
   }
 
   createOrder() {
-    this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
+    this.psCheckoutApi
+      .postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;
         this.redirectToPaymentPage();
@@ -177,12 +205,12 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementButton.disabled = !this.isSubmittable();
 
     this.data.conditions &&
-    this.data.conditions.onChange(() => {
-      // In some PS versions, the handler fails to disable the button because of the timing.
-      setTimeout(() => {
-        this.data.HTMLElementButton.disabled = !this.isSubmittable();
-      }, 0);
-    });
+      this.data.conditions.onChange(() => {
+        // In some PS versions, the handler fails to disable the button because of the timing.
+        setTimeout(() => {
+          this.data.HTMLElementButton.disabled = !this.isSubmittable();
+        }, 0);
+      });
 
     this.data.HTMLElementButton.addEventListener('click', (event) => {
       event.preventDefault();
@@ -195,7 +223,10 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   renderFavoriteImg() {
-    if (this.data.HTMLElementLabel && !document.getElementById(`ps_checkout-favorite-payment-${this.data.name}`)) {
+    if (
+      this.data.HTMLElementLabel &&
+      !document.getElementById(`ps_checkout-favorite-payment-${this.data.name}`)
+    ) {
       const img = document.createElement('img');
       img.classList.add('ps-checkout', 'icon-favorite');
       img.style.display = 'inline-block';
@@ -206,14 +237,152 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   isSubmittable() {
-    return (this.data.conditions ? this.data.conditions.isChecked() : false) && !this.data.disabled;
+    return (
+      (this.data.conditions ? this.data.conditions.isChecked() : false) &&
+      !this.data.disabled
+    );
+  }
+
+  renderPayPalButton() {
+    const buttonSelector = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
+
+    this.data.HTMLElement.classList.add('ps_checkout-button');
+    this.data.HTMLElement.setAttribute('data-funding-source', this.data.name);
+
+    return this.payPalService
+      .getButtonPayment('paypal', {
+        onInit: (data, actions) => {
+          if (!this.data.conditions) {
+            actions.enable();
+            return;
+          }
+
+          if (this.data.conditions.isChecked()) {
+            this.data.notification.hideConditions();
+            actions.enable();
+          } else {
+            this.data.notification.showConditions();
+            actions.disable();
+          }
+
+          this.data.conditions.onChange(() => {
+            if (this.data.conditions.isChecked()) {
+              this.data.notification.hideConditions();
+              actions.enable();
+            } else {
+              this.data.notification.showConditions();
+              actions.disable();
+            }
+          });
+        },
+        onClick: (data, actions) => {
+          if (this.data.conditions && !this.data.conditions.isChecked()) {
+            this.data.notification.hideCancelled();
+            this.data.notification.hideError();
+            this.data.notification.showConditions();
+
+            return actions.reject();
+          }
+
+          if (this.data.name !== 'card') {
+            this.data.loader.show();
+          }
+
+          return this.psCheckoutApi
+            .postCheckCartOrder(
+              {
+                ...data,
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active,
+                orderID: this.payPalService.getOrderId()
+              },
+              actions
+            )
+            .catch((error) => {
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
+              return actions.reject();
+            });
+        },
+        onError: (error) => {
+          let errorMessage = this.handleError(error);
+          console.error(error);
+          this.data.loader.hide();
+          this.data.notification.showError(errorMessage);
+
+          return this.psCheckoutApi
+            .postCancelOrder({
+              orderID: this.data.orderId,
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active,
+              reason: 'checkout_error',
+              error: errorMessage
+            })
+            .catch((error) => console.error(error));
+        },
+        onApprove: (data, actions) => {
+          this.data.loader.show();
+          return this.psCheckoutApi
+            .postValidateOrder(
+              {
+                ...data,
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active
+              },
+              actions
+            )
+            .catch((error) => {
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
+            });
+        },
+        onCancel: (data) => {
+          this.data.loader.hide();
+          this.data.notification.showCanceled();
+
+          return this.psCheckoutApi
+            .postCancelOrder({
+              ...data,
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active,
+              reason: 'checkout_cancelled'
+            })
+            .catch((error) => {
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
+            });
+        },
+        createOrder: (data) => {
+          return this.psCheckoutApi
+            .postCreateOrder({
+              ...this.getVaultFormData(),
+              ...data,
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active
+            })
+            .then((data) => {
+              this.data.orderId = data;
+              return data;
+            })
+            .catch((error) => {
+              this.data.loader.hide();
+              this.data.notification.showError(
+                `${error.message} ${error.name}`
+              );
+            });
+        }
+      })
+      .render(buttonSelector);
   }
 
   render() {
-    this.renderButton();
-    // this.renderFavoriteImg();
+    const { fundingSource } = this.getVaultFormData();
+    if (fundingSource === 'paypal') {
+      this.renderPayPalButton();
+    } else {
+      this.renderButton();
+      // this.renderFavoriteImg();
+    }
     return this;
   }
-
-
 }

@@ -20,10 +20,10 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 import { MarkComponent } from './marker.component';
 import { SmartButtonComponent } from './smart-button.component';
-import { PaymentFieldsComponent } from "./payment-fields.component";
-import {CardFieldsComponent} from "./card-fields.component";
-import {PS_VERSION_1_6} from "../../constants/ps-version.constants";
-import {PaymentTokenComponent} from "./payment-token.component";
+import { PaymentFieldsComponent } from './payment-fields.component';
+import { CardFieldsComponent } from './card-fields.component';
+import { PS_VERSION_1_6 } from '../../constants/ps-version.constants';
+import { PaymentTokenComponent } from './payment-token.component';
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -51,7 +51,8 @@ export class PaymentOptionComponent extends BaseComponent {
     this.data.HTMLElementLabel = this.getLabel();
     this.data.HTMLElementMark = this.props.HTMLElementMark || null;
 
-    this.data.HTMLElementCardFields =this.querySelectorService.getCardFieldsFormContainer();
+    this.data.HTMLElementCardFields =
+      this.querySelectorService.getCardFieldsFormContainer();
     this.data.HTMLElementSmartButton = this.getSmartButton();
     this.data.HTMLElementPaymentFields = this.getPaymentFields();
   }
@@ -63,16 +64,23 @@ export class PaymentOptionComponent extends BaseComponent {
 
   getPaymentFields() {
     const container = `pay-with-${this.data.HTMLElement.id}-form`;
-    const APM = ['bancontact', 'blik', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort'];
+    const APM = [
+      'bancontact',
+      'blik',
+      'eps',
+      'giropay',
+      'ideal',
+      'mybank',
+      'p24',
+      'sofort'
+    ];
 
-    const APMEligible = typeof this.payPalService.sdk.PaymentFields?.isEligible === "function" ?
-      this.payPalService.sdk.PaymentFields.isEligible(this.data.name)
-      : APM.includes(this.data.name)
+    const APMEligible =
+      typeof this.payPalService.sdk.PaymentFields?.isEligible === 'function'
+        ? this.payPalService.sdk.PaymentFields.isEligible(this.data.name)
+        : APM.includes(this.data.name);
 
-    return (
-      APMEligible &&
-      document.getElementById(container)
-    );
+    return APMEligible && document.getElementById(container);
   }
 
   getPaymentForm() {
@@ -90,8 +98,10 @@ export class PaymentOptionComponent extends BaseComponent {
     let element = Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
       .find(
-        item => (this.prestashopService.getVersion() === PS_VERSION_1_6 ? item.innerHTML.trim() : item.innerText.trim())
-          === label.trim()
+        (item) =>
+          (this.prestashopService.getVersion() === PS_VERSION_1_6
+            ? item.innerHTML.trim()
+            : item.innerText.trim()) === label.trim()
       );
 
     if (!element) {
@@ -107,7 +117,7 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   onLabelClick(listener) {
-    this.data.HTMLElementLabel.addEventListener('click', event => {
+    this.data.HTMLElementLabel.addEventListener('click', (event) => {
       event.preventDefault();
       listener(this, event);
     });
@@ -146,15 +156,20 @@ export class PaymentOptionComponent extends BaseComponent {
       return;
     }
 
-    this.children.PaymentFields = this.PaymentFields = new PaymentFieldsComponent(this.app, {
-      fundingSource: this.props.fundingSource,
+    this.children.PaymentFields = this.PaymentFields =
+      new PaymentFieldsComponent(this.app, {
+        fundingSource: this.props.fundingSource,
 
-      HTMLElement: this.data.HTMLElementPaymentFields
-    }).render();
+        HTMLElement: this.data.HTMLElementPaymentFields
+      }).render();
   }
 
   render() {
-    if (this.data.HTMLElementContainer.classList.contains('ps_checkout-payment-option')) {
+    if (
+      this.data.HTMLElementContainer.classList.contains(
+        'ps_checkout-payment-option'
+      )
+    ) {
       // Render already done
       return;
     }
@@ -165,26 +180,35 @@ export class PaymentOptionComponent extends BaseComponent {
 
     const isCardFieldsEligible = this.payPalService.isCardFieldsEligible();
     // Check if all fields required for cardFields are present in DOM
-    const isCardFieldsAvailable = this.data.name === 'card'
-      && this.config.hostedFieldsEnabled
-      && this.querySelectorService.getCardFieldsNameInputContainer()
-      && this.querySelectorService.getCardFieldsNumberInputContainer()
-      && this.querySelectorService.getCardFieldsExpiryInputContainer()
-      && this.querySelectorService.getCardFieldsCvvInputContainer();
+    const isCardFieldsAvailable =
+      this.data.name === 'card' &&
+      this.config.hostedFieldsEnabled &&
+      this.querySelectorService.getCardFieldsNameInputContainer() &&
+      this.querySelectorService.getCardFieldsNumberInputContainer() &&
+      this.querySelectorService.getCardFieldsExpiryInputContainer() &&
+      this.querySelectorService.getCardFieldsCvvInputContainer();
 
-    if (this.data.HTMLElementCardFields && (!isCardFieldsEligible || !isCardFieldsAvailable)) {
+    if (
+      this.data.HTMLElementCardFields &&
+      (!isCardFieldsEligible || !isCardFieldsAvailable)
+    ) {
       this.data.HTMLElementCardFields.style.display = 'none';
     }
 
     if (this.props.fundingSource.name.includes('token')) {
       this.children.paymentToken = new PaymentTokenComponent(this.app, {
         fundingSource: this.props.fundingSource,
+        HTMLElement: this.data.HTMLElementSmartButton,
         HTMLElementRadio: this.data.HTMLElement,
         HTMLElementContainer: this.data.HTMLElementContainer,
         HTMLElementForm: this.getPaymentForm(),
         HTMLElementLabel: this.data.HTMLElementLabel
       }).render();
-    } else if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
+    } else if (
+      this.data.HTMLElementCardFields &&
+      isCardFieldsEligible &&
+      isCardFieldsAvailable
+    ) {
       this.data.HTMLElementCardFields.style.display = '';
       this.children.cardFields = new CardFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,
@@ -204,9 +228,12 @@ export class PaymentOptionComponent extends BaseComponent {
           fundingSource: this.data.name,
           HTMLElement: this.data.HTMLElement,
           HTMLElementContainer: this.data.HTMLElementContainer,
-          HTMLElementBinary: this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable
-            ? this.children.cardFields.data.HTMLElementButton.parentElement
-            : this.data.HTMLElementSmartButton
+          HTMLElementBinary:
+            this.data.HTMLElementCardFields &&
+            isCardFieldsEligible &&
+            isCardFieldsAvailable
+              ? this.children.cardFields.data.HTMLElementButton.parentElement
+              : this.data.HTMLElementSmartButton
         }
       })
     );
