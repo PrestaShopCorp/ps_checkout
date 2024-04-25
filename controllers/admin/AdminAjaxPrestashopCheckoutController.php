@@ -1031,4 +1031,40 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         exit;
     }
+
+    public function ajaxProcessDownloadLogs()
+    {
+        $filename = Tools::getValue('file');
+
+        if (empty($filename) || false === Validate::isFileName($filename)) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'errors' => [
+                    'Filename is invalid.',
+                ],
+            ]);
+        }
+
+        /** @var LoggerDirectory $loggerDirectory */
+        $loggerDirectory = $this->module->getService(LoggerDirectory::class);
+
+        $file = new SplFileObject($loggerDirectory->getPath() . $filename);
+
+        if (false === $file->isReadable()) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'errors' => [
+                    'File is not readable.',
+                ],
+            ]);
+        }
+
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $filename . '.log"');
+        header('Content-Length: ' . $file->getSize());
+        readfile($file->getRealPath());
+        exit;
+    }
 }
