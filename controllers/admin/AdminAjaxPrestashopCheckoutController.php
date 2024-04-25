@@ -21,9 +21,12 @@
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
@@ -215,7 +218,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setOrderPage((bool) Tools::getValue('status'));
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        $this->updateExpressCheckoutSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -229,7 +232,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        $this->updateExpressCheckoutSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -243,9 +246,33 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        $this->updateExpressCheckoutSettings();
 
         $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * @return void
+     *
+     * @throws PayPalException
+     */
+    private function updateExpressCheckoutSettings()
+    {
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService(PrestaShopConfiguration::class);
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
+        /** @var MaaslandHttpClient $maaslandHttpClient */
+        $maaslandHttpClient = $this->module->getService(MaaslandHttpClient::class);
+
+        $maaslandHttpClient->updateSettings([
+            'settings' => [
+                'cb' => (bool)$configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                'express_in_product' => (bool)$ecConfiguration->isProductPageEnabled(),
+                'express_in_cart' => (bool)$ecConfiguration->isOrderPageEnabled(),
+                'express_in_checkout' => (bool)$ecConfiguration->isCheckoutPageEnabled(),
+            ],
+        ]);
     }
 
     /**

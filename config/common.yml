@@ -39,14 +39,8 @@ services:
   PrestaShop\Module\PrestashopCheckout\Environment\Env:
     class: 'PrestaShop\Module\PrestashopCheckout\Environment\Env'
     public: true
-
-  PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv:
-    class: 'PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
-    public: true
-
-  PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv:
-    class: 'PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv'
-    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
   ps_checkout.tactician.bus:
     class: 'League\Tactician\CommandBus'
@@ -114,7 +108,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
-      - '@ps_checkout.bus.command'
+      - '@ps_checkout.module'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
@@ -187,7 +181,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
 
   PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
@@ -235,6 +229,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'

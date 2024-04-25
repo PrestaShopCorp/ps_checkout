@@ -25,7 +25,9 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -180,5 +182,32 @@ class MaaslandHttpClient implements HttpClientInterface
         }
 
         return '';
+    }
+
+    /**
+     * Tells if the webhook came from the PSL
+     *
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function getShopSignature(array $payload, array $options = [])
+    {
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $options, json_encode($payload)));
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Used to notify PSL on settings update
+     *
+     * @return array
+     * @throws PayPalException
+     */
+    public function updateSettings(array $payload)
+    {
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/update_settings', [], json_encode($payload)));
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 }
