@@ -24,7 +24,7 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
@@ -74,6 +74,10 @@ class PayPalSdkConfigurationBuilder
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var Env
+     */
+    private $env;
 
     /**
      * @param \Ps_checkout $module
@@ -87,6 +91,7 @@ class PayPalSdkConfigurationBuilder
      */
     public function __construct(
         \Ps_checkout $module,
+        Env $env,
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
@@ -103,6 +108,7 @@ class PayPalSdkConfigurationBuilder
         $this->commandBus = $module->getService('ps_checkout.bus.command');
         $this->prestaShopContext = $prestaShopContext;
         $this->logger = $logger;
+        $this->env = $env;
     }
 
     /**
@@ -128,7 +134,7 @@ class PayPalSdkConfigurationBuilder
         }
 
         $params = [
-            'clientId' => (new PaypalEnv())->getPaypalClientId(),
+            'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->getMerchantId(),
             'currency' => $this->prestaShopContext->getCurrencyIsoCode(),
             'intent' => strtolower($this->configuration->getIntent()),

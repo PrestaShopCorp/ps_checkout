@@ -15,7 +15,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
       - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
@@ -38,7 +38,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
       - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'

@@ -26,7 +26,7 @@ use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
@@ -38,8 +38,8 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
 {
     const TIMEOUT = 10;
 
-    /** @var PaymentEnv */
-    private $paymentEnv;
+    /** @var Env */
+    private $env;
 
     /** @var Router */
     private $router;
@@ -64,7 +64,7 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
     private $logger;
 
     public function __construct(
-        PaymentEnv $paymentEnv,
+        Env $env,
         Router $router,
         ShopContext $shopContext,
         PsAccountRepository $psAccountRepository,
@@ -72,7 +72,7 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
         LoggerConfiguration $loggerConfiguration,
         LoggerInterface $logger
     ) {
-        $this->paymentEnv = $paymentEnv;
+        $this->env = $env;
         $this->router = $router;
         $this->shopContext = $shopContext;
         $this->psAccountRepository = $psAccountRepository;
@@ -87,7 +87,7 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
     public function build()
     {
         $configuration = [
-            'base_url' => $this->paymentEnv->getCheckoutApiUrl(),
+            'base_url' => $this->env->getCheckoutApiUrl(),
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [

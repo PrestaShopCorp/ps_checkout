@@ -402,7 +402,8 @@ class Ps_checkout extends PaymentModule
             'contextPsAccounts' => $contextPsAccounts,
         ]);
 
-        $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Environment\Env $env */
+        $env = $this->getService(\PrestaShop\Module\PrestashopCheckout\Environment\Env::class);
         $boSdkUrl = $env->getEnv('CHECKOUT_BO_SDK_URL');
         if (substr($boSdkUrl, -3) !== '.js') {
             $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');

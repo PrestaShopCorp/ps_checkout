@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
-use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -59,8 +58,12 @@ class LinkAdapter
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         $shop = \Context::getContext()->shop;
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var ShopContext $shopContext */
+        $shopContext = $module->getService(ShopContext::class);
 
-        if ((new ShopContext(new PaymentEnv()))->isShop17()) {
+        if ($shopContext->isShop17()) {
             $adminLink = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
 
             if ($shop->virtual_uri !== '') {

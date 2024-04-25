@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 
 /**
  * Get the shop context
@@ -28,13 +28,13 @@ use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 class ShopContext
 {
     /**
-     * @var PaymentEnv
+     * @var Env
      */
-    private $paymentEnv;
+    private $env;
 
-    public function __construct(PaymentEnv $paymentEnv)
+    public function __construct(Env $env)
     {
-        $this->paymentEnv = $paymentEnv;
+        $this->env = $env;
     }
 
     /**
@@ -59,7 +59,7 @@ class ShopContext
             return '';
         }
 
-        return $this->paymentEnv->getBnCode();
+        return $this->env->getBnCode();
     }
 
     public function isShop17()

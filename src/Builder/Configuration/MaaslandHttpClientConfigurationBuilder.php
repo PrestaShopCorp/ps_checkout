@@ -26,7 +26,7 @@ use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
@@ -39,7 +39,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     const TIMEOUT = 10;
 
     /**
-     * @var PaymentEnv
+     * @var Env
      */
     private $paymentEnv;
 
@@ -74,7 +74,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     private $logger;
 
     public function __construct(
-        PaymentEnv $paymentEnv,
+        Env $paymentEnv,
         Router $router,
         ShopContext $shopContext,
         PsAccountRepository $psAccountRepository,
