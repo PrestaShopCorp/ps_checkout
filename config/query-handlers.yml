@@ -1,0 +1,82 @@
+services:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.order'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForApprovalReversedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForApprovalReversedQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCartIdQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCartIdQueryHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.order'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.paypal.order"
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.paypal.order"
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'

@@ -200,10 +200,12 @@ export class PayPalService extends BaseClass {
       this.eligibleFundingSources = (
         this.configPrestaShop.fundingSourcesSorted || paypalFundingSources
       )
-        .filter((fundingSource) => paypalFundingSources.includes(fundingSource))
+        .filter(
+          (fundingSource) => paypalFundingSources.includes(fundingSource) || fundingSource.includes('token')
+        )
         .map((fundingSource) => ({
           name: fundingSource,
-          mark: this.sdk.Marks({ fundingSource })
+          mark: fundingSource.includes('token') ? null : this.sdk.Marks({ fundingSource })
         }))
         .filter((fundingSource) => {
           if (
@@ -215,6 +217,11 @@ export class PayPalService extends BaseClass {
               'Card Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)'
             );
           }
+
+          if (fundingSource.name.includes('token')) {
+            return true;
+          }
+
           console.log(fundingSource.name, fundingSource.mark.isEligible());
 
           return fundingSource.mark.isEligible();

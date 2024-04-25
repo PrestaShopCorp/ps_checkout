@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
+use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 
 class FundingSourcePresenter
@@ -33,15 +35,20 @@ class FundingSourcePresenter
      * @var CountryRepository
      */
     private $country;
+    /**
+     * @var PaymentMethodLogoProvider
+     */
+    private $paymentMethodLogoProvider;
 
     /**
      * @param FundingSourceTranslationProvider $translation
      * @param CountryRepository $country
      */
-    public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country)
+    public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country, PaymentMethodLogoProvider $paymentMethodLogoProvider)
     {
         $this->translation = $translation;
         $this->country = $country;
+        $this->paymentMethodLogoProvider = $paymentMethodLogoProvider;
     }
 
     /**
@@ -61,6 +68,38 @@ class FundingSourcePresenter
             $isAdmin ? $this->country->getCountryNames($entity->getCountries()) : $entity->getCountries(),
             $entity->getIsEnabled(),
             $entity->getIsToggleable()
+        );
+    }
+
+    /**
+     * @param PaymentToken $paymentToken
+     *
+     * @return FundingSource
+     */
+    public function presentPaymentToken(PaymentToken $paymentToken)
+    {
+        $paymentSource = $paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()];
+
+        if ($paymentToken->getPaymentSource() === 'card') {
+            $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
+                (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '')
+            );
+        } else {
+            $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
+                isset($paymentSource['email_address']) ? $paymentSource['email_address'] : ''
+            );
+        }
+
+        return new FundingSource(
+            'token-' . $paymentToken->getId()->getValue(),
+            $fundingSourceName,
+            0,
+            [],
+            true,
+            false,
+            $paymentToken->getPaymentSource(),
+            $paymentToken->isFavorite(),
+            $this->paymentMethodLogoProvider->getLogoByPaymentSource($paymentToken->getData()['payment_source'])
         );
     }
 }

@@ -45,6 +45,14 @@ class Router
     }
 
     /**
+     * @return string
+     */
+    public function getCheckoutCancelLink()
+    {
+        return $this->context->link->getModuleLink('ps_checkout', 'cancel', [], true, $this->context->language->id, $this->context->shop->id);
+    }
+
+    /**
      * @param int|null $orderId
      *
      * @return string

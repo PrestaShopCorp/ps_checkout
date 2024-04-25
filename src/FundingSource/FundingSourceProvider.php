@@ -20,6 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
+
 class FundingSourceProvider
 {
     /**
@@ -31,17 +34,31 @@ class FundingSourceProvider
      * @var FundingSourcePresenter
      */
     private $presenter;
+    /**
+     * @var PaymentTokenRepository
+     */
+    private $paymentTokenRepository;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
 
     /**
      * @param FundingSourceCollectionBuilder $fundingSourceCollectionBuilder
      * @param FundingSourcePresenter $presenter
+     * @param PaymentTokenRepository $paymentTokenRepository
+     * @param PayPalConfiguration $payPalConfiguration
      */
     public function __construct(
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
-        FundingSourcePresenter $presenter
+        FundingSourcePresenter $presenter,
+        PaymentTokenRepository $paymentTokenRepository,
+        PayPalConfiguration $payPalConfiguration
     ) {
         $this->collection = new FundingSourceCollection($fundingSourceCollectionBuilder->create());
         $this->presenter = $presenter;
+        $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -65,5 +82,23 @@ class FundingSourceProvider
         }
 
         return $fundingSources;
+    }
+
+    /**
+     * @param int $customerId
+     *
+     * @return FundingSource[]
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getSavedTokens($customerId)
+    {
+        if ((int) $customerId && $this->payPalConfiguration->isVaultingEnabled()) {
+            return array_map(function ($paymentToken) {
+                return $this->presenter->presentPaymentToken($paymentToken);
+            }, $this->paymentTokenRepository->findByPrestaShopCustomerId((int) $customerId, true, $this->payPalConfiguration->getMerchantId()));
+        }
+
+        return [];
     }
 }

@@ -24,8 +24,10 @@ use Exception;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderDataProvider;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
@@ -56,6 +58,10 @@ class PayPalOrderSummaryViewBuilder
      * @var ShopContext
      */
     private $shopContext;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     /**
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
@@ -69,13 +75,15 @@ class PayPalOrderSummaryViewBuilder
         PayPalOrderProvider $orderPayPalProvider,
         Router $router,
         PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
-        ShopContext $shopContext
+        ShopContext $shopContext,
+        PayPalOrderRepository $payPalOrderRepository
     ) {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalProvider = $orderPayPalProvider;
         $this->router = $router;
         $this->orderPayPalTranslationProvider = $orderPayPalTranslationProvider;
         $this->shopContext = $shopContext;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -98,6 +106,12 @@ class PayPalOrderSummaryViewBuilder
         }
 
         try {
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($psCheckoutCart->paypal_order));
+        } catch (PsCheckoutException $exception) {
+            $payPalOrder = null;
+        }
+
+        try {
             $orderPayPal = $this->orderPayPalProvider->getById($psCheckoutCart->paypal_order);
         } catch (Exception $exception) {
             $orderPayPal = [];
@@ -107,7 +121,7 @@ class PayPalOrderSummaryViewBuilder
             throw new PsCheckoutException('Unable to retrieve PayPal order data');
         }
 
-        $orderPayPalDataProvider = new PaypalOrderDataProvider($orderPayPal);
+        $orderPayPalDataProvider = new PaypalOrderDataProvider($orderPayPal, $payPalOrder);
         $checkoutDataProvider = new PsCheckoutDataProvider($psCheckoutCart);
 
         return new PayPalOrderSummaryView(

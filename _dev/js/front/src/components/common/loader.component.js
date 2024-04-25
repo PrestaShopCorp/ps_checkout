@@ -26,6 +26,8 @@ export class LoaderComponent extends BaseComponent {
   };
 
   created() {
+    this.data.text = this.props.text || this.$('loader-component.label.body');
+    this.data.header = this.props.header || this.$('loader-component.label.header');
     this.data.parent = this.querySelectorService.getLoaderParent();
   }
 
@@ -38,7 +40,7 @@ export class LoaderComponent extends BaseComponent {
 
     this.text = document.createElement('h1');
     this.text.classList.add('ps-checkout', 'text');
-    this.text.innerHTML = this.$('loader-component.label.header');
+    this.text.innerHTML = this.data.header;
 
     this.loader = document.createElement('img');
     this.loader.classList.add('ps-checkout', 'loader');
@@ -47,7 +49,7 @@ export class LoaderComponent extends BaseComponent {
 
     this.subtext = document.createElement('div');
     this.subtext.classList.add('ps-checkout', 'subtext');
-    this.text.innerHTML = this.$('loader-component.label.body');
+    this.text.innerHTML = this.data.text;
 
     this.popup.append(this.text);
     this.popup.append(this.loader);
@@ -67,5 +69,10 @@ export class LoaderComponent extends BaseComponent {
   hide() {
     this.overlay.classList.remove('visible');
     document.body.style.overflow = '';
+  }
+
+  destroy() {
+    this.overlay.classList.add('visible');
+    this.overlay.remove();
   }
 }
