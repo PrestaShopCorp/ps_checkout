@@ -699,7 +699,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $data = [];
 
         if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
+            return;
+            // $data['vault_id'] = $this->paypalVaultId;
         }
 
         if ($this->paypalCustomerId) {
