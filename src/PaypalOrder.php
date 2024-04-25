@@ -23,7 +23,11 @@ namespace PrestaShop\Module\PrestashopCheckout;
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder as PayPalOrderEntity;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
 
 /**
@@ -54,13 +58,31 @@ class PaypalOrder
         /** @var Ps_checkout $module */
         $module = Module::getInstanceByName('ps_checkout');
 
-        /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
+        /** @var MaaslandHttpClient $maaslandHttpClient */
+        $maaslandHttpClient = $module->getService(MaaslandHttpClient::class);
+
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $module->getService(PayPalOrderRepository::class);
+
+        /** @var PayPalConfiguration $payPalConfiguration */
+        $payPalConfiguration = $module->getService(PayPalConfiguration::class);
+
+        $order = $payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($id));
 
         try {
-            $response = $checkoutHttpClient->fetchOrder([
+            $payload = [
                 'orderId' => $id,
-            ]);
+            ];
+
+            if ($order->checkCustomerIntent(PayPalOrderEntity::CUSTOMER_INTENT_USES_VAULTING)) {
+                $payload = array_merge($payload, [
+                    'vault' => true,
+                    'payee' => [
+                        'merchant_id' => $payPalConfiguration->getMerchantId(),
+                    ],
+                ]);
+            }
+            $response = $maaslandHttpClient->fetchOrder($payload);
             $responseHandler = new ResponseApiHandler();
             $response = $responseHandler->handleResponse($response);
 
@@ -75,6 +97,13 @@ class PaypalOrder
                         'paypal_status' => \PsCheckoutCart::STATUS_CANCELED,
                     ],
                     'paypal_order = "' . pSQL($id) . '"'
+                );
+                \Db::getInstance()->update(
+                    \PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder::TABLE,
+                    [
+                        'status' => \PsCheckoutCart::STATUS_CANCELED,
+                    ],
+                    'id = "' . pSQL($id) . '"'
                 );
             }
         }

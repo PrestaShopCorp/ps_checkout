@@ -57,7 +57,8 @@ export class PaymentMethodLogosComponent extends BaseComponent {
   renderMark() {
     let containerLogoIdentifier = `#ps_checkout-payment-method-logos-container`;
     const containerLogoQuerySelector = this.querySelectorService.getPaymentMethodLogoContainer(this.props.placement);
-    const fundingSources = this.payPalService.getEligibleFundingSources();
+    let fundingSources = this.payPalService.getEligibleFundingSources();
+    fundingSources = fundingSources.filter((fundingSource) => !fundingSource.name.includes('token'));
 
     if (containerLogoQuerySelector) {
       const containerLogo = document.querySelector(containerLogoIdentifier);

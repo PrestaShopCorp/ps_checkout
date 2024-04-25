@@ -74,4 +74,14 @@ class PrestaShopContext
     {
         return $this->context->shop->theme_name;
     }
+
+    public function customerIsLogged()
+    {
+        return $this->context->customer->isLogged();
+    }
+
+    public function getCustomerId()
+    {
+        return (int) $this->context->customer->id;
+    }
 }

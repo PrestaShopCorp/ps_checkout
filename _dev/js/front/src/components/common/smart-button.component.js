@@ -158,6 +158,7 @@ export class SmartButtonComponent extends BaseComponent {
         createOrder: (data) => {
           return this.psCheckoutApi
             .postCreateOrder({
+              ...this.getVaultFormData(),
               ...data,
               fundingSource: this.data.name,
               isExpressCheckout: this.config.expressCheckout.active
@@ -175,6 +176,19 @@ export class SmartButtonComponent extends BaseComponent {
         }
       })
       .render(buttonSelector);
+  }
+
+  getVaultFormData() {
+    const form = document.querySelector(`form#ps_checkout-vault-payment-form-${this.data.name}`);
+    if (form) {
+      const formData = new FormData(form);
+      return {
+        vault: formData.get(`ps_checkout-vault-payment-${this.data.name}`) === '1',
+        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
+      };
+
+    }
+    return {};
   }
 
   handleError(error) {

@@ -48,11 +48,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
      * @var CheckOrderAmount
      */
     private $checkOrderAmount;
@@ -84,12 +79,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper
     ) {
-        $this->module = $module;
         $this->checkOrderAmount = $checkOrderAmount;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->capturePayPalCache = $capturePayPalCache;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
+        $this->commandBus = $module->getService('ps_checkout.bus.command');
     }
 
     /**

@@ -346,6 +346,28 @@ class PayPalError
                 throw new PayPalException('We can\'t process any refund at this moment due to technical reasons. Please try again later.', PayPalException::CANNOT_PROCESS_REFUNDS, $previous);
             case 'INVALID_REFUND_AMOUNT':
                 throw new PayPalException('The refund amount is invalid. Please check the refund amount and try again.', PayPalException::INVALID_REFUND_AMOUNT, $previous);
+            case 'NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE':
+                throw new PayPalException('The API caller or the merchant on whose behalf the API call is initiated is not allowed to vault the given source. Please contact PayPal customer support for assistance.', PayPalException::NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE, $previous);
+            case 'SETUP_TOKEN_ALREADY_TOKENIZED':
+                throw new PayPalException('The setup token has been used previously to generate a payment token.', PayPalException::SETUP_TOKEN_ALREADY_TOKENIZED, $previous);
+            case 'TOKEN_NOT_FOUND':
+                throw new PayPalException('The specified token id does not exist.', PayPalException::TOKEN_NOT_FOUND, $previous);
+            case 'PAYPAL_REQUEST_ID_PREVIOUSLY_USED':
+                throw new PayPalException('The PayPal-Request-ID has already been used for another request.', PayPalException::PAYPAL_REQUEST_ID_PREVIOUSLY_USED, $previous);
+            case 'OPERATION_NOT_SUPPORTED':
+                throw new PayPalException('Specified operation not supported on any fields.', PayPalException::OPERATION_NOT_SUPPORTED, $previous);
+            case 'INVALID_SECURITY_CODE':
+                throw new PayPalException('The security code provided does not conform to the card number provided.', PayPalException::INVALID_SECURITY_CODE, $previous);
+            case 'INVALID_INTEGER_MIN_VALUE':
+                throw new PayPalException('The integer value of a field is too small.', PayPalException::INVALID_INTEGER_MIN_VALUE, $previous);
+            case 'INVALID_EXPIRY_DATE':
+                throw new PayPalException('Expiry date is invalid. Expiry date should be a date in future and within the threshold for the payment source.', PayPalException::INVALID_EXPIRY_DATE, $previous);
+            case 'EXACTLY_ONE_FIELD_REQUIRED':
+                throw new PayPalException('Exactly one payment source is required.', PayPalException::EXACTLY_ONE_FIELD_REQUIRED, $previous);
+            case 'CREDIT_CARD_NUMBER_IS_INVALID':
+                throw new PayPalException('Credit card number is invalid.', PayPalException::CREDIT_CARD_NUMBER_IS_INVALID, $previous);
+            case 'CARD_EXPIRATION_YEAR_IS_INVALID':
+                throw new PayPalException('Expiration year outside of acceptable range.', PayPalException::CARD_EXPIRATION_YEAR_IS_INVALID, $previous);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN, $previous);
         }
