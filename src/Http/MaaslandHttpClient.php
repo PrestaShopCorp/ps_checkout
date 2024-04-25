@@ -25,9 +25,7 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -202,6 +200,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * Used to notify PSL on settings update
      *
      * @return array
+     *
      * @throws PayPalException
      */
     public function updateSettings(array $payload)

@@ -42,7 +42,8 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     private $commandBus;
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository, Ps_checkout $module) {
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository, Ps_checkout $module)
+    {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->commandBus = $module->getService('ps_checkout.bus.command');
     }

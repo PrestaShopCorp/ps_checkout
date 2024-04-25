@@ -267,10 +267,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $maaslandHttpClient->updateSettings([
             'settings' => [
-                'cb' => (bool)$configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                'express_in_product' => (bool)$ecConfiguration->isProductPageEnabled(),
-                'express_in_cart' => (bool)$ecConfiguration->isOrderPageEnabled(),
-                'express_in_checkout' => (bool)$ecConfiguration->isCheckoutPageEnabled(),
+                'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
+                'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
             ],
         ]);
     }

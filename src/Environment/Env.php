@@ -139,7 +139,6 @@ class Env
         return $this->getEnv('PAYMENT_API_URL_LIVE');
     }
 
-
     /**
      * @return string
      */

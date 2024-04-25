@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
-use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
