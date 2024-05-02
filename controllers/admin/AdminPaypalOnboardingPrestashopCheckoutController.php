@@ -46,8 +46,11 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 return false;
             }
 
+            /** @var LinkAdapter $linkAdapter */
+            $linkAdapter = $this->module->getService(LinkAdapter::class);
+
             Tools::redirect(
-                (new LinkAdapter($this->context->link))->getAdminLink(
+                $linkAdapter->getAdminLink(
                     'AdminModules',
                     true,
                     [],

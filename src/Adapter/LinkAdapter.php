@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -33,14 +34,20 @@ class LinkAdapter
      * @var \Link
      */
     private $link;
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
 
-    public function __construct(\Link $link = null)
+    public function __construct(ShopContext $shopContext, PrestaShopContext $prestaShopContext)
     {
-        if (null === $link) {
-            $link = new \Link();
-        }
-
-        $this->link = $link;
+        $this->link = $this->prestaShopContext->getLink() === null ? new \Link() : $this->prestaShopContext->getLink();
+        $this->shopContext = $shopContext;
+        $this->prestaShopContext = $prestaShopContext;
     }
 
     /**
@@ -52,18 +59,12 @@ class LinkAdapter
      * @param array $params
      *
      * @return string
-     *
-     * @throws \PrestaShopException
      */
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
-        $shop = \Context::getContext()->shop;
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var ShopContext $shopContext */
-        $shopContext = $module->getService(ShopContext::class);
+        $shop = $this->prestaShopContext->getShop();
 
-        if ($shopContext->isShop17()) {
+        if ($this->shopContext->isShop17()) {
             $adminLink = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
 
             if ($shop->virtual_uri !== '') {

@@ -212,6 +212,8 @@ services:
   PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder'
     public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter'
 
   PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
@@ -246,6 +248,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
       - '@PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter'
 
   PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
@@ -448,3 +451,10 @@ services:
       - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+
+  PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'

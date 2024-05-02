@@ -770,6 +770,8 @@ class Ps_checkout extends PaymentModule
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
         $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter $moduleContext */
+        $linkAdapter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter::class);
         $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccountRepository->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
@@ -783,7 +785,7 @@ class Ps_checkout extends PaymentModule
 
             $params = [
                 'imgPath' => $this->_path . 'views/img/',
-                'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
+                'configureLink' => $linkAdapter->getAdminLink(
                     'AdminModules',
                     true,
                     [],
