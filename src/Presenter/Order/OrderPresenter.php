@@ -280,7 +280,7 @@ class OrderPresenter
                 continue;
             }
 
-            $total += (float)$purchase['amount']['value'];
+            $total += (float) $purchase['amount']['value'];
             $currency = $purchase['amount']['currency_code'];
         }
 
