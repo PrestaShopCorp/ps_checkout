@@ -43,7 +43,6 @@ use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
-
     /**
      * @var CommandBusInterface
      */

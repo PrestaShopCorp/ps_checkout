@@ -147,6 +147,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * Used to notify PSL on settings update
      *
      * @return array
+     *
      * @throws PayPalException
      */
     public function updateSettings(array $payload)
