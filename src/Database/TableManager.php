@@ -105,7 +105,8 @@ class TableManager
             `updated_at` varchar(50) NOT NULL,
             `seller_protection` text,
             `seller_receivable_breakdown` text,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            INDEX `pscheckout_capture_id_order` (`id_order`),
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_refund` (
@@ -117,7 +118,8 @@ class TableManager
             `acquirer_reference_number` varchar(50) NOT NULL,
             `seller_payable_breakdown` text,
             `id_order_slip` INT UNSIGNED,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            INDEX `pscheckout_refund_id_order` (`id_order`),
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_authorization` (
@@ -126,7 +128,8 @@ class TableManager
             `status` varchar(30) NOT NULL,
             `expiration_time` varchar(50) NOT NULL,
             `seller_protection` text,
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            INDEX `pscheckout_authorization_id_order` (`id_order`),
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_purchase_unit` (
@@ -134,7 +137,8 @@ class TableManager
             `checksum` varchar(50) NOT NULL,
             `reference_id` varchar(50) NOT NULL,
             `items` text,
-            PRIMARY KEY (`reference_id`, `id_order`)
+            PRIMARY KEY (`reference_id`, `id_order`),
+            INDEX `pscheckout_purchase_unit_id_order` (`id_order`),
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
@@ -153,7 +157,7 @@ class TableManager
             `status` varchar(50) NOT NULL,
             `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
             PRIMARY KEY (`id`),
-            UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`)
+            UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`),
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 
