@@ -50,9 +50,21 @@ class PaymentOptionProvider
     public function getPaymentOptions($customerId) {
         $paymentOptions = [];
 
-        $vaultingEnabled = $this->payPalConfiguration->isVaultingEnabled();
+        $vaultingEnabled = $this->payPalConfiguration->isVaultingEnabled() && $this->context->customer->isLogged();
+
+        $this->context->smarty->assign('lockIcon', Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/icons/lock_fill.svg'));
 
         foreach ($this->fundingSourceProvider->getSavedTokens((int) $customerId) as $fundingSource) {
+            if ($fundingSource->paymentSource === 'paypal') {
+                $vaultedPayPal = [
+                    'paymentIdentifier' => $fundingSource->name,
+                    'fundingSource' => $fundingSource->paymentSource,
+                    'isFavorite' => $fundingSource->isFavorite,
+                    'label' => $fundingSource->label,
+                    'vaultId' => explode('-', $fundingSource->name)[1],
+                ];
+                continue;
+            }
             $paymentOption = new PaymentOption();
             $paymentOption->setModuleName($this->module->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
@@ -70,8 +82,6 @@ class PaymentOptionProvider
             $paymentOptions[] = $paymentOption;
         }
 
-        $this->context->smarty->assign('lockIcon', Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/icons/lock_fill.svg'));
-
         foreach ($this->fundingSourceProvider->getAll() as $fundingSource) {
             $paymentOption = new PaymentOption();
             $paymentOption->setModuleName($this->module->name . '-' . $fundingSource->name);
@@ -85,8 +95,11 @@ class PaymentOptionProvider
             if ('card' === $fundingSource->name && $this->payPalConfiguration->isHostedFieldsEnabled() && in_array($this->payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->module->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
-            } elseif (in_array($fundingSource->name, ['paypal'/*'venmo'*/])) {
+            } elseif ($fundingSource->name === 'paypal' && empty($vaultedPayPal)) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
+            } elseif ($fundingSource->name === 'paypal' && $vaultedPayPal) {
+                $this->context->smarty->assign($vaultedPayPal);
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
