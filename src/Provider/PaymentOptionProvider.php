@@ -56,7 +56,6 @@ class PaymentOptionProvider
         $this->context = Context::getContext();
     }
 
-
     /**
      * @param int $customerId
      *
@@ -65,7 +64,8 @@ class PaymentOptionProvider
      * @throws SmartyException
      * @throws PsCheckoutException
      */
-    public function getPaymentOptions($customerId) {
+    public function getPaymentOptions($customerId)
+    {
         $paymentOptions = [];
 
         $vaultingEnabled = $this->payPalConfiguration->isVaultingEnabled() && $this->context->customer->isLogged();

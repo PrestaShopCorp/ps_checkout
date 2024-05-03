@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRespo
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LinkDescription;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceResponse;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
-
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class ObjectSerializerTest extends TestCase

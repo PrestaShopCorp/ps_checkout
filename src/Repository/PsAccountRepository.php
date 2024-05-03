@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**

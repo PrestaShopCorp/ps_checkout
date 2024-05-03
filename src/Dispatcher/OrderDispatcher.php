@@ -20,9 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
@@ -38,7 +36,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenC
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
 class OrderDispatcher implements DispatcherInterface

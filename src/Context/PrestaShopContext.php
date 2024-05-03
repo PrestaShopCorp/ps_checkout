@@ -20,20 +20,21 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Context;
 
-use \Link;
+use Link;
+use Context;
 /**
  * Class PrestaShopContext used to get information from PrestaShop Context
  */
 class PrestaShopContext
 {
     /**
-     * @var \Context
+     * @var Context
      */
     private $context;
 
     public function __construct()
     {
-        $this->context = \Context::getContext();
+        $this->context = Context::getContext();
     }
 
     /**

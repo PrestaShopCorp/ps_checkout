@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Provider;
 
-use Ps_checkout;
-
 class PaymentMethodLogoProvider
 {
     /**
