@@ -704,8 +704,6 @@ class Ps_checkout extends PaymentModule
         $psAccountRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
-        $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter $moduleContext */
         $linkAdapter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter::class);
         $isShop17 = $shopContext->isShop17();
@@ -737,7 +735,7 @@ class Ps_checkout extends PaymentModule
                 'codesType' => 'countries',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $linkAdapter->getAdminLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
@@ -746,7 +744,7 @@ class Ps_checkout extends PaymentModule
                 'codesType' => 'currencies',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $linkAdapter->getAdminLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } else {
@@ -767,31 +765,20 @@ class Ps_checkout extends PaymentModule
         $version = $this->getService('ps_checkout.module.version');
         $controller = Tools::getValue('controller');
 
-        if ('AdminPayment' === $controller) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
+        $pageCss = '';
+
+        switch ($controller) {
+            case 'AdminPayment':
+                $pageCss = $this->getPathUri() . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion();
+                break;
+            case 'AdminCurrencies':
+            case 'AdminCountries':
+                $pageCss = $this->getPathUri() . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion();
+                break;
         }
 
-        if ('AdminCountries' === $controller) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
-        }
-
-        if ('AdminCurrencies' === $controller) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
+        if (!empty($pageCss)) {
+            $this->context->controller->addCss($pageCss, 'all', null, false);
         }
 
         if ('AdminOrders' === $controller || 'AdminOrders' === Tools::getValue('tab')) {
@@ -800,7 +787,7 @@ class Ps_checkout extends PaymentModule
                 false
             );
             $this->context->controller->addCss(
-                $this->_path . 'views/css/adminOrderView.css?version=' . $version->getSemVersion(),
+                $this->getPathUri() . 'views/css/adminOrderView.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -893,7 +880,7 @@ class Ps_checkout extends PaymentModule
                 $this->context->country->iso_code === 'GB' ? 'UK' : $this->context->country->iso_code,
                 $this->context->currency->iso_code
             );
-            $supportedCardBrands = $supportedCardBrandsByContext ? $supportedCardBrandsByContext : $supportedCardBrands;
+            $supportedCardBrands = $supportedCardBrandsByContext ?: $supportedCardBrands;
         }
 
         $fundingSourcesSorted = [];

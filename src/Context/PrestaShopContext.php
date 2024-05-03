@@ -20,8 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Context;
 
-use Link;
 use Context;
+use Link;
+
 /**
  * Class PrestaShopContext used to get information from PrestaShop Context
  */
@@ -53,7 +54,7 @@ class PrestaShopContext
     }
 
     /**
-     * @return Link
+     * @return Link|null
      */
     public function getLink()
     {

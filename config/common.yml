@@ -317,7 +317,6 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
   PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator'

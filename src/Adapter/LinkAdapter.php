@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
+use Link;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
@@ -31,7 +32,7 @@ class LinkAdapter
     /**
      * Link object
      *
-     * @var \Link
+     * @var Link
      */
     private $link;
     /**
@@ -45,7 +46,7 @@ class LinkAdapter
 
     public function __construct(ShopContext $shopContext, PrestaShopContext $prestaShopContext)
     {
-        $this->link = $this->prestaShopContext->getLink() === null ? new \Link() : $this->prestaShopContext->getLink();
+        $this->link = $prestaShopContext->getLink() ?: new Link();
         $this->shopContext = $shopContext;
         $this->prestaShopContext = $prestaShopContext;
     }
