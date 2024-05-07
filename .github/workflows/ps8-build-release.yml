@@ -1,0 +1,200 @@
+name: PrestaShop 8 - Build & Release draft
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited, labeled]
+  push:
+    tags:
+      - "v8.*"
+    branches:
+      - "prestashop/8.x"
+
+env:
+  ZIP_NAME_INTEGRATION: ${{ github.event.repository.name }}-integration-pr${{ github.event.number }}
+  ZIP_NAME_PREPRODUCTION: ${{ github.event.repository.name }}-preproduction-pr${{ github.event.number }}
+  ZIP_NAME_PRODUCTION: ${{ github.event.repository.name }}-${{ github.ref_name }}
+
+jobs:
+  deploy_integration:
+    name: INTEGRATION - Build dependencies & create artifact
+    runs-on: ubuntu-latest
+    if:
+      contains(github.event.pull_request.labels.*.name, 'integration deployment') &&
+      contains(github.event.pull_request.labels.*.name, 'ps8')
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP
+        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets.WI_PROVIDER_INTEGRATION }}
+          service-account: ${{ secrets.WI_SA_INTEGRATION }}
+          registry-login: true
+
+      - name: Write .env file
+        run: gcloud beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT_INTEGRATION }}
+
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: npm
+          path: ./
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
+
+      - name: Clean-up project
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
+
+      - name: Clean-up node_modules directory
+        run: sudo rm -rf node_modules
+
+      - name: Generate zip
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ env.ZIP_NAME_INTEGRATION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+
+      - name: Push to GCP bucket storage
+        shell: bash
+        run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://checkout-assets-integration/zips
+
+  deploy_preproduction:
+    name: PREPRODUCTION - Build dependencies & create artifact
+    runs-on: ubuntu-latest
+    if:
+      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') &&
+      contains(github.event.pull_request.labels.*.name, 'ps8')
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP
+        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets.WI_PROVIDER_PREPRODUCTION }}
+          service-account: ${{ secrets.WI_SA_PREPRODUCTION }}
+          registry-login: true
+
+      - name: Write .env file
+        run: gcloud beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT_PREPRODUCTION }}
+
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: npm
+          path: ./
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
+
+      - name: Clean-up project
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
+
+      - name: Clean-up node_modules directory
+        run: sudo rm -rf node_modules
+
+      - name: Generate zip
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ env.ZIP_NAME_PREPRODUCTION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+
+      - name: Push to GCP bucket storage
+        shell: bash
+        run: gsutil cp ${{ env.ZIP_NAME_PREPRODUCTION }}.zip gs://checkout-assets-preproduction/zips
+
+  deploy_production:
+    name: PRODUCTION - Build dependencies & create artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP
+        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets.WI_PROVIDER_PRODUCTION }}
+          service-account: ${{ secrets.WI_SA_PRODUCTION }}
+          registry-login: true
+
+      - name: Write .env file
+        run: |
+          gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="module-env" > .env
+        env:
+          GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
+
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: npm
+          path: ./
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
+
+      - name: Clean-up project
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
+
+      - name: Clean-up node_modules directory
+        run: sudo rm -rf node_modules
+
+      - name: Create & upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ZIP_NAME_PRODUCTION }}
+          path: ../
+
+  update_release_draft_production:
+    name: PRODUCTION - Update release draft
+    runs-on: ubuntu-latest
+    needs: [deploy_production]
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ZIP_NAME_PRODUCTION }}
+
+      - name: Release drafter
+        id: release_info
+        uses: toolmantim/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare for Release
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ env.ZIP_NAME_PRODUCTION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+
+      - name: Clean existing assets
+        shell: bash
+        run: |
+          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
+          assets=`bin/hub api -t repos/${{ github.repository }}/releases/${{ steps.release_info.outputs.id }}/assets | awk '/\].url/ { print $2 }'`
+          for asset in $assets
+          do
+            bin/hub api -X DELETE $asset
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to GitHub Release
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          asset_path: ./${{ github.event.repository.name }}/${{ env.ZIP_NAME_PRODUCTION }}.zip
+          asset_name: ${{ env.ZIP_NAME_PRODUCTION }}.zip
+          asset_content_type: application/zip
