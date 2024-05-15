@@ -92,6 +92,10 @@ class ContextModule implements PresenterInterface
      * @var PsAccountRepository
      */
     private $psAccountRepository;
+    /**
+     * @var LinkAdapter
+     */
+    private $linkAdapter;
 
     /**
      * @param string $moduleName
@@ -115,7 +119,8 @@ class ContextModule implements PresenterInterface
         ShopContext $shopContext,
         ShopProvider $shopProvider,
         ModuleLinkBuilder $moduleLinkBuilder,
-        PsAccountRepository $psAccountRepository
+        PsAccountRepository $psAccountRepository,
+        LinkAdapter $linkAdapter
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -128,6 +133,7 @@ class ContextModule implements PresenterInterface
         $this->shopProvider = $shopProvider;
         $this->moduleLinkBuilder = $moduleLinkBuilder;
         $this->psAccountRepository = $psAccountRepository;
+        $this->linkAdapter = $linkAdapter;
     }
 
     /**
@@ -137,7 +143,7 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopId = (int) \Context::getContext()->shop->id;
+        $shopId = (int) $this->psContext->getShopId();
 
         return [
             'context' => [
@@ -154,7 +160,7 @@ class ContextModule implements PresenterInterface
                 'shopsTree' => $this->getShopsTree(),
                 'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
-                'prestashopCheckoutAjax' => $this->getGeneratedLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutAjax' => $this->linkAdapter->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => $this->translations->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
@@ -167,10 +173,10 @@ class ContextModule implements PresenterInterface
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
                 'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
                 'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
-                'countriesLink' => $this->getGeneratedLink('AdminCountries'),
-                'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
-                'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
-                'maintenanceLink' => $this->getGeneratedLink('AdminMaintenance'),
+                'countriesLink' => $this->linkAdapter->getAdminLink('AdminCountries'),
+                'currenciesLink' => $this->linkAdapter->getAdminLink('AdminCurrencies'),
+                'paymentPreferencesLink' => $this->linkAdapter->getAdminLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'maintenanceLink' => $this->linkAdapter->getAdminLink('AdminMaintenance'),
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
@@ -207,8 +213,6 @@ class ContextModule implements PresenterInterface
             return $shopList;
         }
 
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
         foreach (\Shop::getTree() as $groupId => $groupData) {
             $shops = [];
 
@@ -216,7 +220,7 @@ class ContextModule implements PresenterInterface
                 $shops[] = [
                     'id' => $shopId,
                     'name' => $shopData['name'],
-                    'url' => $linkAdapter->getAdminLink(
+                    'url' => $this->linkAdapter->getAdminLink(
                         'AdminModules',
                         true,
                         [],
@@ -328,9 +332,7 @@ class ContextModule implements PresenterInterface
      */
     private function getCountriesLink()
     {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink('AdminCountries');
+        return $this->linkAdapter->getAdminLink('AdminCountries');
     }
 
     /**
@@ -342,9 +344,7 @@ class ContextModule implements PresenterInterface
      */
     public function getGeneratedLink($link)
     {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink($link);
+        return $this->linkAdapter->getAdminLink($link);
     }
 
     /**

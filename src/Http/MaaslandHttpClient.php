@@ -128,6 +128,34 @@ class MaaslandHttpClient implements HttpClientInterface
     }
 
     /**
+     * Tells if the webhook came from the PSL
+     *
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function getShopSignature(array $payload, array $options = [])
+    {
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $options, json_encode($payload)));
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Used to notify PSL on settings update
+     *
+     * @return array
+     *
+     * @throws PayPalException
+     */
+    public function updateSettings(array $payload)
+    {
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/update_settings', [], json_encode($payload)));
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * @param RequestInterface $request
      *
      * @return ResponseInterface
@@ -180,33 +208,5 @@ class MaaslandHttpClient implements HttpClientInterface
         }
 
         return '';
-    }
-
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload, array $options = [])
-    {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $options, json_encode($payload)));
-
-        return json_decode($response->getBody()->getContents(), true);
-    }
-
-    /**
-     * Used to notify PSL on settings update
-     *
-     * @return array
-     *
-     * @throws PayPalException
-     */
-    public function updateSettings(array $payload)
-    {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/update_settings', [], json_encode($payload)));
-
-        return json_decode($response->getBody()->getContents(), true);
     }
 }

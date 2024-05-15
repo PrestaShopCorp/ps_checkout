@@ -44,11 +44,6 @@ use Validate;
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
      * @var CommandBusInterface
      */
     private $commandBus;
@@ -62,11 +57,11 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     private $psCheckoutCartRepository;
 
-    public function __construct(CheckoutChecker $checkoutChecker, CommandBusInterface $commandBus, PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __construct(CheckoutChecker $checkoutChecker, Ps_checkout $module, PsCheckoutCartRepository $psCheckoutCartRepository)
     {
         $this->checkoutChecker = $checkoutChecker;
-        $this->commandBus = $commandBus;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->commandBus = $module->getService('ps_checkout.bus.command');
     }
 
     /**

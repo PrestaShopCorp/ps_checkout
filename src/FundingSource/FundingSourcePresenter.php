@@ -43,6 +43,7 @@ class FundingSourcePresenter
     /**
      * @param FundingSourceTranslationProvider $translation
      * @param CountryRepository $country
+     * @param PaymentMethodLogoProvider $paymentMethodLogoProvider
      */
     public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country, PaymentMethodLogoProvider $paymentMethodLogoProvider)
     {

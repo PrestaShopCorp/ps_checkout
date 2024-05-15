@@ -18,28 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-class GetPayPalGetUserIdTokenQueryResult
+class CardSupplementaryDataRequest
 {
     /**
-     * @var string
+     * @var Level2CardProcessingDataRequest
      */
-    private $userIdToken;
+    private $level_2;
+    /**
+     * @var Level3CardProcessingDataRequest
+     */
+    private $level_3;
 
     /**
-     * @param string $userIdToken
+     * @return Level2CardProcessingDataRequest
      */
-    public function __construct($userIdToken)
+    public function getLevel2()
     {
-        $this->userIdToken = $userIdToken;
+        return $this->level_2;
     }
 
     /**
-     * @return string
+     * @param Level2CardProcessingDataRequest $level_2
+     *
+     * @return void
      */
-    public function getUserIdToken()
+    public function setLevel2(Level2CardProcessingDataRequest $level_2)
     {
-        return $this->userIdToken;
+        $this->level_2 = $level_2;
+    }
+
+    /**
+     * @return Level3CardProcessingDataRequest
+     */
+    public function getLevel3()
+    {
+        return $this->level_3;
+    }
+
+    /**
+     * @param Level3CardProcessingDataRequest $level_3
+     *
+     * @return void
+     */
+    public function setLevel3(Level3CardProcessingDataRequest $level_3)
+    {
+        $this->level_3 = $level_3;
     }
 }

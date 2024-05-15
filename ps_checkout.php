@@ -600,74 +600,10 @@ class Ps_checkout extends PaymentModule
             return [];
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Provider\PaymentOptionProvider $paymentOptionProvider */
+        $paymentOptionProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\Provider\PaymentOptionProvider ::class);
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-
-        $paymentOptions = [];
-
-        $vaultingEnabled = $configurationPayPal->isVaultingEnabled()
-            && $this->context->customer->isLogged();
-
-        $this->context->smarty->assign('lockIcon', Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/lock_fill.svg'));
-        $vaultedPayPal = [];
-
-        if ($vaultingEnabled) {
-            foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
-                if ($fundingSource->paymentSource === 'paypal') {
-                    $vaultedPayPal = [
-                        'paymentIdentifier' => $fundingSource->name,
-                        'fundingSource' => $fundingSource->paymentSource,
-                        'isFavorite' => $fundingSource->isFavorite,
-                        'label' => $fundingSource->label,
-                        'vaultId' => explode('-', $fundingSource->name)[1],
-                    ];
-                    continue;
-                }
-                $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
-                $paymentOption->setCallToActionText($fundingSource->label);
-                $paymentOption->setBinary(true);
-
-                $this->context->smarty->assign([
-                    'paymentIdentifier' => $fundingSource->name,
-                    'fundingSource' => $fundingSource->paymentSource,
-                    'isFavorite' => $fundingSource->isFavorite,
-                    'label' => $fundingSource->label,
-                    'vaultId' => explode('-', $fundingSource->name)[1],
-                ]);
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
-
-                $paymentOptions[] = $paymentOption;
-            }
-        }
-
-        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
-            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
-            $paymentOption->setCallToActionText($fundingSource->label);
-            $paymentOption->setBinary(true);
-            $this->context->smarty->assign([
-                'vaultingEnabled' => $vaultingEnabled,
-                'paymentIdentifier' => $fundingSource->name,
-            ]);
-
-            if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
-                $this->context->smarty->assign('modulePath', $this->getPathUri());
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
-            } elseif ($fundingSource->name === 'paypal' && empty($vaultedPayPal)) {
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
-            } elseif ($fundingSource->name === 'paypal' && $vaultedPayPal) {
-                $this->context->smarty->assign($vaultedPayPal);
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
-            }
-
-            $paymentOptions[] = $paymentOption;
-        }
-
-        return $paymentOptions;
+        return $paymentOptionProvider->getPaymentOptions((int) $this->context->customer->id);
     }
 
     /**
@@ -764,14 +700,14 @@ class Ps_checkout extends PaymentModule
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
-        $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter $linkAdapter */
+        $linkAdapter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter::class);
         $isShop17 = $shopContext->isShop17();
-        $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
+        $isFullyOnboarded = $psAccountRepository->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
             if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
@@ -783,7 +719,7 @@ class Ps_checkout extends PaymentModule
 
             $params = [
                 'imgPath' => $this->_path . 'views/img/',
-                'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
+                'configureLink' => $linkAdapter->getAdminLink(
                     'AdminModules',
                     true,
                     [],
@@ -799,7 +735,7 @@ class Ps_checkout extends PaymentModule
                 'codesType' => 'countries',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $linkAdapter->getAdminLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
@@ -808,7 +744,7 @@ class Ps_checkout extends PaymentModule
                 'codesType' => 'currencies',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $linkAdapter->getAdminLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } else {
@@ -827,41 +763,31 @@ class Ps_checkout extends PaymentModule
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
+        $controller = Tools::getValue('controller');
 
-        if ('AdminPayment' === Tools::getValue('controller')) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
+        $pageCss = '';
+
+        switch ($controller) {
+            case 'AdminPayment':
+                $pageCss = $this->getPathUri() . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion();
+                break;
+            case 'AdminCurrencies':
+            case 'AdminCountries':
+                $pageCss = $this->getPathUri() . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion();
+                break;
         }
 
-        if ('AdminCountries' === Tools::getValue('controller')) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
+        if (!empty($pageCss)) {
+            $this->context->controller->addCss($pageCss, 'all', null, false);
         }
 
-        if ('AdminCurrencies' === Tools::getValue('controller')) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
-                'all',
-                null,
-                false
-            );
-        }
-
-        if ('AdminOrders' === Tools::getValue('controller') || 'AdminOrders' === Tools::getValue('tab')) {
+        if ('AdminOrders' === $controller || 'AdminOrders' === Tools::getValue('tab')) {
             $this->context->controller->addJS(
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $version->getSemVersion(),
                 false
             );
             $this->context->controller->addCss(
-                $this->_path . 'views/css/adminOrderView.css?version=' . $version->getSemVersion(),
+                $this->getPathUri() . 'views/css/adminOrderView.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -954,7 +880,7 @@ class Ps_checkout extends PaymentModule
                 $this->context->country->iso_code === 'GB' ? 'UK' : $this->context->country->iso_code,
                 $this->context->currency->iso_code
             );
-            $supportedCardBrands = $supportedCardBrandsByContext ? $supportedCardBrandsByContext : $supportedCardBrands;
+            $supportedCardBrands = $supportedCardBrandsByContext ?: $supportedCardBrands;
         }
 
         $fundingSourcesSorted = [];
@@ -1310,13 +1236,13 @@ class Ps_checkout extends PaymentModule
         $shop = $params['object'];
         $now = date('Y-m-d H:i:s');
 
-        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
-        $toggleShopConfigurationCommandHandler->handle(
-            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
-                (int) Configuration::get('PS_SHOP_DEFAULT'),
-                (bool) Shop::isFeatureActive()
-            )
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+        $commandBus = $this->getService('ps_checkout.bus.command');
+
+        $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+            (int) Configuration::get('PS_SHOP_DEFAULT'),
+            (bool) Shop::isFeatureActive()
+        ));
 
         foreach ($this->configurationList as $name => $value) {
             if (Configuration::hasKey($name, null, (int) $shop->id_shop_group, (int) $shop->id)) {
@@ -1678,8 +1604,9 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionObjectShopDeleteAfter(array $params)
     {
-        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
-        $toggleShopConfigurationCommandHandler->handle(
+        /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+        $commandBus = $this->getService('ps_checkout.bus.command');
+        $commandBus->handle(
             new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
                 (int) Configuration::get('PS_SHOP_DEFAULT'),
                 (bool) Shop::isFeatureActive()

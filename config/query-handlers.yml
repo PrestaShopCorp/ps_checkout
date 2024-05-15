@@ -73,8 +73,8 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
 
-  PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
+  PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalUserIdTokenQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalUserIdTokenQueryHandler'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'

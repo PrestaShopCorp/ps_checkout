@@ -443,12 +443,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
-        $presenter = new OrderPresenter($this->module, $paypalOrder);
+        /** @var OrderPresenter $presenter */
+        $presenter = $this->module->getService(OrderPresenter::class);
 
         $this->context->smarty->assign([
             'moduleName' => $this->module->displayName,
             'moduleUrl' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => 'ps_checkout']),
-            'orderPayPal' => $presenter->present(),
+            'orderPayPal' => $presenter->present($paypalOrder),
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'moduleLogoUri' => $this->module->getPathUri() . 'logo.png',
             'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),

@@ -46,8 +46,11 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 return false;
             }
 
+            /** @var LinkAdapter $linkAdapter */
+            $linkAdapter = $this->module->getService(LinkAdapter::class);
+
             Tools::redirect(
-                (new LinkAdapter($this->context->link))->getAdminLink(
+                $linkAdapter->getAdminLink(
                     'AdminModules',
                     true,
                     [],
@@ -80,6 +83,9 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/css/' . $this->bo_css, 'all', 0);
         }
 
+        /** @var LinkAdapter $linkAdapter */
+        $linkAdapter = $this->module->getService(LinkAdapter::class);
+
         $this->context->smarty->assign([
             'img_dir' => _PS_IMG_,
             'iso' => $this->context->language->iso_code,
@@ -90,7 +96,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             'js_files' => array_unique($this->js_files),
             'errors' => $this->errors,
             'logoSrc' => $this->module->getPathUri() . 'logo.png',
-            'moduleLink' => (new LinkAdapter($this->context->link))->getAdminLink(
+            'moduleLink' => $linkAdapter->getAdminLink(
                 'AdminModules',
                 true,
                 [],

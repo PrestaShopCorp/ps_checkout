@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -34,19 +33,13 @@ class MerchantValidator
      * @var PsAccountRepository
      */
     private $psAccountRepository;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
 
     public function __construct(
         PayPalConfiguration $configuration,
-        PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext
+        PsAccountRepository $psAccountRepository
     ) {
         $this->configuration = $configuration;
         $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopContext = $prestaShopContext;
     }
 
     public function merchantIsValid()

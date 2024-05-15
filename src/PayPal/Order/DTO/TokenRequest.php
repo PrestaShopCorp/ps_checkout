@@ -18,14 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-interface Dispatcher
+class TokenRequest
 {
     /**
-     * @param array $payload
-     *
-     * @return bool
+     * @var string
      */
-    public function dispatchEventType($payload);
+    private $id;
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return void
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
 }

@@ -25,12 +25,22 @@ use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 class ModuleLinkBuilder
 {
     /**
+     * @var LinkAdapter
+     */
+    private $linkAdapter;
+
+    public function __construct(LinkAdapter $linkAdapter)
+    {
+        $this->linkAdapter = $linkAdapter;
+    }
+
+    /**
      * Generate the callback url used by the paypal button
      *
      * @return string callback link
      */
     public function getPaypalOnboardingCallBackUrl()
     {
-        return (new LinkAdapter())->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
+        return $this->linkAdapter->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
     }
 }

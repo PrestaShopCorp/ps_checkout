@@ -63,6 +63,7 @@ class ConfigurationModule implements PresenterInterface
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      * @param FundingSourceProvider $fundingSourceProvider
+     * @param Ps_checkout $module
      */
     public function __construct(
         PayPalPayLaterConfiguration $payLaterConfiguration,

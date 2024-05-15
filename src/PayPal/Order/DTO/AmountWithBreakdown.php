@@ -18,30 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-
-class GetPayPalGetUserIdTokenQuery
+class AmountWithBreakdown extends Amount
 {
     /**
-     * @var CustomerId|null
+     * @var AmountBreakdown
      */
-    private $customerId;
+    private $breakdown;
 
     /**
-     * @param CustomerId|null $customerId
+     * @return AmountBreakdown
      */
-    public function __construct(CustomerId $customerId = null)
+    public function getBreakdown()
     {
-        $this->customerId = $customerId;
+        return $this->breakdown;
     }
 
     /**
-     * @return CustomerId|null
+     * @param AmountBreakdown $breakdown
+     *
+     * @return void
      */
-    public function getCustomerId()
+    public function setBreakdown(AmountBreakdown $breakdown)
     {
-        return $this->customerId;
+        $this->breakdown = $breakdown;
     }
 }

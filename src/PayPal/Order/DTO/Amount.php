@@ -18,11 +18,53 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-class ExpressCheckout
+class Amount
 {
-    const PS_CHECKOUT_EC_PRODUCT_PAGE = 'PS_CHECKOUT_EC_PRODUCT_PAGE';
-    const PS_CHECKOUT_EC_ORDER_PAGE = 'PS_CHECKOUT_EC_ORDER_PAGE';
-    const PS_CHECKOUT_EC_CHECKOUT_PAGE = 'PS_CHECKOUT_EC_CHECKOUT_PAGE';
+    /**
+     * @var string
+     */
+    private $currency_code;
+
+    /**
+     * @var string
+     */
+    private $value;
+
+    /**
+     * @return string
+     */
+    public function getCurrencyCode()
+    {
+        return $this->currency_code;
+    }
+
+    /**
+     * @param string $currency_code
+     *
+     * @return void
+     */
+    public function setCurrencyCode($currency_code)
+    {
+        $this->currency_code = $currency_code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return void
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }
