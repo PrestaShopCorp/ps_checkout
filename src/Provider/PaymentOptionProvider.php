@@ -113,11 +113,13 @@ class PaymentOptionProvider
             if ('card' === $fundingSource->name && $this->payPalConfiguration->isHostedFieldsEnabled() && in_array($this->payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->module->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
-            } elseif ($fundingSource->name === 'paypal' && empty($vaultedPayPal)) {
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
-            } elseif ($fundingSource->name === 'paypal' && $vaultedPayPal) {
-                $this->context->smarty->assign($vaultedPayPal);
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
+            } elseif ($fundingSource->name === 'paypal') {
+                if (empty($vaultedPayPal)) {
+                    $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
+                } else {
+                    $this->context->smarty->assign($vaultedPayPal);
+                    $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
+                }
             }
 
             $paymentOptions[] = $paymentOption;

@@ -704,7 +704,7 @@ class Ps_checkout extends PaymentModule
         $psAccountRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter $moduleContext */
+        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter $linkAdapter */
         $linkAdapter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter::class);
         $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccountRepository->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();

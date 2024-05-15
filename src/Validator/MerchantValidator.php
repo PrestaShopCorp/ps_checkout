@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
