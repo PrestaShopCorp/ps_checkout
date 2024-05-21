@@ -1099,10 +1099,16 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Environment\Env $env */
+        $env = $this->getService(\PrestaShop\Module\PrestashopCheckout\Environment\Env::class);
+
+        $foSDkUrl = $env->getEnv('CHECKOUT_FO_SDK_URL');
+
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
+                $foSDkUrl,
                 [
                     'position' => 'bottom',
                     'priority' => 201,
@@ -1110,10 +1116,7 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addJS(
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
-                false
-            );
+            $this->context->controller->addJS($foSDkUrl, false);
         }
     }
 
