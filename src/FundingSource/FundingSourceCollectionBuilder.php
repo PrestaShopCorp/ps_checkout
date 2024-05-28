@@ -107,6 +107,11 @@ class FundingSourceCollectionBuilder
         $blik->setIsEnabled($this->configuration->isEnabled('blik'));
         $blik->setCountries($this->eligibilityConstraint->getCountries('blik'));
 
+        // Google pay
+        $blik = new FundingSourceEntity('google_pay');
+        $blik->setPosition($this->configuration->getPosition('google_pay', 11));
+        $blik->setIsEnabled($this->configuration->isEnabled('google_pay'));
+
         return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $blik];
     }
 }

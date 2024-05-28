@@ -64,6 +64,7 @@ class FundingSourceTranslationProvider
             'maxima' => 'Maxima',
             'mercadopago' => 'Mercado Pago',
             'sepa' => 'SEPA',
+            'google_pay' => 'Google Pay',
             'token' => $module->l('Pay with %s', 'fundingsourcetranslationprovider'),
         ];
 
