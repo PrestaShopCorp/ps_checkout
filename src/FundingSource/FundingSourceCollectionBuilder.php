@@ -111,6 +111,7 @@ class FundingSourceCollectionBuilder
         $googlePay = new FundingSourceEntity('google_pay');
         $googlePay->setPosition($this->configuration->getPosition('google_pay', 11));
         $googlePay->setIsEnabled($this->configuration->isEnabled('google_pay'));
+        $googlePay->setCountries($this->eligibilityConstraint->getCountries('google_pay'));
 
         return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $blik, $googlePay];
     }

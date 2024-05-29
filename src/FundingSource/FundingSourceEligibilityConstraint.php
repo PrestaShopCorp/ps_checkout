@@ -41,6 +41,7 @@ class FundingSourceEligibilityConstraint
             'mybank' => ['IT'],
             'p24' => ['PL'],
             'paylater' => ['FR', 'GB', 'US', 'ES', 'IT'],
+            'google_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LI', 'LT', 'LU', 'MK', 'MT', 'NL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
         ];
 
         return $countries[$fundingSourceName];
