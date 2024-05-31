@@ -828,7 +828,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
 
-        if ('AdminModules' === Tools::getValue('controller')) {
+        if ('AdminModules' === Tools::getValue('controller') && 'ps_checkout' === Tools::getValue('configure')) {
             $this->context->controller->addCss(
                 $this->_path . 'views/css/adminModules.css?version=' . $version->getSemVersion(),
                 'all',
