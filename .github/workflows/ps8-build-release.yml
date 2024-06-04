@@ -30,8 +30,8 @@ jobs:
         uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
         with:
           auth-mode: "workload-federation"
-          provider: ${{ secrets.WI_PROVIDER_INTEGRATION }}
-          service-account: ${{ secrets.WI_SA_INTEGRATION }}
+          provider: ${{ secrets.WI_PROVIDER_V2_INTEGRATION }}
+          service-account: ${{ secrets.WI_SA_V2_INTEGRATION }}
           registry-login: true
 
       - name: Write .env file
@@ -61,7 +61,7 @@ jobs:
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://checkout-assets-integration/zips
+        run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://ps-eu-w1-checkout-assets-integration/zips
 
   deploy_preproduction:
     name: PREPRODUCTION - Build dependencies & create artifact
@@ -78,8 +78,8 @@ jobs:
         uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
         with:
           auth-mode: "workload-federation"
-          provider: ${{ secrets.WI_PROVIDER_PREPRODUCTION }}
-          service-account: ${{ secrets.WI_SA_PREPRODUCTION }}
+          provider: ${{ secrets.WI_PROVIDER_V2_PREPRODUCTION }}
+          service-account: ${{ secrets.WI_SA_V2_PREPRODUCTION }}
           registry-login: true
 
       - name: Write .env file
@@ -109,7 +109,7 @@ jobs:
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME_PREPRODUCTION }}.zip gs://checkout-assets-preproduction/zips
+        run: gsutil cp ${{ env.ZIP_NAME_PREPRODUCTION }}.zip gs://ps-eu-w1-checkout-assets-preproduction/zips
 
   deploy_production:
     name: PRODUCTION - Build dependencies & create artifact
@@ -124,8 +124,8 @@ jobs:
         uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
         with:
           auth-mode: "workload-federation"
-          provider: ${{ secrets.WI_PROVIDER_PRODUCTION }}
-          service-account: ${{ secrets.WI_SA_PRODUCTION }}
+          provider: ${{ secrets.WI_PROVIDER_V2_PRODUCTION }}
+          service-account: ${{ secrets.WI_SA_V2_PRODUCTION }}
           registry-login: true
 
       - name: Write .env file
