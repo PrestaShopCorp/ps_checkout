@@ -45,7 +45,7 @@ class OAuthService
         try {
             $response = $this->httpClient->getUserIdToken($merchantId, $customerId);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody(), true);
 
             if (empty($data['id_token'])) {
                 throw new Exception('Failed to get PayPal User ID token from response.');
