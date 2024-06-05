@@ -18,6 +18,10 @@ jobs:
   deploy_integration:
     name: INTEGRATION - Build dependencies & create artifact
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     if:
       contains(github.event.pull_request.labels.*.name, 'integration deployment') &&
       contains(github.event.pull_request.labels.*.name, 'ps8')
@@ -66,6 +70,10 @@ jobs:
   deploy_preproduction:
     name: PREPRODUCTION - Build dependencies & create artifact
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     if:
       contains(github.event.pull_request.labels.*.name, 'preproduction deployment') &&
       contains(github.event.pull_request.labels.*.name, 'ps8')
@@ -114,6 +122,10 @@ jobs:
   deploy_production:
     name: PRODUCTION - Build dependencies & create artifact
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     if: startsWith(github.ref, 'refs/tags')
 
     steps:
@@ -158,6 +170,10 @@ jobs:
   update_release_draft_production:
     name: PRODUCTION - Update release draft
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     needs: [deploy_production]
     if: github.event_name == 'push'
 
