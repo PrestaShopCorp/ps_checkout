@@ -94,7 +94,7 @@ class RefundPayPalCaptureCommandHandler
                 ),
         ]);
 
-        $refund = json_decode($response->getBody()->getContents(), true);
+        $refund = json_decode($response->getBody(), true);
         $this->eventDispatcher->dispatch(
             new PayPalCaptureRefundedEvent(
                 $refund['id'],
