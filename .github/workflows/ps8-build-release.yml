@@ -58,13 +58,10 @@ jobs:
       - name: Clean-up node_modules directory
         run: |
           sudo rm -rf node_modules
-          ls -la
 
       - name: Generate zip
         run: |
-          ls -la
-          cd ${{ github.event.repository.name }}
-          zip -r ${{ env.ZIP_NAME_INTEGRATION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          zip -r ${{ env.ZIP_NAME_INTEGRATION }}.zip . -x '*.git*'
 
       - name: Push to GCP bucket storage
         shell: bash
