@@ -37,6 +37,7 @@ jobs:
           provider: ${{ secrets.WI_PROVIDER_V2_INTEGRATION }}
           service-account: ${{ secrets.WI_SA_V2_INTEGRATION }}
           registry-login: true
+          setup-gcloud: true
 
       - name: Write .env file
         run: gcloud beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
