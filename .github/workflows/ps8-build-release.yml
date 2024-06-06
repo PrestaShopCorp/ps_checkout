@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout the repository 🎁
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Auth GCP
         uses: ./.github/actions/auth-gcp
@@ -60,7 +60,6 @@ jobs:
 
       - name: Generate zip
         run: |
-          cd ${{ github.event.repository.name }}
           zip -r ${{ env.ZIP_NAME_INTEGRATION }}.zip ${{ github.event.repository.name }} -x '*.git*'
 
       - name: Push to GCP bucket storage
