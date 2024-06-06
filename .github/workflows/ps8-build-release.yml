@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout the repository 🎁
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Auth GCP
         uses: ./.github/actions/auth-gcp
