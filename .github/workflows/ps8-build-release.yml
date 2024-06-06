@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Auth GCP
-        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+        uses: ./.github/actions/auth-gcp
         with:
           auth-mode: "workload-federation"
           provider: ${{ secrets.WI_PROVIDER_V2_INTEGRATION }}
@@ -66,7 +66,6 @@ jobs:
       - name: Push to GCP bucket storage
         shell: bash
         run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://ps-eu-w1-checkout-assets-integration/zips
-
 #  deploy_preproduction:
 #    name: PREPRODUCTION - Build dependencies & create artifact
 #    runs-on: ubuntu-latest
@@ -83,7 +82,7 @@ jobs:
 #        uses: actions/checkout@v4
 #
 #      - name: Auth GCP
-#        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+#        uses: ./.github/actions/auth-gcp
 #        with:
 #          auth-mode: "workload-federation"
 #          provider: ${{ secrets.WI_PROVIDER_V2_PREPRODUCTION }}
@@ -133,7 +132,7 @@ jobs:
 #        uses: actions/checkout@v4
 #
 #      - name: Auth GCP
-#        uses: PrestaShopCorp/prestashop-github-action-gcp-auth@v1
+#        uses: ./.github/actions/auth-gcp
 #        with:
 #          auth-mode: "workload-federation"
 #          provider: ${{ secrets.WI_PROVIDER_V2_PRODUCTION }}
