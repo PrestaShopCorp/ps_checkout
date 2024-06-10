@@ -15,6 +15,15 @@ env:
   ZIP_NAME_PRODUCTION: ${{ github.event.repository.name }}-${{ github.ref_name }}
 
 jobs:
+  current_date:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+
+    steps:
+      - id: date
+        run: echo "date=$(date +'%Y-%m-%d-%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
   deploy_integration:
     name: INTEGRATION - Build dependencies & create artifact
     runs-on: ubuntu-latest
@@ -53,20 +62,20 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      - name: Clean-up project
-        uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
+      # - name: Clean-up project
+      #   uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
 
-      - name: Clean-up node_modules directory
-        run: |
-          sudo rm -rf node_modules
+      # - name: Clean-up node_modules directory
+      #   run: |
+      #     sudo rm -rf node_modules
 
       - name: Generate zip
         run: |
-          zip -r ${{ env.ZIP_NAME_INTEGRATION }}.zip . -x '*.git*'
+          zip -r ${{ env.ZIP_NAME_INTEGRATION }}-${{ needs.current_date.outputs.date }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '_dev' -x 'tests'
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://ps-eu-w1-checkout-assets-integration/zips
+        run: gsutil cp ${{ env.ZIP_NAME_INTEGRATION }}.zip gs://ps-eu-w1-checkout-assets-integration/zips/ps8
 #  deploy_preproduction:
 #    name: PREPRODUCTION - Build dependencies & create artifact
 #    runs-on: ubuntu-latest
