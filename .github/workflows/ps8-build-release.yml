@@ -132,7 +132,7 @@ jobs:
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME }}.zip gs://ps-eu-w1-checkout-assets-preproduction/zips
+        run: gsutil cp ${{ env.ZIP_NAME }}.zip gs://ps-eu-w1-checkout-assets-preproduction/zips/ps8
 
   deploy_production:
     name: PRODUCTION - Build dependencies & create artifact
@@ -170,17 +170,25 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      - name: Clean-up project
-        uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
+      # - name: Clean-up project
+      #   uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
 
-      - name: Clean-up node_modules directory
-        run: sudo rm -rf node_modules
+      # - name: Clean-up node_modules directory
+      #   run: sudo rm -rf node_modules
 
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
-          path: ../
+          path: |
+            ../
+            !../*.git*
+            !../.php_cs.*
+            !../**/node_modules
+            !../composer.*
+            !../.editorconfig
+            !../_dev
+            !../tests
 
   update_release_draft_production:
     name: PRODUCTION - Update release draft
@@ -206,8 +214,7 @@ jobs:
 
       - name: Prepare for Release
         run: |
-          cd ${{ github.event.repository.name }}
-          zip -r ${{ env.ZIP_NAME }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '_dev' -x 'tests'
 
       - name: Clean existing assets
         shell: bash
