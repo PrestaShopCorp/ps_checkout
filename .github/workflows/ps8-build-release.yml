@@ -108,7 +108,7 @@ jobs:
           setup-gcloud: true
 
       - name: Write .env file
-        run: gcloud beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT_PREPRODUCTION }}
 
@@ -159,7 +159,7 @@ jobs:
 
       - name: Write .env file
         run: |
-          gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="module-env" > .env
+          gcloud --quiet beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="module-env" > .env
         env:
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
