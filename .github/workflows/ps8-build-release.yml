@@ -65,16 +65,9 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      # - name: Clean-up project
-      #   uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
-
-      # - name: Clean-up node_modules directory
-      #   run: |
-      #     sudo rm -rf node_modules
-
       - name: Generate zip
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '_dev' -x 'tests'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*/_dev' -x '*/tests'
 
       - name: Push to GCP bucket storage
         shell: bash
@@ -121,15 +114,9 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      # - name: Clean-up project
-      #   uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
-
-      # - name: Clean-up node_modules directory
-      #   run: sudo rm -rf node_modules
-
       - name: Generate zip
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '_dev' -x 'tests'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*/_dev' -x '*/tests'
 
       - name: Push to GCP bucket storage
         shell: bash
@@ -172,12 +159,6 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      # - name: Clean-up project
-      #   uses: PrestaShopCorp/github-action-clean-before-deploy@v2.0
-
-      # - name: Clean-up node_modules directory
-      #   run: sudo rm -rf node_modules
-
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -216,7 +197,7 @@ jobs:
 
       - name: Prepare for Release
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '_dev' -x 'tests'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*/_dev' -x '*/tests'
 
       - name: Clean existing assets
         shell: bash
