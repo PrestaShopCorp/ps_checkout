@@ -105,6 +105,7 @@ jobs:
           provider: ${{ secrets.WI_PROVIDER_V2_PREPRODUCTION }}
           service-account: ${{ secrets.WI_SA_V2_PREPRODUCTION }}
           registry-login: true
+          setup-gcloud: true
 
       - name: Write .env file
         run: gcloud beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
@@ -154,6 +155,7 @@ jobs:
           provider: ${{ secrets.WI_PROVIDER_V2_PRODUCTION }}
           service-account: ${{ secrets.WI_SA_V2_PRODUCTION }}
           registry-login: true
+          setup-gcloud: true
 
       - name: Write .env file
         run: |
