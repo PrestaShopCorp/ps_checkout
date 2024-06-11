@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Date
         id: date
-        run: echo "date=$(date +'%Y-%m-%d-%H-%M-%S')" >> "$GITHUB_OUTPUT"
+        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d-%H-%M-%S')" >> "$GITHUB_OUTPUT"
 
   deploy_integration:
     name: INTEGRATION - Build dependencies & create artifact
