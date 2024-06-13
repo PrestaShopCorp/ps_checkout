@@ -67,7 +67,7 @@ jobs:
 
       - name: Generate zip
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*_dev*' -x '*tests*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Push to GCP bucket storage
         shell: bash
@@ -116,7 +116,7 @@ jobs:
 
       - name: Generate zip
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*_dev*' -x '*tests*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Push to GCP bucket storage
         shell: bash
@@ -197,7 +197,7 @@ jobs:
 
       - name: Prepare for Release
         run: |
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x '.editorconfig' -x '*_dev*' -x '*tests*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Clean existing assets
         shell: bash
