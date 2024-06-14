@@ -32,9 +32,7 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    if:
-      contains(github.event.pull_request.labels.*.name, 'integration deployment') &&
-      contains(github.event.pull_request.labels.*.name, 'ps8')
+    if: contains(github.event.pull_request.labels.*.name, 'integration deployment')
     env:
       ZIP_NAME: ${{ github.event.repository.name }}-integration-pr${{ github.event.number }}-${{ needs.current_date.outputs.date }}
 
@@ -81,9 +79,7 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    if:
-      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') &&
-      contains(github.event.pull_request.labels.*.name, 'ps8')
+    if: contains(github.event.pull_request.labels.*.name, 'preproduction deployment')
     env:
       ZIP_NAME: ${{ github.event.repository.name }}-preproduction-pr${{ github.event.number }}-${{ needs.current_date.outputs.date }}
 
