@@ -85,16 +85,12 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
-            $this->hasBeenTotallyRefunded($totalRefund, $order),
+            (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
             (string) $order->getTotalPaid(),
             (string) $totalRefund,
             (int) $order->id_currency
         );
-    }
-
-    private function hasBeenTotallyRefunded($refundAmount, $order)
-    {
-        return $refundAmount >= $order->total_paid;
     }
 
     private function getTotalRefund(Order $order)

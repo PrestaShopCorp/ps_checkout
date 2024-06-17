@@ -45,6 +45,11 @@ class GetOrderForPaymentRefundedQueryResult
     /**
      * @var bool
      */
+    private $hasBeenPartiallyRefund;
+
+    /**
+     * @var bool
+     */
     private $hasBeenTotallyRefund;
 
     /**
@@ -66,6 +71,7 @@ class GetOrderForPaymentRefundedQueryResult
      * @param int $orderId
      * @param int $currentStateId
      * @param bool $hasBeenPaid
+     * @param bool $hasBeenPartiallyRefund
      * @param bool $hasBeenTotallyRefund
      * @param string $totalAmount
      * @param string $totalRefund
@@ -78,6 +84,7 @@ class GetOrderForPaymentRefundedQueryResult
         $orderId,
         $currentStateId,
         $hasBeenPaid,
+        $hasBeenPartiallyRefund,
         $hasBeenTotallyRefund,
         $totalAmount,
         $totalRefund,
@@ -86,6 +93,7 @@ class GetOrderForPaymentRefundedQueryResult
         $this->orderId = new OrderId($orderId);
         $this->currentStateId = new OrderStateId($currentStateId);
         $this->hasBeenPaid = $hasBeenPaid;
+        $this->hasBeenPartiallyRefund = $hasBeenPartiallyRefund;
         $this->hasBeenTotallyRefund = $hasBeenTotallyRefund;
         $this->totalAmount = $totalAmount;
         $this->totalRefund = $totalRefund;
@@ -114,6 +122,11 @@ class GetOrderForPaymentRefundedQueryResult
     public function hasBeenPaid()
     {
         return $this->hasBeenPaid;
+    }
+
+    public function hasBeenPartiallyRefund()
+    {
+        return $this->hasBeenPartiallyRefund;
     }
 
     /**
