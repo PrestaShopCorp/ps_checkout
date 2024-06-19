@@ -24,11 +24,11 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
@@ -94,6 +94,7 @@ class CreatePayPalOrderCommandHandler
      * @throws NotAuthorizedException
      * @throws UnprocessableEntityException
      * @throws Exception
+     * @throws PsCheckoutException
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
@@ -103,7 +104,7 @@ class CreatePayPalOrderCommandHandler
         try {
             $customerId = $this->prestaShopContext->getCustomerId();
             $payPalCustomerId = $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId(new CustomerId($customerId));
-        } catch (CustomerException $exception) {
+        } catch (PsCheckoutException $exception) {
             $payPalCustomerId = null;
         }
 
@@ -118,7 +119,7 @@ class CreatePayPalOrderCommandHandler
             $paymentToken = $this->paymentTokenRepository->findById($command->getPaymentTokenId());
 
             if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId()->getValue() !== $payPalCustomerId->getValue()) {
-                throw new Exception('Payment token does not belong to the customer');
+                throw new PsCheckoutException('Payment token does not belong to the customer');
             }
             $builder->setPaypalVaultId($command->getPaymentTokenId()->getValue());
         }
