@@ -715,7 +715,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'usage_pattern' => 'IMMEDIATE',
                 'usage_type' => 'MERCHANT',
                 'customer_type' => 'CONSUMER',
-                'permit_multiple_payment_tokens' => true,
+                'permit_multiple_payment_tokens' => false,
             ];
         }
 
