@@ -193,7 +193,7 @@ class MaaslandHttpClient implements HttpClientInterface
     {
         $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $options, json_encode($payload)));
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -207,6 +207,6 @@ class MaaslandHttpClient implements HttpClientInterface
     {
         $response = $this->sendRequest(new Request('POST', '/payments/shop/update_settings', [], json_encode($payload)));
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody(), true);
     }
 }
