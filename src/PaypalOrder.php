@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use Exception;
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
@@ -67,14 +68,18 @@ class PaypalOrder
         /** @var PayPalConfiguration $payPalConfiguration */
         $payPalConfiguration = $module->getService(PayPalConfiguration::class);
 
-        $order = $payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($id));
+        try {
+            $order = $payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($id));
+        } catch (Exception $exception) {
+            $order = null;
+        }
 
         try {
             $payload = [
                 'orderId' => $id,
             ];
 
-            if ($order->checkCustomerIntent(PayPalOrderEntity::CUSTOMER_INTENT_USES_VAULTING)) {
+            if ($order && $order->checkCustomerIntent(PayPalOrderEntity::CUSTOMER_INTENT_USES_VAULTING)) {
                 $payload = array_merge($payload, [
                     'vault' => true,
                     'payee' => [
