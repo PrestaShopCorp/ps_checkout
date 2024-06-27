@@ -27,11 +27,13 @@ use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\PrestaShop\Adapter\Shop\Context;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -78,9 +80,14 @@ class PayPalSdkConfigurationBuilder
      * @var Env
      */
     private $env;
+    /**
+     * @var FundingSourceEligibilityConstraint
+     */
+    private $fundingSourceEligibilityConstraint;
 
     /**
      * @param \Ps_checkout $module
+     * @param Env $env
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
@@ -88,17 +95,19 @@ class PayPalSdkConfigurationBuilder
      * @param ShopContext $shopContext
      * @param PrestaShopContext $prestaShopContext
      * @param LoggerInterface $logger
+     * @param FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
      */
     public function __construct(
-        \Ps_checkout $module,
-        Env $env,
-        PayPalConfiguration $configuration,
-        PayPalPayLaterConfiguration $payLaterConfiguration,
+        \Ps_checkout                         $module,
+        Env                                  $env,
+        PayPalConfiguration                  $configuration,
+        PayPalPayLaterConfiguration          $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
-        ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        ShopContext $shopContext,
-        PrestaShopContext $prestaShopContext,
-        LoggerInterface $logger
+        ExpressCheckoutConfiguration         $expressCheckoutConfiguration,
+        ShopContext                          $shopContext,
+        PrestaShopContext                    $prestaShopContext,
+        LoggerInterface                      $logger,
+        FundingSourceEligibilityConstraint   $fundingSourceEligibilityConstraint
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
@@ -109,6 +118,7 @@ class PayPalSdkConfigurationBuilder
         $this->prestaShopContext = $prestaShopContext;
         $this->logger = $logger;
         $this->env = $env;
+        $this->fundingSourceEligibilityConstraint = $fundingSourceEligibilityConstraint;
     }
 
     /**
@@ -131,6 +141,10 @@ class PayPalSdkConfigurationBuilder
 
         if ($this->shouldIncludeMessagesComponent()) {
             $components[] = 'messages';
+        }
+
+        if ($this->shouldIncludeGooglePayComponent()) {
+            $components[] = 'googlepay';
         }
 
         $params = [
@@ -471,5 +485,17 @@ class PayPalSdkConfigurationBuilder
         }
 
         return $fundingSourcesEnabled;
+    }
+
+    private function shouldIncludeGooglePayComponent()
+    {
+        $context = \Context::getContext();
+        $country = $this->getCountry();
+        $fundingSource = $this->fundingSourceConfigurationRepository->get('google_pay');
+
+        return $fundingSource && $fundingSource['active']
+            && \Configuration::get('PS_CHECKOUT_GOOGLE_PAY', false) === '1'
+            && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('google_pay'), true)
+            && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('google_pay'), true);
     }
 }
