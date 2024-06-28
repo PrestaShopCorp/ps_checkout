@@ -960,17 +960,21 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
-        $vaultedPaymentMarks = [];
+        $customMarks = [];
 
         foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
-            $vaultedPaymentMarks[$fundingSource->name] = $fundingSource->customMark;
+            $customMarks[$fundingSource->name] = $fundingSource->customMark;
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+
+            if ($fundingSource->customMark !== null) {
+                $customMarks[$fundingSource->name] = $fundingSource->customMark;
+            }
 
             if ('card' === $fundingSource->name) {
                 $isCardAvailable = $fundingSource->isEnabled;
@@ -1005,7 +1009,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'VaultedPaymentMarks' => $vaultedPaymentMarks,
+            $this->name . 'CustomMarks' => $customMarks,
             $this->name . 'CardLogos' => [
                 'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
                 'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),
@@ -1102,7 +1106,8 @@ class Ps_checkout extends PaymentModule
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
+                'https://fo-sdk.laurynas-sedys-ext-mytun.prestashop.name/ps_checkout-fo-sdk.js',
+//                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
                 [
                     'position' => 'bottom',
                     'priority' => 201,

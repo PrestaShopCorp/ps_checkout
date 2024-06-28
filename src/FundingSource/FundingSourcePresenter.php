@@ -44,8 +44,11 @@ class FundingSourcePresenter
      * @param FundingSourceTranslationProvider $translation
      * @param CountryRepository $country
      */
-    public function __construct(FundingSourceTranslationProvider $translation, CountryRepository $country, PaymentMethodLogoProvider $paymentMethodLogoProvider)
-    {
+    public function __construct(
+        FundingSourceTranslationProvider $translation,
+        CountryRepository $country,
+        PaymentMethodLogoProvider $paymentMethodLogoProvider
+    ) {
         $this->translation = $translation;
         $this->country = $country;
         $this->paymentMethodLogoProvider = $paymentMethodLogoProvider;
@@ -67,7 +70,10 @@ class FundingSourcePresenter
             $entity->getPosition(),
             $isAdmin ? $this->country->getCountryNames($entity->getCountries()) : $entity->getCountries(),
             $entity->getIsEnabled(),
-            $entity->getIsToggleable()
+            $entity->getIsToggleable(),
+            null,
+            null,
+            $name === 'google_pay' ? $this->paymentMethodLogoProvider->getLogoByPaymentSource([$name => []]) : null
         );
     }
 
