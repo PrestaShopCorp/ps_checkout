@@ -81,7 +81,7 @@ class OrderDispatcher implements Dispatcher
         $logger = $module->getService('ps_checkout.logger');
 
         /** @var PayPalConfiguration $payPalConfiguration */
-        $payPalConfiguration = $module->get('ps_checkout.paypal.configuration');
+        $payPalConfiguration = $module->get(PayPalConfiguration::class);
 
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:

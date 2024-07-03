@@ -134,7 +134,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         $response = $maaslandHttpClient->getShopSignature($bodyValues);
 
         // data return false if no error
-        if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
+        if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
             return true;
         }
 
