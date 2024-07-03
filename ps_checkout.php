@@ -105,6 +105,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
+        'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
     ];
 
     public $confirmUninstall;
@@ -112,7 +113,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.0.0';
+    const VERSION = '8.4.0.1';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -133,7 +134,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.4.0.0';
+        $this->version = '8.4.0.1';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -827,6 +828,15 @@ class Ps_checkout extends PaymentModule
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
+
+        if ('AdminModules' === Tools::getValue('controller') && 'ps_checkout' === Tools::getValue('configure')) {
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/adminModules.css?version=' . $version->getSemVersion(),
+                'all',
+                null,
+                false
+            );
+        }
 
         if ('AdminPayment' === Tools::getValue('controller')) {
             $this->context->controller->addCss(

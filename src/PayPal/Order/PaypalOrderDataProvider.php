@@ -145,21 +145,29 @@ class PaypalOrderDataProvider
 
     public function isTokenSaved()
     {
-        $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
+        if ($this->payPalOrder) {
+            $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
 
-        return isset($paymentSource['attributes']['vault']['id']) &&
-            isset($paymentSource['attributes']['vault']['status']) &&
-            $paymentSource['attributes']['vault']['status'] === 'VAULTED';
+            return isset($paymentSource['attributes']['vault']['id']) &&
+                isset($paymentSource['attributes']['vault']['status']) &&
+                $paymentSource['attributes']['vault']['status'] === 'VAULTED';
+        }
+
+        return false;
     }
 
     public function getPaymentTokenIdentifier()
     {
-        $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
+        if ($this->payPalOrder) {
+            $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
 
-        if ($this->payPalOrder->getFundingSource() === 'card') {
-            return (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '');
-        } else {
-            return isset($paymentSource['email_address']) ? $paymentSource['email_address'] : '';
+            if ($this->payPalOrder->getFundingSource() === 'card') {
+                return (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '');
+            } else {
+                return isset($paymentSource['email_address']) ? $paymentSource['email_address'] : '';
+            }
         }
+
+        return '';
     }
 }

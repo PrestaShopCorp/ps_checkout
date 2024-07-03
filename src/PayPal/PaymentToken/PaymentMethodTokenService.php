@@ -59,7 +59,7 @@ class PaymentMethodTokenService
             $request = new Request('GET', 'https://api.paypal.com/v3/vault/payment-tokens&customer_id=' . $customerId->getValue(), []);
             $response = $this->httpClient->sendRequest($request);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody(), true);
 
             if (empty($data['payment_tokens'])) {
                 throw new Exception('Failed to fetch PayPal Payment Method tokens from response.');

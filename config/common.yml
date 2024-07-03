@@ -137,8 +137,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
     arguments:
       - '@ps_checkout.module'
-      - '@PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
-      - '@ps_checkout.cache.paypal.capture'
       - '@ps_checkout.cache.paypal.order'
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
