@@ -33,7 +33,7 @@ class GooglePayDisplayItem
      */
     private $label;
     /**
-     * @var 'LINE_ITEM'|'SUBTOTAL'
+     * @var 'LINE_ITEM'|'SUBTOTAL'|'TAX'
      */
     private $type;
     /**
@@ -47,11 +47,13 @@ class GooglePayDisplayItem
 
     /**
      * @param string $label
+     *
      * @return GooglePayDisplayItem
      */
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -64,12 +66,14 @@ class GooglePayDisplayItem
     }
 
     /**
-     * @param string $type
+     * @param 'LINE_ITEM'|'SUBTOTAL'|'TAX' $type
+     *
      * @return GooglePayDisplayItem
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -83,11 +87,13 @@ class GooglePayDisplayItem
 
     /**
      * @param string $price
+     *
      * @return GooglePayDisplayItem
      */
     public function setPrice($price)
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -100,12 +106,14 @@ class GooglePayDisplayItem
     }
 
     /**
-     * @param string $status
+     * @param 'FINAL'|'PENDING' $status
+     *
      * @return GooglePayDisplayItem
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 

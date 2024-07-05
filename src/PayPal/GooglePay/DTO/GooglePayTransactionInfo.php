@@ -70,11 +70,13 @@ class GooglePayTransactionInfo
 
     /**
      * @param string $currencyCode
+     *
      * @return GooglePayTransactionInfo
      */
     public function setCurrencyCode($currencyCode)
     {
         $this->currencyCode = $currencyCode;
+
         return $this;
     }
 
@@ -85,15 +87,19 @@ class GooglePayTransactionInfo
     {
         return $this->countryCode;
     }
+
     /**
      * @param string $countryCode
+     *
      * @return GooglePayTransactionInfo
      */
     public function setCountryCode($countryCode)
     {
         $this->countryCode = $countryCode;
+
         return $this;
     }
+
     /**
      * @return string
      */
@@ -101,15 +107,19 @@ class GooglePayTransactionInfo
     {
         return $this->transactionId;
     }
+
     /**
      * @param string $transactionId
+     *
      * @return GooglePayTransactionInfo
      */
     public function setTransactionId($transactionId)
     {
         $this->transactionId = $transactionId;
+
         return $this;
     }
+
     /**
      * @return string
      */
@@ -117,15 +127,19 @@ class GooglePayTransactionInfo
     {
         return $this->totalPriceStatus;
     }
+
     /**
-     * @param string $totalPriceStatus
+     * @param 'ESTIMATED'|'FINAL' $totalPriceStatus
+     *
      * @return GooglePayTransactionInfo
      */
     public function setTotalPriceStatus($totalPriceStatus)
     {
         $this->totalPriceStatus = $totalPriceStatus;
+
         return $this;
     }
+
     /**
      * @return string
      */
@@ -133,15 +147,19 @@ class GooglePayTransactionInfo
     {
         return $this->totalPrice;
     }
+
     /**
      * @param string $totalPrice
+     *
      * @return GooglePayTransactionInfo
      */
     public function setTotalPrice($totalPrice)
     {
         $this->totalPrice = $totalPrice;
+
         return $this;
     }
+
     /**
      * @return GooglePayDisplayItem[]
      */
@@ -149,15 +167,19 @@ class GooglePayTransactionInfo
     {
         return $this->displayItems;
     }
+
     /**
      * @param GooglePayDisplayItem[] $displayItems
+     *
      * @return GooglePayTransactionInfo
      */
     public function setDisplayItems($displayItems)
     {
         $this->displayItems = $displayItems;
+
         return $this;
     }
+
     /**
      * @return string
      */
@@ -165,15 +187,19 @@ class GooglePayTransactionInfo
     {
         return $this->totalPriceLabel;
     }
+
     /**
      * @param string $totalPriceLabel
+     *
      * @return GooglePayTransactionInfo
      */
     public function setTotalPriceLabel($totalPriceLabel)
     {
         $this->totalPriceLabel = $totalPriceLabel;
+
         return $this;
     }
+
     /**
      * @return string
      */
@@ -181,13 +207,16 @@ class GooglePayTransactionInfo
     {
         return $this->checkoutOption;
     }
+
     /**
-     * @param string $checkoutOption
+     * @param 'DEFAULT'|'COMPLETE_IMMEDIATE_PURCHASE' $checkoutOption
+     *
      * @return GooglePayTransactionInfo
      */
     public function setCheckoutOption($checkoutOption)
     {
         $this->checkoutOption = $checkoutOption;
+
         return $this;
     }
 

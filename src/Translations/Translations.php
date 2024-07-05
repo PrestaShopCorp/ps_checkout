@@ -544,7 +544,7 @@ class Translations
                 'subtotal' => $this->module->l('Subtotal', 'translations'),
                 'handling' => $this->module->l('Handling', 'translations'),
                 'discount' => $this->module->l('Discount', 'translations'),
-            ]
+            ],
         ];
 
         return $translations;

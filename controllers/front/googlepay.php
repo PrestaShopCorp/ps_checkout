@@ -26,8 +26,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTran
 /**
  * This controller receive ajax call on customer click on a payment button
  */
-class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController {
-
+class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
+{
     /**
      * @var Ps_checkout
      */
@@ -41,7 +41,8 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController 
     /**
      * @see FrontController::postProcess()
      */
-    public function postProcess() {
+    public function postProcess()
+    {
         try {
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
@@ -74,12 +75,10 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController 
 
     private function create($bodyValues)
     {
-
     }
 
     private function capture($bodyValues)
     {
-
     }
 
     private function getTransactionInfo($bodyValues)
