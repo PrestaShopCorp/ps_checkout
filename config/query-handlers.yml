@@ -80,3 +80,9 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GoogleTransactionInfoBuilder'

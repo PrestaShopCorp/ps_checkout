@@ -537,6 +537,14 @@ class Translations
                     'paymentTokenNotSaved' => $this->module->l('was not saved for future purchases', 'translations'),
                 ],
             ],
+            'google_pay' => [
+                'shipping' => $this->module->l('Shipping', 'translations'),
+                'tax' => $this->module->l('Tax', 'translations'),
+                'total' => $this->module->l('Total', 'translations'),
+                'subtotal' => $this->module->l('Subtotal', 'translations'),
+                'handling' => $this->module->l('Handling', 'translations'),
+                'discount' => $this->module->l('Discount', 'translations'),
+            ]
         ];
 
         return $translations;
