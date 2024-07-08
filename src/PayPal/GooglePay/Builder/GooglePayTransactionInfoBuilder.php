@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\DTO\GooglePayDisplayIt
 use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\DTO\GooglePayTransactionInfo;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
-class GoogleTransactionInfoBuilder
+class GooglePayTransactionInfoBuilder
 {
     /**
      * @var Translations
@@ -34,8 +34,7 @@ class GoogleTransactionInfoBuilder
 
     public function __construct(Translations $translations)
     {
-        $isoCode = \Context::getContext()->language->iso_code;
-        $this->translations = $translations->getTranslations()[$isoCode]['google_pay'];
+        $this->translations = current($translations->getTranslations())['google_pay'];
     }
 
     /**

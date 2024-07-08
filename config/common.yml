@@ -476,8 +476,8 @@ services:
     arguments:
       - '@ps_checkout.module'
 
-  PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GoogleTransactionInfoBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GoogleTransactionInfoBuilder'
+  PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Translations\Translations'

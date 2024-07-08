@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Sdk;
 
-use Configuration;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -494,7 +493,7 @@ class PayPalSdkConfigurationBuilder
         $fundingSource = $this->fundingSourceConfigurationRepository->get('google_pay');
 
         return $fundingSource && $fundingSource['active']
-            && Configuration::get('PS_CHECKOUT_GOOGLE_PAY') === '1'
+            && $this->configuration->isGooglePayEligible()
             && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('google_pay'), true)
             && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('google_pay'), true);
     }

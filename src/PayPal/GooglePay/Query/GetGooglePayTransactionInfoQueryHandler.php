@@ -21,17 +21,17 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
-use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GoogleTransactionInfoBuilder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 
 class GetGooglePayTransactionInfoQueryHandler
 {
     /**
-     * @var GoogleTransactionInfoBuilder
+     * @var GooglePayTransactionInfoBuilder
      */
     private $builder;
 
-    public function __construct(GoogleTransactionInfoBuilder $builder)
+    public function __construct(GooglePayTransactionInfoBuilder $builder)
     {
         $this->builder = $builder;
     }
