@@ -86,3 +86,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder'
+
+  PrestaShop\Module\PrestashopCheckout\Cart\Query\GetCartForPaymentQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Cart\Query\GetCartForPaymentQueryHandler'
+    public: true
