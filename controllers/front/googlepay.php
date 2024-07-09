@@ -55,18 +55,10 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
 
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
 
-            switch ($action) {
-                case 'create':
-                    $this->create($bodyValues);
-                    break;
-                case 'capture':
-                    $this->capture($bodyValues);
-                    break;
-                case 'getTransactionInfo':
-                    $this->getTransactionInfo($bodyValues);
-                    break;
-                default:
-                    $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
+            if ($action === 'getTransactionInfo') {
+                $this->getTransactionInfo($bodyValues);
+            } else {
+                $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
         } catch (Exception $exception) {
             $this->exitWithExceptionMessage($exception);
