@@ -739,7 +739,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
-    private function buildGooglePayPaymentSourceNode() {
+    private function buildGooglePayPaymentSourceNode()
+    {
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PayPalConfiguration $paypalConfiguration */

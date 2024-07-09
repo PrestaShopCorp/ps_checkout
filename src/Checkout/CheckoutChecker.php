@@ -57,7 +57,7 @@ class CheckoutChecker
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']));
         }
 
-        $paymentSource = current(array_keys($orderPayPal['payment_source']));
+        $paymentSource = key($orderPayPal['payment_source']);
 
         if (in_array($paymentSource, ['card', 'google_pay']) && isset($orderPayPal['payment_source'][$paymentSource])) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
