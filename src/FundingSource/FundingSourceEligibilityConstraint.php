@@ -46,4 +46,20 @@ class FundingSourceEligibilityConstraint
 
         return $countries[$fundingSourceName];
     }
+
+    /**
+     * Get eligible currencies for PayPal funding sources
+     *
+     * @param string $fundingSourceName
+     *
+     * @return array
+     */
+    public function getCurrencies($fundingSourceName)
+    {
+        $currencies = [
+            'google_pay' => ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
+        ];
+
+        return $currencies[$fundingSourceName];
+    }
 }
