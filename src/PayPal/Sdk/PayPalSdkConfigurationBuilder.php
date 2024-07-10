@@ -33,7 +33,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTo
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\PrestaShop\Adapter\Shop\Context;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -98,16 +97,16 @@ class PayPalSdkConfigurationBuilder
      * @param FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
      */
     public function __construct(
-        \Ps_checkout                         $module,
-        Env                                  $env,
-        PayPalConfiguration                  $configuration,
-        PayPalPayLaterConfiguration          $payLaterConfiguration,
+        \Ps_checkout $module,
+        Env $env,
+        PayPalConfiguration $configuration,
+        PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
-        ExpressCheckoutConfiguration         $expressCheckoutConfiguration,
-        ShopContext                          $shopContext,
-        PrestaShopContext                    $prestaShopContext,
-        LoggerInterface                      $logger,
-        FundingSourceEligibilityConstraint   $fundingSourceEligibilityConstraint
+        ExpressCheckoutConfiguration $expressCheckoutConfiguration,
+        ShopContext $shopContext,
+        PrestaShopContext $prestaShopContext,
+        LoggerInterface $logger,
+        FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
@@ -494,7 +493,7 @@ class PayPalSdkConfigurationBuilder
         $fundingSource = $this->fundingSourceConfigurationRepository->get('google_pay');
 
         return $fundingSource && $fundingSource['active']
-            && \Configuration::get('PS_CHECKOUT_GOOGLE_PAY', false) === '1'
+            && $this->configuration->isGooglePayEligible()
             && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('google_pay'), true)
             && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('google_pay'), true);
     }

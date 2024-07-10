@@ -130,9 +130,9 @@ class Card3DSecure
      */
     public function isLiabilityShifted(array $order)
     {
-        $cardAuthenticationResult = $this->getAuthenticationResult($order);
-        $liabilityShift = $this->getLiabilityShift($cardAuthenticationResult);
-        $threeDSecure = $this->get3DSecure($cardAuthenticationResult);
+        $authenticationResult = $this->getAuthenticationResult($order);
+        $liabilityShift = $this->getLiabilityShift($authenticationResult);
+        $threeDSecure = $this->get3DSecure($authenticationResult);
         $authenticationStatus = $this->getAuthenticationStatus($threeDSecure);
 
         return ($liabilityShift === self::LIABILITY_SHIFT_POSSIBLE || $liabilityShift === self::LIABILITY_SHIFT_YES)
@@ -188,27 +188,29 @@ class Card3DSecure
      */
     private function getAuthenticationResult(array $order)
     {
-        return isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null;
+        $fundingSource = isset($order['payment_source']) ? key($order['payment_source']) : '';
+
+        return isset($order['payment_source'][$fundingSource]['authentication_result']) ? $order['payment_source'][$fundingSource]['authentication_result'] : null;
     }
 
     /**
-     * @param array|null $cardAuthenticationResult
+     * @param array|null $authenticationResult
      *
      * @return string|null
      */
-    private function getLiabilityShift($cardAuthenticationResult)
+    private function getLiabilityShift($authenticationResult)
     {
-        return isset($cardAuthenticationResult['liability_shift']) ? $cardAuthenticationResult['liability_shift'] : null;
+        return isset($authenticationResult['liability_shift']) ? $authenticationResult['liability_shift'] : null;
     }
 
     /**
-     * @param array|null $cardAuthenticationResult
+     * @param array|null $authenticationResult
      *
      * @return array|null
      */
-    private function get3DSecure($cardAuthenticationResult)
+    private function get3DSecure($authenticationResult)
     {
-        return isset($cardAuthenticationResult['three_d_secure']) ? $cardAuthenticationResult['three_d_secure'] : null;
+        return isset($authenticationResult['three_d_secure']) ? $authenticationResult['three_d_secure'] : null;
     }
 
     /**
