@@ -746,6 +746,10 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         /** @var PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $module->getService(PayPalConfiguration::class);
 
+        if (!$paypalConfiguration->is3dSecureEnabled()) {
+            return;
+        }
+
         $node = [
             'payment_source' => [
                 'google_pay' => [
