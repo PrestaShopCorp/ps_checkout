@@ -1108,8 +1108,7 @@ class Ps_checkout extends PaymentModule
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                'https://fo-sdk.laurynas-sedys-ext-mytun.prestashop.name/ps_checkout-fo-sdk.js',
-//                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
+                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
                 [
                     'position' => 'bottom',
                     'priority' => 201,
