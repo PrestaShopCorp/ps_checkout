@@ -65,15 +65,7 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
         }
     }
 
-    private function create($bodyValues)
-    {
-    }
-
-    private function capture($bodyValues)
-    {
-    }
-
-    private function getTransactionInfo($bodyValues)
+    private function getTransactionInfo(array $bodyValues)
     {
         $transactionInfo = $this->commandBus->handle(new GetGooglePayTransactionInfoQuery(new CartId($this->context->cart->id)));
 
