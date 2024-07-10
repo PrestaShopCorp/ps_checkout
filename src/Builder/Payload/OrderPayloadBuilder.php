@@ -752,8 +752,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                     'attributes' => [
                         'verification' => [
                             'method' => $paypalConfiguration->getHostedFieldsContingencies(),
-                        ]
-                    ]
+                        ],
+                    ],
                 ],
             ],
         ];

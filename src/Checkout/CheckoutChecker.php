@@ -59,7 +59,8 @@ class CheckoutChecker
 
         $paymentSource = key($orderPayPal['payment_source']);
 
-        if (in_array($paymentSource, ['card', 'google_pay']) && isset($orderPayPal['payment_source'][$paymentSource])) {
+        if ((($paymentSource === 'google_pay' && $orderPayPal['status'] !== 'APPROVED')
+            || $paymentSource === 'card') && isset($orderPayPal['payment_source'][$paymentSource])) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 
             $this->logger->info(
