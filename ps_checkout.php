@@ -1086,6 +1086,7 @@ class Ps_checkout extends PaymentModule
                 'express-button.cart.separator' => $this->l('or'),
                 'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
                 'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
+                'error.google-pay-sdk' => $this->l('No Google Pay Javascript SDK Instance'),
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
