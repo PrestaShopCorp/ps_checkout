@@ -87,6 +87,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\Customer\Command\SavePayPalCustomerCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQueryHandler'
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
@@ -235,6 +236,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@ps_checkout.logger'
+      - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint'
 
   PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
@@ -471,3 +473,9 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Translations\Translations'

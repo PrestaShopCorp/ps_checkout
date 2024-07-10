@@ -178,8 +178,15 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $this->buildSupplementaryDataNode();
         }
 
-        if ($this->fundingSource === 'paypal') {
-            $this->buildPayPalPaymentSourceNode();
+        switch ($this->fundingSource) {
+            case 'paypal':
+                $this->buildPayPalPaymentSourceNode();
+                break;
+            case 'google_pay':
+                $this->buildGooglePayPaymentSourceNode();
+                break;
+            default:
+                break;
         }
     }
 
@@ -726,6 +733,32 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $node = [
             'payment_source' => [
                 'paypal' => $data,
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildGooglePayPaymentSourceNode()
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService(PayPalConfiguration::class);
+
+        if (!$paypalConfiguration->is3dSecureEnabled()) {
+            return;
+        }
+
+        $node = [
+            'payment_source' => [
+                'google_pay' => [
+                    'attributes' => [
+                        'verification' => [
+                            'method' => $paypalConfiguration->getHostedFieldsContingencies(),
+                        ],
+                    ],
+                ],
             ],
         ];
 

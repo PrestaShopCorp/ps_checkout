@@ -970,17 +970,21 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
-        $vaultedPaymentMarks = [];
+        $customMarks = [];
 
         foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
-            $vaultedPaymentMarks[$fundingSource->name] = $fundingSource->customMark;
+            $customMarks[$fundingSource->name] = $fundingSource->customMark;
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+
+            if ($fundingSource->customMark !== null) {
+                $customMarks[$fundingSource->name] = $fundingSource->customMark;
+            }
 
             if ('card' === $fundingSource->name) {
                 $isCardAvailable = $fundingSource->isEnabled;
@@ -1015,7 +1019,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'VaultedPaymentMarks' => $vaultedPaymentMarks,
+            $this->name . 'CustomMarks' => $customMarks,
             $this->name . 'CardLogos' => [
                 'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
                 'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),
@@ -1037,6 +1041,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
             $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
             $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
+            $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
@@ -1091,6 +1096,7 @@ class Ps_checkout extends PaymentModule
                 'express-button.cart.separator' => $this->l('or'),
                 'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
                 'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
+                'error.google-pay-sdk' => $this->l('No Google Pay Javascript SDK Instance'),
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
