@@ -188,7 +188,7 @@ class Card3DSecure
      */
     private function getAuthenticationResult(array $order)
     {
-        $fundingSource = key($order['payment_source']);
+        $fundingSource = isset($order['payment_source']) ? key($order['payment_source']) : '';
 
         return isset($order['payment_source'][$fundingSource]['authentication_result']) ? $order['payment_source'][$fundingSource]['authentication_result'] : null;
     }
