@@ -33,12 +33,6 @@ jobs:
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
-      - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1.0
-        with:
-          cmd: npm
-          path: ./
-
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
