@@ -1099,7 +1099,6 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
-
         /** @var \PrestaShop\Module\PrestashopCheckout\Environment\Env $env */
         $env = $this->getService(\PrestaShop\Module\PrestashopCheckout\Environment\Env::class);
 
