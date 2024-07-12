@@ -65,6 +65,7 @@ jobs:
 
       - name: Generate zip
         run: |
+          cd ${{ github.event.repository.name }}
           zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Push to GCP bucket storage
@@ -112,6 +113,7 @@ jobs:
 
       - name: Generate zip
         run: |
+          cd ${{ github.event.repository.name }}
           zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Push to GCP bucket storage
@@ -193,6 +195,7 @@ jobs:
 
       - name: Prepare for Release
         run: |
+          cd ${{ github.event.repository.name }}
           zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
 
       - name: Clean existing assets
