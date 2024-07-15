@@ -66,10 +66,12 @@ jobs:
       - name: Generate zip
         run: |
           ls -la
-          mkdir -p ${{ github.event.repository.name }}
-          cd ${{ github.event.repository.name }}
-          cp -R ../* .
           zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
+          unzip ${{ env.ZIP_NAME }}.zip -d ${{ github.event.repository.name }}
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
+          cd ../
+          cp ${{ github.event.repository.name }}/${{ env.ZIP_NAME }}.zip .
 
       - name: Push to GCP bucket storage
         shell: bash
