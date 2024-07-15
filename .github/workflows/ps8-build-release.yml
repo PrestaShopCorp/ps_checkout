@@ -63,13 +63,14 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
+      # It's mandatory to generate the zip inside a folder named ps_checkout, to make the zip installation working on PrestaShop
       - name: Generate zip
         run: |
           ls -la
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
           unzip ${{ env.ZIP_NAME }}.zip -d ${{ github.event.repository.name }}
           cd ${{ github.event.repository.name }}
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*'
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
           cd ../
           cp ${{ github.event.repository.name }}/${{ env.ZIP_NAME }}.zip .
 
