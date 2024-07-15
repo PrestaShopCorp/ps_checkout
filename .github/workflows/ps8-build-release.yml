@@ -65,6 +65,7 @@ jobs:
 
       - name: Generate zip
         run: |
+          ls -la
           mkdir -p ${{ github.event.repository.name }}
           cd ${{ github.event.repository.name }}
           cp -R ../* .
