@@ -59,6 +59,10 @@ class GooglePayTransactionInfo
      * @var 'DEFAULT'|'COMPLETE_IMMEDIATE_PURCHASE'
      */
     private $checkoutOption = self::CHECKOUT_OPTION_DEFAULT;
+    /**
+     * @var MerchantInfo
+     */
+    private $merchantInfo;
 
     /**
      * @return string
@@ -220,6 +224,26 @@ class GooglePayTransactionInfo
         return $this;
     }
 
+    /**
+     * @param MerchantInfo $merchantInfo
+     *
+     * @return GooglePayTransactionInfo
+     */
+    public function setMerchantInfo($merchantInfo)
+    {
+        $this->merchantInfo = $merchantInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return MerchantInfo
+     */
+    public function getMerchantInfo()
+    {
+        return $this->merchantInfo;
+    }
+
     public function toArray()
     {
         return array_filter([
@@ -233,6 +257,7 @@ class GooglePayTransactionInfo
             'displayItems' => array_map(function (GooglePayDisplayItem $item) {
                 return $item->toArray();
             }, $this->displayItems),
+            'merchantInfo' => $this->merchantInfo->toArray(),
         ]);
     }
 }

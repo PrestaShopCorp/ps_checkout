@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\DTO\GooglePayDisplayItem;
 use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\DTO\GooglePayTransactionInfo;
+use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\DTO\MerchantInfo;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 class GooglePayTransactionInfoBuilder
@@ -98,10 +99,14 @@ class GooglePayTransactionInfoBuilder
 
         $displayItems = array_merge($productItems, $displayItems);
 
+        $merchantInfo = new MerchantInfo();
+        $merchantInfo->setMerchantName($payload['application_context']['brand_name']);
+
         $transactionInfo->setCurrencyCode($payload['amount']['currency_code'])
             ->setTotalPrice($payload['amount']['value'])
             ->setTotalPriceLabel($this->translations['total'])
-            ->setDisplayItems($displayItems);
+            ->setDisplayItems($displayItems)
+            ->setMerchantInfo($merchantInfo);
 
         return $transactionInfo;
     }
