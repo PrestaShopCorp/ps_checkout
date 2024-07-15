@@ -67,12 +67,13 @@ jobs:
       - name: Generate zip
         run: |
           ls -la
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
-          unzip ${{ env.ZIP_NAME }}.zip -d ${{ github.event.repository.name }}
-          cd ${{ github.event.repository.name }}
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
           cd ../
-          cp ${{ github.event.repository.name }}/${{ env.ZIP_NAME }}.zip .
+          zip -r ${{ env.ZIP_NAME }}.zip ${{ github.event.repository.name }} -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
+          # unzip ${{ env.ZIP_NAME }}.zip -d ${{ github.event.repository.name }}
+          # cd ${{ github.event.repository.name }}
+          # zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
+          # cd ../
+          # cp ${{ github.event.repository.name }}/${{ env.ZIP_NAME }}.zip .
 
       - name: Push to GCP bucket storage
         shell: bash
