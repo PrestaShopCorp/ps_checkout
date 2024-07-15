@@ -69,6 +69,7 @@ jobs:
           ls -la
           cd ../
           zip -r ${{ env.ZIP_NAME }}.zip ${{ github.event.repository.name }} -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
+          cp ${{ env.ZIP_NAME }}.zip ${{ github.event.repository.name }}
           # unzip ${{ env.ZIP_NAME }}.zip -d ${{ github.event.repository.name }}
           # cd ${{ github.event.repository.name }}
           # zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' -x '.php_cs.*' -x '*/node_modules' -x 'composer.*' -x 'package.*' -x '.editorconfig' -x '*_dev*' -x '*test*' -x 'gha-creds-*.json'
