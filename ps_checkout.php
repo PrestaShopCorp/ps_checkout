@@ -1050,6 +1050,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isHostedFieldsEnabled() && in_array($payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart && $psCheckoutCart->isHostedFields(),
             $this->name . 'HostedFieldsContingencies' => $payPalConfiguration->getHostedFieldsContingencies(),
+            $this->name . 'PayPalEnvironment' => $payPalConfiguration->getPaymentMode(),
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout(),
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled() && $payPalConfiguration->isPayPalPaymentsReceivable(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled() && $payPalConfiguration->isPayPalPaymentsReceivable(),
@@ -1115,10 +1116,26 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Environment\Env $env */
+        $env = $this->getService(\PrestaShop\Module\PrestashopCheckout\Environment\Env::class);
+
+        $foSdkUrl = $env->getEnv('CHECKOUT_FO_SDK_URL');
+        if (substr($foSdkUrl, -3) !== '.js') {
+            $foSdkVersion = $env->getEnv('CHECKOUT_FO_SDK_VERSION');
+            if (empty($foSdkVersion)) {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+                $version = $this->getService('ps_checkout.module.version');
+                $majorModuleVersion = explode('.', $version->getSemVersion())[0];
+                $foSdkVersion = "$majorModuleVersion.X.X";
+            }
+
+            $foSdkUrl = $foSdkUrl . $foSdkVersion . '/sdk/ps_checkout-fo-sdk.js';
+        }
+
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
+                $foSdkUrl,
                 [
                     'position' => 'bottom',
                     'priority' => 201,
@@ -1126,10 +1143,7 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addJS(
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
-                false
-            );
+            $this->context->controller->addJS($foSdkUrl, false);
         }
     }
 
