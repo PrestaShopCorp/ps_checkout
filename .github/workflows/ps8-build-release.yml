@@ -54,12 +54,6 @@ jobs:
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT_INTEGRATION }}
 
-      - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1.0
-        with:
-          cmd: npm
-          path: ./
-
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
@@ -104,12 +98,6 @@ jobs:
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT_PREPRODUCTION }}
 
-      - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1.0
-        with:
-          cmd: npm
-          path: ./
-
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
@@ -151,12 +139,6 @@ jobs:
           gcloud --quiet beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="module-env" > .env
         env:
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
-
-      - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1.0
-        with:
-          cmd: npm
-          path: ./
 
       - name: Install composer dependencies
         run: composer install --no-dev -o
