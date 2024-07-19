@@ -90,7 +90,7 @@ class GooglePayTransactionInfoBuilder
 
         $productItems = array_map(function ($item) {
             $productItem = new GooglePayDisplayItem();
-            $productItem->setPrice($item['unit_amount']['value'])
+            $productItem->setPrice($this->formatAmount($item['unit_amount']['value'] * $item['quantity'], $item['unit_amount']['currency_code']))
                 ->setType(GooglePayDisplayItem::TYPE_LINE_ITEM)
                 ->setLabel($item['name'] . ' ' . $item['description'] . ' x' . $item['quantity']);
 
