@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 
@@ -36,6 +37,13 @@ class GetGooglePayTransactionInfoQueryHandler
         $this->builder = $builder;
     }
 
+    /**
+     * @param GetGooglePayTransactionInfoQuery $query
+     *
+     * @return GetGooglePayTransactionInfoQueryResult
+     *
+     * @throws PsCheckoutException
+     */
     public function handle(GetGooglePayTransactionInfoQuery $query)
     {
         $cartPresenter = (new CartPresenter())->present();
@@ -44,6 +52,6 @@ class GetGooglePayTransactionInfoQueryHandler
         $orderPayloadBuilder->buildFullPayload();
         $payload = $orderPayloadBuilder->presentPayload();
 
-        return new GetGooglePayTransactionInfoQueryResult($this->builder->buildFromPayPalPayload($payload->getArray()));
+        return new GetGooglePayTransactionInfoQueryResult($this->builder->buildMinimalTransactionInfoFromPayPalPayload($payload->getArray()));
     }
 }

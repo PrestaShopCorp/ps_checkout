@@ -112,6 +112,26 @@ class GooglePayTransactionInfoBuilder
     }
 
     /**
+     * @return GooglePayTransactionInfo
+     *
+     * @throws PsCheckoutException
+     */
+    public function buildMinimalTransactionInfoFromPayPalPayload($payload)
+    {
+        $transactionInfo = new GooglePayTransactionInfo();
+
+        $merchantInfo = new MerchantInfo();
+        $merchantInfo->setMerchantName($payload['application_context']['brand_name']);
+
+        $transactionInfo->setCurrencyCode($payload['amount']['currency_code'])
+            ->setTotalPrice($payload['amount']['value'])
+            ->setTotalPriceLabel($this->translations['total'])
+            ->setMerchantInfo($merchantInfo);
+
+        return $transactionInfo;
+    }
+
+    /**
      * Get decimal to round correspondent to the payment currency used
      * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
      * currencies which require a round with 0 decimal
