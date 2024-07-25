@@ -25,6 +25,7 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
+use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
@@ -53,6 +54,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function createOrder(array $payload, array $options = [])
     {
@@ -70,6 +72,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function updateOrder(array $payload, array $options = [])
     {
@@ -87,6 +90,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function fetchOrder(array $payload, array $options = [])
     {
@@ -104,6 +108,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function captureOrder(array $payload, array $options = [])
     {
@@ -121,6 +126,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function refundOrder(array $payload, array $options = [])
     {
@@ -137,6 +143,7 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
+     * @throws HttpTimeoutException
      */
     public function sendRequest(RequestInterface $request)
     {
@@ -144,7 +151,13 @@ class MaaslandHttpClient implements HttpClientInterface
             $response = $this->httpClient->sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $message = $this->extractMessage(json_decode($response->getBody(), true));
+            $body = json_decode($response->getBody(), true);
+
+            if (isset($body['isResponseUndefined']) && $body['isResponseUndefined']) {
+                throw new HttpTimeoutException($exception->getMessage(), $exception->getCode(), $exception);
+            }
+
+            $message = $this->extractMessage($body);
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
