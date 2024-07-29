@@ -67,6 +67,6 @@ class FundingSourceConfiguration
             return (bool) $fundingSource['active'];
         }
 
-        return true;
+        return false;
     }
 }
