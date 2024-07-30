@@ -27,9 +27,11 @@ class FundingSourceInstaller
     /**
      * Saves Funding Sources for the first time into the database
      *
+     * @param int|null $shopId
+     *
      * @return bool
      */
-    public function createFundingSources()
+    public function createFundingSources($shopId = null)
     {
         $fundingSourceConfigurationRepository = new FundingSourceConfigurationRepository(new PrestaShopContext());
         $fundingSourceCollectionBuilder = new FundingSourceCollectionBuilder(
@@ -43,7 +45,7 @@ class FundingSourceInstaller
                 'name' => $fundingSourceEntity->getName(),
                 'position' => $fundingSourceEntity->getPosition(),
                 'isEnabled' => $fundingSourceEntity->getIsEnabled() ? 1 : 0,
-            ]);
+            ], $shopId);
         }
 
         return true;
