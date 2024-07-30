@@ -172,7 +172,7 @@ class Ps_checkout extends PaymentModule
             $this->installConfiguration() &&
             $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
+            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSourcesOnAllShops() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();

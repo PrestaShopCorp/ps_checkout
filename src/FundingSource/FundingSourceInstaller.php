@@ -50,4 +50,15 @@ class FundingSourceInstaller
 
         return true;
     }
+
+    public function createFundingSourcesOnAllShops()
+    {
+        $result = true;
+
+        foreach (\Shop::getShops(false, null, true) as $shopId) {
+            $result &= $this->createFundingSources((int) $shopId);
+        }
+
+        return $result;
+    }
 }
