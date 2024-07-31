@@ -21,7 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQuery;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -67,7 +67,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
     private function getPaymentRequest(array $bodyValues)
     {
-        $transactionInfo = $this->commandBus->handle(new GetGooglePayTransactionInfoQuery(new CartId($this->context->cart->id)));
+        $transactionInfo = $this->commandBus->handle(new GetApplePayPaymentRequestQuery(new CartId($this->context->cart->id)));
 
         $this->exitWithResponse([
             'httpCode' => 200,
