@@ -50,12 +50,13 @@ class FundingSourceConfigurationRepository
 
     /**
      * @param string $name
+     * @param int|null $shopId
      *
      * @return array|null
      */
-    public function get($name)
+    public function get($name, $shopId = null)
     {
-        $fundingSources = $this->getAll();
+        $fundingSources = $this->getAll($shopId);
 
         if (null === $fundingSources) {
             return null;
@@ -71,10 +72,14 @@ class FundingSourceConfigurationRepository
     }
 
     /**
+     * @param int|null $shopId
+     *
      * @return array|null
      */
-    public function getAll()
+    public function getAll($shopId = null)
     {
+        $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
+
         if (null !== $this->fundingSources) {
             return $this->fundingSources;
         }
@@ -82,7 +87,7 @@ class FundingSourceConfigurationRepository
         $data = $this->db->executeS('
             SELECT `name`, `active`, `position`
             FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
-            WHERE `id_shop` = ' . (int) $this->context->getShopId()
+            WHERE `id_shop` = ' . $shopId
         );
 
         if (!empty($data)) {
@@ -104,7 +109,7 @@ class FundingSourceConfigurationRepository
     {
         $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
 
-        if ($this->get($data['name'])) {
+        if ($this->get($data['name'], $shopId)) {
             return (bool) $this->db->update(
                 'pscheckout_funding_source',
                 [
