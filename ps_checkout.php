@@ -1042,6 +1042,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
             $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
             $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', [], true),
+            $this->name . 'ApplePayUrl' => $this->context->link->getModuleLink($this->name, 'applepay', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
