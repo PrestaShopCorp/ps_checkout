@@ -51,9 +51,15 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
             if (!empty($bodyContent)) {
                 $bodyValues = json_decode($bodyContent, true);
+                $action = $bodyValues['action'];
             }
 
-            $action = $bodyValues['action'];
+            if (empty($action)) {
+                $getParam = Tools::getValue('action');
+                if ($getParam === 'getDomainAssociation') {
+                    $action = $getParam;
+                }
+            }
 
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
 
@@ -67,8 +73,12 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                      */
                     $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
                     $environment = $payPalConfiguration->getPaymentMode();
-                    echo readfile(_PS_MODULE_DIR_ . "ps_checkout/.well-known/apple-$environment-merchantid-domain-association");
-                    exit;
+                    $associationFile = _PS_MODULE_DIR_ . "ps_checkout/.well-known/apple-$environment-merchantid-domain-association";
+                    if (file_exists($associationFile)) {
+                        echo file_get_contents($associationFile);
+                        exit;
+                    }
+                    $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
                 default:
                     $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
