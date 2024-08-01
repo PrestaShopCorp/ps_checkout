@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -56,6 +57,21 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
 
+            switch ($action) {
+                case 'getPaymentRequest':
+                    $this->getPaymentRequest($bodyValues);
+                    break;
+                case 'getDomainAssociation':
+                    /**
+                     * @var PayPalConfiguration $payPalConfiguration
+                     */
+                    $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
+                    $environment = $payPalConfiguration->getPaymentMode();
+                    echo readfile(_PS_MODULE_DIR_ . "ps_checkout/.well-known/apple-$environment-merchantid-domain-association");
+                    exit;
+                default:
+                    $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
+            }
             if ($action === 'getPaymentRequest') {
                 $this->getPaymentRequest();
             } else {
