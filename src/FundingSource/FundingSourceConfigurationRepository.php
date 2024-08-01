@@ -80,8 +80,8 @@ class FundingSourceConfigurationRepository
     {
         $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
 
-        if (null !== $this->fundingSources) {
-            return $this->fundingSources;
+        if (isset($this->fundingSources[$shopId]) && null !== $this->fundingSources[$shopId]) {
+            return $this->fundingSources[$shopId];
         }
 
         $data = $this->db->executeS('
@@ -91,10 +91,10 @@ class FundingSourceConfigurationRepository
         );
 
         if (!empty($data)) {
-            $this->fundingSources = $data;
+            $this->fundingSources[$shopId] = $data;
         }
 
-        return $this->fundingSources;
+        return isset($this->fundingSources[$shopId]) ? $this->fundingSources[$shopId] : null;
     }
 
     /**
@@ -108,6 +108,8 @@ class FundingSourceConfigurationRepository
     public function save($data, $shopId = null)
     {
         $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
+
+        $this->fundingSources[$shopId] = null;
 
         if ($this->get($data['name'], $shopId)) {
             return (bool) $this->db->update(
