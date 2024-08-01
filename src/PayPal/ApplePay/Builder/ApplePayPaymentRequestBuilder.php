@@ -34,7 +34,7 @@ class ApplePayPaymentRequestBuilder
 
     public function __construct(Translations $translations)
     {
-        $this->translations = current($translations->getTranslations())['google_pay'];
+        $this->translations = current($translations->getTranslations())['apple_pay'];
     }
 
     /**
@@ -48,23 +48,8 @@ class ApplePayPaymentRequestBuilder
         $total->setAmount($payload['amount']['value'])
             ->setLabel($this->translations['total']);
 
-
-        $shipping = $payload['shipping'];
-        $shippingContact = new ApplePayPaymentContact();
-
-        $name = explode(' ', $shipping['name']);
-
-        $shippingContact->setCountryCode($shipping['address']['country_code'])
-            ->setGivenName($name[count($name) -1])
-            ->setFamilyName($name[count($name) -2])
-            ->setAddressLines([$shipping['address']['address_line_1'], $shipping['address']['address_line_2']])
-            ->setAdministrativeArea($shipping['address']['admin_area_1'])
-            ->setSubAdministrativeArea($shipping['address']['admin_area_2'])
-            ->setPostalCode($shipping['address']['postal_code']);
-
         $paymentRequest->setCurrencyCode($payload['amount']['currency_code'])
-            ->setTotal($total)
-            ->setShippingContact($shippingContact);
+            ->setTotal($total);
 
         return $paymentRequest;
     }
