@@ -105,6 +105,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
+        'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
     ];
 
     public $confirmUninstall;
