@@ -147,16 +147,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
-          path: |
-            ../
-            !../*.git*
-            !../.php_cs.*
-            !../**/node_modules
-            !../composer.*
-            !../.editorconfig
-            !../_dev
-            !../tests
-            !../gha-creds-*.json
+          path: ../
 
   update_release_draft_production:
     name: PRODUCTION - Update release draft
