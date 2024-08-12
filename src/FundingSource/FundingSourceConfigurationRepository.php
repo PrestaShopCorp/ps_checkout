@@ -50,12 +50,13 @@ class FundingSourceConfigurationRepository
 
     /**
      * @param string $name
+     * @param int|null $shopId
      *
      * @return array|null
      */
-    public function get($name)
+    public function get($name, $shopId = null)
     {
-        $fundingSources = $this->getAll();
+        $fundingSources = $this->getAll($shopId);
 
         if (null === $fundingSources) {
             return null;
@@ -71,42 +72,53 @@ class FundingSourceConfigurationRepository
     }
 
     /**
+     * @param int|null $shopId
+     *
      * @return array|null
      */
-    public function getAll()
+    public function getAll($shopId = null)
     {
-        if (null !== $this->fundingSources) {
-            return $this->fundingSources;
+        $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
+
+        if (isset($this->fundingSources[$shopId]) && null !== $this->fundingSources[$shopId]) {
+            return $this->fundingSources[$shopId];
         }
 
         $data = $this->db->executeS('
             SELECT `name`, `active`, `position`
             FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
-            WHERE `id_shop` = ' . (int) $this->context->getShopId()
+            WHERE `id_shop` = ' . $shopId
         );
 
         if (!empty($data)) {
-            $this->fundingSources = $data;
+            $this->fundingSources[$shopId] = $data;
         }
 
-        return $this->fundingSources;
+        return isset($this->fundingSources[$shopId]) ? $this->fundingSources[$shopId] : null;
     }
 
     /**
      * @param array $data
+     * @param int|null $shopId
      *
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
      */
-    public function save($data)
+    public function save($data, $shopId = null)
     {
-        if ($this->get($data['name'])) {
+        $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
+
+        $this->fundingSources[$shopId] = null;
+
+        if ($this->get($data['name'], $shopId)) {
             return (bool) $this->db->update(
                 'pscheckout_funding_source',
                 [
                     'position' => (int) $data['position'],
                     'active' => (int) $data['isEnabled'],
                 ],
-                '`name` = "' . pSQL($data['name']) . '" AND `id_shop` = ' . (int) $this->context->getShopId()
+                '`name` = "' . pSQL($data['name']) . '" AND `id_shop` = ' . $shopId
             );
         }
 
@@ -116,7 +128,7 @@ class FundingSourceConfigurationRepository
                 'name' => pSQL($data['name']),
                 'position' => (int) $data['position'],
                 'active' => (int) $data['isEnabled'],
-                'id_shop' => (int) $this->context->getShopId(),
+                'id_shop' => $shopId,
             ]
         );
     }

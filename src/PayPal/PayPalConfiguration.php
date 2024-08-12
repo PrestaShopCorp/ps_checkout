@@ -50,6 +50,8 @@ class PayPalConfiguration
     const PS_CHECKOUT_DISPLAY_LOGO_CART = 'PS_CHECKOUT_DISPLAY_LOGO_CART';
     const PS_CHECKOUT_VAULTING = 'PS_CHECKOUT_VAULTING';
 
+    const PS_CHECKOUT_GOOGLE_PAY = 'PS_CHECKOUT_GOOGLE_PAY';
+
     /**
      * @var PrestaShopConfiguration
      */
@@ -440,5 +442,10 @@ class PayPalConfiguration
     public function isVaultingEnabled()
     {
         return (bool) $this->configuration->get(static::PS_CHECKOUT_VAULTING);
+    }
+
+    public function isGooglePayEligible()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_GOOGLE_PAY);
     }
 }

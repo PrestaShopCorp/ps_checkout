@@ -113,7 +113,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.0.1';
+    const VERSION = '8.4.1.0';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -134,7 +134,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.4.0.1';
+        $this->version = '8.4.1.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -172,7 +172,7 @@ class Ps_checkout extends PaymentModule
             $this->installConfiguration() &&
             $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
+            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSourcesOnAllShops() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();
@@ -970,17 +970,21 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
-        $vaultedPaymentMarks = [];
+        $customMarks = [];
 
         foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
-            $vaultedPaymentMarks[$fundingSource->name] = $fundingSource->customMark;
+            $customMarks[$fundingSource->name] = $fundingSource->customMark;
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+
+            if ($fundingSource->customMark !== null) {
+                $customMarks[$fundingSource->name] = $fundingSource->customMark;
+            }
 
             if ('card' === $fundingSource->name) {
                 $isCardAvailable = $fundingSource->isEnabled;
@@ -1015,7 +1019,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'VaultedPaymentMarks' => $vaultedPaymentMarks,
+            $this->name . 'CustomMarks' => $customMarks,
             $this->name . 'CardLogos' => [
                 'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
                 'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),
@@ -1037,6 +1041,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
             $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
             $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
+            $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
@@ -1045,6 +1050,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isHostedFieldsEnabled() && in_array($payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart && $psCheckoutCart->isHostedFields(),
             $this->name . 'HostedFieldsContingencies' => $payPalConfiguration->getHostedFieldsContingencies(),
+            $this->name . 'PayPalEnvironment' => $payPalConfiguration->getPaymentMode(),
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout(),
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled() && $payPalConfiguration->isPayPalPaymentsReceivable(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled() && $payPalConfiguration->isPayPalPaymentsReceivable(),
@@ -1091,6 +1097,7 @@ class Ps_checkout extends PaymentModule
                 'express-button.cart.separator' => $this->l('or'),
                 'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
                 'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
+                'error.google-pay-sdk' => $this->l('No Google Pay Javascript SDK Instance'),
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
@@ -1109,10 +1116,26 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Environment\Env $env */
+        $env = $this->getService(\PrestaShop\Module\PrestashopCheckout\Environment\Env::class);
+
+        $foSdkUrl = $env->getEnv('CHECKOUT_FO_SDK_URL');
+        if (substr($foSdkUrl, -3) !== '.js') {
+            $foSdkVersion = $env->getEnv('CHECKOUT_FO_SDK_VERSION');
+            if (empty($foSdkVersion)) {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+                $version = $this->getService('ps_checkout.module.version');
+                $majorModuleVersion = explode('.', $version->getSemVersion())[0];
+                $foSdkVersion = "$majorModuleVersion.X.X";
+            }
+
+            $foSdkUrl = $foSdkUrl . $foSdkVersion . '/sdk/ps_checkout-fo-sdk.js';
+        }
+
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
+                $foSdkUrl,
                 [
                     'position' => 'bottom',
                     'priority' => 201,
@@ -1120,10 +1143,7 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addJS(
-                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
-                false
-            );
+            $this->context->controller->addJS($foSdkUrl, false);
         }
     }
 
@@ -1364,6 +1384,7 @@ class Ps_checkout extends PaymentModule
             Configuration::set($name, $value, (int) $shop->id_shop_group, (int) $shop->id);
         }
 
+        (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources((int) $shop->id);
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
 

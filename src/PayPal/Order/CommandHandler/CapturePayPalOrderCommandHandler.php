@@ -58,7 +58,7 @@ class CapturePayPalOrderCommandHandler
     /**
      * @var MaaslandHttpClient
      */
-    private $httpClient;
+    private $maaslandHttpClient;
     /**
      * @var PrestaShopContext
      */
@@ -73,14 +73,14 @@ class CapturePayPalOrderCommandHandler
     private $payPalOrderRepository;
 
     public function __construct(
-        MaaslandHttpClient $httpClient,
+        MaaslandHttpClient $maaslandHttpClient,
         EventDispatcherInterface $eventDispatcher,
         CacheInterface $orderPayPalCache,
         PrestaShopContext $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
         PayPalOrderRepository $payPalOrderRepository
     ) {
-        $this->httpClient = $httpClient;
+        $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->prestaShopContext = $prestaShopContext;
@@ -105,7 +105,7 @@ class CapturePayPalOrderCommandHandler
             $payload['vault'] = true;
         }
 
-        $response = $this->httpClient->captureOrder($payload);
+        $response = $this->maaslandHttpClient->captureOrder($payload);
 
         $orderPayPal = json_decode($response->getBody(), true);
 
