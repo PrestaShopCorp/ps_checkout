@@ -136,7 +136,7 @@ jobs:
 
       - name: Write .env file
         run: |
-          gcloud --quiet beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="module-env" > .env
+          gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
         env:
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
