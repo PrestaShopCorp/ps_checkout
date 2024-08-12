@@ -144,7 +144,7 @@ jobs:
         run: composer install --no-dev -o
 
       - name: Create & upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v1
         with:
           name: ${{ env.ZIP_NAME }}
           path: ../
