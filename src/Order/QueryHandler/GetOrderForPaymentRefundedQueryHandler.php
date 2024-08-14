@@ -22,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use Order;
-use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -79,8 +78,6 @@ class GetOrderForPaymentRefundedQueryHandler
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        $totalRefund = $this->getTotalRefund($order);
-
         return new GetOrderForPaymentRefundedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
@@ -88,21 +85,7 @@ class GetOrderForPaymentRefundedQueryHandler
             (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
             (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
             (string) $order->getTotalPaid(),
-            (string) $totalRefund,
             (int) $order->id_currency
         );
-    }
-
-    private function getTotalRefund(Order $order)
-    {
-        /** @var OrderSlip[] $orderSlips */
-        $orderSlips = $order->getOrderSlipsCollection()->getResults();
-        $refundAmount = 0;
-
-        foreach ($orderSlips as $orderSlip) {
-            $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
-        }
-
-        return $refundAmount;
     }
 }

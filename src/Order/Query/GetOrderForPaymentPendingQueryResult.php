@@ -22,8 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 
 class GetOrderForPaymentPendingQueryResult
@@ -34,39 +32,22 @@ class GetOrderForPaymentPendingQueryResult
     private $orderId;
 
     /**
-     * @var OrderStateId
-     */
-    private $currentStateId;
-
-    /**
      * @var bool
      */
     private $isInPending;
 
     /**
-     * @var string
-     */
-    private $paymentMethod;
-
-    /**
      * @param int $orderId
-     * @param int $currentStateId
      * @param bool $isInPending
-     * @param string $paymentMethod
      *
      * @throws OrderException
-     * @throws OrderStateException
      */
     public function __construct(
         $orderId,
-        $currentStateId,
-        $isInPending,
-        $paymentMethod
+        $isInPending
     ) {
         $this->orderId = new OrderId($orderId);
-        $this->currentStateId = new OrderStateId($currentStateId);
         $this->isInPending = $isInPending;
-        $this->paymentMethod = $paymentMethod;
     }
 
     /**
@@ -78,26 +59,10 @@ class GetOrderForPaymentPendingQueryResult
     }
 
     /**
-     * @return OrderStateId
-     */
-    public function getCurrentStateId()
-    {
-        return $this->currentStateId;
-    }
-
-    /**
      * @return bool
      */
     public function isInPending()
     {
         return $this->isInPending;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentMethod()
-    {
-        return $this->paymentMethod;
     }
 }
