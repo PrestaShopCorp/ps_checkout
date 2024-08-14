@@ -207,7 +207,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     {
         try {
             /** @var GetOrderForPaymentReversedQueryResult $order */
-            $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+            $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue()));
         } catch (OrderNotFoundException $exception) {
             return;
         }

@@ -81,7 +81,6 @@ class GetOrderForPaymentReversedQueryHandler
 
         return new GetOrderForPaymentReversedQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             $this->hasBeenTotallyRefunded($order)
         );
