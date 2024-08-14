@@ -92,10 +92,8 @@ class GetOrderForPaymentCompletedQueryHandler
         return new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,
             (int) $order->id_cart,
-            (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             (string) $order->total_paid,
-            (string) $order->total_paid_real,
             (int) $order->id_currency,
             $psCheckoutCart->getPaypalFundingSource(),
             $orderPaymentId

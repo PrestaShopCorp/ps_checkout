@@ -84,7 +84,6 @@ class GetOrderForApprovalReversedQueryHandler
 
         return new GetOrderForApprovalReversedQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             (bool) $hasBeenCanceled
         );
