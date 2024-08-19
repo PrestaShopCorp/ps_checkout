@@ -143,7 +143,7 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
-      - name: Create directory with repo name and copy files
+      - name: Create directory with repo name and move files
         run: |
           repo_name="${{ github.event.repository.name }}"
           mkdir "$repo_name"
@@ -159,6 +159,16 @@ jobs:
         with:
           name: ${{ env.ZIP_NAME }}
           path: .
+
+      - name: Move files at root project
+        run: |
+          cd "${{ github.event.repository.name }}"
+          shopt -s dotglob nullglob
+          for file in *; do
+            mv "$file" ../
+          done
+          cd ../
+          rm -Rf "${{ github.event.repository.name }}"
 
   update_release_draft_production:
     name: PRODUCTION - Update release draft
