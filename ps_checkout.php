@@ -1807,7 +1807,7 @@ class Ps_checkout extends PaymentModule
         if ($payPalConfiguration->isApplePayEligible() && $applePay && $applePay['active']) {
             return [
                 'ps_checkout_applepay' => [
-                    'rule' => 'ps_checkout_applepay',
+                    'rule' => '.well-known/apple-developer-merchantid-domain-association',
                     'keywords' => [],
                     'controller' => 'applepay',
                     'params' => [

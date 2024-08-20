@@ -79,6 +79,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                         exit;
                     }
                     $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
+                    break;
                 default:
                     $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
