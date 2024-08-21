@@ -41,6 +41,12 @@ use Psr\Log\LoggerInterface;
 class PayPalSdkConfigurationBuilder
 {
     /**
+     * google_pay and apple_pay are not considered funding sources
+     * and passing these values to disableFunding with crash PayPal SDK
+     */
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+
+    /**
      * @var PayPalConfiguration
      */
     private $configuration;
@@ -223,7 +229,7 @@ class PayPalSdkConfigurationBuilder
         }
 
         foreach ($fundingSources as $fundingSource) {
-            if (!$fundingSource['active']) {
+            if (!$fundingSource['active'] && !in_array($fundingSource['name'], self::NOT_FUNDING_SOURCES, true)) {
                 $fundingSourcesDisabled[] = $fundingSource['name'];
             }
         }
