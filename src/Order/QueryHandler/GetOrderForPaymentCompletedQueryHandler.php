@@ -21,6 +21,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Configuration;
 use Order;
 use OrderPayment;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
@@ -28,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -89,10 +91,14 @@ class GetOrderForPaymentCompletedQueryHandler
             }
         }
 
+        $hasBeenPaid = $order->hasBeenPaid();
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
+
         return new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,
             (int) $order->id_cart,
-            (bool) $order->hasBeenPaid(),
+            $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
             (string) $order->total_paid,
             (int) $order->id_currency,
             $psCheckoutCart->getPaypalFundingSource(),
