@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
-use Crypto\MAC;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository;
