@@ -75,6 +75,13 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                     $environment = $payPalConfiguration->getPaymentMode();
                     $associationFile = _PS_MODULE_DIR_ . "ps_checkout/.well-known/apple-$environment-merchantid-domain-association";
                     if (file_exists($associationFile)) {
+                        if (!headers_sent()) {
+                            ob_end_clean();
+                            header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+                            header('X-Robots-Tag: noindex, nofollow');
+                            header_remove('Last-Modified');
+                            header('Content-Type: text/plain', true, 200);
+                        }
                         echo file_get_contents($associationFile);
                         exit;
                     }
