@@ -161,12 +161,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
 
-        if (false === $this->expressCheckout) {
+        if (false === $this->expressCheckout || $this->isUpdate) {
             $this->buildShippingNode();
+        }
 
-            if (false === $this->isUpdate) {
-                $this->buildPayerNode();
-            }
+        if (false === $this->expressCheckout && false === $this->isUpdate) {
+            $this->buildPayerNode();
         }
 
         if (false === $this->isUpdate) {
@@ -203,12 +203,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $this->buildBaseNode();
 
-        if (false === $this->expressCheckout) {
+        if (false === $this->expressCheckout || $this->isUpdate) {
             $this->buildShippingNode();
+        }
 
-            if (false === $this->isUpdate) {
-                $this->buildPayerNode();
-            }
+        if (false === $this->expressCheckout && false === $this->isUpdate) {
+            $this->buildPayerNode();
         }
 
         if (false === $this->isUpdate) {
@@ -272,6 +272,10 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildShippingNode()
     {
+        if (false === empty($this->cart['cart']['is_virtual'])) {
+            return;
+        }
+
         $gender = new \Gender($this->cart['customer']->id_gender, $this->cart['language']->id);
         $genderName = $gender->name;
 
@@ -370,10 +374,15 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 null,
                 (int) $context->shop->id
             ),
-            'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
             'return_url' => $router->getCheckoutValidateLink(),
             'cancel_url' => $router->getCheckoutCancelLink(),
         ];
+
+        if (empty($this->cart['cart']['is_virtual'])) {
+            $node['application_context']['shipping_preference'] = $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS';
+        } else {
+            $node['application_context']['shipping_preference'] = 'NO_SHIPPING';
+        }
 
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -427,7 +436,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $paypalItem['tax']['currency_code'] = $this->cart['currency']['iso_code'];
             $paypalItem['tax']['value'] = $unitTax;
             $paypalItem['quantity'] = $quantity;
-            $paypalItem['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
+            $paypalItem['category'] = !empty($value['is_virtual']) ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
             $node['items'][] = $paypalItem;
         }
@@ -524,18 +533,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                         'tax_total' => $payload['amount']['breakdown']['tax_total'],
                     ],
                     'level_3' => [
-                        'shipping_amount' => $payload['amount']['breakdown']['shipping'],
                         'duty_amount' => [
                             'currency_code' => $payload['amount']['currency_code'],
                             'value' => $payload['amount']['value'],
                         ],
                         'discount_amount' => $payload['amount']['breakdown']['discount'],
-                        'shipping_address' => $this->getAddressPortable('shipping'),
                         'line_items' => $payload['items'],
                     ],
                 ],
             ],
         ];
+
+        if (empty($this->cart['cart']['is_virtual'])) {
+            $node['supplementary_data']['card']['level_3']['shipping_address'] = $this->getAddressPortable('deliveryAddress');
+            $node['supplementary_data']['card']['level_3']['shipping_amount'] = $payload['amount']['breakdown']['shipping'];
+        }
 
         $this->getPayload()->addAndMergeItems($node);
     }
