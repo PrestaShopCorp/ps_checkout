@@ -89,10 +89,18 @@ class CreateOrderPayloadBuilderTest extends TestCase
             $this->assertEquals($payload['amount']['breakdown']['tax_total'], $payload['supplementary_data']['card']['level_2']['tax_total']);
             $this->assertEquals($payload['amount']['currency_code'], $payload['supplementary_data']['card']['level_3']['duty_amount']['currency_code']);
             $this->assertEquals($payload['amount']['value'], $payload['supplementary_data']['card']['level_3']['duty_amount']['value']);
-            $this->assertEquals($payload['amount']['breakdown']['shipping'], $payload['supplementary_data']['card']['level_3']['shipping_amount']);
             $this->assertEquals($payload['amount']['breakdown']['discount'], $payload['supplementary_data']['card']['level_3']['discount_amount']);
-            $this->assertEquals($payload['shipping']['address'], $payload['supplementary_data']['card']['level_3']['shipping_address']);
             $this->assertEquals($payload['items'], $payload['supplementary_data']['card']['level_3']['line_items']);
+
+            if ($cartData['cart']['is_virtual']) {
+                $this->assertArrayNotHasKey('shipping_address', $payload['supplementary_data']['card']['level_3']);
+                $this->assertArrayNotHasKey('shipping_amount', $payload['supplementary_data']['card']['level_3']);
+            } else {
+                $this->assertArrayHasKey('shipping_address', $payload['supplementary_data']['card']['level_3']);
+                $this->assertEquals($payload['shipping']['address'], $payload['supplementary_data']['card']['level_3']['shipping_address']);
+                $this->assertArrayHasKey('shipping_amount', $payload['supplementary_data']['card']['level_3']);
+                $this->assertEquals($payload['amount']['breakdown']['shipping'], $payload['supplementary_data']['card']['level_3']['shipping_amount']);
+            }
         }
     }
 
@@ -119,6 +127,198 @@ class CreateOrderPayloadBuilderTest extends TestCase
             $this->assertArrayNotHasKey('payment_source', $payload);
             $this->assertArrayNotHasKey('supplementary_data', $payload);
         }
+    }
+
+    public function testCreateOrderWithPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = false;
+        $moduleData['ps_checkout']['isUpdate'] = false;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneProductWithPaidShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertTrue(isset($payload['shipping']));
+        $this->assertTrue(isset($payload['payer']));
+        $this->assertTrue(isset($payload['application_context']));
+        $this->assertEquals('SET_PROVIDED_ADDRESS', $payload['application_context']['shipping_preference']);
+    }
+
+    public function testUpdateOrderWithPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = false;
+        $moduleData['ps_checkout']['isUpdate'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneProductWithPaidShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertTrue(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertFalse(isset($payload['application_context']));
+    }
+
+    public function testCreateOrderExpressCheckoutWithPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneProductWithPaidShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertFalse(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertEquals('GET_FROM_FILE', $payload['application_context']['shipping_preference']);
+    }
+
+    public function testUpdateOrderExpressCheckoutWithPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = true;
+        $moduleData['ps_checkout']['isUpdate'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneProductWithPaidShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertTrue(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertFalse(isset($payload['application_context']));
+    }
+
+    public function testCreateOrderWithoutPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = false;
+        $moduleData['ps_checkout']['isUpdate'] = false;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneVirtualProductWithoutShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertFalse(isset($payload['shipping']));
+        $this->assertTrue(isset($payload['payer']));
+        $this->assertTrue(isset($payload['application_context']));
+        $this->assertEquals('NO_SHIPPING', $payload['application_context']['shipping_preference']);
+    }
+
+    public function testUpdateOrderWithoutPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = false;
+        $moduleData['ps_checkout']['isUpdate'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneVirtualProductWithoutShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertFalse(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertFalse(isset($payload['application_context']));
+    }
+
+    public function testCreateOrderExpressCheckoutWithoutPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneVirtualProductWithoutShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertFalse(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertEquals('NO_SHIPPING', $payload['application_context']['shipping_preference']);
+    }
+
+    public function testUpdateOrderExpressCheckoutWithoutPhysicalItems()
+    {
+        $moduleData = $this->moduleDataProvider();
+        $moduleData['ps_checkout']['isExpressCheckout'] = true;
+        $moduleData['ps_checkout']['isUpdate'] = true;
+        $moduleData['ps_checkout']['isCard'] = false;
+        $cartData = $this->cartDataProvider()['oneVirtualProductWithoutShippingRoundingCompliant'];
+        $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+            $cartData,
+            $this->shippingAddressDataProvider(),
+            $this->invoiceAddressDataProvider(),
+            $this->customerDataProvider(),
+            $this->currencyDataProvider(),
+            $this->languageDataProvider(),
+            $this->shopDataProvider(),
+            $moduleData
+        ));
+        $orderPayloadBuilder->buildFullPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
+        $this->assertFalse(isset($payload['shipping']));
+        $this->assertFalse(isset($payload['payer']));
+        $this->assertFalse(isset($payload['application_context']));
     }
 
     private function checkAmountCalculation(array $payload)
@@ -185,7 +385,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'mobile_theme' => null,
                     'date_add' => '2022-01-03 21:11:22',
                     'secure_key' => null,
-                    'id_carrier' => 0,
+                    'id_carrier' => 2,
                     'date_upd' => '2022-01-03 21:11:23',
                     'checkedTos' => false,
                     'pictures' => null,
@@ -195,6 +395,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -280,12 +481,12 @@ class CreateOrderPayloadBuilderTest extends TestCase
                         'tax_name' => 'TVA FR 20%',
                     ],
                 ],
-                'totalShippingWithTaxes' => 0,
+                'totalShippingWithTaxes' => 8.4000000000000004,
                 'totalShippingWithoutTaxes' => 0,
                 'totalGiftWrappingWithTaxes' => 0.0,
                 'totalGiftWrappingWithoutTaxes' => 0.0,
-                'totalWithTaxes' => 34.799999999999997,
-                'totalWithoutTaxes' => 29.0,
+                'totalWithTaxes' => 43.200000000000003,
+                'totalWithoutTaxes' => 36,
             ],
             'oneProductWithFreeShippingRoundingCompliant' => [
                 'cart' => [
@@ -314,6 +515,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -433,6 +635,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => true,
                 ],
                 'products' => [
                     0 => [
@@ -545,6 +748,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -746,6 +950,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -947,6 +1152,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => true,
                 ],
                 'products' => [
                     0 => [
@@ -956,7 +1162,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                         'id_shop' => '1',
                         'id_customization' => null,
                         'name' => 'Affiche encadrée The best is yet to come',
-                        'is_virtual' => '0',
+                        'is_virtual' => '1',
                         'description_short' => '<p><span style="font-size:10pt;font-style:normal;">Affiche imprimée sur papier rigide, finition mate et surface lisse.</span></p>',
                         'available_now' => '',
                         'available_later' => '',
@@ -1038,7 +1244,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                         'id_shop' => '1',
                         'id_customization' => null,
                         'name' => 'Affiche encadrée The adventure begins',
-                        'is_virtual' => '0',
+                        'is_virtual' => '1',
                         'description_short' => '<p><span style="font-size:10pt;font-style:normal;">Affiche imprimée sur papier rigide, finition mate et surface lisse.</span></p>',
                         'available_now' => '',
                         'available_later' => '',
@@ -1148,6 +1354,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -1291,6 +1498,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -1434,6 +1642,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -1683,6 +1892,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -1932,6 +2142,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -2181,6 +2392,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -2430,6 +2642,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -2549,6 +2762,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -2668,6 +2882,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => true,
                 ],
                 'products' => [
                     0 => [
@@ -2780,6 +2995,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -2899,6 +3115,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -3018,6 +3235,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => true,
                 ],
                 'products' => [
                     0 => [
@@ -3130,6 +3348,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -3331,6 +3550,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -3532,6 +3752,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -3733,6 +3954,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -3876,6 +4098,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -4019,6 +4242,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -4268,6 +4492,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -4517,6 +4742,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -4766,6 +4992,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -5015,6 +5242,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -5134,6 +5362,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => false,
                 ],
                 'products' => [
                     0 => [
@@ -5253,6 +5482,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                     'id_shop_list' => [
                     ],
                     'force_id' => false,
+                    'is_virtual' => true,
                 ],
                 'products' => [
                     0 => [

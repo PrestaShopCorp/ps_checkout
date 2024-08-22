@@ -46,12 +46,12 @@ class CreateOrderPayloadBuilder extends Builder
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
 
-        if (empty($this->data['ps_checkout']['isExpressCheckout'])) {
+        if (empty($this->data['ps_checkout']['isExpressCheckout']) || !empty($this->data['ps_checkout']['isUpdate'])) {
             $this->buildShippingNode();
+        }
 
-            if (empty($this->data['ps_checkout']['isUpdate'])) {
-                $this->buildPayerNode();
-            }
+        if (empty($this->data['ps_checkout']['isExpressCheckout']) && empty($this->data['ps_checkout']['isUpdate'])) {
+            $this->buildPayerNode();
         }
 
         if (empty($this->data['ps_checkout']['isUpdate'])) {
@@ -73,12 +73,12 @@ class CreateOrderPayloadBuilder extends Builder
 
         $this->buildBaseNode();
 
-        if (empty($this->data['ps_checkout']['isExpressCheckout'])) {
+        if (empty($this->data['ps_checkout']['isExpressCheckout']) || !empty($this->data['ps_checkout']['isUpdate'])) {
             $this->buildShippingNode();
+        }
 
-            if (empty($this->data['ps_checkout']['isUpdate'])) {
-                $this->buildPayerNode();
-            }
+        if (empty($this->data['ps_checkout']['isExpressCheckout']) && empty($this->data['ps_checkout']['isUpdate'])) {
+            $this->buildPayerNode();
         }
 
         if (empty($this->data['ps_checkout']['isUpdate'])) {
@@ -108,10 +108,6 @@ class CreateOrderPayloadBuilder extends Builder
             ],
         ];
 
-        if (empty($this->data['ps_checkout']['isUpdate']) && !empty($this->data['ps_checkout']['token'])) {
-            $node['token'] = $this->data['ps_checkout']['token'];
-        }
-
         if (empty($this->data['ps_checkout']['isUpdate'])) {
             $node['roundingConfig'] = $this->data['ps_checkout']['roundType'] . '-' . $this->data['ps_checkout']['roundMode'];
         }
@@ -124,6 +120,10 @@ class CreateOrderPayloadBuilder extends Builder
      */
     public function buildShippingNode()
     {
+        if (false === empty($this->data['cart']['is_virtual'])) {
+            return;
+        }
+
         $node['shipping'] = [
             'name' => [
                 'full_name' => trim(
@@ -171,8 +171,13 @@ class CreateOrderPayloadBuilder extends Builder
     {
         $node['application_context'] = [
             'brand_name' => $this->data['shop']['name'],
-            'shipping_preference' => empty($this->data['ps_checkout']['isExpressCheckout']) ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE',
         ];
+
+        if (empty($this->data['cart']['is_virtual'])) {
+            $node['application_context']['shipping_preference'] = empty($this->data['ps_checkout']['isExpressCheckout']) ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE';
+        } else {
+            $node['application_context']['shipping_preference'] = 'NO_SHIPPING';
+        }
 
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -299,22 +304,24 @@ class CreateOrderPayloadBuilder extends Builder
             'supplementary_data' => [
                 'card' => [
                     'level_2' => [
-//                        'invoice_id' => '',
                         'tax_total' => $payload['amount']['breakdown']['tax_total'],
                     ],
                     'level_3' => [
-                        'shipping_amount' => $payload['amount']['breakdown']['shipping'],
                         'duty_amount' => [
                             'currency_code' => $payload['amount']['currency_code'],
                             'value' => $payload['amount']['value'],
                         ],
                         'discount_amount' => $payload['amount']['breakdown']['discount'],
-                        'shipping_address' => $this->getAddressPortable('deliveryAddress'),
                         'line_items' => $payload['items'],
                     ],
                 ],
             ],
         ];
+
+        if (empty($this->data['cart']['is_virtual'])) {
+            $node['supplementary_data']['card']['level_3']['shipping_address'] = $this->getAddressPortable('deliveryAddress');
+            $node['supplementary_data']['card']['level_3']['shipping_amount'] = $payload['amount']['breakdown']['shipping'];
+        }
 
         $this->getPayload()->addAndMergeItems($node);
     }
