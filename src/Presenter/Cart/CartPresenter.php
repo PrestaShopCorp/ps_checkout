@@ -51,6 +51,10 @@ class CartPresenter implements PresenterInterface
             $cart['totals']['total_including_tax']['amount'] = $context->cart->getOrderTotal(true);
         }
 
+        if (false === isset($cart['is_virtual'])) {
+            $cart['is_virtual'] = $context->cart->isVirtualCart();
+        }
+
         $shippingAddress = \Address::initialize((int) $cart['id_address_delivery']);
         $invoiceAddress = \Address::initialize((int) $cart['id_address_invoice']);
         $currency = \Currency::getCurrencyInstance((int) $context->cart->id_currency);
