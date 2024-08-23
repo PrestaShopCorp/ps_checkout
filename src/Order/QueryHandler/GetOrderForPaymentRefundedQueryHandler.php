@@ -21,12 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Configuration;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -78,12 +80,16 @@ class GetOrderForPaymentRefundedQueryHandler
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
+        $hasBeenPaid = $order->hasBeenPaid();
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
+
         return new GetOrderForPaymentRefundedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
-            (bool) $order->hasBeenPaid(),
-            (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
-            (bool) count($order->getHistory((int) $order->id_lang, (int) \Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
+            $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
+            (bool) count($order->getHistory((int) $order->id_lang, (int) Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, (int) Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
             (string) $order->getTotalPaid(),
             (int) $order->id_currency
         );
