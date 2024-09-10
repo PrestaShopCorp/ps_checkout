@@ -67,7 +67,6 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
         }
     }
 
-
     /**
      * @return void
      *

@@ -52,9 +52,9 @@ class ApplePayLineItem
      */
     private $paymentTiming;
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    private $recurringPaymentStartDate;
+    private $recurringPaymentStartDate = null;
     /**
      * @var self::RECURRING_PAYMENT_INTERVAL_UNIT_DAY|self::RECURRING_PAYMENT_INTERVAL_UNIT_WEEK|self::RECURRING_PAYMENT_INTERVAL_UNIT_MONTH|self::RECURRING_PAYMENT_INTERVAL_UNIT_YEAR
      */
@@ -64,20 +64,21 @@ class ApplePayLineItem
      */
     private $recurringPaymentIntervalCount;
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    private $recurringPaymentEndDate;
+    private $recurringPaymentEndDate = null;
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
-    private $deferredPaymentDate;
+    private $deferredPaymentDate = null;
     /**
      * @var string
      */
     private $automaticReloadPaymentThresholdAmount;
 
     /**
-     * @param string $type
+     * @param self::TYPE_PENDING|self::TYPE_FINAL $type
+     *
      * @return ApplePayLineItem
      */
     public function setType($type)
@@ -97,6 +98,7 @@ class ApplePayLineItem
 
     /**
      * @param string $label
+     *
      * @return ApplePayLineItem
      */
     public function setLabel($label)
@@ -116,6 +118,7 @@ class ApplePayLineItem
 
     /**
      * @param string $amount
+     *
      * @return ApplePayLineItem
      */
     public function setAmount($amount)
@@ -134,7 +137,8 @@ class ApplePayLineItem
     }
 
     /**
-     * @param string $paymentTiming
+     * @param self::PAYMENT_TIMING_IMMEDIATE|self::PAYMENT_TIMING_RECURRING|self::PAYMENT_TIMING_DEFERRED|self::PAYMENT_TIMING_AUTOMATIC_RELOAD $paymentTiming
+     *
      * @return ApplePayLineItem
      */
     public function setPaymentTiming($paymentTiming)
@@ -154,6 +158,7 @@ class ApplePayLineItem
 
     /**
      * @param DateTime $recurringPaymentStartDate
+     *
      * @return ApplePayLineItem
      */
     public function setRecurringPaymentStartDate($recurringPaymentStartDate)
@@ -172,7 +177,8 @@ class ApplePayLineItem
     }
 
     /**
-     * @param string $recurringPaymentIntervalUnit
+     * @param self::RECURRING_PAYMENT_INTERVAL_UNIT_DAY|self::RECURRING_PAYMENT_INTERVAL_UNIT_WEEK|self::RECURRING_PAYMENT_INTERVAL_UNIT_MONTH|self::RECURRING_PAYMENT_INTERVAL_UNIT_YEAR $recurringPaymentIntervalUnit
+     *
      * @return ApplePayLineItem
      */
     public function setRecurringPaymentIntervalUnit($recurringPaymentIntervalUnit)
@@ -192,6 +198,7 @@ class ApplePayLineItem
 
     /**
      * @param int $recurringPaymentIntervalCount
+     *
      * @return ApplePayLineItem
      */
     public function setRecurringPaymentIntervalCount($recurringPaymentIntervalCount)
@@ -211,6 +218,7 @@ class ApplePayLineItem
 
     /**
      * @param DateTime $recurringPaymentEndDate
+     *
      * @return ApplePayLineItem
      */
     public function setRecurringPaymentEndDate($recurringPaymentEndDate)
@@ -230,6 +238,7 @@ class ApplePayLineItem
 
     /**
      * @param DateTime $deferredPaymentDate
+     *
      * @return ApplePayLineItem
      */
     public function setDeferredPaymentDate($deferredPaymentDate)
@@ -249,6 +258,7 @@ class ApplePayLineItem
 
     /**
      * @param string $automaticReloadPaymentThresholdAmount
+     *
      * @return ApplePayLineItem
      */
     public function setAutomaticReloadPaymentThresholdAmount($automaticReloadPaymentThresholdAmount)

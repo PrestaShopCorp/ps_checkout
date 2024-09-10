@@ -31,22 +31,22 @@ class ApplePayPaymentRequest
      */
     private $currencyCode;
     /**
-     * @var ApplePayLineItem
+     * @var ApplePayLineItem|null
      */
-    private $total;
+    private $total = null;
     /**
      * @var ApplePayLineItem[]
      */
     private $lineItems = [];
 
     /**
-     * @var ApplePayPaymentContact
+     * @var ApplePayPaymentContact|null
      */
-    private $shippingContact;
+    private $shippingContact = null;
     /**
-     * @var ApplePayPaymentContact
+     * @var ApplePayPaymentContact|null
      */
-    private $billingContact;
+    private $billingContact = null;
 
     /**
      * @return string

@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Builder;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\DTO\ApplePayLineItem;
-use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\DTO\ApplePayPaymentContact;
 use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\DTO\ApplePayPaymentRequest;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 

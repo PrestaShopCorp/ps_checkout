@@ -547,7 +547,7 @@ class Translations
             ],
             'apple_pay' => [
                 'total' => $this->module->l('Total', 'translations'),
-            ]
+            ],
         ];
 
         return $translations;

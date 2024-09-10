@@ -129,6 +129,7 @@ class ApplePayPaymentContact
 
     /**
      * @param string $givenName
+     *
      * @return $this
      */
     public function setGivenName($givenName)
@@ -188,6 +189,7 @@ class ApplePayPaymentContact
 
     /**
      * @param string $phoneticFamilyName
+     *
      * @return $this
      */
     public function setPhoneticFamilyName($phoneticFamilyName)
@@ -207,6 +209,7 @@ class ApplePayPaymentContact
 
     /**
      * @param array $addressLines
+     *
      * @return $this
      */
     public function setAddressLines(array $addressLines)
