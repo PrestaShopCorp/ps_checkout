@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
@@ -56,22 +57,31 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
 
             if ($action === 'getPaymentRequest') {
-                $this->getPaymentRequest($bodyValues);
+                $this->getPaymentRequest();
             } else {
-                $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
+                $exception = new Exception('Invalid request', 400);
+                $this->exitWithExceptionMessage($exception);
             }
         } catch (Exception $exception) {
             $this->exitWithExceptionMessage($exception);
         }
     }
 
-    private function getPaymentRequest(array $bodyValues)
+
+    /**
+     * @return void
+     *
+     * @throws CartException
+     */
+    private function getPaymentRequest()
     {
-        $transactionInfo = $this->commandBus->handle(new GetApplePayPaymentRequestQuery(new CartId($this->context->cart->id)));
+        $cartId = new CartId($this->context->cart->id);
+        $query = new GetApplePayPaymentRequestQuery($cartId);
+        $paymentRequest = $this->commandBus->handle($query);
 
         $this->exitWithResponse([
             'httpCode' => 200,
-            'body' => $transactionInfo->getPayload()->toArray(),
+            'body' => $paymentRequest->getPayload()->toArray(),
         ]);
     }
 }

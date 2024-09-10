@@ -46,12 +46,15 @@ class GetApplePayPaymentRequestQueryHandler
      */
     public function handle(GetApplePayPaymentRequestQuery $query)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $orderPayloadBuilder = new OrderPayloadBuilder($cartPresenter);
+        $cartPresenter = new CartPresenter();
+        $cart = $cartPresenter->present();
+        $orderPayloadBuilder = new OrderPayloadBuilder($cart);
 
         $orderPayloadBuilder->buildFullPayload();
-        $payload = $orderPayloadBuilder->presentPayload();
+        $payload = $orderPayloadBuilder->presentPayload()->getArray();
 
-        return new GetApplePayPaymentRequestQueryResult($this->builder->buildMinimalPaymentRequestFromPayPalPayload($payload->getArray()));
+        $paymentRequest = $this->builder->buildMinimalPaymentRequestFromPayPalPayload($payload);
+
+        return new GetApplePayPaymentRequestQueryResult($paymentRequest);
     }
 }
