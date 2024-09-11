@@ -1,9 +1,6 @@
 name: PHP tests
 on:
   push:
-    branches:
-      - "master"
-      - "prestashop/8.x"
   pull_request:
     types: [opened, reopened, synchronize, edited]
 
