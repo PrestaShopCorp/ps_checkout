@@ -65,6 +65,7 @@ class FundingSourceTranslationProvider
             'mercadopago' => 'Mercado Pago',
             'sepa' => 'SEPA',
             'google_pay' => 'Google Pay',
+            'apple_pay' => 'Apple Pay',
             'token' => $module->l('Pay with %s', 'fundingsourcetranslationprovider'),
         ];
 
