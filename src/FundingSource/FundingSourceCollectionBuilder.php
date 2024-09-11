@@ -119,7 +119,6 @@ class FundingSourceCollectionBuilder
         $applePay->setIsEnabled($this->configuration->isEnabled('apple_pay'));
         $applePay->setCountries($this->eligibilityConstraint->getCountries('apple_pay'));
 
-
         return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $blik, $googlePay, $applePay];
     }
 }
