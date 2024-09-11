@@ -46,7 +46,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         try {
-            $bodyValues = [];
+            $action = '';
             $bodyContent = file_get_contents('php://input');
 
             if (!empty($bodyContent)) {
@@ -65,7 +65,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
             switch ($action) {
                 case 'getPaymentRequest':
-                    $this->getPaymentRequest($bodyValues);
+                    $this->getPaymentRequest();
                     break;
                 case 'getDomainAssociation':
                     /**
@@ -84,17 +84,12 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                         }
                         echo file_get_contents($associationFile);
                         exit;
+                    } else {
+                        $this->exitWithExceptionMessage(new Exception('File not found', 404));
                     }
-                    $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
                     break;
                 default:
                     $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
-            }
-            if ($action === 'getPaymentRequest') {
-                $this->getPaymentRequest();
-            } else {
-                $exception = new Exception('Invalid request', 400);
-                $this->exitWithExceptionMessage($exception);
             }
         } catch (Exception $exception) {
             $this->exitWithExceptionMessage($exception);
