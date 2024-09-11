@@ -545,6 +545,9 @@ class Translations
                 'handling' => $this->module->l('Handling', 'translations'),
                 'discount' => $this->module->l('Discount', 'translations'),
             ],
+            'apple_pay' => [
+                'total' => $this->module->l('Total', 'translations'),
+            ],
         ];
 
         return $translations;
