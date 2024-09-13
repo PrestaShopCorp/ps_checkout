@@ -25,6 +25,7 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
@@ -37,15 +38,20 @@ class MaaslandHttpClient implements HttpClientInterface
      * @var HttpClientInterface
      */
     private $httpClient;
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $configuration;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(HttpClientInterface $httpClient, PrestaShopConfiguration $configuration)
     {
         $this->httpClient = $httpClient;
+        $this->configuration = $configuration;
     }
 
     /**
      * @param array $payload
-     * @param array $options
+     * @param array $headers
      *
      * @return ResponseInterface
      *
@@ -56,14 +62,18 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function createOrder(array $payload, array $options = [])
+    public function createOrder(array $payload, array $headers = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, json_encode($payload)));
+        if ($ntHeader = $this->configuration->get('PS_CHECKOUT_NT_CREATE_ORDER')) {
+            $headers['NT-PayPalOrderCreate'] = $ntHeader;
+        }
+
+        return $this->sendRequest(new Request('POST', '/payments/order/create', $headers, json_encode($payload)));
     }
 
     /**
      * @param array $payload
-     * @param array $options
+     * @param array $headers
      *
      * @return ResponseInterface
      *
@@ -74,14 +84,18 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function updateOrder(array $payload, array $options = [])
+    public function updateOrder(array $payload, array $headers = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, json_encode($payload)));
+        if ($ntHeader = $this->configuration->get('PS_CHECKOUT_NT_UPDATE_ORDER')) {
+            $headers['NT-PayPalOrderUpdate'] = $ntHeader;
+        }
+
+        return $this->sendRequest(new Request('POST', '/payments/order/update', $headers, json_encode($payload)));
     }
 
     /**
      * @param array $payload
-     * @param array $options
+     * @param array $headers
      *
      * @return ResponseInterface
      *
@@ -92,14 +106,18 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function fetchOrder(array $payload, array $options = [])
+    public function fetchOrder(array $payload, array $headers = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, json_encode($payload)));
+        if ($ntHeader = $this->configuration->get('PS_CHECKOUT_NT_FETCH_ORDER')) {
+            $headers['NT-PayPalOrderFetch'] = $ntHeader;
+        }
+
+        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $headers, json_encode($payload)));
     }
 
     /**
      * @param array $payload
-     * @param array $options
+     * @param array $headers
      *
      * @return ResponseInterface
      *
@@ -110,14 +128,18 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function captureOrder(array $payload, array $options = [])
+    public function captureOrder(array $payload, array $headers = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
+        if ($ntHeader = $this->configuration->get('PS_CHECKOUT_NT_CAPTURE_ORDER')) {
+            $headers['NT-PayPalOrderCapture'] = $ntHeader;
+        }
+
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $headers, json_encode($payload)));
     }
 
     /**
      * @param array $payload
-     * @param array $options
+     * @param array $headers
      *
      * @return ResponseInterface
      *
@@ -128,9 +150,9 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function refundOrder(array $payload, array $options = [])
+    public function refundOrder(array $payload, array $headers = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/refund', $headers, json_encode($payload)));
     }
 
     /**
@@ -202,9 +224,9 @@ class MaaslandHttpClient implements HttpClientInterface
      *
      * @return array
      */
-    public function getShopSignature(array $payload, array $options = [])
+    public function getShopSignature(array $payload, array $headers = [])
     {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $options, json_encode($payload)));
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', $headers, json_encode($payload)));
 
         return json_decode($response->getBody(), true);
     }
