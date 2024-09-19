@@ -510,6 +510,7 @@ class PayPalSdkConfigurationBuilder
 
         return $fundingSource && $fundingSource['active']
             && $this->configuration->isApplePayEligible()
+            && $this->configuration->isApplePayDomainRegistered()
             && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('apple_pay'), true)
             && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('apple_pay'), true);
     }

@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
+use Crypto\MAC;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository;
@@ -52,6 +53,8 @@ class PayPalConfiguration
 
     const PS_CHECKOUT_GOOGLE_PAY = 'PS_CHECKOUT_GOOGLE_PAY';
     const PS_CHECKOUT_APPLE_PAY = 'PS_CHECKOUT_APPLE_PAY';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX = 'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_LIVE = 'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE';
 
     /**
      * @var PrestaShopConfiguration
@@ -453,5 +456,10 @@ class PayPalConfiguration
     public function isApplePayEligible()
     {
         return (bool) $this->configuration->get(static::PS_CHECKOUT_APPLE_PAY);
+    }
+
+    public function isApplePayDomainRegistered()
+    {
+        return (bool) $this->configuration->get($this->getPaymentMode() === Mode::SANDBOX ? static::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX : static::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE);
     }
 }

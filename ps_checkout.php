@@ -107,6 +107,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
         'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
+        'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX' => false,
+        'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE' => false,
     ];
 
     public $confirmUninstall;
