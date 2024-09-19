@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -45,22 +46,50 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         try {
-            $bodyValues = [];
+            $action = '';
             $bodyContent = file_get_contents('php://input');
 
             if (!empty($bodyContent)) {
                 $bodyValues = json_decode($bodyContent, true);
+                $action = $bodyValues['action'];
             }
 
-            $action = $bodyValues['action'];
+            if (empty($action)) {
+                $getParam = Tools::getValue('action');
+                if ($getParam === 'getDomainAssociation') {
+                    $action = $getParam;
+                }
+            }
 
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
 
-            if ($action === 'getPaymentRequest') {
-                $this->getPaymentRequest();
-            } else {
-                $exception = new Exception('Invalid request', 400);
-                $this->exitWithExceptionMessage($exception);
+            switch ($action) {
+                case 'getPaymentRequest':
+                    $this->getPaymentRequest();
+                    break;
+                case 'getDomainAssociation':
+                    /**
+                     * @var PayPalConfiguration $payPalConfiguration
+                     */
+                    $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
+                    $environment = $payPalConfiguration->getPaymentMode();
+                    $associationFile = _PS_MODULE_DIR_ . "ps_checkout/.well-known/apple-$environment-merchantid-domain-association";
+                    if (file_exists($associationFile)) {
+                        if (!headers_sent()) {
+                            ob_end_clean();
+                            header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+                            header('X-Robots-Tag: noindex, nofollow');
+                            header_remove('Last-Modified');
+                            header('Content-Type: text/plain', true, 200);
+                        }
+                        echo file_get_contents($associationFile);
+                        exit;
+                    } else {
+                        $this->exitWithExceptionMessage(new Exception('File not found', 404));
+                    }
+                    break;
+                default:
+                    $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
         } catch (Exception $exception) {
             $this->exitWithExceptionMessage($exception);
