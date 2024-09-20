@@ -1795,30 +1795,17 @@ class Ps_checkout extends PaymentModule
 
     public function hookModuleRoutes()
     {
-        /**
-         * @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration
-         */
-        $payPalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-        /**
-         * @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceRepository
-         */
-        $fundingSourceRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository::class);
-
-        $applePay = $fundingSourceRepository->get('apple_pay');
-
-        if ($payPalConfiguration->isApplePayEligible() && $applePay && $applePay['active']) {
-            return [
-                'ps_checkout_applepay' => [
-                    'rule' => '.well-known/apple-developer-merchantid-domain-association',
-                    'keywords' => [],
-                    'controller' => 'applepay',
-                    'params' => [
-                        'fc' => 'module',
-                        'module' => 'ps_checkout',
-                        'action' => 'getDomainAssociation'
-                    ],
-                ]
-            ];
-        }
+        return [
+            'ps_checkout_applepay' => [
+                'rule' => '.well-known/apple-developer-merchantid-domain-association',
+                'keywords' => [],
+                'controller' => 'applepay',
+                'params' => [
+                    'fc' => 'module',
+                    'module' => 'ps_checkout',
+                    'action' => 'getDomainAssociation'
+                ],
+            ]
+        ];
     }
 }
