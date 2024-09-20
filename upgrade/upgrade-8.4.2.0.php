@@ -31,6 +31,8 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_8_4_2_0($module)
 {
     try {
+        $module->registerHook('moduleRoutes');
+
         $db = Db::getInstance();
         $shopsList = \Shop::getShops(false, null, true);
 
