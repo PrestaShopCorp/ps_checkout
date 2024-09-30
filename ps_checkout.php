@@ -46,6 +46,7 @@ class Ps_checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
         'displayOrderDetail',
+        'moduleRoutes'
     ];
 
     /**
@@ -106,6 +107,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
         'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
+        'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX' => false,
+        'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE' => false,
     ];
 
     public $confirmUninstall;
@@ -113,7 +116,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.1.0';
+    const VERSION = '8.4.2.0';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -134,7 +137,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.4.1.0';
+        $this->version = '8.4.2.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -1042,6 +1045,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
             $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
             $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', [], true),
+            $this->name . 'ApplePayUrl' => $this->context->link->getModuleLink($this->name, 'applepay', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
@@ -1098,6 +1102,9 @@ class Ps_checkout extends PaymentModule
                 'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
                 'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
                 'error.google-pay-sdk' => $this->l('No Google Pay Javascript SDK Instance'),
+                'error.google-pay.transaction-info' => $this->l('An error occurred fetching Google Pay transaction info'),
+                'error.apple-pay-sdk' => $this->l('No Apple Pay Javascript SDK Instance'),
+                'error.apple-pay.payment-request' => $this->l('An error occurred fetching Apple Pay payment request'),
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
@@ -1784,5 +1791,21 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
+    }
+
+    public function hookModuleRoutes()
+    {
+        return [
+            'ps_checkout_applepay' => [
+                'rule' => '.well-known/apple-developer-merchantid-domain-association',
+                'keywords' => [],
+                'controller' => 'applepay',
+                'params' => [
+                    'fc' => 'module',
+                    'module' => 'ps_checkout',
+                    'action' => 'getDomainAssociation'
+                ],
+            ]
+        ];
     }
 }

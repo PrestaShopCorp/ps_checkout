@@ -86,3 +86,9 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Builder\GooglePayTransactionInfoBuilder'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQueryHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Builder\ApplePayPaymentRequestBuilder'

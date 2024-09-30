@@ -113,6 +113,12 @@ class FundingSourceCollectionBuilder
         $googlePay->setIsEnabled($this->configuration->isEnabled('google_pay'));
         $googlePay->setCountries($this->eligibilityConstraint->getCountries('google_pay'));
 
-        return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $blik, $googlePay];
+        // Apple pay
+        $applePay = new FundingSourceEntity('apple_pay');
+        $applePay->setPosition($this->configuration->getPosition('apple_pay', 12));
+        $applePay->setIsEnabled($this->configuration->isEnabled('apple_pay'));
+        $applePay->setCountries($this->eligibilityConstraint->getCountries('apple_pay'));
+
+        return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $blik, $googlePay, $applePay];
     }
 }

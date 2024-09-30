@@ -146,6 +146,10 @@ class PayPalSdkConfigurationBuilder
             $components[] = 'googlepay';
         }
 
+        if ($this->shouldIncludeApplePayComponent()) {
+            $components[] = 'applepay';
+        }
+
         $params = [
             'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->getMerchantId(),
@@ -496,5 +500,18 @@ class PayPalSdkConfigurationBuilder
             && $this->configuration->isGooglePayEligible()
             && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('google_pay'), true)
             && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('google_pay'), true);
+    }
+
+    private function shouldIncludeApplePayComponent()
+    {
+        $context = \Context::getContext();
+        $country = $this->getCountry();
+        $fundingSource = $this->fundingSourceConfigurationRepository->get('apple_pay');
+
+        return $fundingSource && $fundingSource['active']
+            && $this->configuration->isApplePayEligible()
+            && $this->configuration->isApplePayDomainRegistered()
+            && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('apple_pay'), true)
+            && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('apple_pay'), true);
     }
 }

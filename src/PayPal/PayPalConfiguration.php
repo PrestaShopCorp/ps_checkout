@@ -51,6 +51,9 @@ class PayPalConfiguration
     const PS_CHECKOUT_VAULTING = 'PS_CHECKOUT_VAULTING';
 
     const PS_CHECKOUT_GOOGLE_PAY = 'PS_CHECKOUT_GOOGLE_PAY';
+    const PS_CHECKOUT_APPLE_PAY = 'PS_CHECKOUT_APPLE_PAY';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX = 'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_LIVE = 'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE';
 
     /**
      * @var PrestaShopConfiguration
@@ -447,5 +450,15 @@ class PayPalConfiguration
     public function isGooglePayEligible()
     {
         return (bool) $this->configuration->get(static::PS_CHECKOUT_GOOGLE_PAY);
+    }
+
+    public function isApplePayEligible()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_APPLE_PAY);
+    }
+
+    public function isApplePayDomainRegistered()
+    {
+        return (bool) $this->configuration->get($this->getPaymentMode() === Mode::SANDBOX ? static::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX : static::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE);
     }
 }

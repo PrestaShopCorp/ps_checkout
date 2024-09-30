@@ -73,7 +73,7 @@ class FundingSourcePresenter
             $entity->getIsToggleable(),
             null,
             null,
-            $name === 'google_pay' ? $this->paymentMethodLogoProvider->getLogoByPaymentSource([$name => []]) : null
+            in_array($name, ['google_pay', 'apple_pay']) ? $this->paymentMethodLogoProvider->getLogoByPaymentSource([$name => []]) : null
         );
     }
 
