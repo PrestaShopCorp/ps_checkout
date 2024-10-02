@@ -4,6 +4,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.http.client"
+      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
 
   PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
