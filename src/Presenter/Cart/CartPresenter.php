@@ -43,7 +43,7 @@ class CartPresenter implements PresenterInterface
 
         if (class_exists('\PrestaShop\PrestaShop\Adapter\Cart\CartPresenter')) {
             $cart = new \PrestaShop\PrestaShop\Adapter\Cart\CartPresenter();
-            $cart = $cart->present($context->cart);
+            $cart = (array) $cart->present($context->cart);
         }
 
         if (false === isset($cart['totals']['total_including_tax']['amount'])) {
