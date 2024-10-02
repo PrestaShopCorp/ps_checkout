@@ -22,8 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
 
 class GetOrderForPaymentReversedQuery
 {
@@ -33,21 +31,13 @@ class GetOrderForPaymentReversedQuery
     private $orderPayPalId;
 
     /**
-     * @var PayPalCaptureId
-     */
-    private $capturePayPalId;
-
-    /**
      * @param string $orderPayPalId
-     * @param string $capturePayPalId
      *
      * @throws PayPalOrderException
-     * @throws PayPalCaptureException
      */
-    public function __construct($orderPayPalId, $capturePayPalId)
+    public function __construct($orderPayPalId)
     {
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->capturePayPalId = new PayPalCaptureId($capturePayPalId);
     }
 
     /**
@@ -56,10 +46,5 @@ class GetOrderForPaymentReversedQuery
     public function getOrderPayPalId()
     {
         return $this->orderPayPalId;
-    }
-
-    public function getCapturePayPalId()
-    {
-        return $this->capturePayPalId;
     }
 }

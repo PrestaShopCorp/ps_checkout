@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
@@ -43,19 +42,9 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
     private $module;
 
     /**
-     * @var CheckOrderAmount
-     */
-    private $checkOrderAmount;
-
-    /**
      * @var CommandBusInterface
      */
     private $commandBus;
-
-    /**
-     * @var CacheInterface
-     */
-    private $capturePayPalCache;
 
     /**
      * @var CacheInterface
@@ -73,16 +62,12 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
 
     public function __construct(
         Ps_checkout $module,
-        CheckOrderAmount $checkOrderAmount,
-        CacheInterface $capturePayPalCache,
         CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper,
         PayPalOrderProvider $orderProvider
     ) {
         $this->module = $module;
-        $this->checkOrderAmount = $checkOrderAmount;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
-        $this->capturePayPalCache = $capturePayPalCache;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
         $this->orderProvider = $orderProvider;
@@ -129,11 +114,22 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
         });
 
         $orderFullyRefunded = (float) $order->getTotalAmount() <= (float) $totalRefunded;
+        $orderStateRefunded = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED);
+        $orderStatePartiallyRefunded = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+        $newOrderState = $orderFullyRefunded ? $orderStateRefunded : $orderStatePartiallyRefunded;
+
+        if ($order->hasBeenPartiallyRefund() && $newOrderState === $orderStatePartiallyRefunded) {
+            return;
+        }
+
+        if ($order->getCurrentStateId()->getValue() === $newOrderState) {
+            return;
+        }
 
         $this->commandBus->handle(
             new UpdateOrderStatusCommand(
                 $order->getOrderId()->getValue(),
-                $this->orderStateMapper->getIdByKey($orderFullyRefunded ? OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED : OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)
+                $newOrderState
             )
         );
     }

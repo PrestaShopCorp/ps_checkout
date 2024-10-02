@@ -70,7 +70,9 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
             $reason = isset($bodyValues['reason']) ? Tools::safeOutput($bodyValues['reason']) : null;
-            $error = isset($bodyValues['error']) ? Tools::safeOutput($bodyValues['error']) : null;
+            $error = isset($bodyValues['error'])
+                ? Tools::safeOutput(is_string($bodyValues['error']) ? $bodyValues['error'] : json_encode($bodyValues['error']))
+                : null;
 
             if ($orderId) {
                 /** @var CommandBusInterface $commandBus */

@@ -105,6 +105,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
+        'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
     ];
 
     public $confirmUninstall;
@@ -112,7 +113,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '6.3.6.3';
+    const VERSION = '6.3.6.4';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -133,7 +134,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '6.3.6.3';
+        $this->version = '6.3.6.4';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -171,7 +172,7 @@ class Ps_checkout extends PaymentModule
             $this->installConfiguration() &&
             $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
+            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSourcesOnAllShops() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();
@@ -1266,6 +1267,7 @@ class Ps_checkout extends PaymentModule
             Configuration::set($name, $value, (int) $shop->id_shop_group, (int) $shop->id);
         }
 
+        (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources((int) $shop->id);
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
 

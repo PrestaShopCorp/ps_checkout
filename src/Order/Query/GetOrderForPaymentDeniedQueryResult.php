@@ -21,8 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 
 class GetOrderForPaymentDeniedQueryResult
@@ -33,30 +31,21 @@ class GetOrderForPaymentDeniedQueryResult
     private $orderId;
 
     /**
-     * @var OrderStateId
-     */
-    private $currentStateId;
-
-    /**
      * @var bool
      */
     private $hasBeenError;
 
     /**
      * @param int $orderId
-     * @param int $currentState
      * @param bool $hasBeenError
      *
      * @throws OrderException
-     * @throws OrderStateException
      */
     public function __construct(
         $orderId,
-        $currentState,
         $hasBeenError
     ) {
         $this->orderId = new OrderId($orderId);
-        $this->currentStateId = new OrderStateId($currentState);
         $this->hasBeenError = $hasBeenError;
     }
 
@@ -66,14 +55,6 @@ class GetOrderForPaymentDeniedQueryResult
     public function getOrderId()
     {
         return $this->orderId;
-    }
-
-    /**
-     * @return OrderStateId
-     */
-    public function getCurrentStateId()
-    {
-        return $this->currentStateId;
     }
 
     /**

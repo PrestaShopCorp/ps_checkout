@@ -38,7 +38,6 @@ function upgrade_module_6_3_3_0($module)
 
     $module->registerHook('displayPaymentReturn');
     $module->registerHook('displayOrderDetail');
-    $module->registerHook('displayHeader');
 
     try {
         $db = Db::getInstance();
