@@ -89,12 +89,16 @@ class UpdatePayPalOrderCommandHandler
             $builder->buildMinimalPayload();
         }
 
-        $response = $this->httpClient->updateOrder($builder->presentPayload()->getArray());
-        $order = json_decode($response->getBody(), true);
+        $payload = $builder->presentPayload()->getArray();
+        $response = $this->httpClient->updateOrder($payload);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);
+        }
 
         $this->eventDispatcher->dispatch(new PayPalOrderUpdatedEvent(
-            $order['id'],
-            $order,
+            $command->getPayPalOrderId()->getValue(),
+            $payload,
             $command->getCartId()->getValue(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),

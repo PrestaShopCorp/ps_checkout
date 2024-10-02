@@ -20,25 +20,17 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Event;
 
-use Psr\EventDispatcher\EventDispatcherInterface as PsrEventDispatcherInterface;
-
-if (interface_exists(PsrEventDispatcherInterface::class)) {
-    interface EventDispatcherInterface extends PsrEventDispatcherInterface
-    {
-    }
-} else {
+/**
+ * Defines a dispatcher for events.
+ */
+interface EventDispatcherInterface
+{
     /**
-     * Defines a dispatcher for events.
+     * Provide all relevant listeners with an event to process.
+     *
+     * @param object $event the object to process
+     *
+     * @return object the Event that was passed, now modified by listeners
      */
-    interface EventDispatcherInterface
-    {
-        /**
-         * Provide all relevant listeners with an event to process.
-         *
-         * @param object $event the object to process
-         *
-         * @return object the Event that was passed, now modified by listeners
-         */
-        public function dispatch($event);
-    }
+    public function dispatch($event);
 }

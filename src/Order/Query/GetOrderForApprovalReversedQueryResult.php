@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 
 class GetOrderForApprovalReversedQueryResult
@@ -31,11 +30,6 @@ class GetOrderForApprovalReversedQueryResult
      * @var OrderId
      */
     private $orderId;
-
-    /**
-     * @var OrderStateId
-     */
-    private $currentStateId;
 
     /**
      * @var bool
@@ -49,7 +43,6 @@ class GetOrderForApprovalReversedQueryResult
 
     /**
      * @param int $orderId
-     * @param int $currentStateId
      * @param bool $hasBeenPaid
      * @param bool $hasBeenCanceled
      *
@@ -58,12 +51,10 @@ class GetOrderForApprovalReversedQueryResult
      */
     public function __construct(
         $orderId,
-        $currentStateId,
         $hasBeenPaid,
         $hasBeenCanceled
     ) {
         $this->orderId = new OrderId($orderId);
-        $this->currentStateId = new OrderStateId($currentStateId);
         $this->hasBeenPaid = $hasBeenPaid;
         $this->hasBeenCanceled = $hasBeenCanceled;
     }
@@ -74,14 +65,6 @@ class GetOrderForApprovalReversedQueryResult
     public function getOrderId()
     {
         return $this->orderId;
-    }
-
-    /**
-     * @return OrderStateId
-     */
-    public function getCurrentStateId()
-    {
-        return $this->currentStateId;
     }
 
     /**
