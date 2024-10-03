@@ -41,11 +41,13 @@ class FundingSourceInstaller
 
         $fundingSourceCollection = $fundingSourceCollectionBuilder->create();
         foreach ($fundingSourceCollection as $fundingSourceEntity) {
-            $fundingSourceConfigurationRepository->save([
+            $fundingSourceConfigurationRepository->insert([
                 'name' => $fundingSourceEntity->getName(),
                 'position' => $fundingSourceEntity->getPosition(),
-                'isEnabled' => $fundingSourceEntity->getName() !== 'apple_pay' && $fundingSourceEntity->getIsEnabled() ? 1 : 0,
-            ], $shopId);
+                'isEnabled' => !in_array($fundingSourceEntity->getName(), ['google_pay', 'apple_pay']) ? 1 : 0,
+            ],
+            $shopId,
+            true);
         }
 
         return true;
