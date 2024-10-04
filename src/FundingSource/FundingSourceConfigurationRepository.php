@@ -132,27 +132,4 @@ class FundingSourceConfigurationRepository
             ]
         );
     }
-
-    /**
-     * @param array $data
-     * @param int|null $shopId
-     * @param bool $insertIgnore
-     *
-     * @return bool
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function insert($data, $shopId = null, $insertIgnore = false)
-    {
-        return (bool) $this->db->insert(
-            'pscheckout_funding_source',
-            [
-                'name' => pSQL($data['name']),
-                'position' => (int) $data['position'],
-                'active' => (int) $data['isEnabled'],
-                'id_shop' => $shopId,
-            ]
-            , false, true, $insertIgnore ? \Db::INSERT_IGNORE : \Db::INSERT
-        );
-    }
 }
