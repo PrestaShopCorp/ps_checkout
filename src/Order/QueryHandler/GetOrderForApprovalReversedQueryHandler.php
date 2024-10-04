@@ -81,11 +81,13 @@ class GetOrderForApprovalReversedQueryHandler
         }
 
         $hasBeenCanceled = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
+        $hasBeenPaid = $order->hasBeenPaid();
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
 
         return new GetOrderForApprovalReversedQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
-            (bool) $order->hasBeenPaid(),
+            $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
             (bool) $hasBeenCanceled
         );
     }

@@ -49,6 +49,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'

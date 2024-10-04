@@ -82,7 +82,6 @@ class GetOrderForPaymentDeniedQueryHandler
 
         return new GetOrderForPaymentDeniedQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
             $this->hasBeenError($order)
         );
     }
