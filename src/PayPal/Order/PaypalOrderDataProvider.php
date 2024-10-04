@@ -145,7 +145,7 @@ class PaypalOrderDataProvider
 
     public function isTokenSaved()
     {
-        if ($this->payPalOrder) {
+        if ($this->payPalOrder && isset($this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()])) {
             $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
 
             return isset($paymentSource['attributes']['vault']['id']) &&
