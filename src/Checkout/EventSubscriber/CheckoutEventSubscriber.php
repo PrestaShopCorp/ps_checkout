@@ -118,21 +118,25 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws PsCheckoutException
+     * @throws HttpTimeoutException
      */
     public function proceedToPayment(CheckoutCompletedEvent $event)
     {
+        /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
+        $getPayPalOrderForCheckoutCompletedQueryResult = $this->commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery(
+            $event->getPayPalOrderId()->getValue()
+        ));
+
         try {
-            /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
-            $getPayPalOrderForCheckoutCompletedQueryResult = $this->commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery(
-                $event->getPayPalOrderId()->getValue()
-            ));
-        } catch (HttpTimeoutException $exception) {
-            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
-
-            return;
+            $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
+        } catch (PsCheckoutException $exception) {
+            if ($exception->getCode() === PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED) {
+//                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+//                return;
+            } else {
+                throw $exception;
+            }
         }
-
-        $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
 
         try {
             $this->commandBus->handle(
@@ -160,10 +164,6 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             } else {
                 throw $exception;
             }
-        } catch (HttpTimeoutException $exception) {
-            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
-
-            return;
         }
     }
 }

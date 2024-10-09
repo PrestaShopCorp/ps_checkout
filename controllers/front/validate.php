@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
+use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
@@ -108,6 +109,18 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             ));
 
             $this->sendOkResponse($this->generateResponse());
+        } catch (HttpTimeoutException $exception) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 408,
+                'body' => [
+                    'error' => [
+                        'message' => $exception->getMessage(),
+                    ],
+                ],
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
+            ]);
         } catch (Exception $exception) {
             $response = $this->generateResponse();
 
@@ -148,7 +161,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $response = [
-                'status' => $psCheckoutCart->paypal_status,
+                'status' => $psCheckoutCart->paypal_status, // Need to change this to get the status from PayPal Order instead?
                 'paypalOrderId' => $psCheckoutCart->paypal_order,
                 'transactionIdentifier' => $paypalOrder && isset($paypalOrder->getOrderPayPal()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrderPayPal()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];

@@ -22,6 +22,9 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
@@ -87,6 +90,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $commandBus = $this->module->getService('ps_checkout.bus.command');
             /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
             $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
+            /** @var OrderStateMapper $orderStateMapper */
+            $orderStateMapper = $this->module->getService(OrderStateMapper::class);
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
@@ -94,10 +99,27 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 throw new Exception('PayPal order does not belong to this customer');
             }
 
+            $payPalOrderCache->delete($this->paypalOrderId->getValue());
+
             $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
-                $this->createOrder($payPalOrderFromCache, $payPalOrder);
+                $orders = new PrestaShopCollection(Order::class);
+                $orders->where('id_cart', '=', pSQL($payPalOrder->getIdCart()));
+
+                if (!$orders->count()) {
+                    $this->createOrder($payPalOrderFromCache, $payPalOrder);
+                }
+
+                /** @var Order $order */
+                $order = $orders->getFirst();
+                $paidOrderStateId = (int) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED);
+
+                if ($order->getCurrentOrderState()->id !== $paidOrderStateId) {
+                    $commandBus->handle(new UpdateOrderStatusCommand($order->id, $paidOrderStateId));
+                }
+
+                $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]['id'], $payPalOrderFromCache['status']);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
@@ -125,6 +147,12 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                     default:
                         break;
                 }
+            }
+
+            if ($payPalOrderFromCache['status'] === 'APPROVED') {
+                $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
+                $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
