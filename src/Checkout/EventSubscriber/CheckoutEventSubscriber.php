@@ -131,8 +131,8 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
         } catch (PsCheckoutException $exception) {
             if ($exception->getCode() === PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED) {
-//                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
-//                return;
+                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+                return;
             } else {
                 throw $exception;
             }
@@ -160,6 +160,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
 
                 throw $exception;
             } elseif ($exception->getCode() === PayPalException::ORDER_ALREADY_CAPTURED) {
+                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
                 return;
             } else {
                 throw $exception;

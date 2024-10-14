@@ -112,7 +112,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         } catch (HttpTimeoutException $exception) {
             $this->exitWithResponse([
                 'status' => false,
-                'httpCode' => 408,
+                'httpCode' => 504,
                 'body' => [
                     'error' => [
                         'message' => $exception->getMessage(),
