@@ -24,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
-use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
@@ -109,18 +108,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             ));
 
             $this->sendOkResponse($this->generateResponse());
-        } catch (HttpTimeoutException $exception) {
-            $this->exitWithResponse([
-                'status' => false,
-                'httpCode' => 504,
-                'body' => [
-                    'error' => [
-                        'message' => $exception->getMessage(),
-                    ],
-                ],
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
         } catch (Exception $exception) {
             $response = $this->generateResponse();
 
@@ -451,6 +438,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             'body' => [
                 'error' => [
                     'message' => $exceptionMessageForCustomer,
+                    'code' => $exception->getCode(),
                 ],
             ],
             'exceptionCode' => $exception->getCode(),
