@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use function _PHPStan_f2258ada8\React\Async\await;
 
 class MaaslandHttpClient implements HttpClientInterface
 {
@@ -110,9 +111,18 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function captureOrder(array $payload, array $options = [])
+    public function captureOrder(array $payload, array $options = [], $maxRetries = 0, $backOff = 1)
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
+        try {
+            return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
+        } catch (HttpTimeoutException $exception) {
+            if ($maxRetries > 0) {
+                sleep($backOff);
+                return $this->captureOrder($payload, $options, $maxRetries - 1, $backOff * 2);
+            }
+
+            throw $exception;
+        }
     }
 
     /**
