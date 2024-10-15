@@ -91,6 +91,7 @@ class CapturePayPalOrderCommandHandler
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
+        throw new HttpTimeoutException('PayPal timeout', 504);
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $this->prestaShopContext->getShopId());
 
         $payload = [
@@ -105,7 +106,7 @@ class CapturePayPalOrderCommandHandler
             $payload['vault'] = true;
         }
 
-        $response = $this->maaslandHttpClient->captureOrder($payload);
+        $response = $this->maaslandHttpClient->captureOrder($payload, [], 3);
 
         $orderPayPal = json_decode($response->getBody(), true);
 
