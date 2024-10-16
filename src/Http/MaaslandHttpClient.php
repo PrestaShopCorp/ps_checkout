@@ -30,7 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use function _PHPStan_f2258ada8\React\Async\await;
 
 class MaaslandHttpClient implements HttpClientInterface
 {

@@ -91,7 +91,6 @@ class CapturePayPalOrderCommandHandler
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
-        throw new HttpTimeoutException('PayPal timeout', 504);
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $this->prestaShopContext->getShopId());
 
         $payload = [

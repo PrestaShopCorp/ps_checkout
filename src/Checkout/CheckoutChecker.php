@@ -51,7 +51,7 @@ class CheckoutChecker
      *
      * @throws PsCheckoutException
      */
-    public function  continueWithAuthorization($cartId, $orderPayPal)
+    public function continueWithAuthorization($cartId, $orderPayPal)
     {
         if ($orderPayPal['status'] === 'COMPLETED') {
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
