@@ -26,6 +26,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
@@ -94,10 +96,19 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 throw new Exception('PayPal order does not belong to this customer');
             }
 
-            $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
+            /** @var GetPayPalOrderForOrderConfirmationQueryResult $payPalOrderQueryResult */
+            $payPalOrderQueryResult = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery($this->paypalOrderId->getValue()));
+            $payPalOrderFromCache = $payPalOrderQueryResult->getOrderPayPal();
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
-                $this->createOrder($payPalOrderFromCache, $payPalOrder);
+                $orders = new PrestaShopCollection(Order::class);
+                $orders->where('id_cart', '=', $payPalOrder->getIdCart());
+
+                if (!$orders->count()) {
+                    $this->createOrder($payPalOrderFromCache, $payPalOrder);
+                }
+
+                $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]['id'], $payPalOrderFromCache['status']);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
@@ -125,6 +136,12 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                     default:
                         break;
                 }
+            }
+
+            if ($payPalOrderFromCache['status'] === 'APPROVED') {
+                $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
+                $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());

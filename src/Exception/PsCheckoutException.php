@@ -89,4 +89,6 @@ class PsCheckoutException extends \Exception
     const CART_ADDRESS_DELIVERY_INVALID = 57;
     const CART_DELIVERY_OPTION_INVALID = 58;
     const PSCHECKOUT_HTTP_UNAUTHORIZED = 59;
+
+    const PAYPAL_ORDER_ALREADY_CAPTURED = 60;
 }
