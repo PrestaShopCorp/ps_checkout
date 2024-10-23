@@ -46,7 +46,7 @@ class Ps_checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
         'displayOrderDetail',
-        'moduleRoutes'
+        'moduleRoutes',
     ];
 
     /**
@@ -1803,9 +1803,9 @@ class Ps_checkout extends PaymentModule
                 'params' => [
                     'fc' => 'module',
                     'module' => 'ps_checkout',
-                    'action' => 'getDomainAssociation'
+                    'action' => 'getDomainAssociation',
                 ],
-            ]
+            ],
         ];
     }
 }
