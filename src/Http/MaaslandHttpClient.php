@@ -110,18 +110,9 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
-    public function captureOrder(array $payload, array $options = [], $maxRetries = 0, $backOff = 1)
+    public function captureOrder(array $payload, array $options = [])
     {
-        try {
-            return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
-        } catch (HttpTimeoutException $exception) {
-            if ($maxRetries > 0) {
-                sleep($backOff);
-                return $this->captureOrder($payload, $options, $maxRetries - 1, $backOff * 2);
-            }
-
-            throw $exception;
-        }
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
     }
 
     /**
