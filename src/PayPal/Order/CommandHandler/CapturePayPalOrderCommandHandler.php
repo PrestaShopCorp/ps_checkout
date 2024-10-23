@@ -105,7 +105,7 @@ class CapturePayPalOrderCommandHandler
             $payload['vault'] = true;
         }
 
-        $response = $this->maaslandHttpClient->captureOrder($payload, [], 3);
+        $response = $this->maaslandHttpClient->captureOrder($payload);
 
         $orderPayPal = json_decode($response->getBody(), true);
 
