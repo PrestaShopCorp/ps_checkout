@@ -49,10 +49,12 @@ class SavePayPalOrderCommandHandler
         $intent = isset($order['intent']) ? $order['intent'] : 'CAPTURE';
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($order['id']));
-            $payPalOrder->setStatus($order['status'])
-            ->setIntent($intent)
-            ->setFundingSource(key($order['payment_source']))
-            ->setPaymentSource($order['payment_source']);
+            $payPalOrder->setStatus($order['status']);
+            $payPalOrder->setIntent($intent);
+            $payPalOrder->setFundingSource(isset($order['payment_source']) ? key($order['payment_source']) : $command->getFundingSource());
+            if (isset($order['payment_source'])) {
+                $payPalOrder->setPaymentSource($order['payment_source']);
+            }
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
         } catch (Exception $exception) {
             $payPalOrder = new PayPalOrder(
@@ -61,7 +63,7 @@ class SavePayPalOrderCommandHandler
                 $intent,
                 $command->getFundingSource(),
                 $order['status'],
-                $order['payment_source'],
+                isset($order['payment_source']) ? $order['payment_source'] : [],
                 $command->getPaymentMode(),
                 $command->isCardFields(),
                 $command->isExpressCheckout(),

@@ -165,7 +165,6 @@ class MaaslandHttpClient implements HttpClientInterface
      * @throws RequestException
      * @throws TransferException
      * @throws PayPalException
-     * @throws HttpTimeoutException
      */
     public function sendRequest(RequestInterface $request)
     {
@@ -174,11 +173,6 @@ class MaaslandHttpClient implements HttpClientInterface
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $body = json_decode($response->getBody(), true);
-
-            if (isset($body['isResponseUndefined']) && $body['isResponseUndefined']) {
-                throw new HttpTimeoutException($exception->getMessage(), $exception->getCode(), $exception);
-            }
-
             $message = $this->extractMessage($body);
 
             if ($message) {

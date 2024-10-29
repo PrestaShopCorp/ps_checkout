@@ -44,7 +44,7 @@ class FundingSourceInstaller
             $fundingSourceConfigurationRepository->save([
                 'name' => $fundingSourceEntity->getName(),
                 'position' => $fundingSourceEntity->getPosition(),
-                'isEnabled' => $fundingSourceEntity->getName() !== 'apple_pay' && $fundingSourceEntity->getIsEnabled() ? 1 : 0,
+                'isEnabled' => !in_array($fundingSourceEntity->getName(), ['google_pay', 'apple_pay']) ? 1 : 0,
             ], $shopId);
         }
 

@@ -82,9 +82,7 @@ class GetOrderForPaymentPendingQueryHandler
 
         return new GetOrderForPaymentPendingQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
-            $this->isInPending($order),
-            $psCheckoutCart->getPaypalFundingSource()
+            $this->isInPending($order)
         );
     }
 

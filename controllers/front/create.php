@@ -104,6 +104,28 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $isCardFields = isset($bodyValues['isCardFields']) && $bodyValues['isCardFields'];
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
 
+            if ($isExpressCheckout) {
+                $psCheckoutCartCollection = new PrestaShopCollection(PsCheckoutCart::class);
+                $psCheckoutCartCollection->where('id_cart', '=', (int) $cartId);
+                $psCheckoutCartCollection->where('isExpressCheckout', '=', '1');
+                $psCheckoutCartCollection->where('paypal_status', 'IN', [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED]);
+                $psCheckoutCartCollection->where('date_upd', '>', date('Y-m-d H:i:s', strtotime('-1 hour')));
+                $psCheckoutCartCollection->orderBy('date_upd', 'desc');
+                /** @var PsCheckoutCart|false $psCheckoutCart */
+                $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+                if ($psCheckoutCart) {
+                    $this->exitWithResponse([
+                        'status' => true,
+                        'httpCode' => 200,
+                        'body' => [
+                            'orderID' => $psCheckoutCart->paypal_order,
+                        ],
+                        'exceptionCode' => null,
+                        'exceptionMessage' => null,
+                    ]);
+                }
+            }
+
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
             $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
