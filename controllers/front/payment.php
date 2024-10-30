@@ -29,7 +29,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
@@ -83,8 +82,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
-            /** @var PayPalOrderProvider $payPalOrderProvider */
-            $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
             /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
@@ -93,7 +90,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
             if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
-                throw new Exception('PayPal order does not belong to this customer');
+                $this->redirectToOrderPage();
+            }
+
+            $orders = new PrestaShopCollection(Order::class);
+            $orders->where('id_cart', '=', $payPalOrder->getIdCart());
+
+            if ($orders->count()) {
+                $this->redirectToOrderHistoryPage();
             }
 
             /** @var GetPayPalOrderForOrderConfirmationQueryResult $payPalOrderQueryResult */
@@ -101,22 +105,11 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderFromCache = $payPalOrderQueryResult->getOrderPayPal();
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
-                $orders = new PrestaShopCollection(Order::class);
-                $orders->where('id_cart', '=', $payPalOrder->getIdCart());
-
-                if (!$orders->count()) {
-                    $this->createOrder($payPalOrderFromCache, $payPalOrder);
-                }
-
+                $this->createOrder($payPalOrderFromCache, $payPalOrder);
                 $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]['id'], $payPalOrderFromCache['status']);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
-                // Delete from cache so when user is redirected from 3DS authentication page the order is fetched from PayPal
-                if ($payPalOrderCache->has($this->paypalOrderId->getValue())) {
-                    $payPalOrderCache->delete($this->paypalOrderId->getValue());
-                }
-
                 $this->redirectTo3DSVerification($payPalOrderFromCache);
             }
 
@@ -234,5 +227,10 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 ]
             ));
         }
+    }
+
+    private function redirectToOrderHistoryPage()
+    {
+        Tools::redirect($this->context->link->getPageLink('history'));
     }
 }
