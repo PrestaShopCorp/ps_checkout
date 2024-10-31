@@ -27,8 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PsCheckoutCart;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -40,28 +38,18 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
      * @var CacheInterface
      */
     private $orderPayPalCache;
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
 
-    public function __construct(CacheInterface $orderPayPalCache, PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __construct(CacheInterface $orderPayPalCache)
     {
         $this->orderPayPalCache = $orderPayPalCache;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */
         $order = $this->orderPayPalCache->get($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getOrderPayPalId()->getValue());
 
-        $psCheckoutCartDateUpdated = new \DateTime($psCheckoutCart->date_upd);
-        $currentDateTime = new \DateTime();
-        $interval = $currentDateTime->getTimestamp() - $psCheckoutCartDateUpdated->getTimestamp();
-
-        if (!empty($order) && ($psCheckoutCart->paypal_status === $order['status'] && $interval < 30 || in_array($order['status'], [PsCheckoutCart::STATUS_COMPLETED, PsCheckoutCart::STATUS_CANCELED]))) {
+        if (!empty($order) && in_array($order['status'], ['COMPLETED', 'CANCELED'])) {
             return new GetPayPalOrderForCheckoutCompletedQueryResult($order);
         }
 
