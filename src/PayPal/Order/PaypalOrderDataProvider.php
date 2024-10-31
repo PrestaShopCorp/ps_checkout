@@ -158,7 +158,7 @@ class PaypalOrderDataProvider
 
     public function getPaymentTokenIdentifier()
     {
-        if ($this->payPalOrder) {
+        if ($this->payPalOrder && isset($this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()])) {
             $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
 
             if ($this->payPalOrder->getFundingSource() === 'card') {

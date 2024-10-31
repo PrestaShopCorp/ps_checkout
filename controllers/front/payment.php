@@ -51,7 +51,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     public function checkAccess()
     {
-        return $this->context->customer && $this->context->customer->isLogged() && $this->context->cart;
+        return $this->context->customer && $this->context->cart;
     }
 
     public function initContent()
@@ -89,15 +89,15 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
-            if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
-                $this->redirectToOrderPage();
-            }
-
             $orders = new PrestaShopCollection(Order::class);
             $orders->where('id_cart', '=', $payPalOrder->getIdCart());
 
             if ($orders->count()) {
                 $this->redirectToOrderHistoryPage();
+            }
+
+            if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
+                $this->redirectToOrderPage();
             }
 
             /** @var GetPayPalOrderForOrderConfirmationQueryResult $payPalOrderQueryResult */
