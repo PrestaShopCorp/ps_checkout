@@ -133,7 +133,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $payPalOrder);
         } catch (PsCheckoutException $exception) {
             if ($exception->getCode() === PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED) {
-                $capture = $payPalOrder['purchase_units'][0]['payments']['captures'][0] ?? null;
+                $capture = isset($payPalOrder['purchase_units'][0]['payments']['captures'][0]) ? $payPalOrder['purchase_units'][0]['payments']['captures'][0] : null;
                 $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue(), $capture));
 
                 return;
@@ -172,7 +172,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                         $event->getPayPalOrderId()->getValue()
                     ));
                     $payPalOrder = $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder();
-                    $capture = $payPalOrder['purchase_units'][0]['payments']['captures'][0] ?? null;
+                    $capture = isset($payPalOrder['purchase_units'][0]['payments']['captures'][0]) ? $payPalOrder['purchase_units'][0]['payments']['captures'][0] : null;
                 }
                 $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue(), $capture));
 

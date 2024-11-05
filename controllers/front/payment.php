@@ -155,16 +155,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->module->getService('ps_checkout.bus.command');
 
-        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-        if ($capture['status'] === 'COMPLETED') {
-            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-            if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
-                /** @var PaymentTokenRepository $paymentTokenRepository */
-                $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
-                $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
-            }
-            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
+        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] ?? null;
+        $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+        if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
+            /** @var PaymentTokenRepository $paymentTokenRepository */
+            $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
+            $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
+        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
     }
 
     /**
