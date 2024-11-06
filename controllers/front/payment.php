@@ -26,8 +26,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
@@ -100,13 +100,12 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 $this->redirectToOrderPage();
             }
 
-            /** @var GetPayPalOrderForOrderConfirmationQueryResult $payPalOrderQueryResult */
-            $payPalOrderQueryResult = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery($this->paypalOrderId->getValue()));
-            $payPalOrderFromCache = $payPalOrderQueryResult->getOrderPayPal();
+            /** @var GetPayPalOrderForCheckoutCompletedQueryResult $payPalOrderQueryResult */
+            $payPalOrderQueryResult = $commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery($this->paypalOrderId->getValue()));
+            $payPalOrderFromCache = $payPalOrderQueryResult->getPayPalOrder();
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
                 $this->createOrder($payPalOrderFromCache, $payPalOrder);
-                $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]['id'], $payPalOrderFromCache['status']);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
@@ -156,16 +155,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->module->getService('ps_checkout.bus.command');
 
-        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-        if ($capture['status'] === 'COMPLETED') {
-            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-            if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
-                /** @var PaymentTokenRepository $paymentTokenRepository */
-                $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
-                $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
-            }
-            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
+        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] ?? null;
+        $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+        if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
+            /** @var PaymentTokenRepository $paymentTokenRepository */
+            $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
+            $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
+        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
     }
 
     /**

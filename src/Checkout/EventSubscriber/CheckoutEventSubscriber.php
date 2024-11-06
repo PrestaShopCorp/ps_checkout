@@ -127,11 +127,14 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             $event->getPayPalOrderId()->getValue()
         ));
 
+        $payPalOrder = $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder();
+
         try {
-            $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
+            $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $payPalOrder);
         } catch (PsCheckoutException $exception) {
             if ($exception->getCode() === PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED) {
-                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+                $capture = isset($payPalOrder['purchase_units'][0]['payments']['captures'][0]) ? $payPalOrder['purchase_units'][0]['payments']['captures'][0] : null;
+                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue(), $capture));
 
                 return;
             } else {
@@ -161,7 +164,17 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
 
                 throw $exception;
             } elseif ($exception->getCode() === PayPalException::ORDER_ALREADY_CAPTURED) {
-                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+                if (isset($payPalOrder['purchase_units'][0]['payments']['captures'][0])) {
+                    $capture = $payPalOrder['purchase_units'][0]['payments']['captures'][0];
+                } else {
+                    /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
+                    $getPayPalOrderForCheckoutCompletedQueryResult = $this->commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery(
+                        $event->getPayPalOrderId()->getValue()
+                    ));
+                    $payPalOrder = $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder();
+                    $capture = isset($payPalOrder['purchase_units'][0]['payments']['captures'][0]) ? $payPalOrder['purchase_units'][0]['payments']['captures'][0] : null;
+                }
+                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue(), $capture));
 
                 return;
             } else {

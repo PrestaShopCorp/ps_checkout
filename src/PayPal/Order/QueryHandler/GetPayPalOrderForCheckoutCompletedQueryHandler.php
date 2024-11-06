@@ -55,7 +55,8 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
+            $orderToStoreInCache = !empty($order) ? array_replace_recursive($order, $orderPayPal->getOrder()) : $orderPayPal->getOrder();
+            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderToStoreInCache);
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {
