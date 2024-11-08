@@ -811,10 +811,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function init()
     {
-        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
-            // Avoid redirection to Login page because Ajax doesn't support it
-            $this->initCursedPage();
-        }
+//        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+//            // Avoid redirection to Login page because Ajax doesn't support it
+//            $this->initCursedPage();
+//        }
 
         parent::init();
     }
@@ -822,7 +822,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     /**
      * {@inheritdoc}
      */
-    protected function isAnonymousAllowed()
+    public function isAnonymousAllowed()
     {
         return false;
     }
@@ -1065,6 +1065,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         header('Content-Disposition: attachment; filename="' . $filename . '.log"');
         header('Content-Length: ' . $file->getSize());
         readfile($file->getRealPath());
+        exit;
+    }
+
+    public function ajaxDie($value = null, $controller = null, $method = null)
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        echo json_encode($value);
         exit;
     }
 }

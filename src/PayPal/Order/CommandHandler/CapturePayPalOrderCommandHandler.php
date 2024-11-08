@@ -41,7 +41,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenC
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -88,7 +88,7 @@ class CapturePayPalOrderCommandHandler
         $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
-    public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
+    public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
         $context = Context::getContext();
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);

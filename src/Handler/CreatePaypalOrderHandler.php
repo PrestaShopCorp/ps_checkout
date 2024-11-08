@@ -55,7 +55,7 @@ class CreatePaypalOrderHandler
      *
      * @throws PsCheckoutException
      */
-    public function handle($expressCheckout = false, $isCardPayment = false, $updateOrder = false, $paypalOrderId = null)
+    public function __invoke($expressCheckout = false, $isCardPayment = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
         $cartPresenter = (new CartPresenter())->present();

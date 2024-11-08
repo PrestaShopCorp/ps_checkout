@@ -44,7 +44,7 @@ class GetApplePayPaymentRequestQueryHandler
      *
      * @throws PsCheckoutException
      */
-    public function handle(GetApplePayPaymentRequestQuery $query)
+    public function __invoke(GetApplePayPaymentRequestQuery $query)
     {
         $cartPresenter = new CartPresenter();
         $cart = $cartPresenter->present();

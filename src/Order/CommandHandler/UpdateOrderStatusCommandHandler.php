@@ -48,7 +48,7 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
      *
      * @throws OrderException
      */
-    public function handle(UpdateOrderStatusCommand $command)
+    public function __invoke(UpdateOrderStatusCommand $command)
     {
         $order = $this->getOrder($command->getOrderId());
         $orderCurrentState = (int) $order->getCurrentState();

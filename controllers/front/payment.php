@@ -85,7 +85,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
+            /** @var Symfony\Contracts\Cache\CacheInterface $payPalOrderCache */
             $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
@@ -102,7 +102,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
                 // Delete from cache so when user is redirected from 3DS authentication page the order is fetched from PayPal
-                if ($payPalOrderCache->has($this->paypalOrderId->getValue())) {
+                if ($payPalOrderCache->hasItem($this->paypalOrderId->getValue())) {
                     $payPalOrderCache->delete($this->paypalOrderId->getValue());
                 }
 

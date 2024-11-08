@@ -50,7 +50,7 @@ class SavePayPalOrderStatusCommandHandler
      *
      * @throws PsCheckoutSessionException
      */
-    public function handle(SavePayPalOrderStatusCommand $command)
+    public function __invoke(SavePayPalOrderStatusCommand $command)
     {
         // TODO: To be repurposed
         try {

@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForAdm
 
 class GetPayPalOrderForAdminViewQueryHandler
 {
-    public function handle(GetPayPalOrderForAdminViewQuery $query)
+    public function __invoke(GetPayPalOrderForAdminViewQuery $query)
     {
         return new GetPayPalOrderForAdminViewQueryResult();
     }

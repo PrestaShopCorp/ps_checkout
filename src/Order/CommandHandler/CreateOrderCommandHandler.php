@@ -112,7 +112,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
      * @throws PrestaShopException
      * @throws PsCheckoutException
      */
-    public function handle(CreateOrderCommand $command)
+    public function __invoke(CreateOrderCommand $command)
     {
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());

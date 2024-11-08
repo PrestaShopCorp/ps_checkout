@@ -38,9 +38,11 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+#      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+    tags:
+      - { name: messenger.message_handler, bus: ps_checkout.bus.command }
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'

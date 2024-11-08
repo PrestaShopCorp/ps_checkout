@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class GetPayPalOrderForOrderConfirmationQueryHandler
 {
@@ -39,7 +39,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
         $this->orderPayPalCache = $orderPayPalCache;
     }
 
-    public function handle(GetPayPalOrderForOrderConfirmationQuery $query)
+    public function __invoke(GetPayPalOrderForOrderConfirmationQuery $query)
     {
         /** @var array{id: string, status: string} $order */
         $order = $this->orderPayPalCache->get($query->getOrderPayPalId()->getValue());

@@ -24,7 +24,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class GetPayPalOrderQueryHandler
 {
@@ -50,7 +50,7 @@ class GetPayPalOrderQueryHandler
      *
      * @throws \PrestaShopException
      */
-    public function handle(GetPayPalOrderQuery $query)
+    public function __invoke(GetPayPalOrderQuery $query)
     {
         $orderId = !$query->getOrderId()->getValue() ? null : $query->getOrderId()->getValue();
 

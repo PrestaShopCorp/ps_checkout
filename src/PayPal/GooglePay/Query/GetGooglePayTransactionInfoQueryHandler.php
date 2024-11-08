@@ -44,7 +44,7 @@ class GetGooglePayTransactionInfoQueryHandler
      *
      * @throws PsCheckoutException
      */
-    public function handle(GetGooglePayTransactionInfoQuery $query)
+    public function __invoke(GetGooglePayTransactionInfoQuery $query)
     {
         $cartPresenter = (new CartPresenter())->present();
         $orderPayloadBuilder = new OrderPayloadBuilder($cartPresenter);

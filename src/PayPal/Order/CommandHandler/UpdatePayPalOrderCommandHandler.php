@@ -81,7 +81,7 @@ class UpdatePayPalOrderCommandHandler
      *
      * @throws CartException|PayPalException|PayPalOrderException|PsCheckoutException|Exception
      */
-    public function handle(UpdatePayPalOrderCommand $command)
+    public function __invoke(UpdatePayPalOrderCommand $command)
     {
         try {
             $paypalOrder = $this->paypalOrderProvider->getById($command->getPayPalOrderId()->getValue());

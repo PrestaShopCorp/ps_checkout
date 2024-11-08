@@ -42,7 +42,7 @@ class SavePayPalOrderCommandHandler
         $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
-    public function handle(SavePayPalOrderCommand $command)
+    public function __invoke(SavePayPalOrderCommand $command)
     {
         $order = $command->getOrder();
 

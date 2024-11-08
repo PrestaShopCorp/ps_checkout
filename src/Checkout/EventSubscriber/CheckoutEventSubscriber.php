@@ -62,11 +62,12 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     private $psCheckoutCartRepository;
 
-    public function __construct(CheckoutChecker $checkoutChecker, CommandBusInterface $commandBus, PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __construct(CheckoutChecker $checkoutChecker, Ps_checkout $module, PsCheckoutCartRepository $psCheckoutCartRepository)
     {
         $this->checkoutChecker = $checkoutChecker;
-        $this->commandBus = $commandBus;
+        $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+//        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
     }
 
     /**
@@ -135,12 +136,12 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
         $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
 
         try {
-            $this->commandBus->handle(
-                new CapturePayPalOrderCommand(
-                    $event->getPayPalOrderId()->getValue(),
-                    $event->getFundingSource()
-                )
-            );
+//            $this->commandBus->handle(
+//                new CapturePayPalOrderCommand(
+//                    $event->getPayPalOrderId()->getValue(),
+//                    $event->getFundingSource()
+//                )
+//            );
         } catch (PayPalException $exception) {
             if ($exception->getCode() === PayPalException::ORDER_NOT_APPROVED) {
                 $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
@@ -161,7 +162,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                 throw $exception;
             }
         } catch (HttpTimeoutException $exception) {
-            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+//            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
 
             return;
         }
