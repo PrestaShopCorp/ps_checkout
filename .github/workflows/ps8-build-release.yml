@@ -181,7 +181,7 @@ jobs:
       contents: read
       pull-requests: write
     needs: [deploy_production]
-    if: github.event_name == 'push'
+    # if: github.event_name == 'push'
 
     steps:
       - name: Download artifact
