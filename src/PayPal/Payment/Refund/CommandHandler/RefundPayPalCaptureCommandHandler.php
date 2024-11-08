@@ -75,7 +75,7 @@ class RefundPayPalCaptureCommandHandler
      * @throws PayPalRefundFailedException
      * @throws PayPalOrderException
      */
-    public function handle(RefundPayPalCaptureCommand $command)
+    public function __invoke(RefundPayPalCaptureCommand $command)
     {
         $response = $this->checkoutHttpClient->refundOrder([
             'orderId' => $command->getOrderPayPalId(),

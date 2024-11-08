@@ -59,7 +59,7 @@ class GetPayPalGetUserIdTokenQueryHandler
      *
      * @throws Exception
      */
-    public function handle(GetPayPalGetUserIdTokenQuery $query)
+    public function __invoke(GetPayPalGetUserIdTokenQuery $query)
     {
         $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
         $merchantId = $this->payPalConfiguration->getMerchantId();

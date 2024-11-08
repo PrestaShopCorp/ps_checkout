@@ -57,7 +57,7 @@ class GetOrderForPaymentCompletedQueryHandler
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForPaymentCompletedQuery $query)
+    public function __invoke(GetOrderForPaymentCompletedQuery $query)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
 

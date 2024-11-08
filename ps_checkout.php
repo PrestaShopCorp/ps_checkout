@@ -937,6 +937,8 @@ class Ps_checkout extends PaymentModule
         if (false === $frontControllerValidator->shouldLoadFrontJS($controller)) {
             return;
         }
+//        $sfContainer = PrestaShop\PrestaShop\Adapter\SymfonyContainer::getInstance();
+        $commandBus = $this->get('prestashop.core.filter.front_end_object.main');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder $payPalSdkConfigurationBuilder */
         $payPalSdkConfigurationBuilder = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder::class);

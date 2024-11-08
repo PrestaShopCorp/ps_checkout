@@ -66,7 +66,7 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
      * @throws OrderException
      * @throws OrderPaymentException
      */
-    public function handle(AddOrderPaymentCommand $command)
+    public function __invoke(AddOrderPaymentCommand $command)
     {
         $order = $this->getOrder($command->getOrderId());
         $currency = Currency::getCurrencyInstance($command->getPaymentCurrencyId());

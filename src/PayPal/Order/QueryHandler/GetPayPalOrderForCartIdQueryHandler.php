@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class GetPayPalOrderForCartIdQueryHandler
 {
@@ -50,7 +50,7 @@ class GetPayPalOrderForCartIdQueryHandler
      *
      * @throws PayPalOrderException
      */
-    public function handle(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
+    public function __invoke(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
     {
         $psCheckoutCart = $this->checkoutCartRepository->findOneByCartId($getPayPalOrderQuery->getCartId()->getValue());
 

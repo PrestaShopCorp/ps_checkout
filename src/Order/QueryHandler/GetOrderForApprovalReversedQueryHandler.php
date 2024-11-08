@@ -57,7 +57,7 @@ class GetOrderForApprovalReversedQueryHandler
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForApprovalReversedQuery $query)
+    public function __invoke(GetOrderForApprovalReversedQuery $query)
     {
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());

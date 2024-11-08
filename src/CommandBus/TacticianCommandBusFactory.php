@@ -20,22 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-use League\Tactician\CommandBus;
-use League\Tactician\Handler\CommandHandlerMiddleware;
-use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
-use League\Tactician\Handler\MethodNameInflector\HandleInflector;
-use League\Tactician\Logger\Formatter\ClassPropertiesFormatter;
-use League\Tactician\Logger\LoggerMiddleware;
-use Ps_checkout;
+use PrestaShopBundle\CommandBus\MessengerCommandBus;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
 class TacticianCommandBusFactory
 {
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
     /**
      * @var array
      */
@@ -47,35 +39,30 @@ class TacticianCommandBusFactory
     private $logger;
 
     /**
-     * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param array $commandToHandlerMap
      */
-    public function __construct(Ps_checkout $module, LoggerInterface $logger, array $commandToHandlerMap)
+    public function __construct(LoggerInterface $logger, array $commandToHandlerMap)
     {
-        $this->module = $module;
         $this->logger = $logger;
         $this->commandToHandlerMap = $commandToHandlerMap;
     }
 
     /**
-     * @return CommandBus
+     * @return TacticianCommandBusAdapter
      */
     public function create()
     {
-        return new CommandBus([
-            new LoggerMiddleware(
-                new ClassPropertiesFormatter(),
-                $this->logger
-            ),
-            new CommandHandlerMiddleware(
-                new ClassNameExtractor(),
-                new TacticianContainerLocator(
-                    $this->module,
-                    $this->commandToHandlerMap
-                ),
-                new HandleInflector()
-            ),
-        ]);
+        $handlerMiddleWare = new HandleMessageMiddleware(
+            new HandlersLocator($this->commandToHandlerMap),
+        );
+
+        $handlerMiddleWare->setLogger($this->logger);
+
+        $messengerBus = new MessengerCommandBus(
+            new MessageBus([$handlerMiddleWare])
+        );
+
+        return new TacticianCommandBusAdapter($messengerBus);
     }
 }

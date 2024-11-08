@@ -45,7 +45,7 @@ class GetCustomerPaymentTokensQueryHandler
      *
      * @throws Exception
      */
-    public function handle(GetCustomerPaymentTokensQuery $query)
+    public function __invoke(GetCustomerPaymentTokensQuery $query)
     {
 //        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue(), $query->getPageSize(), $query->getPageNumber());
         $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue());

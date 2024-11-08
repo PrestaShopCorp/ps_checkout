@@ -44,7 +44,7 @@ class UpdatePaymentMethodSelectedCommandHandler
      *
      * @throws PsCheckoutSessionException
      */
-    public function handle(UpdatePaymentMethodSelectedCommand $command)
+    public function __invoke(UpdatePaymentMethodSelectedCommand $command)
     {
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */

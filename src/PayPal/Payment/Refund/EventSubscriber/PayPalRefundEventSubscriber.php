@@ -31,7 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptu
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalRefundEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use Ps_checkout;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalRefundEventSubscriber implements EventSubscriberInterface
@@ -95,7 +95,7 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->orderPayPalCache->has($event->getPayPalOrderId()->getValue())) {
+        if ($this->orderPayPalCache->hasItem($event->getPayPalOrderId()->getValue())) {
             $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
         }
 
@@ -136,7 +136,7 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
 
     public function updateCache(PayPalRefundEvent $event)
     {
-        if ($this->orderPayPalCache->has($event->getPayPalOrderId()->getValue())) {
+        if ($this->orderPayPalCache->hasItem($event->getPayPalOrderId()->getValue())) {
             $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
         }
     }

@@ -37,7 +37,7 @@ class UpdateOrderMatriceCommandHandler
      * @throws \PrestaShopException
      * @throws \PrestaShopDatabaseException
      */
-    public function handle(UpdateOrderMatriceCommand $command)
+    public function __invoke(UpdateOrderMatriceCommand $command)
     {
         $orderMatrice = new \OrderMatrice();
         $orderMatrice->id_order_prestashop = $command->getOrderId()->getValue();

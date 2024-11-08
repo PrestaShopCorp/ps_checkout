@@ -39,7 +39,7 @@ class GetCurrentPayPalOrderStatusQueryHandler
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
-    public function handle(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
+    public function __invoke(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
     {
         try {
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getOrderPayPalId()->getValue());

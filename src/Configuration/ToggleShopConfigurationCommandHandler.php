@@ -37,7 +37,7 @@ class ToggleShopConfigurationCommandHandler
     /**
      * @param ToggleShopConfigurationCommand $command
      */
-    public function handle(ToggleShopConfigurationCommand $command)
+    public function __invoke(ToggleShopConfigurationCommand $command)
     {
         // Due to static cache in Shop::isFeatureActive(), we have to execute this to retrieve an accurate value
         $isMultiShopEnabled = (bool) $this->db->getValue('SELECT `value` FROM `' . _DB_PREFIX_ . 'configuration` WHERE `name` = "PS_MULTISHOP_FEATURE_ACTIVE"')

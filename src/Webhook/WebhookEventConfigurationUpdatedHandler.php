@@ -56,7 +56,7 @@ class WebhookEventConfigurationUpdatedHandler implements WebhookEventHandlerInte
      * @throws WebhookException
      * @throws PsCheckoutException
      */
-    public function handle(array $payload)
+    public function __invoke(array $payload)
     {
         $this->assertPayloadIsValid($payload);
 

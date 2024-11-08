@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\PayPalCustomerIdProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -70,10 +71,6 @@ class PayPalSdkConfigurationBuilder
     /** @var array */
     private static $cache = [];
     /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
-    /**
      * @var PrestaShopContext
      */
     private $prestaShopContext;
@@ -89,9 +86,9 @@ class PayPalSdkConfigurationBuilder
      * @var FundingSourceEligibilityConstraint
      */
     private $fundingSourceEligibilityConstraint;
+    private PayPalCustomerIdProvider $payPalCustomerIdProvider;
 
     /**
-     * @param \Ps_checkout $module
      * @param Env $env
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
@@ -103,7 +100,6 @@ class PayPalSdkConfigurationBuilder
      * @param FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
      */
     public function __construct(
-        \Ps_checkout $module,
         Env $env,
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
@@ -112,18 +108,19 @@ class PayPalSdkConfigurationBuilder
         ShopContext $shopContext,
         PrestaShopContext $prestaShopContext,
         LoggerInterface $logger,
-        FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
+        FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
+        PayPalCustomerIdProvider $payPalCustomerIdProvider,
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
         $this->shopContext = $shopContext;
-        $this->commandBus = $module->getService('ps_checkout.bus.command');
         $this->prestaShopContext = $prestaShopContext;
         $this->logger = $logger;
         $this->env = $env;
         $this->fundingSourceEligibilityConstraint = $fundingSourceEligibilityConstraint;
+        $this->payPalCustomerIdProvider = $payPalCustomerIdProvider;
     }
 
     /**
@@ -170,9 +167,7 @@ class PayPalSdkConfigurationBuilder
 
         if ($this->configuration->isVaultingEnabled() && $this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
             try {
-                /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
-                $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
-                $params['dataUserIdToken'] = $queryResult->getUserIdToken();
+                $params['dataUserIdToken'] = $this->payPalCustomerIdProvider->getCustomerId(new CustomerId($this->prestaShopContext->getCustomerId()));
             } catch (Exception $exception) {
                 $this->logger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
             }

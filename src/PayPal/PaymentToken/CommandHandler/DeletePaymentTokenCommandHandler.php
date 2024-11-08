@@ -43,7 +43,7 @@ class DeletePaymentTokenCommandHandler
     /**
      * @throws Exception
      */
-    public function handle(DeletePaymentTokenCommand $command)
+    public function __invoke(DeletePaymentTokenCommand $command)
     {
         $tokenBelongsToCustomer = false;
         $tokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($command->getCustomerId()->getValue());

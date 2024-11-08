@@ -38,7 +38,7 @@ class SavePaymentTokenCommandHandler
     /**
      * @throws Exception
      */
-    public function handle(SavePaymentTokenCommand $command)
+    public function __invoke(SavePaymentTokenCommand $command)
     {
         $token = new PaymentToken(
             $command->getPaymentTokenId()->getValue(),

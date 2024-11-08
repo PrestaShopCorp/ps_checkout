@@ -8,17 +8,17 @@ services:
       - !php/const _PS_MODE_DEV_
 
   ps_checkout.cache.array.paypal.order:
-    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    class: 'Symfony\Component\Cache\Adapter\ArrayAdapter'
 
   ps_checkout.cache.filesystem.paypal.order:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    class: 'Symfony\Component\Cache\Adapter\FilesystemAdapter'
     arguments:
       - "paypal-orders"
       - 3600
       - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
 
   ps_checkout.cache.paypal.order:
-    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    class: 'Symfony\Component\Cache\Adapter\ChainAdapter'
     public: true
     arguments:
       - [
@@ -27,17 +27,17 @@ services:
       ]
 
   ps_checkout.cache.array.paypal.capture:
-    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    class: 'Symfony\Component\Cache\Adapter\ArrayAdapter'
 
   ps_checkout.cache.filesystem.paypal.capture:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    class: 'Symfony\Component\Cache\Adapter\FilesystemAdapter'
     arguments:
       - "paypal-capture"
       - 3600
       - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
 
   ps_checkout.cache.paypal.capture:
-    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    class: 'Symfony\Component\Cache\Adapter\ChainAdapter'
     public: true
     arguments:
       - [
@@ -46,9 +46,9 @@ services:
       ]
 
   ps_checkout.cache.pscheckoutcart:
-    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    class: 'Symfony\Component\Cache\Adapter\ArrayAdapter'
     public: true
 
   ps_checkout.cache.order:
-    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    class: 'Symfony\Component\Cache\Adapter\ArrayAdapter'
     public: true
