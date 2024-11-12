@@ -159,6 +159,7 @@ jobs:
         with:
           name: ${{ env.ZIP_NAME }}
           path: .
+          include-hidden-files: true
 
       - name: Move files at root project
         run: |
@@ -175,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
+      contents: write
       pull-requests: write
     needs: [deploy_production]
     if: github.event_name == 'push'
@@ -191,6 +192,8 @@ jobs:
         uses: toolmantim/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commitish: prestashop/8.x
 
       - name: Prepare for Release
         run: |
