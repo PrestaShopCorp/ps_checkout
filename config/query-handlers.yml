@@ -60,6 +60,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.cache.paypal.order"
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
