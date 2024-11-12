@@ -22,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache;
 
 use PsCheckoutCart;
-use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Cache\Simple\ChainCache;
 
 class PayPalOrderCache extends ChainCache
@@ -38,13 +37,9 @@ class PayPalOrderCache extends ChainCache
     ];
 
     /**
-     * @param string $key
-     * @param $value
-     * @param int $ttl Time To Live in seconds. Defines how long the value will be stored in the cache.
+     * {@inheritdoc}
      *
      * @return bool
-     *
-     * @throws InvalidArgumentException
      */
     public function set($key, $value, $ttl = null)
     {
