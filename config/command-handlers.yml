@@ -3,7 +3,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\AddOrderPaymentCommandHandler'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+#      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
@@ -12,7 +12,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+#      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
       - "@ps_checkout.module"

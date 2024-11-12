@@ -30,8 +30,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface as CheckoutHttpClientInterface;
 
-class MaaslandHttpClient implements HttpClientInterface
+class MaaslandHttpClient implements CheckoutHttpClientInterface
 {
     /**
      * @var HttpClientInterface
@@ -147,7 +149,10 @@ class MaaslandHttpClient implements HttpClientInterface
     public function sendRequest(RequestInterface $request)
     {
         try {
-            $response = $this->httpClient->sendRequest($request);
+            $response = $this->httpClient->request($request->getMethod(), $request->getUri(), [
+                'headers' => $request->getHeaders(),
+                'body' => $request->getBody()->getContents(),
+            ]);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $body = json_decode($response->getBody(), true);

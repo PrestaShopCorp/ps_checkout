@@ -97,8 +97,8 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
     public function build()
     {
         $configuration = [
-            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
-            'verify' => $this->getVerify(),
+            'base_uri' => $this->paymentEnv->getPaymentApiUrl(),
+            'verify_host' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
                 'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)

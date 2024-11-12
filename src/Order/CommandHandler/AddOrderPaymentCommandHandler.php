@@ -51,11 +51,11 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
     private $configuration;
 
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
+//        EventDispatcherInterface $eventDispatcher,
         FundingSourceTranslationProvider $fundingSourceTranslationProvider,
         PayPalConfiguration $configuration
     ) {
-        $this->eventDispatcher = $eventDispatcher;
+//        $this->eventDispatcher = $eventDispatcher;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
         $this->configuration = $configuration;
     }
@@ -100,6 +100,6 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
         $orderPayments = $order->getOrderPayments();
         $latestOrderPayment = end($orderPayments);
 
-        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
+//        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
     }
 }

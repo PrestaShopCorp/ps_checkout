@@ -153,15 +153,15 @@ class CreatePayPalOrderCommandHandler
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
         }
 
-//        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-//            $order['id'],
-//            $order,
-//            $command->getCartId()->getValue(),
-//            $command->getFundingSource(),
-//            $command->isHostedFields(),
-//            $command->isExpressCheckout(),
-//            $customerIntent,
-//            $command->getPaymentTokenId()
-//        ));
+        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+            $order['id'],
+            $order,
+            $command->getCartId()->getValue(),
+            $command->getFundingSource(),
+            $command->isHostedFields(),
+            $command->isExpressCheckout(),
+            $customerIntent,
+            $command->getPaymentTokenId()
+        ));
     }
 }

@@ -47,11 +47,6 @@ services:
     public: true
     factory: [ '@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create" ]
 
-  app.command_handler_locator:
-    class: Symfony\Component\DependencyInjection\ServiceLocator
-    arguments:
-      - PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
-
   PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
     public: true
@@ -110,9 +105,6 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
       - '@ps_checkout.module'
-    calls:
-      - method: setCommandBus
-        arguments: [ '@ps_checkout.bus.command' ]
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'

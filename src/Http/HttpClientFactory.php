@@ -21,9 +21,21 @@
 namespace PrestaShop\Module\PrestashopCheckout\Http;
 
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\HttpClientConfigurationBuilderInterface;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class HttpClientFactory
 {
+//    /**
+//     * @param HttpClientConfigurationBuilderInterface $httpClientConfigurationBuilder
+//     *
+//     * @return HttpClientInterface
+//     */
+//    public function create(HttpClientConfigurationBuilderInterface $httpClientConfigurationBuilder)
+//    {
+//        return new PsrHttpClientAdapter($httpClientConfigurationBuilder->build());
+//    }
+
     /**
      * @param HttpClientConfigurationBuilderInterface $httpClientConfigurationBuilder
      *
@@ -31,6 +43,6 @@ class HttpClientFactory
      */
     public function create(HttpClientConfigurationBuilderInterface $httpClientConfigurationBuilder)
     {
-        return new PsrHttpClientAdapter($httpClientConfigurationBuilder->build());
+        return HttpClient::create($httpClientConfigurationBuilder->build());
     }
 }

@@ -27,6 +27,7 @@ use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
@@ -84,15 +85,15 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 
     public function __construct(
         ContextStateManager $contextStateManager,
-        EventDispatcherInterface $eventDispatcher,
+//        EventDispatcherInterface $eventDispatcher,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         OrderStateMapper $psOrderStateMapper,
-        Ps_checkout $module,
+        \Ps_checkout $module,
         CheckOrderAmount $checkOrderAmount,
         FundingSourceTranslationProvider $fundingSourceTranslationProvider
     ) {
         $this->contextStateManager = $contextStateManager;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->eventDispatcher = $module->getService(SymfonyEventDispatcherAdapter::class);
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->psOrderStateMapper = $psOrderStateMapper;
         $this->module = $module;
@@ -209,6 +210,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         }
 
         foreach ($orders as $order) {
+
             $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
         }
     }
