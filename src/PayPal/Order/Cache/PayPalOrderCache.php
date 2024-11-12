@@ -36,6 +36,11 @@ class PayPalOrderCache extends ChainCache
         PsCheckoutCart::STATUS_COMPLETED => 3600,
     ];
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return bool
+     */
     public function set($key, $value, $ttl = null)
     {
         if (!$ttl && isset($value['status']) && isset(self::CACHE_TTL[$value['status']])) {

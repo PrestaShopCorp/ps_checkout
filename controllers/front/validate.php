@@ -148,7 +148,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $response = [
-                'status' => $psCheckoutCart->paypal_status, // Need to change this to get the status from PayPal Order instead?
+                'status' => $psCheckoutCart->paypal_status,
                 'paypalOrderId' => $psCheckoutCart->paypal_order,
                 'transactionIdentifier' => $paypalOrder && isset($paypalOrder->getOrderPayPal()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrderPayPal()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];

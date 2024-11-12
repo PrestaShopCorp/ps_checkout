@@ -100,8 +100,10 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 $this->redirectToOrderPage();
             }
 
+            $payPalOrderQuery = new GetPayPalOrderForCheckoutCompletedQuery($orderId);
+
             /** @var GetPayPalOrderForCheckoutCompletedQueryResult $payPalOrderQueryResult */
-            $payPalOrderQueryResult = $commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery($this->paypalOrderId->getValue()));
+            $payPalOrderQueryResult = $commandBus->handle($payPalOrderQuery);
             $payPalOrderFromCache = $payPalOrderQueryResult->getPayPalOrder();
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
@@ -120,8 +122,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                         $this->redirectTo3DSVerification($payPalOrderFromCache);
                         break;
                     case Card3DSecure::PROCEED:
-                        $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
-                        $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                        $commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
+                        $payPalOrderFromCache = $payPalOrderCache->get($orderId);
                         $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         break;
                     case Card3DSecure::NO_DECISION:
@@ -131,8 +133,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             }
 
             if ($payPalOrderFromCache['status'] === 'APPROVED') {
-                $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
-                $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                $commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
+                $payPalOrderFromCache = $payPalOrderCache->get($orderId);
                 $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
         } catch (Exception $exception) {
