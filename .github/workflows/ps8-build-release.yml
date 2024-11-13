@@ -10,7 +10,7 @@ on:
       - "prestashop/8.x"
 
 env:
-  ZIP_NAME: ${{ github.event.repository.name }}-${{ github.ref_name }}
+  ZIP_NAME: ${{ github.event.repository.name }}
 
 jobs:
   current_date:
