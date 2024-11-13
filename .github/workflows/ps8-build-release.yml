@@ -10,7 +10,7 @@ on:
       - "prestashop/8.x"
 
 env:
-  ZIP_NAME: ${{ github.event.repository.name }}-${{ github.ref_name }}
+  ZIP_NAME: ${{ github.event.repository.name }}
 
 jobs:
   current_date:
@@ -119,7 +119,6 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    if: github.event.pull_request.merged == true
 
     steps:
       - name: Checkout the repository 🎁
