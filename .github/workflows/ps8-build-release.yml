@@ -119,7 +119,6 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    if: github.event.pull_request.merged == true
 
     steps:
       - name: Checkout the repository 🎁
