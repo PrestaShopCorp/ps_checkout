@@ -119,6 +119,7 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout the repository 🎁
