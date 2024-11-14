@@ -116,7 +116,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.2.1';
+    const VERSION = '8.4.2.2';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -137,7 +137,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.4.2.1';
+        $this->version = '8.4.2.2';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -1110,6 +1110,7 @@ class Ps_checkout extends PaymentModule
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
                 'loader-component.label.header' => $this->l('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->l('Please wait, we are processing your payment'),
+                'loader-component.label.body.longer' => $this->l('This is taking longer than expected. Please wait...'),
                 'error.paypal-sdk.contingency.cancel' => $this->l('Card holder authentication canceled, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),

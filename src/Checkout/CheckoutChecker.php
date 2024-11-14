@@ -54,7 +54,7 @@ class CheckoutChecker
     public function continueWithAuthorization($cartId, $orderPayPal)
     {
         if ($orderPayPal['status'] === 'COMPLETED') {
-            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']));
+            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
 
         $paymentSource = isset($orderPayPal['payment_source']) ? key($orderPayPal['payment_source']) : '';

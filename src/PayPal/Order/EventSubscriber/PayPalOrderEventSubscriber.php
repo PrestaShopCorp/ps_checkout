@@ -308,10 +308,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
     }
 
-    public function updatePayPalOrder(PayPalOrderEvent $event)
+    public function updatePayPalOrder(PayPalOrderUpdatedEvent $event)
     {
         $this->commandBus->handle(new SavePayPalOrderCommand(
-            $event->getOrderPayPal()
+            $event->getOrderPayPal(),
+            $event->getCartId()
         ));
     }
 
