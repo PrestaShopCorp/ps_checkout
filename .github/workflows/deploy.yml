@@ -20,14 +20,18 @@ jobs:
       matrix:
         env:
           - upper: INTEGRATION
+            lower: integration
             triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
           - upper: PREPRODUCTION
+            lower: preproduction
             triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
           - upper: PRODUCTION
+            lower: production
             triggered: ${{ github.event_name == 'push' }}
     uses: ./.github/workflows/build.yml
     with:
       env-upper: ${{ matrix.env.upper }}
+      env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
 
   push-to-bucket-matrix:
