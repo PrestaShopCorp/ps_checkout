@@ -33,7 +33,9 @@ jobs:
           echo 'Provider : ' $PROVIDER
           echo 'SA : ' $SA
           echo 'GCP Project : ' $GCP_PROJECT
+          echo 'Test : ' $TEST
         env:
+          TEST: test
           PROVIDER: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
           SA: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
           GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', inputs.env-upper)] }}

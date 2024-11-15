@@ -4,6 +4,7 @@ jobs:
   js-linter:
     name: JS linter
     runs-on: ubuntu-latest
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'ready to review') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
