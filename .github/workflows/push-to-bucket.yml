@@ -1,0 +1,66 @@
+name: Push to GCP bucket storage
+
+on:
+  workflow_call:
+    inputs:
+      env-upper:
+        required: true
+        type: string
+      env-lower:
+        required: true
+        type: string
+      triggered:
+        required: true
+        type: boolean
+      zip-name:
+        required: true
+        type: string
+
+jobs:
+  current_date:
+    name: Get current date
+    runs-on: ubuntu-latest
+    if: inputs.triggered == true
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+
+    steps:
+      - name: Date
+        id: date
+        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
+    runs-on: ubuntu-latest
+    needs: [current_date]
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    if: inputs.triggered == true
+    env:
+      ZIP_NAME: ${{ inputs.zip-name }}-${{ needs.current_date.outputs.date }}.zip
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP
+        uses: ./.github/actions/auth-gcp
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
+          service-account: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
+          registry-login: true
+          setup-gcloud: true
+
+      # It's mandatory to generate the zip inside a folder named ps_checkout, to make the zip installation working on PrestaShop
+      - name: Generate zip
+        run: |
+          cd ../
+          zip -r ${{ env.ZIP_NAME }} ${{ github.event.repository.name }} -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
+          cp ${{ env.ZIP_NAME }} ${{ github.event.repository.name }}
+
+      - name: Push to GCP bucket storage
+        shell: bash
+        run: gsutil cp ${{ env.ZIP_NAME }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/ps7

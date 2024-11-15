@@ -1,0 +1,67 @@
+name: PrestaShop 1.7 - Deployment
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited, labeled]
+  push:
+    tags:
+      - "v7.*"
+    branches:
+      - "prestashop/1.7.x"
+
+env:
+  ZIP_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  build-matrix:
+    name: ${{ matrix.env.upper }} - Build
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - upper: INTEGRATION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
+          - upper: PREPRODUCTION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+          - upper: PRODUCTION
+            triggered: ${{ github.event_name == 'push' }}
+    uses: ./.github/workflows/build.yml
+    with:
+      env-upper: ${{ matrix.env.upper }}
+      triggered: ${{ matrix.env.triggered }}
+
+  push-to-bucket-matrix:
+    name: ${{ matrix.env.upper }} - Push to GCP bucket storage
+    needs: [build-matrix]
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - lower: integration
+            upper: INTEGRATION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
+          - lower: preproduction
+            upper: PREPRODUCTION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+    uses: ./.github/workflows/push-to-bucket.yml
+    with:
+      env-upper: ${{ matrix.env.upper }}
+      env-lower: ${{ matrix.env.lower }}
+      triggered: ${{ matrix.env.triggered }}
+      zip-name: ${{ github.event.repository.name }}-${{ matrix.env.lower }}-pr${{ github.event.number }}
+
+  push-to-repository:
+    name: PRODUCTION - Push to GitHub repository
+    needs: [build-matrix]
+    uses: ./.github/workflows/push-to-repository.yml
+    with:
+      triggered: ${{ github.event_name == 'push' }}
+      repository-name: ${{ github.event.repository.name }}
+
+  update-release-draft:
+    name: PRODUCTION - Update release draft
+    needs: [push-to-repository]
+    uses: ./.github/workflows/update-release-draft.yml
+    with:
+      triggered: ${{ github.event_name == 'push' }}
+      repository-name: ${{ github.event.repository.name }}

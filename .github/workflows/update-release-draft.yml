@@ -1,0 +1,65 @@
+name: Update release draft
+
+on:
+  workflow_call:
+    inputs:
+      triggered:
+        required: true
+        type: boolean
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
+
+jobs:
+  update-release-draft:
+    name: PRODUCTION - Update release draft
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    if: inputs.triggered == true
+    env:
+      ZIP_NAME: ${{ inputs.repository-name }}.zip
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ZIP_NAME }}
+
+      - name: Release drafter
+        id: release_info
+        uses: toolmantim/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commitish: prestashop/1.7.x
+
+      - name: Prepare for Release
+        run: |
+          cd ${{ inputs.repository-name }}
+          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
+
+      - name: Clean existing assets
+        shell: bash
+        run: |
+          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
+          assets=`bin/hub api -t repos/${{ inputs.repository-name }}/releases/${{ steps.release_info.outputs.id }}/assets | awk '/\].url/ { print $2 }'`
+          for asset in $assets
+          do
+            bin/hub api -X DELETE $asset
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to GitHub Release
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          asset_path: ./${{ inputs.repository-name }}/${{ env.ZIP_NAME }}.zip
+          asset_name: ${{ env.ZIP_NAME }}.zip
+          asset_content_type: application/zip

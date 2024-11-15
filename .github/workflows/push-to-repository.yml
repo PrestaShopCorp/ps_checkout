@@ -1,0 +1,56 @@
+name: Push to GitHub repository
+
+on:
+  workflow_call:
+    inputs:
+      triggered:
+        required: true
+        type: boolean
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
+
+jobs:
+  push-to-repository:
+    name: PRODUCTION - Create zip file and push to GitHub repository
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    if: inputs.triggered == true
+    env:
+      ZIP_NAME: ${{ inputs.repository-name }}.zip
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Create directory with repo name and move files
+        run: |
+          repo_name="${{ inputs.repository-name }}"
+          mkdir "$repo_name"
+          shopt -s dotglob nullglob
+          for file in *; do
+            if [ "$file" != "$repo_name" ]; then
+              mv "$file" "$repo_name/"
+            fi
+          done
+
+      - name: Create & upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ZIP_NAME }}
+          path: ../
+          include-hidden-files: true
+
+      - name: Move files at root project
+        run: |
+          cd "${{ inputs.repository-name }}"
+          shopt -s dotglob nullglob
+          for file in *; do
+            mv "$file" ../
+          done
+          cd ../
+          rm -Rf "${{ inputs.repository-name }}"
