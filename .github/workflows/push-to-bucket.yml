@@ -43,6 +43,15 @@ jobs:
     if: inputs.triggered == true
 
     steps:
+      - name: Auth GCP
+        uses: ./.github/actions/auth-gcp
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
+          service-account: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
+          registry-login: true
+          setup-gcloud: true
+
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
