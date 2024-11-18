@@ -70,4 +70,4 @@ jobs:
           ls -la
           cd ${{ inputs.repository-name }}
           ls -la
-          gsutil cp ${{ inputs.zip-name }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
+          gsutil cp ${{ inputs.zip-name }}.zip gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}

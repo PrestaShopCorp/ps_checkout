@@ -24,14 +24,14 @@ jobs:
     outputs:
       integration: ${{ steps.zip-name.outputs.integration }}
       preproduction: ${{ steps.zip-name.outputs.preproduction }}
-      production: ps_checkout.zip
+      production: ps_checkout
 
     steps:
       - name: Generate zip file name
         id: zip-name
         run: |
           date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
-          echo "$ENV=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date.zip" >> "$GITHUB_OUTPUT"
+          echo "$ENV=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date" >> "$GITHUB_OUTPUT"
         env:
           ENV: ${{ matrix.env.lower }}
           REPOSITORY: ${{ github.event.repository.name }}
