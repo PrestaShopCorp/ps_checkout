@@ -154,11 +154,15 @@ jobs:
             fi
           done
 
+      - name: Workaround actions/upload-artifact#176
+        run: |
+          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
+
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
-          path: ../
+          path: ${{ env.artifacts_path }}/.
           include-hidden-files: true
 
       - name: Move files at root project
