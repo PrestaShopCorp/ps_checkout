@@ -17,14 +17,12 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          - lower: integration
-            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
-          - lower: preproduction
-            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+          - integration
+          - preproduction
     outputs:
       integration: ${{ steps.zip-name.outputs.integration }}
       preproduction: ${{ steps.zip-name.outputs.preproduction }}
-      production: ps_checkout
+      production: ${{ github.event.repository.name }}
 
     steps:
       - name: Generate zip file name
@@ -33,7 +31,7 @@ jobs:
           date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
           echo "$ENV=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date" >> "$GITHUB_OUTPUT"
         env:
-          ENV: ${{ matrix.env.lower }}
+          ENV: ${{ matrix.env }}
           REPOSITORY: ${{ github.event.repository.name }}
           PS_VERSION: ps7
           PR_NUMBER: pr${{ github.event.number }}
