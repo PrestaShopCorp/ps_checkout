@@ -44,7 +44,7 @@ jobs:
       - name: Prepare zip for release 👷
         run: |
           cd ${{ inputs.repository-name }}
-          zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
+          zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
 
       - name: Clean existing assets ♻️
         shell: bash
@@ -64,6 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release_info.outputs.upload_url }}
-          asset_path: ./${{ inputs.repository-name }}/${{ env.ZIP_NAME }}.zip
-          asset_name: ${{ env.ZIP_NAME }}.zip
+          asset_path: ./${{ env.ZIP_NAME }}
+          asset_name: ${{ env.ZIP_NAME }}
           asset_content_type: application/zip
