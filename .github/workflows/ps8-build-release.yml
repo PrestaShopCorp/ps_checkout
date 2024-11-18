@@ -151,12 +151,12 @@ jobs:
           for file in *; do
             if [ "$file" != "$repo_name" ]; then
               mv "$file" "$repo_name/"
+            fi
+          done
 
       - name: Workaround actions/upload-artifact#176
         run: |
           echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
-            fi
-          done
 
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
