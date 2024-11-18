@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: ${{ inputs.env-upper }} - Build dependencies & create artifact
+    name: ${{ inputs.env-upper }} - Build module dependencies
     runs-on: ubuntu-latest
     environment: ${{ inputs.env-lower }}
     permissions:
