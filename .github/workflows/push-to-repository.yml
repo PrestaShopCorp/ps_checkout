@@ -3,6 +3,9 @@ name: Push to GitHub repository
 on:
   workflow_call:
     inputs:
+      env-upper:
+        required: true
+        type: string
       env-lower:
         required: true
         type: string
@@ -13,10 +16,28 @@ on:
         required: true
         type: string
         default: "ps_checkout"
+      prestashop-version:
+        required: true
+        type: string
+      pr-number:
+        required: true
+        type: string
 
 jobs:
+  current_date:
+    name: Get current date
+    runs-on: ubuntu-latest
+    if: inputs.triggered == true
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+
+    steps:
+      - name: Date
+        id: date
+        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
   push-to-repository:
-    name: PRODUCTION - Create zip file and push to GitHub repository
+    name: ${{ inputs.env-upper }} - Create zip file and push to GitHub repository
     runs-on: ubuntu-latest
     environment: ${{ inputs.env-lower }}
     permissions:
@@ -25,11 +46,28 @@ jobs:
       pull-requests: write
     if: inputs.triggered == true
     env:
-      ZIP_NAME: ${{ inputs.repository-name }}.zip
+      ZIP_NAME: ${{ inputs.repository-name && (inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) }}.zip
 
     steps:
       - name: Checkout the repository 🎁
         uses: actions/checkout@v4
+
+      - name: Auth GCP
+        uses: ./.github/actions/auth-gcp
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
+          service-account: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write .env file
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', inputs.env-upper)] }}
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
 
       - name: Create directory with repo name and move files
         run: |
@@ -42,12 +80,17 @@ jobs:
             fi
           done
 
+      - name: Workaround actions/upload-artifact#176
+        run: |
+          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
+
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
-          path: ../
+          path: ${{ env.artifacts_path }}
           include-hidden-files: true
+          retention-days: ${{ (inputs.env-lower == 'production' && 90) || 1 }}
 
       - name: Move files at root project
         run: |

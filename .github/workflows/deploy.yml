@@ -5,16 +5,13 @@ on:
     types: [opened, reopened, synchronize, edited, labeled]
   push:
     tags:
-      - "v7.*"
+      - v7.*
     branches:
-      - "prestashop/1.7.x"
-
-env:
-  ZIP_NAME: ${{ github.event.repository.name }}
+      - prestashop/1.7.x
 
 jobs:
-  build-matrix:
-    name: ${{ matrix.env.upper }} - Build
+  push-to-repository-matrix:
+    name: ${{ matrix.env.upper }} - Push to GitHub repository
     strategy:
       fail-fast: false
       matrix:
@@ -28,16 +25,19 @@ jobs:
           - upper: PRODUCTION
             lower: production
             triggered: ${{ github.event_name == 'push' }}
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/push-to-repository.yml
     with:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
+      repository-name: ${{ github.event.repository.name }}
+      prestashop-version: ps7
+      pr-number: pr${{ github.event.number }}
     secrets: inherit
 
   push-to-bucket-matrix:
     name: ${{ matrix.env.upper }} - Push to GCP bucket storage
-    needs: [build-matrix]
+    needs: [push-to-repository-matrix]
     strategy:
       fail-fast: false
       matrix:
@@ -48,27 +48,22 @@ jobs:
           - lower: preproduction
             upper: PREPRODUCTION
             triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+          - upper: PRODUCTION
+            lower: production
+            triggered: ${{ github.event_name == 'push' }}
     uses: ./.github/workflows/push-to-bucket.yml
     with:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
-      zip-name: ${{ github.event.repository.name }}-${{ matrix.env.lower }}-pr${{ github.event.number }}
-    secrets: inherit
-
-  push-to-repository:
-    name: PRODUCTION - Push to GitHub repository
-    needs: [build-matrix]
-    uses: ./.github/workflows/push-to-repository.yml
-    with:
-      env-lower: production
-      triggered: ${{ github.event_name == 'push' }}
       repository-name: ${{ github.event.repository.name }}
+      prestashop-version: ps7
+      pr-number: pr${{ github.event.number }}
     secrets: inherit
 
   update-release-draft:
     name: PRODUCTION - Update release draft
-    needs: [push-to-repository]
+    needs: [push-to-repository-matrix]
     uses: ./.github/workflows/update-release-draft.yml
     with:
       env-lower: production

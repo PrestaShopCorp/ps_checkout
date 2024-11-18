@@ -12,7 +12,14 @@ on:
       triggered:
         required: true
         type: boolean
-      zip-name:
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
+      prestashop-version:
+        required: true
+        type: string
+      pr-number:
         required: true
         type: string
 
@@ -40,28 +47,14 @@ jobs:
       pull-requests: write
     if: inputs.triggered == true
     env:
-      ZIP_NAME: ${{ inputs.zip-name }}-${{ needs.current_date.outputs.date }}.zip
+      ZIP_NAME: ${{ inputs.repository-name && (inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) }}.zip
 
     steps:
-      - name: Checkout the repository 🎁
-        uses: actions/checkout@v4
-
-      - name: Auth GCP
-        uses: ./.github/actions/auth-gcp
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
-          auth-mode: "workload-federation"
-          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
-          service-account: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
-          registry-login: true
-          setup-gcloud: true
-
-      # It's mandatory to generate the zip inside a folder named ps_checkout, to make the zip installation working on PrestaShop
-      - name: Generate zip
-        run: |
-          cd ../
-          zip -r ${{ env.ZIP_NAME }} ${{ github.event.repository.name }} -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
-          cp ${{ env.ZIP_NAME }} ${{ github.event.repository.name }}
+          name: ${{ env.ZIP_NAME }}
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/ps7
+        run: gsutil cp ${{ env.ZIP_NAME }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
