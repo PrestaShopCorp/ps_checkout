@@ -13,44 +13,6 @@ env:
   ZIP_NAME: ${{ github.event.repository.name }}
 
 jobs:
-  build:
-    name: Build dependencies & create artifact
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-    strategy:
-      fail-fast: false
-      matrix:
-        env:
-          - upper: INTEGRATION
-            lower: integration
-            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
-          - upper: PREPRODUCTION
-            lower: preproduction
-            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
-          - upper: PRODUCTION
-            lower: production
-            triggered: ${{ github.event_name == 'push' }}
-
-    steps:
-      - name: Test
-        run: |
-          echo 'env : ' $env
-          echo 'format : ' $format
-          echo 'Provider : ' $PROVIDER
-          echo 'SA : ' $SA
-          echo 'GCP Project : ' $GCP_PROJECT
-          echo 'Test : ' $TEST
-        env:
-          TEST: test
-          env: ${{ matrix.env.upper }}
-          format: ${{ format('WI_PROVIDER_V2_{0}', matrix.env.upper) }}
-          PROVIDER: ${{ secrets[format('WI_PROVIDER_V2_{0}', matrix.env.upper)] }}
-          SA: ${{ secrets[format('WI_SA_V2_{0}', matrix.env.upper)] }}
-          GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', matrix.env.upper)] }}
-
   build-matrix:
     name: ${{ matrix.env.upper }} - Build
     strategy:
@@ -99,6 +61,7 @@ jobs:
     needs: [build-matrix]
     uses: ./.github/workflows/push-to-repository.yml
     with:
+      env-lower: production
       triggered: ${{ github.event_name == 'push' }}
       repository-name: ${{ github.event.repository.name }}
     secrets: inherit
@@ -108,6 +71,7 @@ jobs:
     needs: [push-to-repository]
     uses: ./.github/workflows/update-release-draft.yml
     with:
+      env-lower: production
       triggered: ${{ github.event_name == 'push' }}
       repository-name: ${{ github.event.repository.name }}
     secrets: inherit

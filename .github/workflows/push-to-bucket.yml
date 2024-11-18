@@ -29,9 +29,10 @@ jobs:
         id: date
         run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
 
-  deploy:
+  push-to-bucket:
     name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env-lower }}
     needs: [current_date]
     permissions:
       id-token: write

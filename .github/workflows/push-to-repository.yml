@@ -3,6 +3,9 @@ name: Push to GitHub repository
 on:
   workflow_call:
     inputs:
+      env-lower:
+        required: true
+        type: string
       triggered:
         required: true
         type: boolean
@@ -15,6 +18,7 @@ jobs:
   push-to-repository:
     name: PRODUCTION - Create zip file and push to GitHub repository
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
       contents: read

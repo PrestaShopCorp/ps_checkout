@@ -3,6 +3,9 @@ name: Update release draft
 on:
   workflow_call:
     inputs:
+      env-lower:
+        required: true
+        type: string
       triggered:
         required: true
         type: boolean
@@ -15,6 +18,7 @@ jobs:
   update-release-draft:
     name: PRODUCTION - Update release draft
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
       contents: read

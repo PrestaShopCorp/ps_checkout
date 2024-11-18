@@ -28,22 +28,6 @@ jobs:
       - name: Checkout the repository 🎁
         uses: actions/checkout@v4
 
-      - name: Test
-        run: |
-          echo 'env : ' $env
-          echo 'format : ' $format
-          echo 'Provider : ' $PROVIDER
-          echo 'SA : ' $SA
-          echo 'GCP Project : ' $GCP_PROJECT
-          echo 'Test : ' $TEST
-        env:
-          TEST: test
-          env: ${{ inputs.env-upper }}
-          format: ${{ format('WI_PROVIDER_V2_{0}', inputs.env-upper) }}
-          PROVIDER: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
-          SA: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
-          GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', inputs.env-upper)] }}
-
       - name: Auth GCP
         uses: ./.github/actions/auth-gcp
         with:
