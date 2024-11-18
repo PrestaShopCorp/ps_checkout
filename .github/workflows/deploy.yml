@@ -24,7 +24,7 @@ jobs:
           - lower: production
             triggered: ${{ github.event_name == 'push' }}
     outputs:
-      name: ${{ steps.zip-name.outputs.date }}
+      name: ${{ steps.zip-name.outputs.zip_name }}
 
     steps:
       - name: Generate zip file name
