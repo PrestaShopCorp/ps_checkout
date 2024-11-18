@@ -64,7 +64,7 @@ jobs:
         with:
           name: ${{ inputs.zip-name }}
 
-      - name: Prepare for Release
+      - name: Prepare zip for push 👷
         run: |
           cd ${{ inputs.repository-name }}
           zip -r ../${{ inputs.zip-name }}.zip . -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'

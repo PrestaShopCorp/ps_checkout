@@ -52,7 +52,7 @@ jobs:
       - name: Install composer dependencies 👷
         run: composer install --no-dev -o
 
-      - name: Create directory with repo name and move files
+      - name: Create directory with repo name and move files 🏗️
         run: |
           repo_name="${{ inputs.repository-name }}"
           mkdir "$repo_name"
@@ -63,12 +63,12 @@ jobs:
             fi
           done
 
-      - name: Workaround actions/upload-artifact#176
+      - name: Workaround actions/upload-artifact#176 🚧
         id: artifacts
         run: |
           echo "path=$(realpath ..)" >> "$GITHUB_OUTPUT"
 
-      - name: Create & upload artifact
+      - name: Create & upload artifact 🛩️
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.zip-name }}
@@ -76,7 +76,7 @@ jobs:
           include-hidden-files: true
           retention-days: ${{ (inputs.env-lower == 'production' && 90) || 1 }}
 
-      - name: Move files at root project
+      - name: Move files at root project 🏗️
         run: |
           cd "${{ inputs.repository-name }}"
           shopt -s dotglob nullglob

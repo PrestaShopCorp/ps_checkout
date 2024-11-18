@@ -28,12 +28,12 @@ jobs:
       ZIP_NAME: ${{ inputs.repository-name }}.zip
 
     steps:
-      - name: Download artifact
+      - name: Download artifact 🚚
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
 
-      - name: Release drafter
+      - name: Release drafter 🏗️
         id: release_info
         uses: toolmantim/release-drafter@v6
         env:
@@ -41,12 +41,12 @@ jobs:
         with:
           commitish: prestashop/1.7.x
 
-      - name: Prepare for Release
+      - name: Prepare zip for release 👷
         run: |
           cd ${{ inputs.repository-name }}
           zip -r ${{ env.ZIP_NAME }}.zip . -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
 
-      - name: Clean existing assets
+      - name: Clean existing assets ♻️
         shell: bash
         run: |
           curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
@@ -58,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish to GitHub Release
+      - name: Publish to GitHub Release 🛩️
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
