@@ -46,7 +46,7 @@ jobs:
       pull-requests: write
     if: inputs.triggered == true
     env:
-      ZIP_NAME: ${{ inputs.repository-name }}-${{ inputs.prestashop-version }}-${{ inputs.pr-number }}-${{ needs.current_date.outputs.date }}.zip
+      ZIP_NAME: ${{ inputs.repository-name }}-${{ inputs.prestashop-version }}-${{ inputs.env-lower }}-${{ inputs.pr-number }}-${{ needs.current_date.outputs.date }}.zip
 
     steps:
       - name: Checkout the repository 🎁
