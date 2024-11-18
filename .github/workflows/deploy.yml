@@ -65,7 +65,7 @@ jobs:
 
   push-to-bucket-matrix:
     name: ${{ matrix.env.upper }} - Push to GCP bucket storage
-    needs: [zip-name-matrix]
+    needs: [zip-name-matrix, push-to-repository-matrix]
     strategy:
       fail-fast: false
       matrix:
