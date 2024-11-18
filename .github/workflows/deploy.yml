@@ -21,25 +21,17 @@ jobs:
             triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
           - lower: preproduction
             triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
-          - lower: production
-            triggered: ${{ github.event_name == 'push' }}
     outputs:
-      name: ${{ steps.zip-name.outputs.zip_name }}
+      integration: ${{ steps.zip-name.outputs.integration }}
+      preproduction: ${{ steps.zip-name.outputs.preproduction }}
+      production: ps_checkout.zip
 
     steps:
       - name: Generate zip file name
         id: zip-name
-        if: matrix.env.triggered == true
         run: |
-          zip_name=$REPOSITORY
-          test_name=''
-
-          if [ $ENV != 'production' ]; then
-            date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
-            test_name=-$PS_VERSION-$ENV-$PR_NUMBER-$date
-          fi
-
-          echo "zip_name=$zip_name$test_name.zip" >> "$GITHUB_OUTPUT"
+          date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
+          echo "$ENV=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date.zip" >> "$GITHUB_OUTPUT"
         env:
           ENV: ${{ matrix.env.lower }}
           REPOSITORY: ${{ github.event.repository.name }}
@@ -67,7 +59,7 @@ jobs:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
-      zip-name: ${{ needs.zip-name-matrix.outputs.name }}
+      zip-name: ${{ needs.zip-name-matrix.outputs[matrix.env.lower] }}
       repository-name: ${{ github.event.repository.name }}
     secrets: inherit
 
@@ -92,7 +84,7 @@ jobs:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
-      zip-name: ${{ needs.zip-name-matrix.outputs.name }}
+      zip-name: ${{ needs.zip-name-matrix.outputs[matrix.env.lower] }}
       prestashop-version: ps7
     secrets: inherit
 
