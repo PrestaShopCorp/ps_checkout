@@ -71,6 +71,7 @@ jobs:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
+    secrets: inherit
 
   push-to-bucket-matrix:
     name: ${{ matrix.env.upper }} - Push to GCP bucket storage
@@ -91,6 +92,7 @@ jobs:
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
       zip-name: ${{ github.event.repository.name }}-${{ matrix.env.lower }}-pr${{ github.event.number }}
+    secrets: inherit
 
   push-to-repository:
     name: PRODUCTION - Push to GitHub repository
@@ -99,6 +101,7 @@ jobs:
     with:
       triggered: ${{ github.event_name == 'push' }}
       repository-name: ${{ github.event.repository.name }}
+    secrets: inherit
 
   update-release-draft:
     name: PRODUCTION - Update release draft
@@ -107,3 +110,4 @@ jobs:
     with:
       triggered: ${{ github.event_name == 'push' }}
       repository-name: ${{ github.event.repository.name }}
+    secrets: inherit
