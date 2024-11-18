@@ -85,6 +85,7 @@ jobs:
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
       zip-name: ${{ needs.zip-name-matrix.outputs[matrix.env.lower] }}
+      repository-name: ${{ github.event.repository.name }}
       prestashop-version: ps7
     secrets: inherit
 

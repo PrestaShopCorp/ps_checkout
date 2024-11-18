@@ -15,6 +15,10 @@ on:
       zip-name:
         required: true
         type: string
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
       prestashop-version:
         required: true
         type: string
@@ -62,4 +66,6 @@ jobs:
 
       - name: Push to GCP bucket storage 🛩️
         shell: bash
-        run: gsutil cp ${{ inputs.zip-name }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
+        run: |
+          cd ${{ inputs.repository-name }}
+          gsutil cp ${{ inputs.zip-name }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
