@@ -64,10 +64,13 @@ jobs:
         with:
           name: ${{ inputs.zip-name }}
 
+      - name: Prepare for Release
+        run: |
+          cd ${{ inputs.repository-name }}
+          zip -r ${{ inputs.zip-name }}.zip . -x '*.git*' '*/.php_cs.*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/gha-creds-*.json'
+
       - name: Push to GCP bucket storage 🛩️
         shell: bash
         run: |
-          ls -la
-          cd ${{ inputs.repository-name }}
           ls -la
           gsutil cp ${{ inputs.zip-name }}.zip gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
