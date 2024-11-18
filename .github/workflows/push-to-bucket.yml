@@ -12,17 +12,12 @@ on:
       triggered:
         required: true
         type: boolean
-      repository-name:
+      zip-name:
         required: true
         type: string
-        default: "ps_checkout"
       prestashop-version:
         required: true
         type: string
-      pr-number:
-        required: true
-        type: string
-
 jobs:
   current_date:
     name: Get current date
@@ -46,15 +41,13 @@ jobs:
       contents: read
       pull-requests: write
     if: inputs.triggered == true
-    env:
-      ZIP_NAME: ${{ inputs.repository-name && (inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) }}.zip
 
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ZIP_NAME }}
+          name: ${{ inputs.zip-name }}
 
       - name: Push to GCP bucket storage
         shell: bash
-        run: gsutil cp ${{ env.ZIP_NAME }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
+        run: gsutil cp ${{ inputs.zip-name }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}

@@ -12,30 +12,15 @@ on:
       triggered:
         required: true
         type: boolean
+      zip-name:
+        required: true
+        type: string
       repository-name:
         required: true
         type: string
         default: "ps_checkout"
-      prestashop-version:
-        required: true
-        type: string
-      pr-number:
-        required: true
-        type: string
 
 jobs:
-  current_date:
-    name: Get current date
-    runs-on: ubuntu-latest
-    if: inputs.triggered == true
-    outputs:
-      date: ${{ steps.date.outputs.date }}
-
-    steps:
-      - name: Date
-        id: date
-        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
-
   push-to-repository:
     name: ${{ inputs.env-upper }} - Create zip file and push to GitHub repository
     runs-on: ubuntu-latest
@@ -45,8 +30,6 @@ jobs:
       contents: read
       pull-requests: write
     if: inputs.triggered == true
-    env:
-      ZIP_NAME: ${{ inputs.repository-name && ((inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) || '') }}.zip
 
     steps:
       - name: Checkout the repository 🎁
@@ -81,14 +64,15 @@ jobs:
           done
 
       - name: Workaround actions/upload-artifact#176
+        id: artifacts
         run: |
-          echo "artifacts_path=$(realpath ..)" >> $GITHUB_ENV
+          echo "path=$(realpath ..)" >> "$GITHUB_OUTPUT"
 
       - name: Create & upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ZIP_NAME }}
-          path: ${{ env.artifacts_path }}
+          name: ${{ inputs.zip-name }}
+          path: ${{ steps.artifacts.outputs.path }}
           include-hidden-files: true
           retention-days: ${{ (inputs.env-lower == 'production' && 90) || 1 }}
 

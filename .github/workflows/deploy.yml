@@ -10,8 +10,45 @@ on:
       - prestashop/1.7.x
 
 jobs:
+  zip-name-matrix:
+    name: Generate zip file name
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - lower: integration
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
+          - lower: preproduction
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+          - lower: production
+            triggered: ${{ github.event_name == 'push' }}
+    outputs:
+      name: ${{ steps.zip-name.outputs.date }}
+
+    steps:
+      - name: Generate zip file name
+        id: zip-name
+        if: matrix.env.triggered == true
+        run: |
+          zip_name=$REPOSITORY
+          test_name=''
+
+          if [ $ENV != 'production' ]; then
+            date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
+            test_name=-$PS_VERSION-$ENV-$PR_NUMBER-$date
+          fi
+
+          echo "zip_name=$zip_name$test_name.zip" >> "$GITHUB_OUTPUT"
+        env:
+          ENV: ${{ matrix.env.lower }}
+          REPOSITORY: ${{ github.event.repository.name }}
+          PS_VERSION: ps7
+          PR_NUMBER: pr${{ github.event.number }}
+
   push-to-repository-matrix:
     name: ${{ matrix.env.upper }} - Push to GitHub repository
+    needs: [zip-name-matrix]
     strategy:
       fail-fast: false
       matrix:
@@ -30,14 +67,13 @@ jobs:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
+      zip-name: ${{ needs.zip-name-matrix.outputs.name }}
       repository-name: ${{ github.event.repository.name }}
-      prestashop-version: ps7
-      pr-number: pr${{ github.event.number }}
     secrets: inherit
 
   push-to-bucket-matrix:
     name: ${{ matrix.env.upper }} - Push to GCP bucket storage
-    needs: [push-to-repository-matrix]
+    needs: [zip-name-matrix]
     strategy:
       fail-fast: false
       matrix:
@@ -56,9 +92,8 @@ jobs:
       env-upper: ${{ matrix.env.upper }}
       env-lower: ${{ matrix.env.lower }}
       triggered: ${{ matrix.env.triggered }}
-      repository-name: ${{ github.event.repository.name }}
+      zip-name: ${{ needs.zip-name-matrix.outputs.name }}
       prestashop-version: ps7
-      pr-number: pr${{ github.event.number }}
     secrets: inherit
 
   update-release-draft:
