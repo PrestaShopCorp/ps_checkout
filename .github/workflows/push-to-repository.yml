@@ -46,7 +46,7 @@ jobs:
       pull-requests: write
     if: inputs.triggered == true
     env:
-      ZIP_NAME: ${{ inputs.repository-name && (inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) }}.zip
+      ZIP_NAME: ${{ inputs.repository-name && ((inputs.env-lower != 'production' && '-' && inputs.prestashop-version && '-' && inputs.env-lower && '-pr' && github.event.number && '-' && needs.current_date.outputs.date) || '') }}.zip
 
     steps:
       - name: Checkout the repository 🎁
