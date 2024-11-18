@@ -43,7 +43,10 @@ jobs:
     if: inputs.triggered == true
 
     steps:
-      - name: Auth GCP
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP 🔑
         uses: ./.github/actions/auth-gcp
         with:
           auth-mode: "workload-federation"
@@ -52,11 +55,11 @@ jobs:
           registry-login: true
           setup-gcloud: true
 
-      - name: Download artifact
+      - name: Download artifact 🚚
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.zip-name }}
 
-      - name: Push to GCP bucket storage
+      - name: Push to GCP bucket storage 🛩️
         shell: bash
         run: gsutil cp ${{ inputs.zip-name }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}

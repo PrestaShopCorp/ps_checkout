@@ -35,7 +35,7 @@ jobs:
       - name: Checkout the repository 🎁
         uses: actions/checkout@v4
 
-      - name: Auth GCP
+      - name: Auth GCP 🔑
         uses: ./.github/actions/auth-gcp
         with:
           auth-mode: "workload-federation"
@@ -44,12 +44,12 @@ jobs:
           registry-login: true
           setup-gcloud: true
 
-      - name: Write .env file
+      - name: Write .env file 🌳
         run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-env" > .env
         env:
           GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', inputs.env-upper)] }}
 
-      - name: Install composer dependencies
+      - name: Install composer dependencies 👷
         run: composer install --no-dev -o
 
       - name: Create directory with repo name and move files
