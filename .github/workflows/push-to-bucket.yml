@@ -1,0 +1,74 @@
+name: Push to GCP bucket storage
+
+on:
+  workflow_call:
+    inputs:
+      env-upper:
+        required: true
+        type: string
+      env-lower:
+        required: true
+        type: string
+      triggered:
+        required: true
+        type: boolean
+      zip-name:
+        required: true
+        type: string
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
+      prestashop-version:
+        required: true
+        type: string
+jobs:
+  current_date:
+    name: Get current date
+    runs-on: ubuntu-latest
+    if: inputs.triggered == true
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+
+    steps:
+      - name: Date
+        id: date
+        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+  push-to-bucket:
+    name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env-lower }}
+    needs: [current_date]
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    if: inputs.triggered == true
+
+    steps:
+      - name: Checkout the repository 🎁
+        uses: actions/checkout@v4
+
+      - name: Auth GCP 🔑
+        uses: ./.github/actions/auth-gcp
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', inputs.env-upper)] }}
+          service-account: ${{ secrets[format('WI_SA_V2_{0}', inputs.env-upper)] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Download artifact 🚚
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.zip-name }}
+
+      - name: Prepare zip for push 👷
+        run: |
+          cd ${{ inputs.repository-name }}
+          zip -r ../${{ inputs.zip-name }}.zip . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
+      - name: Push to GCP bucket storage 🛩️
+        shell: bash
+        run: |
+          gsutil cp ${{ inputs.zip-name }}.zip gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
