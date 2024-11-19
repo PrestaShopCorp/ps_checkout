@@ -45,6 +45,7 @@ jobs:
         run: |
           cd ${{ inputs.repository-name }}
           zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
+
       - name: Clean existing assets ♻️
         shell: bash
         run: |
