@@ -84,4 +84,4 @@ jobs:
       - name: Push to GCP bucket storage 🛩️
         shell: bash
         run: |
-          gsutil cp ${{ needs.bucket-zip-name.outputs[inputs.env-lower] }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}/zips/${{ inputs.prestashop-version }}
+          gsutil cp ${{ needs.bucket-zip-name.outputs[inputs.env-lower] }} gs://ps-eu-w1-checkout-assets-${{ inputs.env-lower }}
