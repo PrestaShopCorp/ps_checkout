@@ -22,24 +22,12 @@ on:
       prestashop-version:
         required: true
         type: string
+
 jobs:
-  current_date:
-    name: Get current date
-    runs-on: ubuntu-latest
-    if: inputs.triggered == true
-    outputs:
-      date: ${{ steps.date.outputs.date }}
-
-    steps:
-      - name: Date
-        id: date
-        run: echo "date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
-
   push-to-bucket:
     name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
     runs-on: ubuntu-latest
     environment: ${{ inputs.env-lower }}
-    needs: [current_date]
     permissions:
       id-token: write
       contents: read
@@ -68,7 +56,7 @@ jobs:
         run: |
           cd ${{ inputs.repository-name }}
           zip -r ../${{ inputs.zip-name }}.zip . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
-      
+
       - name: Push to GCP bucket storage 🛩️
         shell: bash
         run: |
