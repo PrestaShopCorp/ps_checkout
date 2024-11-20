@@ -22,35 +22,39 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 8.4.2.0
+ * Update main function for module version 7.4.1.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_8_4_2_0($module)
+function upgrade_module_7_4_1_0($module)
 {
     try {
-        $module->registerHook('moduleRoutes');
-
         $db = Db::getInstance();
         $shopsList = \Shop::getShops(false, null, true);
 
         foreach ($shopsList as $shopId) {
-            $hasFundingSourceApplePay = (bool) $db->getValue('
+            $isGooglePayEligible = (bool) \Configuration::get(
+                'PS_CHECKOUT_GOOGLE_PAY',
+                null,
+                null,
+                $shopId
+            );
+            $hasFundingSourceGooglePay = (bool) $db->getValue('
                 SELECT 1
                 FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
-                WHERE `name` = "apple_pay"
+                WHERE `name` = "google_pay"
                 AND `id_shop` = ' . (int) $shopId
             );
 
-            if (!$hasFundingSourceApplePay) {
+            if (!$hasFundingSourceGooglePay) {
                 $db->insert(
                     'pscheckout_funding_source',
                     [
-                        'name' => 'apple_pay',
-                        'position' => 12,
-                        'active' => 0,
+                        'name' => 'google_pay',
+                        'position' => 11,
+                        'active' => (int) $isGooglePayEligible,
                         'id_shop' => (int) $shopId,
                     ]
                 );
