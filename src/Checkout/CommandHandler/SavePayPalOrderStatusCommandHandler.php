@@ -24,6 +24,7 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\PsCheckoutSessionException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PsCheckoutCart;
 
@@ -33,10 +34,15 @@ class SavePayPalOrderStatusCommandHandler
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository, PayPalOrderRepository $payPalOrderRepository)
     {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -46,6 +52,14 @@ class SavePayPalOrderStatusCommandHandler
      */
     public function handle(SavePayPalOrderStatusCommand $command)
     {
+        // TODO: To be repurposed
+        try {
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderPayPalId());
+            $payPalOrder->setStatus($command->getOrderPayPalStatus());
+            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
+        } catch (Exception $exception) {
+        }
+
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());

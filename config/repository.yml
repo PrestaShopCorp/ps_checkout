@@ -1,0 +1,45 @@
+services:
+  PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.pscheckoutcart"
+
+  PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+
+  PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
+    public: true
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+      - "@ps_accounts.facade"
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.db'
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.db'
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.db'

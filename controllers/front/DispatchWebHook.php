@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
@@ -128,11 +129,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function checkPSLSignature(array $bodyValues)
     {
-        $context = Context::getContext();
-        $response = (new Webhook($context->link))->getShopSignature($bodyValues);
+        /** @var MaaslandHttpClient $maaslandHttpClient */
+        $maaslandHttpClient = $this->module->getService(MaaslandHttpClient::class);
+        $response = $maaslandHttpClient->getShopSignature($bodyValues);
 
         // data return false if no error
-        if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
+        if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
             return true;
         }
 
@@ -209,7 +211,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     private function checkExecutionPermissions()
     {
         /** @var PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $psAccountRepository = $this->module->getService(PsAccountRepository::class);
 
         if ($this->shopId !== $psAccountRepository->getShopUuid()) {
             throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);

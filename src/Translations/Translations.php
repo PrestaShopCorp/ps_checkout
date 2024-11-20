@@ -532,7 +532,21 @@ class Translations
                     'buttonPayerAction' => $this->module->l('Authenticate payment', 'translations'),
                     'externalRedirection' => $this->module->l('You will be redirected to an external secured page of our payment gateway.', 'translations'),
                     'contactLink' => $this->module->l('If you have any question, please contact us.', 'translations'),
+                    'paymentMethodStatus' => $this->module->l('Payment method status', 'translations'),
+                    'paymentTokenSaved' => $this->module->l('was saved for future purchases', 'translations'),
+                    'paymentTokenNotSaved' => $this->module->l('was not saved for future purchases', 'translations'),
                 ],
+            ],
+            'google_pay' => [
+                'shipping' => $this->module->l('Shipping', 'translations'),
+                'tax' => $this->module->l('Tax', 'translations'),
+                'total' => $this->module->l('Total', 'translations'),
+                'subtotal' => $this->module->l('Subtotal', 'translations'),
+                'handling' => $this->module->l('Handling', 'translations'),
+                'discount' => $this->module->l('Discount', 'translations'),
+            ],
+            'apple_pay' => [
+                'total' => $this->module->l('Total', 'translations'),
             ],
         ];
 

@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
@@ -33,6 +34,10 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -47,6 +52,9 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
     const PS_CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
     const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CheckoutPaymentApprovalReversed';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED = 'VaultPaymentTokenCreated';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED = 'VaultPaymentTokenDeleted';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED = 'VaultPaymentTokenDeletionInitiated';
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -67,10 +75,13 @@ class OrderDispatcher implements Dispatcher
         $module = Module::getInstanceByName('ps_checkout');
 
         /** @var EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $module->getService('ps_checkout.event.dispatcher');
+        $eventDispatcher = $module->getService(SymfonyEventDispatcherAdapter::class);
 
         /** @var LoggerInterface $logger */
         $logger = $module->getService('ps_checkout.logger');
+
+        /** @var PayPalConfiguration $payPalConfiguration */
+        $payPalConfiguration = $module->get(PayPalConfiguration::class);
 
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
@@ -96,6 +107,15 @@ class OrderDispatcher implements Dispatcher
                 break;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
                 $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED:
+                $eventDispatcher->dispatch(new PaymentTokenCreatedEvent($payload['resource'], $payPalConfiguration->getMerchantId()));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED:
+                $eventDispatcher->dispatch(new PaymentTokenDeletedEvent($payload['resource']));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED:
+                $eventDispatcher->dispatch(new PaymentTokenDeletionInitiatedEvent($payload['resource']));
                 break;
             default:
                 $logger->warning(

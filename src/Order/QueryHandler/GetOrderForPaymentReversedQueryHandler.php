@@ -21,13 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Configuration;
 use Order;
-use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -79,26 +80,15 @@ class GetOrderForPaymentReversedQueryHandler
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
+        $hasBeenPaid = $order->hasBeenPaid();
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
+        $hasBeenTotallyRefunded = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
+
         return new GetOrderForPaymentReversedQueryResult(
             (int) $order->id,
-            (int) $order->getCurrentState(),
-            (bool) $order->hasBeenPaid(),
-            $this->hasBeenTotallyRefunded($order)
+            $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
+            (bool) $hasBeenTotallyRefunded
         );
-    }
-
-    private function hasBeenTotallyRefunded(Order $order)
-    {
-        /** @var OrderSlip[] $orderSlips */
-        $orderSlips = $order->getOrderSlipsCollection()->getResults();
-        $refundAmount = 0;
-
-        if (!empty($orderSlips)) {
-            foreach ($orderSlips as $orderSlip) {
-                $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
-            }
-        }
-
-        return $refundAmount >= $order->total_paid;
     }
 }

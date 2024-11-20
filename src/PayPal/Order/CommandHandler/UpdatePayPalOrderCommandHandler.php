@@ -26,10 +26,11 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
@@ -41,7 +42,7 @@ class UpdatePayPalOrderCommandHandler
     private $eventDispatcher;
 
     /**
-     * @var CheckoutHttpClient
+     * @var MaaslandHttpClient
      */
     private $httpClient;
 
@@ -51,18 +52,26 @@ class UpdatePayPalOrderCommandHandler
     private $shopContext;
 
     /**
-     * @param CheckoutHttpClient $httpClient
+     * @var PayPalOrderProvider
+     */
+    private $paypalOrderProvider;
+
+    /**
+     * @param MaaslandHttpClient $httpClient
      * @param EventDispatcherInterface $eventDispatcher
      * @param ShopContext $shopContext
+     * @param PayPalOrderProvider $paypalOrderProvider
      */
     public function __construct(
-        CheckoutHttpClient $httpClient,
+        MaaslandHttpClient $httpClient,
         EventDispatcherInterface $eventDispatcher,
-        ShopContext $shopContext
+        ShopContext $shopContext,
+        PayPalOrderProvider $paypalOrderProvider
     ) {
         $this->httpClient = $httpClient;
         $this->eventDispatcher = $eventDispatcher;
         $this->shopContext = $shopContext;
+        $this->paypalOrderProvider = $paypalOrderProvider;
     }
 
     /**
@@ -74,6 +83,16 @@ class UpdatePayPalOrderCommandHandler
      */
     public function handle(UpdatePayPalOrderCommand $command)
     {
+        try {
+            $paypalOrder = $this->paypalOrderProvider->getById($command->getPayPalOrderId()->getValue());
+        } catch (Exception $exception) {
+            return;
+        }
+
+        if (empty($paypalOrder) || empty($paypalOrder['purchase_units'])) {
+            return;
+        }
+
         $cartPresenter = (new CartPresenter())->present();
         $builder = new OrderPayloadBuilder($cartPresenter, true);
         $builder->setIsUpdate(true);
@@ -89,16 +108,87 @@ class UpdatePayPalOrderCommandHandler
             $builder->buildMinimalPayload();
         }
 
-        $response = $this->httpClient->updateOrder($builder->presentPayload()->getArray());
-        $order = json_decode($response->getBody(), true);
+        $payload = $builder->presentPayload()->getArray();
+        $needToUpdate = false;
+        $updatedPayPalOrder = $paypalOrder;
+
+        if (isset($paypalOrder['purchase_units'][0]['amount']) && isset($payload['amount'])) {
+            $amountDiff = $this->arrayRecursiveDiff($paypalOrder['purchase_units'][0]['amount'], $payload['amount']);
+            if (!empty($amountDiff)) {
+                $needToUpdate = true;
+                $updatedPayPalOrder['purchase_units'][0]['amount'] = $payload['amount'];
+            }
+        }
+
+        if (isset($paypalOrder['purchase_units'][0]['items']) && isset($payload['items'])) {
+            $itemsDiff = $this->arrayRecursiveDiff($paypalOrder['purchase_units'][0]['items'], $payload['items']);
+            if (!empty($itemsDiff)) {
+                $needToUpdate = true;
+                $updatedPayPalOrder['purchase_units'][0]['items'] = $payload['items'];
+            }
+        }
+
+        if (isset($paypalOrder['purchase_units'][0]['shipping']) && isset($payload['shipping'])) {
+            $shippingDiff = $this->arrayRecursiveDiff($paypalOrder['purchase_units'][0]['shipping'], $payload['shipping']);
+            if (!empty($shippingDiff)) {
+                $needToUpdate = true;
+                $updatedPayPalOrder['purchase_units'][0]['shipping'] = $payload['shipping'];
+            }
+        }
+
+        if (!$needToUpdate) {
+            return;
+        }
+
+        $response = $this->httpClient->updateOrder($payload);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);
+        }
 
         $this->eventDispatcher->dispatch(new PayPalOrderUpdatedEvent(
-            $order['id'],
-            $order,
+            $command->getPayPalOrderId()->getValue(),
+            $updatedPayPalOrder,
             $command->getCartId()->getValue(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),
             $command->getFundingSource()
         ));
+    }
+
+    /**
+     * Recursively compares two arrays and returns the differences.
+     *
+     * @param array $array1
+     * @param array $array2
+     * @param int $maxDepth
+     * @param int $currentDepth
+     *
+     * @return array
+     */
+    private function arrayRecursiveDiff(array $array1, array $array2, $maxDepth = 5, $currentDepth = 0)
+    {
+        $result = [];
+
+        if ($currentDepth >= $maxDepth) {
+            return $result;
+        }
+
+        foreach ($array1 as $key => $value) {
+            if (array_key_exists($key, $array2)) {
+                if (is_array($value)) {
+                    $recursiveDiff = $this->arrayRecursiveDiff($value, $array2[$key], $maxDepth, $currentDepth + 1);
+                    if (!empty($recursiveDiff)) {
+                        $result[$key] = $recursiveDiff;
+                    }
+                } elseif ($value !== $array2[$key]) {
+                    $result[$key] = $value;
+                }
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }
