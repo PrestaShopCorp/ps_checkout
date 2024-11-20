@@ -30,14 +30,17 @@ class PayPalOrderUpdatedEvent extends PayPalOrderEvent
      * @var CartId
      */
     private $cartId;
+
     /**
      * @var bool
      */
     private $isHostedFields;
+
     /**
      * @var bool
      */
     private $isExpressCheckout;
+
     /**
      * @var string
      */

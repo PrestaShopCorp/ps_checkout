@@ -46,24 +46,27 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
-        /** @var array{id: string, status: string} $order */
-        $order = $this->orderPayPalCache->get($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+        $payPalOrderId = $getPayPalOrderQuery->getOrderPayPalId()->getValue();
 
-        if (!empty($order) && $order['status'] === 'APPROVED') {
+        /** @var array{id: string, status: string} $order */
+        $order = $this->orderPayPalCache->get($payPalOrderId);
+
+        if (!empty($order) && in_array($order['status'], ['COMPLETED', 'CANCELED'])) {
             return new GetPayPalOrderForCheckoutCompletedQueryResult($order);
         }
 
         try {
-            $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
+            $orderPayPal = new PaypalOrder($payPalOrderId);
+            $orderToStoreInCache = !empty($order) ? array_replace_recursive($order, $orderPayPal->getOrder()) : $orderPayPal->getOrder();
+            $this->orderPayPalCache->set($payPalOrderId, $orderToStoreInCache);
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $getPayPalOrderQuery->getOrderPayPalId()->getValue()), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
+            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $payPalOrderId), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
         }
 
         if (!$orderPayPal->isLoaded()) {
-            throw new PayPalOrderException(sprintf('No data for PayPal Order %s', $getPayPalOrderQuery->getOrderPayPalId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
+            throw new PayPalOrderException(sprintf('No data for PayPal Order %s', $payPalOrderId), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
         return new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());

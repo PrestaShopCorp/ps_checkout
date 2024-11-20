@@ -22,21 +22,44 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 8.3.6.3
+ * Update main function for module version 7.4.2.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_8_3_6_3($module)
+function upgrade_module_7_4_2_0($module)
 {
     try {
+        $module->registerHook('moduleRoutes');
+
         $db = Db::getInstance();
-        $db->update('pscheckout_cart', ['paypal_token' => null, 'paypal_token_expire' => null], 'paypal_token IS NOT NULL', 0, true);
-        $db->update('pscheckout_cart', ['paypal_status' => 'CANCELED'], 'paypal_status = "CREATED" AND date_add < DATE_SUB(NOW(), INTERVAL 1 HOUR)');
-        $db->delete('pscheckout_cart', 'paypal_order IS NULL OR paypal_order = ""');
+        $shopsList = \Shop::getShops(false, null, true);
+
+        foreach ($shopsList as $shopId) {
+            $hasFundingSourceApplePay = (bool) $db->getValue('
+                SELECT 1
+                FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
+                WHERE `name` = "apple_pay"
+                AND `id_shop` = ' . (int) $shopId
+            );
+
+            if (!$hasFundingSourceApplePay) {
+                $db->insert(
+                    'pscheckout_funding_source',
+                    [
+                        'name' => 'apple_pay',
+                        'position' => 12,
+                        'active' => 0,
+                        'id_shop' => (int) $shopId,
+                    ]
+                );
+            }
+        }
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
+
+        return false;
     }
 
     return true;

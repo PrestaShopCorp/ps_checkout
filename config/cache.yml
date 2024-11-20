@@ -23,8 +23,7 @@ services:
     arguments:
       - [
         "@ps_checkout.cache.array.paypal.order",
-        "@ps_checkout.cache.filesystem.paypal.order",
-      ]
+        "@ps_checkout.cache.filesystem.paypal.order"]
 
   ps_checkout.cache.array.paypal.capture:
     class: 'Symfony\Component\Cache\Simple\ArrayCache'
@@ -42,8 +41,7 @@ services:
     arguments:
       - [
         "@ps_checkout.cache.array.paypal.capture",
-        "@ps_checkout.cache.filesystem.paypal.capture",
-      ]
+        "@ps_checkout.cache.filesystem.paypal.capture"]
 
   ps_checkout.cache.pscheckoutcart:
     class: 'Symfony\Component\Cache\Simple\ArrayCache'

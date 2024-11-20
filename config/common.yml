@@ -160,8 +160,7 @@ services:
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber',
-        '@PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber'
-      ]
+        '@PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber']
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
