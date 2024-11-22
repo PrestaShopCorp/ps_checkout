@@ -79,7 +79,7 @@ class SavePayPalOrderCommandHandler
                     $order['id'],
                     crc32(json_encode($purchaseUnit)),
                     $purchaseUnit['reference_id'],
-                    $purchaseUnit['items']
+                    isset($purchaseUnit['items']) ? $purchaseUnit['items'] : []
                 );
 
                 $this->payPalOrderRepository->savePayPalOrderPurchaseUnit($payPalPurchaseUnit);
