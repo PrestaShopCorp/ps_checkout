@@ -17,16 +17,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-use Exception;
-
-class PayPalRefundException extends Exception
-{
-    const INVALID_ORDER_ID = 1;
-    const INVALID_TRANSACTION_ID = 2;
-    const INVALID_CURRENCY = 3;
-    const INVALID_AMOUNT = 4;
-    const INVALID_REFUND_ID = 4;
-}
+header('Location: ../');
+exit;
