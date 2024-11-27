@@ -22,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Configuration;
-use Context;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;

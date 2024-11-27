@@ -438,6 +438,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             'body' => [
                 'error' => [
                     'message' => $exceptionMessageForCustomer,
+                    'code' => (int) $exception->getCode() < 400 && $exception->getPrevious() !== null
+                        ? (int) $exception->getPrevious()->getCode()
+                        : (int) $exception->getCode(),
                 ],
             ],
             'exceptionCode' => $exception->getCode(),

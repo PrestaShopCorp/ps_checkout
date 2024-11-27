@@ -1111,6 +1111,7 @@ class Ps_checkout extends PaymentModule
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
                 'loader-component.label.header' => $this->l('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->l('Please wait, we are processing your payment'),
+                'loader-component.label.body.longer' => $this->l('This is taking longer than expected. Please wait...'),
                 'error.paypal-sdk.contingency.cancel' => $this->l('Card holder authentication canceled, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
