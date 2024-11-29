@@ -32,7 +32,7 @@ There 3 main branches on the repository:
 
 Contributors **must** follow the following rules:
 
-* Use the main branch `prestashop/8.x`
+* Use the main branch `prestashop/1.7.x`
 * Do not update the module's version number.
 * Follow [the coding standards][1].
 

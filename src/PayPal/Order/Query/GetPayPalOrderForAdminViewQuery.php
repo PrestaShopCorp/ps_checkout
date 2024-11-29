@@ -18,14 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-<<<<<<<< HEAD:src/PayPal/Order/Query/GetPayPalOrderForAdminViewQuery.php
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
 
 class GetPayPalOrderForAdminViewQuery
-========
-namespace PrestaShop\Module\PrestashopCheckout\Cart\Exception;
-
-class CartNotFoundException extends CartException
->>>>>>>> a34060bd (Refacto):src/Cart/Exception/CartNotFoundException.php
 {
 }

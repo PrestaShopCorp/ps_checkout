@@ -18,11 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-<<<<<<<< HEAD:src/PayPal/Sdk/PayPalSdkConfigurationBuilder.php
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Sdk;
-========
-namespace PrestaShop\Module\PrestashopCheckout\Builder\PaypalSdkConfiguration;
->>>>>>>> 1d2c229a (Replaced paypal script creation with using paypal npm lib):src/Builder/PayPalSdkConfiguration/PayPalSdkConfigurationBuilder.php
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
@@ -170,10 +166,6 @@ class PayPalSdkConfigurationBuilder
             'integrationDate' => $this->configuration->getIntegrationDate(),
             'dataPartnerAttributionId' => $this->shopContext->getBnCode(),
             'dataCspNonce' => $this->configuration->getCSPNonce(),
-<<<<<<<< HEAD:src/PayPal/Sdk/PayPalSdkConfigurationBuilder.php
-========
-            'dataEnable3ds' => $this->configuration->is3dSecureEnabled(),
->>>>>>>> 1d2c229a (Replaced paypal script creation with using paypal npm lib):src/Builder/PayPalSdkConfiguration/PayPalSdkConfigurationBuilder.php
         ];
 
         if ($this->configuration->isVaultingEnabled() && $this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
