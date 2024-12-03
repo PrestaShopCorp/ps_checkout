@@ -71,7 +71,7 @@ jobs:
       - name: Create & upload artifact 🛩️
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.zip-name }}.zip
+          name: ${{ inputs.zip-name }}
           path: ${{ steps.artifacts.outputs.path }}
           include-hidden-files: true
           retention-days: ${{ (inputs.env-lower == 'production' && 90) || 1 }}

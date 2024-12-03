@@ -21,7 +21,7 @@ jobs:
     environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       pull-requests: write
     if: inputs.triggered == true
     env:
@@ -39,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          commitish: prestashop/1.7.x
+          commitish: prestashop/8.x
 
       - name: Prepare zip for release 👷
         run: |
