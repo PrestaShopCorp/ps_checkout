@@ -45,7 +45,7 @@ jobs:
           ENV: production
           REPOSITORY: ${{ inputs.repository-name }}
           PS_VERSION: ${{ inputs.prestashop-version }}
-          PR_NUMBER: pr${{ inputs.pr-number }}
+          PR_NUMBER: ${{ inputs.pr-number }}
 
   push-to-bucket:
     name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
