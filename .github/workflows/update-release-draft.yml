@@ -21,7 +21,7 @@ jobs:
     environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       pull-requests: write
     if: inputs.triggered == true
     env:
@@ -39,24 +39,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          commitish: prestashop/1.7.x
+          commitish: prestashop/1.6.x
 
       - name: Prepare zip for release 👷
         run: |
           cd ${{ inputs.repository-name }}
           zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
-
-      - name: Clean existing assets ♻️
-        shell: bash
-        run: |
-          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
-          assets=`bin/hub api -t repos/${{ inputs.repository-name }}/releases/${{ steps.release_info.outputs.id }}/assets | awk '/\].url/ { print $2 }'`
-          for asset in $assets
-          do
-            bin/hub api -X DELETE $asset
-          done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub Release 🛩️
         uses: actions/upload-release-asset@v1.0.2
