@@ -39,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          commitish: prestashop/1.6.x
+          commitish: prestashop/1.6.1.x
 
       - name: Prepare zip for release 👷
         run: |
