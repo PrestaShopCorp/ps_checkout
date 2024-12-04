@@ -28,24 +28,24 @@ on:
 
 jobs:
   bucket-zip-name:
-    name: Generate zip file name
+    name: Generate zip file name for GCP bucket
     runs-on: ubuntu-latest
     outputs:
-      integration: ${{ inputs.zip-name }}.zip
-      preproduction: ${{ inputs.zip-name }}.zip
-      production: ${{ steps.zip-name.outputs.name }}.zip
+      integration: ${{ inputs.zip-name }}
+      preproduction: ${{ inputs.zip-name }}
+      production: ${{ steps.zip-name.outputs.name }}
 
     steps:
       - name: Generate zip file name
         id: zip-name
         run: |
           date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
-          echo "name=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date" >> "$GITHUB_OUTPUT"
+          echo "name=$REPOSITORY-$PS_VERSION-$ENV-$PR_NUMBER-$date.zip" >> "$GITHUB_OUTPUT"
         env:
           ENV: production
           REPOSITORY: ${{ inputs.repository-name }}
           PS_VERSION: ${{ inputs.prestashop-version }}
-          PR_NUMBER: pr${{ inputs.pr-number }}
+          PR_NUMBER: ${{ inputs.pr-number }}
 
   push-to-bucket:
     name: ${{ inputs.env-upper }} - Create zip file and push to GCP bucket storage
@@ -54,7 +54,7 @@ jobs:
     environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       pull-requests: write
     if: inputs.triggered == true
 

@@ -27,7 +27,7 @@ jobs:
     environment: ${{ inputs.env-lower }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       pull-requests: write
     if: inputs.triggered == true
 
