@@ -73,7 +73,8 @@ function upgrade_module_7_4_2_2($module)
  *
  * @return bool
  */
-function upgrade_7_4_0_0($module) {
+function upgrade_7_4_0_0($module)
+{
     try {
         $db = Db::getInstance();
         $db->execute('

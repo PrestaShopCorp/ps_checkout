@@ -56,7 +56,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     public function checkAccess()
     {
-        return $this->context->customer && $this->context->cart;
+        return $this->context->customer;
     }
 
     public function initContent()

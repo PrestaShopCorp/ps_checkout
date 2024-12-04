@@ -1,11 +1,4 @@
 services:
-  PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
-    public: true
-    arguments:
-      - '@ps_checkout.cache.paypal.order'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
-
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
     public: true

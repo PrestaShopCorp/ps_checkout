@@ -88,8 +88,8 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->id,
             (int) $order->getCurrentState(),
             $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
-            (bool) count($order->getHistory((int) $order->id_lang, Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
-            (bool) count($order->getHistory((int) $order->id_lang, Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, (int) Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, (int) Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
             (string) $order->getTotalPaid(),
             (int) $order->id_currency
         );

@@ -43,8 +43,11 @@ class PayPalOrderCache extends ChainCache
      */
     public function set($key, $value, $ttl = null)
     {
-        if (!$ttl && isset($value['status']) && isset(self::CACHE_TTL[$value['status']])) {
-            $ttl = self::CACHE_TTL[$value['status']];
+        if (!$ttl && isset($value['status'])) {
+            $status = $value['status'];
+            if (self::CACHE_TTL[$status] !== null) {
+                $ttl = self::CACHE_TTL[$status];
+            }
         }
 
         return parent::set($key, $value, $ttl);
