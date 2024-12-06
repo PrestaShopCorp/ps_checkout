@@ -334,3 +334,14 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Builder\ApplePayPaymentRequestBuilder'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Translations\Translations'
+
+  PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration:
+    class: 'PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration'
+    public: true
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\AppleSetup:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\AppleSetup'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
