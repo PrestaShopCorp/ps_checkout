@@ -21,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Configuration;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\CapturePayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
@@ -77,6 +76,9 @@ class CapturePayPalOrderCommandHandler
     /** @var PayPalConfiguration  */
     private $payPalConfiguration;
 
+    /** @var PayPalOrderRepository */
+    private $payPalOrderRepository;
+
     public function __construct(
         MaaslandHttpClient $maaslandHttpClient,
         EventDispatcherInterface $eventDispatcher,
@@ -85,7 +87,8 @@ class CapturePayPalOrderCommandHandler
         PayPalCustomerRepository $payPalCustomerRepository,
         LoggerInterface $logger,
         CapturePayloadBuilder $capturePayloadBuilder,
-        PayPalConfiguration $payPalConfiguration
+        PayPalConfiguration $payPalConfiguration,
+        PayPalOrderRepository $payPalOrderRepository
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
@@ -94,11 +97,14 @@ class CapturePayPalOrderCommandHandler
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->capturePayloadBuilder = $capturePayloadBuilder;
         $this->payPalConfiguration = $payPalConfiguration;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
         $merchantId = $this->payPalConfiguration->getMerchantId();
+
+        $capturePayload = $this->buildCapturePayload($capturePayPalOrderCommand);
 
         $capturePayloadDTO = $this->capturePayloadBuilder->buildPayload(
             $capturePayPalOrderCommand->getFundingSource(),
@@ -107,35 +113,88 @@ class CapturePayPalOrderCommandHandler
         );
 
         $orderPayPal = $this->captureOrder($capturePayloadDTO);
-        $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
             $vault = $orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'];
-            if (isset($vault['customer']['id'])) {
-                try {
-                    $payPalCustomerId = new PayPalCustomerId($vault['customer']['id']);
-                    $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
-                    $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (\Exception $exception) {
-                }
-            }
+            $vault = $this->savePrestaShopPayPalCustomerRelationship($vault);
 
             if (isset($vault['id'])) {
-                $resource = $vault;
-                $resource['metadata'] = [
-                    'order_id' => $orderPayPal['id'],
-                ];
-                $paymentSource = $orderPayPal['payment_source'];
-                unset($paymentSource[$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault']);
-                $resource['payment_source'] = $paymentSource;
-                $resource['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['verification_status'] = $resource['status'];
-
-                $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent(
-                    $resource,
-                    $merchantId
-                ));
+                $paymentToken = $this->createPaymentTokenEvent($capturePayPalOrderCommand, $orderPayPal, $vault, $merchantId);
             }
         }
+
+        return $this->processTheCapture($orderPayPal);
+    }
+
+    private function captureOrder(CaptureOrderPayloadDTO $captureOrderPayloadDTO)
+    {
+        try {
+            $response = $this->maaslandHttpClient->captureOrder($captureOrderPayloadDTO->toArray());
+
+            $orderPayPal = json_decode($response->getBody(), true);
+            $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
+
+            return array_replace_recursive($payPalOrderFromCache, $orderPayPal);
+        } catch (\Exception $exception) {
+            return [];
+        }
+    }
+
+    private function buildCapturePayload(CapturePayPalOrderCommand $capturePayPalOrderCommand)
+    {
+        $payload = [
+            'mode' => $capturePayPalOrderCommand->getFundingSource(),
+            'orderId' => $capturePayPalOrderCommand->getOrderId()->getValue(),
+            'payee' => ['merchant_id' => $this->payPalConfiguration->getMerchantId()],
+        ];
+
+        $order = $this->payPalOrderRepository->getPayPalOrderById($capturePayPalOrderCommand->getOrderId());
+
+        if ($order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)) {
+            $payload['vault'] = true;
+        }
+
+        return $payload;
+    }
+
+    private function savePrestaShopPayPalCustomerRelationship($vault)
+    {
+        try {
+            $payPalCustomerId = new PayPalCustomerId($vault['customer']['id']);
+            $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
+            $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
+
+            return $vault;
+        } catch (\Exception $exception) {
+
+            return [];
+        }
+    }
+
+    private function createPaymentTokenEvent($capturePayPalOrderCommand,$orderPayPal, $vault, $merchantId)
+    {
+        $paymentToken = $vault;
+        $paymentToken['metadata'] = [
+            'order_id' => $orderPayPal['id'],
+        ];
+
+        $paymentSource = $orderPayPal['payment_source'];
+        unset($paymentSource[$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault']);
+        $paymentSource[$capturePayPalOrderCommand->getFundingSource()]['verification_status'] = $paymentToken['status'];
+
+        $paymentToken['payment_source'] = $paymentSource;
+
+        $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent(
+            $paymentToken,
+            $merchantId
+        ));
+
+        return $paymentToken;
+    }
+
+    private function processTheCapture($orderPayPal)
+    {
+        $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
             $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
@@ -166,56 +225,12 @@ class CapturePayPalOrderCommandHandler
                 isset($capturePayPal['processor_response']['cvv_code']) ? $capturePayPal['processor_response']['cvv_code'] : null,
                 isset($capturePayPal['processor_response']['response_code']) ? $capturePayPal['processor_response']['response_code'] : null
             );
+
             $payPalProcessorResponse->throwException();
         } elseif (PayPalCaptureStatus::DECLINED === $capturePayPal['status'] || PayPalCaptureStatus::FAILED === $capturePayPal['status']) {
             throw new PsCheckoutException('PayPal declined the capture', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
-    }
 
-    private function captureOrder(CaptureOrderPayloadDTO $captureOrderPayloadDTO)
-    {
-        try {
-            $response = $this->maaslandHttpClient->captureOrder($captureOrderPayloadDTO->toArray());
-
-            $orderPayPal = json_decode($response->getBody(), true);
-            $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
-
-            $orderPayPal = array_replace_recursive($payPalOrderFromCache, $orderPayPal);
-
-            return $orderPayPal;
-        } catch (\Exception $exception) {
-            return [];
-        }
-    }
-
-    private function processTheCapture()
-    {
-        if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
-            $vault = $orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'];
-            if (isset($vault['customer']['id'])) {
-                try {
-                    $payPalCustomerId = new PayPalCustomerId($vault['customer']['id']);
-                    $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
-                    $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (\Exception $exception) {
-                }
-            }
-
-            if (isset($vault['id'])) {
-                $resource = $vault;
-                $resource['metadata'] = [
-                    'order_id' => $orderPayPal['id'],
-                ];
-                $paymentSource = $orderPayPal['payment_source'];
-                unset($paymentSource[$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault']);
-                $resource['payment_source'] = $paymentSource;
-                $resource['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['verification_status'] = $resource['status'];
-
-                $this->eventDispatcher->dispatch(new PaymentTokenCreatedEvent(
-                    $resource,
-                    $merchantId
-                ));
-            }
-        }
+        return $capturePayPal;
     }
 }
