@@ -5,7 +5,7 @@ on:
       - "master"
       - "prestashop/1.6.1.x"
   pull_request:
-    types: [opened, reopened, synchronize, edited]
+    types: [opened, reopened, synchronize, edited, labeled]
 
 jobs:
   header-stamp:
