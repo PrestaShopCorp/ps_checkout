@@ -67,7 +67,7 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
         PayPalOrderProvider $orderProvider
     ) {
         $this->module = $module;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->commandBus = $this->module->getService('ps_checkout.bus.command2');
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
         $this->orderProvider = $orderProvider;

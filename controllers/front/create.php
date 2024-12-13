@@ -126,9 +126,13 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 }
             }
 
+            /** @var \PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient $maaslandHttpClient */
+            $maaslandHttpClient = $this->module->getService(\PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient::class);
+
+            $maaslandHttpClient->createOrder([]);
             /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
-            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
+//            $commandBus = $this->module->getService('ps_checkout.bus.command');
+//            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
 
             /** @var GetPayPalOrderForCartIdQueryResult $getPayPalOrderForCartIdQueryResult */
             $getPayPalOrderForCartIdQueryResult = $commandBus->handle(new GetPayPalOrderForCartIdQuery($cartId));

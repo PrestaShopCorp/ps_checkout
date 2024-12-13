@@ -24,8 +24,8 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\TransferException;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Symfony\Component\HttpClient\HttpClient;
 
 class PsrHttpClientAdapter implements HttpClientInterface
 {
@@ -39,7 +39,17 @@ class PsrHttpClientAdapter implements HttpClientInterface
      */
     public function __construct(array $configuration)
     {
-        $this->client = (new ClientFactory())->getClient($configuration);
+        if (isset($configuration['logger'])) {
+            $logger = $configuration['logger'];
+            unset($configuration['logger']);
+        }
+
+        $this->client = HttpClient::create($configuration);
+
+        if (isset($logger)) {
+            $this->client->setLogger($logger);
+        }
+//        $this->client = (new ClientFactory())->getClient($configuration);
     }
 
     /**
@@ -48,7 +58,10 @@ class PsrHttpClientAdapter implements HttpClientInterface
     public function sendRequest(RequestInterface $request)
     {
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->client->request($request->getMethod(), (string) $request->getUri(), [
+                'headers' => $request->getHeaders(),
+                'body' => $request->getBody()->getContents(),
+            ]);
         } catch (\GuzzleHttp\Ring\Exception\ConnectException $exception) { // @phpstan-ignore-line
             // Guzzle 5.3 use RingPHP for the low level connection
             throw new NetworkException($exception->getMessage(), $request, $exception); // @phpstan-ignore-line
@@ -59,7 +72,12 @@ class PsrHttpClientAdapter implements HttpClientInterface
 
         // Guzzle 5.3 does not throw exceptions on 4xx and 5xx status codes
         if ($response->getStatusCode() >= 400) {
-            throw new HttpException($response->getReasonPhrase(), $request, $response);
+            try {
+                $responseContent = $response->getContent(false);
+                throw new HttpException($response->getInfo(), $request, $response);
+            } catch (Exception $exception) {
+                throw new HttpException($response->getInfo(), $request, $response);
+            }
         }
 
         return $response;

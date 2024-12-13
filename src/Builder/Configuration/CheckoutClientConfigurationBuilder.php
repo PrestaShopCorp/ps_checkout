@@ -87,8 +87,8 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
     public function build()
     {
         $configuration = [
-            'base_url' => $this->env->getCheckoutApiUrl(),
-            'verify' => $this->getVerify(),
+            'base_uri' => $this->env->getCheckoutApiUrl(),
+            'verify_host' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
 //                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
@@ -104,29 +104,33 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
         ];
 
         if ($this->loggerConfiguration->isHttpEnabled()) {
-            if (
-                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
-                && class_exists(HandlerStack::class)
-                && class_exists(LogMiddleware::class)
-            ) {
-                $handlerStack = HandlerStack::create();
-                $handlerStack->push(new LogMiddleware($this->logger));
-                $configuration['handler'] = $handlerStack;
-            } elseif (
-                defined('\GuzzleHttp\ClientInterface::VERSION')
-                && class_exists(Emitter::class)
-                && class_exists(LogSubscriber::class)
-                && class_exists(Formatter::class)
-            ) {
-                $emitter = new Emitter();
-                $emitter->attach(new LogSubscriber(
-                    $this->logger,
-                    Formatter::DEBUG
-                ));
-
-                $configuration['emitter'] = $emitter;
-            }
+            $configuration['logger'] = $this->logger;
         }
+
+//        if ($this->loggerConfiguration->isHttpEnabled()) {
+//            if (
+//                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+//                && class_exists(HandlerStack::class)
+//                && class_exists(LogMiddleware::class)
+//            ) {
+//                $handlerStack = HandlerStack::create();
+//                $handlerStack->push(new LogMiddleware($this->logger));
+//                $configuration['handler'] = $handlerStack;
+//            } elseif (
+//                defined('\GuzzleHttp\ClientInterface::VERSION')
+//                && class_exists(Emitter::class)
+//                && class_exists(LogSubscriber::class)
+//                && class_exists(Formatter::class)
+//            ) {
+//                $emitter = new Emitter();
+//                $emitter->attach(new LogSubscriber(
+//                    $this->logger,
+//                    Formatter::DEBUG
+//                ));
+//
+//                $configuration['emitter'] = $emitter;
+//            }
+//        }
 
         return $configuration;
     }

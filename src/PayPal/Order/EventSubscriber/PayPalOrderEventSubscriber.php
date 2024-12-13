@@ -111,9 +111,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->checkoutChecker = $checkoutChecker;
         $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
         $this->orderStateMapper = $orderStateMapper;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->commandBus = $this->module->getService('ps_checkout.bus.command2');
         $this->payPalConfiguration = $payPalConfiguration;
         $this->payPalOrderRepository = $payPalOrderRepository;
+    }
+
+    public function setCommandBus()
+    {
+
     }
 
     /**

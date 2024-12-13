@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCusto
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
@@ -36,11 +37,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 {
-    /** @var Ps_checkout */
-    private $module;
-
-    /** @var CommandBusInterface */
-    private $commandBus;
     /**
      * @var PayPalOrderRepository
      */
@@ -50,10 +46,8 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
      */
     private $paymentTokenRepository;
 
-    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
+    public function __construct(PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
     {
-        $this->module = $module;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->paymentTokenRepository = $paymentTokenRepository;
     }
@@ -90,15 +84,20 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        $this->commandBus->handle(new SavePaymentTokenCommand(
-            new PaymentTokenId($resource['id']),
-            new PayPalCustomerId($resource['customer']['id']),
-            $resource['payment_source'][array_keys($resource['payment_source'])[0]]['verification_status'],
+        $token = new PaymentToken(
+            (new PaymentTokenId($resource['id']))->getValue(),
+            (new PayPalCustomerId($resource['customer']['id']))->getValue(),
             array_keys($resource['payment_source'])[0],
             $resource,
             $event->getMerchantId(),
+            $resource['payment_source'][array_keys($resource['payment_source'])[0]]['verification_status'],
             $setFavorite
-        ));
+        );
+        $this->paymentTokenRepository->save($token);
+
+        if ($setFavorite) {
+            $this->paymentTokenRepository->setTokenFavorite($token->getId());
+        }
     }
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)

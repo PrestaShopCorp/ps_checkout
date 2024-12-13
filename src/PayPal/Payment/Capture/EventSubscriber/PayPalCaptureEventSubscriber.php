@@ -83,7 +83,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->capturePayPalCache = $capturePayPalCache;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
-        $this->commandBus = $module->getService('ps_checkout.bus.command');
+        $this->commandBus = $module->getService('ps_checkout.bus.command2');
     }
 
     /**
