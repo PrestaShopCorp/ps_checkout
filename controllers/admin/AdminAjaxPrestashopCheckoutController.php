@@ -101,7 +101,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $fundingSourceConfigurationRepository->save($paymentOption);
         }
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -113,7 +113,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -125,7 +125,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $stepLive = $this->module->getService(LiveStep::class);
         $stepLive->confirmed(true);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -137,7 +137,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $stepLive = $this->module->getService(LiveStep::class);
         $stepLive->viewed(true);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -149,7 +149,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $valueBanner = $this->module->getService(ValueBanner::class);
         $valueBanner->closed(true);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -165,7 +165,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalConfiguration->setRoundType(RoundingSettings::ROUND_ON_EACH_ITEM);
         $paypalConfiguration->setPriceRoundMode(RoundingSettings::ROUND_UP_AWAY_FROM_ZERO);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -193,7 +193,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $fundingSourceConfigurationRepository->save($paymentOption);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -206,7 +206,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $paypalConfiguration->setCardPaymentEnabled((bool) Tools::getValue('hostedFieldsEnabled'));
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -220,7 +220,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $this->updateExpressCheckoutSettings();
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -234,7 +234,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $this->updateExpressCheckoutSettings();
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -248,7 +248,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $this->updateExpressCheckoutSettings();
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -357,19 +357,19 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if (empty($id_order)) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     $this->l('No PrestaShop Order identifier received'),
                 ],
-            ]));
+            ]);
         }
 
         $order = new Order($id_order);
 
         if ($order->module !== $this->module->name) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     strtr(
@@ -379,7 +379,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                         ]
                     ),
                 ],
-            ]));
+            ]);
         }
 
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
@@ -388,7 +388,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if (!$psCheckoutCartCollection->count()) {
             http_response_code(500);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     strtr(
@@ -398,7 +398,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                         ]
                     ),
                 ],
-            ]));
+            ]);
         }
 
         $psCheckoutCart = null;
@@ -415,7 +415,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if ($configurationPayPal->getPaymentMode() !== $psCheckoutCart->getEnvironment()) {
             http_response_code(422);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     strtr(
@@ -425,7 +425,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                         ]
                     ),
                 ],
-            ]));
+            ]);
         }
 
         /** @var PayPalOrderProvider $paypalOrderProvider */
@@ -457,12 +457,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'isProductionEnv' => $psCheckoutCart->getEnvironment() === Mode::LIVE,
         ]);
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'content' => $isLegacy
                 ? $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrderLegacy.tpl')
                 : $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrder.tpl'),
-        ]));
+        ]);
     }
 
     /**
@@ -565,30 +565,30 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if (false === in_array($level, $levels, true)) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Logger level is invalid',
                 ],
-            ]));
+            ]);
         }
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, $level)) {
             http_response_code(500);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Unable to save logger level in PrestaShop Configuration',
                 ],
-            ]));
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'content' => [
                 'level' => $level,
             ],
-        ]));
+        ]);
     }
 
     /**
@@ -604,29 +604,29 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $format = Tools::getValue('httpFormat');
 
         if (false === in_array($format, $formats, true)) {
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Logger http format is invalid',
                 ],
-            ]));
+            ]);
         }
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, $format)) {
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Unable to save logger http format in PrestaShop Configuration',
                 ],
-            ]));
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'content' => [
                 'httpFormat' => $format,
             ],
-        ]));
+        ]);
     }
 
     /**
@@ -638,20 +638,20 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, (int) $isEnabled)) {
             http_response_code(500);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Unable to save logger http in PrestaShop Configuration',
                 ],
-            ]));
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'content' => [
                 'isEnabled' => (int) $isEnabled,
             ],
-        ]));
+        ]);
     }
 
     /**
@@ -663,30 +663,30 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if ($maxFiles < 0 || $maxFiles > 30) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Logger max files is invalid',
                 ],
-            ]));
+            ]);
         }
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, $maxFiles)) {
             http_response_code(500);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Unable to save logger max files in PrestaShop Configuration',
                 ],
-            ]));
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'content' => [
                 'maxFiles' => $maxFiles,
             ],
-        ]));
+        ]);
     }
 
     /**
@@ -697,8 +697,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var LoggerFileFinder $loggerFileFinder */
         $loggerFileFinder = $this->module->getService(LoggerFileFinder::class);
 
-        header('Content-type: application/json');
-        $this->ajaxDie(json_encode($loggerFileFinder->getLogFileNames()));
+        $this->exitWithResponse($loggerFileFinder->getLogFileNames());
     }
 
     /**
@@ -706,20 +705,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetLogs()
     {
-        header('Content-type: application/json');
-
         $filename = Tools::getValue('file');
         $offset = (int) Tools::getValue('offset');
         $limit = (int) Tools::getValue('limit');
 
         if (empty($filename) || false === Validate::isFileName($filename)) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     'Filename is invalid.',
                 ],
-            ]));
+            ]);
         }
 
         /** @var LoggerDirectory $loggerDirectory */
@@ -736,15 +733,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             );
         } catch (Exception $exception) {
             http_response_code(500);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
                     $exception->getMessage(),
                 ],
-            ]));
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'file' => $fileData['filename'],
             'offset' => $fileData['offset'],
@@ -752,7 +749,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'currentOffset' => $fileData['currentOffset'],
             'eof' => (int) $fileData['eof'],
             'lines' => $fileData['lines'],
-        ]));
+        ]);
     }
 
     /**
@@ -764,7 +761,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     /**
@@ -811,10 +808,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function init()
     {
-        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
-            // Avoid redirection to Login page because Ajax doesn't support it
-            $this->initCursedPage();
-        }
+//        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+//            // Avoid redirection to Login page because Ajax doesn't support it
+//            $this->initCursedPage();
+//        }
 
         parent::init();
     }
@@ -822,7 +819,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     /**
      * {@inheritdoc}
      */
-    protected function isAnonymousAllowed()
+    public function isAnonymousAllowed()
     {
         return false;
     }
@@ -834,10 +831,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         if ($this->errors) {
             http_response_code(400);
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
                 'status' => false,
                 'errors' => $this->errors,
-            ]));
+            ]);
         }
 
         parent::display();
@@ -849,7 +846,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $payLaterConfiguration = $this->module->getService(PayPalPayLaterConfiguration::class);
         $payLaterConfiguration->$method(Tools::getValue('status') ? true : false);
 
-        $this->ajaxDie(json_encode(true));
+        $this->ajaxDie(true);
     }
 
     public function ajaxProcessUpsertSecretToken()
@@ -870,7 +867,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         http_response_code($status ? 204 : 500);
         $response['status'] = $status;
-        $this->ajaxDie(json_encode($response));
+        $this->exitWithResponse($response);
     }
 
     public function ajaxProcessCheckConfiguration()
@@ -1065,6 +1062,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         header('Content-Disposition: attachment; filename="' . $filename . '.log"');
         header('Content-Length: ' . $file->getSize());
         readfile($file->getRealPath());
+        exit;
+    }
+
+    public function ajaxDie($value = null, $controller = null, $method = null)
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Content-type: application/json');
+        echo json_encode($value);
         exit;
     }
 }
