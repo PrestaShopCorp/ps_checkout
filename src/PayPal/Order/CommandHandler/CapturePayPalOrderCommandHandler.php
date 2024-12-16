@@ -21,15 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\CapturePayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Write\CaptureOrderPayloadDTO;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
@@ -70,34 +69,34 @@ class CapturePayPalOrderCommandHandler
      */
     private $payPalCustomerRepository;
 
-    /** @var CapturePayloadBuilder */
-    private $capturePayloadBuilder;
-
     /** @var PayPalConfiguration  */
     private $payPalConfiguration;
 
     /** @var PayPalOrderRepository */
     private $payPalOrderRepository;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
+        MaaslandHttpClient       $maaslandHttpClient,
         EventDispatcherInterface $eventDispatcher,
-        CacheInterface $orderPayPalCache,
-        PrestaShopContext $prestaShopContext,
+        CacheInterface           $orderPayPalCache,
+        PrestaShopContext        $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
-        LoggerInterface $logger,
-        CapturePayloadBuilder $capturePayloadBuilder,
-        PayPalConfiguration $payPalConfiguration,
-        PayPalOrderRepository $payPalOrderRepository
+        LoggerInterface          $logger,
+        PayPalConfiguration      $payPalConfiguration,
+        PayPalOrderRepository    $payPalOrderRepository
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->prestaShopContext = $prestaShopContext;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->capturePayloadBuilder = $capturePayloadBuilder;
         $this->payPalConfiguration = $payPalConfiguration;
         $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->logger = $logger;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
@@ -106,13 +105,7 @@ class CapturePayPalOrderCommandHandler
 
         $capturePayload = $this->buildCapturePayload($capturePayPalOrderCommand);
 
-        $capturePayloadDTO = $this->capturePayloadBuilder->buildPayload(
-            $capturePayPalOrderCommand->getFundingSource(),
-            $capturePayPalOrderCommand->getOrderId()->getValue(),
-            $merchantId
-        );
-
-        $orderPayPal = $this->captureOrder($capturePayloadDTO);
+        $orderPayPal = $this->captureOrder($capturePayload);
 
         if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
             $vault = $orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'];
@@ -126,16 +119,17 @@ class CapturePayPalOrderCommandHandler
         return $this->processTheCapture($orderPayPal);
     }
 
-    private function captureOrder(CaptureOrderPayloadDTO $captureOrderPayloadDTO)
+    private function captureOrder($captureOrderPayload)
     {
         try {
-            $response = $this->maaslandHttpClient->captureOrder($captureOrderPayloadDTO->toArray());
+            $response = $this->maaslandHttpClient->captureOrder($captureOrderPayload);
 
             $orderPayPal = json_decode($response->getBody(), true);
             $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
 
             return array_replace_recursive($payPalOrderFromCache, $orderPayPal);
         } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
             return [];
         }
     }
@@ -165,13 +159,18 @@ class CapturePayPalOrderCommandHandler
             $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
 
             return $vault;
+        } catch (CustomerException $exception) {
+            $this->logger->error($exception->getMessage());
+            return [];
+        } catch (\InvalidArgumentException $exception) {
+            return [];
         } catch (\Exception $exception) {
-
+            $this->logger->error(sprintf('An error occurs during process : %s', $exception->getMessage()));
             return [];
         }
     }
 
-    private function createPaymentTokenEvent($capturePayPalOrderCommand,$orderPayPal, $vault, $merchantId)
+    private function createPaymentTokenEvent($capturePayPalOrderCommand, $orderPayPal, $vault, $merchantId)
     {
         $paymentToken = $vault;
         $paymentToken['metadata'] = [
@@ -197,6 +196,7 @@ class CapturePayPalOrderCommandHandler
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
+            $this->logger->info('Bonjour');
             $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
         }
 
