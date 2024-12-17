@@ -17,10 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+namespace Tests;
+
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
-class PaypalCountryCodeMatriceTest extends TestCase
+class IsoCodeDispatcherTest extends TestCase
 {
     /**
      * @dataProvider isoCodeDataProviderPaypal
@@ -58,7 +61,7 @@ class PaypalCountryCodeMatriceTest extends TestCase
     }
 
     /**
-     * @dataProvider isoCodeDataProviderPrestashopl
+     * @dataProvider isoCodeDataProviderPrestashop
      */
     public function testgetPrestashopIsoCode($resultExpect, $dataToValidate)
     {
@@ -68,7 +71,7 @@ class PaypalCountryCodeMatriceTest extends TestCase
         );
     }
 
-    public function isoCodeDataProviderPrestashopl()
+    public function isoCodeDataProviderPrestashop()
     {
         return [
             [

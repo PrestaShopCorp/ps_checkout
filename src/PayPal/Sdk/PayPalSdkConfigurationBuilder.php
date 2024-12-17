@@ -20,18 +20,32 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Sdk;
 
-use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use Psr\Log\LoggerInterface;
 
 /**
  * Build sdk link
  */
 class PayPalSdkConfigurationBuilder
 {
+    /**
+     * google_pay and apple_pay are not considered funding sources
+     * and passing these values to disableFunding with crash PayPal SDK
+     */
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+
     /**
      * @var PayPalConfiguration
      */
@@ -55,26 +69,61 @@ class PayPalSdkConfigurationBuilder
 
     /** @var array */
     private static $cache = [];
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+    /**
+     * @var Env
+     */
+    private $env;
+    /**
+     * @var FundingSourceEligibilityConstraint
+     */
+    private $fundingSourceEligibilityConstraint;
 
     /**
+     * @param \Ps_checkout $module
+     * @param Env $env
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
      * @param ShopContext $shopContext
+     * @param PrestaShopContext $prestaShopContext
+     * @param LoggerInterface $logger
+     * @param FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
      */
     public function __construct(
+        \Ps_checkout $module,
+        Env $env,
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        ShopContext $shopContext
+        ShopContext $shopContext,
+        PrestaShopContext $prestaShopContext,
+        LoggerInterface $logger,
+        FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
         $this->shopContext = $shopContext;
+        $this->commandBus = $module->getService('ps_checkout.bus.command');
+        $this->prestaShopContext = $prestaShopContext;
+        $this->logger = $logger;
+        $this->env = $env;
+        $this->fundingSourceEligibilityConstraint = $fundingSourceEligibilityConstraint;
     }
 
     /**
@@ -99,10 +148,18 @@ class PayPalSdkConfigurationBuilder
             $components[] = 'messages';
         }
 
+        if ($this->shouldIncludeGooglePayComponent()) {
+            $components[] = 'googlepay';
+        }
+
+        if ($this->shouldIncludeApplePayComponent()) {
+            $components[] = 'applepay';
+        }
+
         $params = [
-            'clientId' => (new PaypalEnv())->getPaypalClientId(),
+            'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->getMerchantId(),
-            'currency' => \Context::getContext()->currency->iso_code,
+            'currency' => $this->prestaShopContext->getCurrencyIsoCode(),
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
@@ -110,6 +167,16 @@ class PayPalSdkConfigurationBuilder
             'dataPartnerAttributionId' => $this->shopContext->getBnCode(),
             'dataCspNonce' => $this->configuration->getCSPNonce(),
         ];
+
+        if ($this->configuration->isVaultingEnabled() && $this->prestaShopContext->customerIsLogged() && $this->prestaShopContext->getCustomerId() && 'order' === $this->getPageName()) {
+            try {
+                /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
+                $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
+                $params['dataUserIdToken'] = $queryResult->getUserIdToken();
+            } catch (Exception $exception) {
+                $this->logger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
+            }
+        }
 
         if ($this->configuration->is3dSecureEnabled()) {
             $params['dataEnable3ds'] = 'true';
@@ -166,7 +233,7 @@ class PayPalSdkConfigurationBuilder
         }
 
         foreach ($fundingSources as $fundingSource) {
-            if (!$fundingSource['active']) {
+            if (!$fundingSource['active'] && !in_array($fundingSource['name'], self::NOT_FUNDING_SOURCES, true)) {
                 $fundingSourcesDisabled[] = $fundingSource['name'];
             }
         }
@@ -427,5 +494,30 @@ class PayPalSdkConfigurationBuilder
         }
 
         return $fundingSourcesEnabled;
+    }
+
+    private function shouldIncludeGooglePayComponent()
+    {
+        $context = \Context::getContext();
+        $country = $this->getCountry();
+        $fundingSource = $this->fundingSourceConfigurationRepository->get('google_pay');
+
+        return $fundingSource && $fundingSource['active']
+            && $this->configuration->isGooglePayEligible()
+            && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('google_pay'), true)
+            && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('google_pay'), true);
+    }
+
+    private function shouldIncludeApplePayComponent()
+    {
+        $context = \Context::getContext();
+        $country = $this->getCountry();
+        $fundingSource = $this->fundingSourceConfigurationRepository->get('apple_pay');
+
+        return $fundingSource && $fundingSource['active']
+            && $this->configuration->isApplePayEligible()
+            && $this->configuration->isApplePayDomainRegistered()
+            && in_array($country, $this->fundingSourceEligibilityConstraint->getCountries('apple_pay'), true)
+            && in_array($context->currency->iso_code, $this->fundingSourceEligibilityConstraint->getCurrencies('apple_pay'), true);
     }
 }

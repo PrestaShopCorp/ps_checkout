@@ -55,16 +55,18 @@ class CheckoutChecker
     public function continueWithAuthorization($cartId, $orderPayPal)
     {
         if ($orderPayPal['status'] === 'COMPLETED') {
-            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']));
+            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
 
-        if (isset($orderPayPal['payment_source']['card'])) {
+        $paymentSource = isset($orderPayPal['payment_source']) ? key($orderPayPal['payment_source']) : '';
+
+        if (in_array($paymentSource, ['google_pay', 'card'], true)) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 
             $this->logger->info(
                 '3D Secure authentication result',
                 [
-                    'authentication_result' => isset($orderPayPal['payment_source']['card']['authentication_result']) ? $orderPayPal['payment_source']['card']['authentication_result'] : null,
+                    'authentication_result' => isset($orderPayPal['payment_source'][$paymentSource]['authentication_result']) ? $orderPayPal['payment_source'][$paymentSource]['authentication_result'] : null,
                     'decision' => str_replace(
                         [
                             (string) Card3DSecure::NO_DECISION,

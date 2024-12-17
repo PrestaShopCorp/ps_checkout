@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class CreatePayPalOrderCommand
 {
@@ -44,6 +45,18 @@ class CreatePayPalOrderCommand
      * @var bool
      */
     private $isExpressCheckout;
+    /**
+     * @var PaymentTokenId|null
+     */
+    private $paymentTokenId;
+    /**
+     * @var bool
+     */
+    private $favorite;
+    /**
+     * @var bool
+     */
+    private $vault;
 
     /**
      * @param int $cartId
@@ -53,12 +66,17 @@ class CreatePayPalOrderCommand
      *
      * @throws CartException
      */
-    public function __construct($cartId, $fundingSource, $isHostedFields, $isExpressCheckout)
+    public function __construct($cartId, $fundingSource, $isHostedFields, $isExpressCheckout, $paymentTokenId = null, $favorite = false, $vault = false)
     {
         $this->cartId = new CartId($cartId);
         $this->fundingSource = $fundingSource;
         $this->isHostedFields = $isHostedFields;
         $this->isExpressCheckout = $isExpressCheckout;
+        if ($paymentTokenId) {
+            $this->paymentTokenId = new PaymentTokenId($paymentTokenId);
+        }
+        $this->favorite = $favorite;
+        $this->vault = $vault;
     }
 
     /**
@@ -91,5 +109,53 @@ class CreatePayPalOrderCommand
     public function isExpressCheckout()
     {
         return $this->isExpressCheckout;
+    }
+
+    /**
+     * @return PaymentTokenId|null
+     */
+    public function getPaymentTokenId()
+    {
+        return $this->paymentTokenId;
+    }
+
+    /**
+     * @param PaymentTokenId|null $paymentTokenId
+     */
+    public function setPaymentTokenId($paymentTokenId)
+    {
+        $this->paymentTokenId = $paymentTokenId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function favorite()
+    {
+        return $this->favorite;
+    }
+
+    /**
+     * @param bool $favorite
+     */
+    public function setFavorite($favorite)
+    {
+        $this->favorite = $favorite;
+    }
+
+    /**
+     * @return bool
+     */
+    public function vault()
+    {
+        return $this->vault;
+    }
+
+    /**
+     * @param bool $vault
+     */
+    public function setVault($vault)
+    {
+        $this->vault = $vault;
     }
 }

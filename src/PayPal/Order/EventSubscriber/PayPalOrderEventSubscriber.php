@@ -21,6 +21,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
@@ -34,6 +35,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
@@ -42,6 +44,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
@@ -83,6 +86,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var CommandBusInterface
      */
     private $commandBus;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     public function __construct(
         Ps_checkout $module,
@@ -90,7 +101,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         CacheInterface $orderPayPalCache,
         CheckoutChecker $checkoutChecker,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        OrderStateMapper $orderStateMapper
+        OrderStateMapper $orderStateMapper,
+        PayPalConfiguration $payPalConfiguration,
+        PayPalOrderRepository $payPalOrderRepository
     ) {
         $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
@@ -99,6 +112,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
         $this->orderStateMapper = $orderStateMapper;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->payPalConfiguration = $payPalConfiguration;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -126,6 +141,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
                 ['clearCache'],
             ],
             PayPalOrderUpdatedEvent::class => [
+                ['updatePayPalOrder'],
                 ['clearCache'],
             ],
         ];
@@ -133,19 +149,34 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {
-        /** @var PayPalConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.paypal.configuration');
         $order = $event->getOrderPayPal();
+
+        try { // NOT SURE WHAT SHOULD HAPPEN IF ORDER WITH THAT ID ALREADY EXISTS
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderByCartId($event->getCartId()->getValue());
+            $this->payPalOrderRepository->deletePayPalOrder($payPalOrder->getId());
+        } catch (Exception $e) {
+        }
+
+        $this->commandBus->handle(new SavePayPalOrderCommand(
+            $order,
+            $event->getCartId(),
+            $event->getFundingSource(),
+            $this->payPalConfiguration->getPaymentMode(),
+            $event->getCustomerIntent(),
+            $event->isExpressCheckout(),
+            $event->isCardFields(),
+            $event->getPaymentTokenId()
+        ));
 
         $this->commandBus->handle(new SaveCheckoutCommand(
             $event->getCartId()->getValue(),
             $event->getOrderPayPalId()->getValue(),
             $order['status'],
-            $order['intent'],
+            isset($order['intent']) ? $order['intent'] : $this->payPalConfiguration->getIntent(),
             $event->getFundingSource(),
             $event->isExpressCheckout(),
-            $event->isHostedFields(),
-            $configuration->getPaymentMode()
+            $event->isCardFields(),
+            $this->payPalConfiguration->getPaymentMode()
         ));
     }
 
@@ -159,6 +190,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::APPROVED)) {
             return;
+        }
+
+        try {
+            $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
+        } catch (Exception $exception) {
         }
 
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
@@ -177,6 +213,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::COMPLETED)) {
             return;
+        }
+
+        try {
+            $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
+        } catch (Exception $exception) {
         }
 
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
@@ -265,6 +306,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         }
 
         $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
+    }
+
+    public function updatePayPalOrder(PayPalOrderUpdatedEvent $event)
+    {
+        $this->commandBus->handle(new SavePayPalOrderCommand(
+            $event->getOrderPayPal(),
+            $event->getCartId()
+        ));
     }
 
     public function clearCache(PayPalOrderEvent $event)

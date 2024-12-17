@@ -48,6 +48,12 @@ class PayPalConfiguration
 
     const PS_CHECKOUT_DISPLAY_LOGO_PRODUCT = 'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT';
     const PS_CHECKOUT_DISPLAY_LOGO_CART = 'PS_CHECKOUT_DISPLAY_LOGO_CART';
+    const PS_CHECKOUT_VAULTING = 'PS_CHECKOUT_VAULTING';
+
+    const PS_CHECKOUT_GOOGLE_PAY = 'PS_CHECKOUT_GOOGLE_PAY';
+    const PS_CHECKOUT_APPLE_PAY = 'PS_CHECKOUT_APPLE_PAY';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX = 'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX';
+    const PS_CHECKOUT_DOMAIN_REGISTERED_LIVE = 'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE';
 
     /**
      * @var PrestaShopConfiguration
@@ -429,5 +435,30 @@ class PayPalConfiguration
         return $this->configuration->get('PS_TIMEZONE', [
             'default' => date_default_timezone_get(),
         ]);
+    }
+
+    /**
+     * Merchant can disable vaulting in module configuration
+     *
+     * @return bool
+     */
+    public function isVaultingEnabled()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_VAULTING);
+    }
+
+    public function isGooglePayEligible()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_GOOGLE_PAY);
+    }
+
+    public function isApplePayEligible()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_APPLE_PAY);
+    }
+
+    public function isApplePayDomainRegistered()
+    {
+        return (bool) $this->configuration->get($this->getPaymentMode() === Mode::SANDBOX ? static::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX : static::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE);
     }
 }

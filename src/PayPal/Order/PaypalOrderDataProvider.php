@@ -20,19 +20,26 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+
 class PaypalOrderDataProvider
 {
     /**
      * @var array
      */
     private $orderData;
+    /**
+     * @var PayPalOrder|null
+     */
+    private $payPalOrder;
 
     /**
      * @param array $order
      */
-    public function __construct(array $order)
+    public function __construct(array $order, PayPalOrder $payPalOrder = null)
     {
         $this->orderData = $order;
+        $this->payPalOrder = $payPalOrder;
     }
 
     /**
@@ -129,5 +136,41 @@ class PaypalOrderDataProvider
         return isset($this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'])
             ? $this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code']
             : '';
+    }
+
+    public function isIntentToVault()
+    {
+        return $this->payPalOrder && $this->payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_VAULT);
+    }
+
+    public function isTokenSaved()
+    {
+        if ($this->payPalOrder && isset($this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()])) {
+            $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
+
+            return isset($paymentSource['attributes']['vault']['id']) &&
+                isset($paymentSource['attributes']['vault']['status']) &&
+                $paymentSource['attributes']['vault']['status'] === 'VAULTED';
+        }
+
+        return false;
+    }
+
+    public function getPaymentTokenIdentifier()
+    {
+        if ($this->payPalOrder) {
+            $fundingSource = $this->payPalOrder->getFundingSource();
+            if (isset($this->payPalOrder->getPaymentSource()[$fundingSource])) {
+                $paymentSource = $this->payPalOrder->getPaymentSource()[$fundingSource];
+
+                if ($fundingSource === 'card') {
+                    return (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '');
+                } else {
+                    return isset($paymentSource['email_address']) ? $paymentSource['email_address'] : '';
+                }
+            }
+        }
+
+        return '';
     }
 }

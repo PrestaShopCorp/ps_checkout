@@ -36,7 +36,7 @@ jobs:
       - run: composer install
 
       - name: Run Header Stamp in Dry Run mode
-        run: php vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,node_modules,vendor,tests,_dev --dry-run
+        run: php vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,node_modules,vendor,tests --dry-run
   php-linter:
     name: PHP Syntax check 5.6|7.1|7.2|7.3|7.4
     runs-on: ubuntu-latest

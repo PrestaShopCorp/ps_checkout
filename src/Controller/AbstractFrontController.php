@@ -22,11 +22,15 @@ namespace PrestaShop\Module\PrestashopCheckout\Controller;
 
 use Exception;
 use ModuleFrontController;
+use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
+use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use Ps_checkout;
+use Tools;
 
 class AbstractFrontController extends ModuleFrontController
 {
     /**
-     * @var \Ps_checkout
+     * @var Ps_checkout
      */
     public $module;
 
@@ -72,5 +76,31 @@ class AbstractFrontController extends ModuleFrontController
         }
 
         exit;
+    }
+
+    /**
+     * @return CustomerId|null
+     *
+     * @throws CustomerException
+     */
+    protected function getCustomerId()
+    {
+        return $this->context->customer->isLogged() ? new CustomerId($this->context->customer->id) : null;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getPageSize()
+    {
+        return (int) Tools::getValue('pageSize', 10);
+    }
+
+    /**
+     * @return int
+     */
+    protected function getPageNumber()
+    {
+        return (int) Tools::getValue('pageNumber', 1);
     }
 }
