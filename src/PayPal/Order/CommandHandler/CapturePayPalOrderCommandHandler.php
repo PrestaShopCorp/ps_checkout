@@ -107,6 +107,10 @@ class CapturePayPalOrderCommandHandler
 
         $orderPayPal = $this->captureOrder($capturePayload);
 
+        if (empty($orderPayPal)) {
+            throw new \Exception('Order PayPal not found');
+        }
+
         if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
             $vault = $orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'];
             $vault = $this->savePrestaShopPayPalCustomerRelationship($vault);
@@ -196,7 +200,7 @@ class CapturePayPalOrderCommandHandler
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
-            $this->logger->info('Bonjour');
+            $this->logger->info('');
             $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
         }
 
@@ -205,6 +209,7 @@ class CapturePayPalOrderCommandHandler
         }
 
         if ($capturePayPal['status'] === PayPalCaptureStatus::COMPLETED) {
+            $this->logger->info('Capture payment completed');
             $this->eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($capturePayPal['id'], $orderPayPal['id'], $capturePayPal));
         }
 
