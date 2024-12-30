@@ -35,10 +35,9 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
      */
     public $module;
 
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
+    private CommandBusInterface $commandBus;
+
+    private CommandBusInterface $queryBus;
 
     /**
      * @see FrontController::postProcess()
@@ -105,7 +104,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
     {
         $cartId = new CartId($this->context->cart->id);
         $query = new GetApplePayPaymentRequestQuery($cartId);
-        $paymentRequest = $this->commandBus->handle($query);
+        $paymentRequest = $this->queryBus->handle($query);
 
         $this->exitWithResponse([
             'httpCode' => 200,

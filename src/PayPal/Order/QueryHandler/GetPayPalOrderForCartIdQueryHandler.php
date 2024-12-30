@@ -43,6 +43,10 @@ class GetPayPalOrderForCartIdQueryHandler
         $this->checkoutCartRepository = $checkoutCartRepository;
     }
 
+    public function __invoke(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
+    {
+        return $this->handle($getPayPalOrderQuery);
+    }
     /**
      * @param GetPayPalOrderForCartIdQuery $getPayPalOrderQuery
      *
@@ -50,12 +54,12 @@ class GetPayPalOrderForCartIdQueryHandler
      *
      * @throws PayPalOrderException
      */
-    public function __invoke(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
+    public function handle(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
     {
         $psCheckoutCart = $this->checkoutCartRepository->findOneByCartId($getPayPalOrderQuery->getCartId()->getValue());
 
         /** @var array $order */
-        $order = $this->orderPayPalCache->get($psCheckoutCart->getPaypalOrderId());
+        $order = $this->orderPayPalCache->getItem($psCheckoutCart->getPaypalOrderId())->get();
 
         if (empty($order)) {
             throw new PayPalOrderException('PayPal order not found', PayPalOrderException::CANNOT_RETRIEVE_ORDER);

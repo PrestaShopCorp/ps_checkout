@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundFailedException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
@@ -53,19 +54,26 @@ class RefundPayPalCaptureCommandHandler
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    private PayPalRefundEventSubscriber $payPalRefundEventSubscriber;
 
     public function __construct(
         MaaslandHttpClient $checkoutHttpClient,
         PayPalConfiguration $payPalConfiguration,
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
-        EventDispatcherInterface $eventDispatcher
+        PayPalRefundEventSubscriber $payPalRefundEventSubscriber
     ) {
         $this->checkoutHttpClient = $checkoutHttpClient;
         $this->payPalConfiguration = $payPalConfiguration;
         $this->prestaShopConfiguration = $prestaShopConfiguration;
         $this->prestaShopContext = $prestaShopContext;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->payPalRefundEventSubscriber = $payPalRefundEventSubscriber;
+    }
+
+
+    public function __invoke(RefundPayPalCaptureCommand $command)
+    {
+        $this->handle($command);
     }
 
     /**
@@ -75,7 +83,7 @@ class RefundPayPalCaptureCommandHandler
      * @throws PayPalRefundFailedException
      * @throws PayPalOrderException
      */
-    public function __invoke(RefundPayPalCaptureCommand $command)
+    public function handle(RefundPayPalCaptureCommand $command)
     {
         $response = $this->checkoutHttpClient->refundOrder([
             'orderId' => $command->getOrderPayPalId(),
@@ -95,12 +103,14 @@ class RefundPayPalCaptureCommandHandler
         ]);
 
         $refund = json_decode($response->getBody(), true);
-        $this->eventDispatcher->dispatch(
-            new PayPalCaptureRefundedEvent(
-                $refund['id'],
-                $command->getOrderPayPalId(),
-                $refund
-            )
+
+        $event = new PayPalCaptureRefundedEvent(
+            $refund['id'],
+            $command->getOrderPayPalId(),
+            $refund
         );
+
+        $this->payPalRefundEventSubscriber->setPaymentRefundedOrderStatus($event);
+        $this->payPalRefundEventSubscriber->updateCache($event);
     }
 }

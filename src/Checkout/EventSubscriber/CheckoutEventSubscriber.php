@@ -23,13 +23,16 @@ namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\UpdatePaymentMethodSelectedCommand;
+use PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
@@ -43,31 +46,30 @@ use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
+    private Ps_checkout $module;
+    private CommandBusInterface $queryBus;
+    private CheckoutChecker $checkoutChecker;
+    private PsCheckoutCartRepository $psCheckoutCartRepository;
+    private UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler;
+    private CreateOrderCommandHandler $createOrderCommandHandler;
+    private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler;
 
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
-
-    /**
-     * @var CheckoutChecker
-     */
-    private $checkoutChecker;
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    public function __construct(CheckoutChecker $checkoutChecker, Ps_checkout $module, PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
+    public function __construct(
+        CheckoutChecker $checkoutChecker,
+        Ps_checkout $module,
+        PsCheckoutCartRepository $psCheckoutCartRepository,
+        CommandBusInterface $queryBus,
+        UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
+        CreateOrderCommandHandler $createOrderCommandHandler,
+        CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
+    ) {
         $this->checkoutChecker = $checkoutChecker;
         $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-//        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->queryBus = $queryBus;
+        $this->updatePaymentMethodSelectedCommandHandler = $updatePaymentMethodSelectedCommandHandler;
+        $this->createOrderCommandHandler = $createOrderCommandHandler;
+        $this->capturePayPalOrderCommandHandler = $capturePayPalOrderCommandHandler;
     }
 
     /**
@@ -98,7 +100,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function updatePaymentMethodSelected(CheckoutCompletedEvent $event)
     {
-        $this->commandBus->handle(new UpdatePaymentMethodSelectedCommand(
+        $this->updatePaymentMethodSelectedCommandHandler->handle(new UpdatePaymentMethodSelectedCommand(
             $event->getCartId()->getValue(),
             $event->getPayPalOrderId()->getValue(),
             $event->getFundingSource(),
@@ -124,27 +126,26 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     {
         try {
             /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
-            $getPayPalOrderForCheckoutCompletedQueryResult = $this->commandBus->handle(new GetPayPalOrderForCheckoutCompletedQuery(
+            $getPayPalOrderForCheckoutCompletedQueryResult = $this->queryBus->handle(new GetPayPalOrderForCheckoutCompletedQuery(
                 $event->getPayPalOrderId()->getValue()
             ));
         } catch (HttpTimeoutException $exception) {
-            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
-
+            $this->createOrderCommandHandler->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
             return;
         }
 
         $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
 
         try {
-//            $this->commandBus->handle(
-//                new CapturePayPalOrderCommand(
-//                    $event->getPayPalOrderId()->getValue(),
-//                    $event->getFundingSource()
-//                )
-//            );
+            $this->capturePayPalOrderCommandHandler->handle(
+                new CapturePayPalOrderCommand(
+                    $event->getPayPalOrderId()->getValue(),
+                    $event->getFundingSource()
+                )
+            );
         } catch (PayPalException $exception) {
             if ($exception->getCode() === PayPalException::ORDER_NOT_APPROVED) {
-                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+                $this->createOrderCommandHandler->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
 
                 return;
             } elseif ($exception->getCode() === PayPalException::RESOURCE_NOT_FOUND) {
@@ -162,7 +163,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                 throw $exception;
             }
         } catch (HttpTimeoutException $exception) {
-//            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+            $this->createOrderCommandHandler->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
 
             return;
         }

@@ -33,10 +33,7 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
      */
     public $module;
 
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
+    private CommandBusInterface $queryBus;
 
     /**
      * @see FrontController::postProcess()
@@ -53,7 +50,7 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
 
             $action = $bodyValues['action'];
 
-            $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+            $this->queryBus = $this->module->getService('ps_checkout.bus.query');
 
             if ($action === 'getTransactionInfo') {
                 $this->getTransactionInfo($bodyValues);
@@ -67,7 +64,7 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
 
     private function getTransactionInfo(array $bodyValues)
     {
-        $transactionInfo = $this->commandBus->handle(new GetGooglePayTransactionInfoQuery(new CartId($this->context->cart->id)));
+        $transactionInfo = $this->queryBus->handle(new GetGooglePayTransactionInfoQuery(new CartId($this->context->cart->id)));
 
         $this->exitWithResponse([
             'httpCode' => 200,

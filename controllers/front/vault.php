@@ -40,6 +40,9 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
 
+            /** @var CommandBusInterface $queryBus */
+            $queryBus = $this->module->getService('ps_checkout.bus.query');
+
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
 
@@ -70,7 +73,7 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
             }
 
             /** @var GetCustomerPaymentTokensQueryResult $getCustomerPaymentMethodTokensQueryResult */
-            $getCustomerPaymentMethodTokensQueryResult = $commandBus->handle(new GetCustomerPaymentTokensQuery(
+            $getCustomerPaymentMethodTokensQueryResult = $queryBus->handle(new GetCustomerPaymentTokensQuery(
                 $customerId,
                 $this->getPageSize(),
                 $this->getPageNumber()

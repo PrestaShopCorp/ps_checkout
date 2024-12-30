@@ -126,8 +126,8 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         }
 
         try {
-            /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
+            /** @var CommandBusInterface $queryBus */
+            $queryBus = $this->module->getService('ps_checkout.bus.query');
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
@@ -141,7 +141,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             try {
                 /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrder */
-                $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
+                $paypalOrder = $queryBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
                     $psCheckoutCart->paypal_order
                 ));
             } catch (Exception $exception) {

@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
+use PrestaShop\Module\PsAccounts\Vendor\Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -47,7 +48,13 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
     public function __invoke(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->orderPayPalCache->get($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+        $order = $this->orderPayPalCache->get(
+            $getPayPalOrderQuery->getOrderPayPalId()->getValue(),
+            function(CacheItemInterface $cacheItem) use ($getPayPalOrderQuery) {
+                $cacheItem->expiresAfter(60);
+                return new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+            }
+        );
 
         if (!empty($order) && $order['status'] === 'APPROVED') {
             return new GetPayPalOrderForCheckoutCompletedQueryResult($order);
@@ -55,7 +62,10 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
+            $cacheItem = $this->orderPayPalCache->getItem($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+            $cacheItem->set($orderPayPal->getOrder());
+            $this->orderPayPalCache->save($cacheItem);
+//            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {

@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscr
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
@@ -30,47 +31,29 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalRefundEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
-use Ps_checkout;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalRefundEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
-
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    /**
-     * @var OrderStateMapper
-     */
-    private $orderStateMapper;
-    /**
-     * @var PayPalOrderProvider
-     */
-    private $orderProvider;
+    private CacheInterface $orderPayPalCache;
+    private OrderStateMapper $orderStateMapper;
+    private PayPalOrderProvider $orderProvider;
+    private CommandBusInterface $queryBus;
+    private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
 
     public function __construct(
-        Ps_checkout $module,
         CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper,
-        PayPalOrderProvider $orderProvider
+        PayPalOrderProvider $orderProvider,
+        CommandBusInterface $queryBus,
+        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
     ) {
-        $this->module = $module;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
         $this->orderProvider = $orderProvider;
+        $this->queryBus = $queryBus;
+        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
     }
 
     /**
@@ -90,7 +73,7 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
     {
         try {
             /** @var GetOrderForPaymentRefundedQueryResult $order */
-            $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
+            $order = $this->queryBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
         } catch (OrderNotFoundException $exception) {
             return;
         }
@@ -126,7 +109,7 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->handle(
+        $this->updateOrderStatusCommandHandler->handle(
             new UpdateOrderStatusCommand(
                 $order->getOrderId()->getValue(),
                 $newOrderState

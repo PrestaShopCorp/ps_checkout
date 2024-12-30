@@ -25,11 +25,9 @@ use Currency;
 use DateTimeZone;
 use OrderInvoice;
 use OrderPayment;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\AbstractOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -37,10 +35,6 @@ use Validate;
 
 class AddOrderPaymentCommandHandler extends AbstractOrderHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
     /**
      * @var FundingSourceTranslationProvider
      */
@@ -51,13 +45,15 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
     private $configuration;
 
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
         FundingSourceTranslationProvider $fundingSourceTranslationProvider,
         PayPalConfiguration $configuration
     ) {
-        $this->eventDispatcher = $eventDispatcher;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
         $this->configuration = $configuration;
+    }
+
+    public function __invoke(AddOrderPaymentCommand $command) {
+        $this->handle($command);
     }
 
     /**
@@ -66,7 +62,7 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
      * @throws OrderException
      * @throws OrderPaymentException
      */
-    public function __invoke(AddOrderPaymentCommand $command)
+    public function handle(AddOrderPaymentCommand $command)
     {
         $order = $this->getOrder($command->getOrderId());
         $currency = Currency::getCurrencyInstance($command->getPaymentCurrencyId());
@@ -100,6 +96,6 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
         $orderPayments = $order->getOrderPayments();
         $latestOrderPayment = end($orderPayments);
 
-        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
+//        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
     }
 }

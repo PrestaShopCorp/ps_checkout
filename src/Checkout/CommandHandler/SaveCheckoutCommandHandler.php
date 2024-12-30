@@ -43,7 +43,7 @@ class SaveCheckoutCommandHandler
      *
      * @throws PsCheckoutSessionException
      */
-    public function __invoke(SaveCheckoutCommand $command)
+    public function handle(SaveCheckoutCommand $command)
     {
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */

@@ -44,6 +44,11 @@ class SavePayPalOrderCommandHandler
 
     public function __invoke(SavePayPalOrderCommand $command)
     {
+        $this->handle($command);
+    }
+
+    public function handle(SavePayPalOrderCommand $command)
+    {
         $order = $command->getOrder();
 
         $intent = isset($order['intent']) ? $order['intent'] : 'CAPTURE';

@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
@@ -48,11 +49,6 @@ use Validate;
 
 class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     /**
      * @var ContextStateManager
      */
@@ -81,23 +77,28 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
      * @var FundingSourceTranslationProvider
      */
     private $fundingSourceTranslationProvider;
+    private OrderEventSubscriber $orderEventSubscriber;
 
     public function __construct(
         ContextStateManager $contextStateManager,
-        EventDispatcherInterface $eventDispatcher,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         OrderStateMapper $psOrderStateMapper,
         Ps_checkout $module,
         CheckOrderAmount $checkOrderAmount,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider
+        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        OrderEventSubscriber $orderEventSubscriber
     ) {
         $this->contextStateManager = $contextStateManager;
-        $this->eventDispatcher = $eventDispatcher;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->psOrderStateMapper = $psOrderStateMapper;
         $this->module = $module;
         $this->checkOrderAmount = $checkOrderAmount;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->orderEventSubscriber = $orderEventSubscriber;
+    }
+
+    public function __invoke(CreateOrderCommand $command) {
+        $this->handle($command);
     }
 
     /**
@@ -112,7 +113,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
      * @throws PrestaShopException
      * @throws PsCheckoutException
      */
-    public function __invoke(CreateOrderCommand $command)
+    public function handle(CreateOrderCommand $command)
     {
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
@@ -209,7 +210,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         }
 
         foreach ($orders as $order) {
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
+            $this->orderEventSubscriber->updateOrderMatrice(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
         }
     }
 }

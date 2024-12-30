@@ -21,17 +21,16 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
+use PrestaShop\PrestaShop\Core\Domain\Order\ValueObject\OrderId;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class PayPalOrderProvider
 {
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
+    private CacheInterface $orderPayPalCache;
 
     /**
      * @param CacheInterface $orderPayPalCache
+     * @param OrderId $orderId
      */
     public function __construct(CacheInterface $orderPayPalCache)
     {
@@ -49,9 +48,17 @@ class PayPalOrderProvider
             return false;
         }
 
-        if ($this->orderPayPalCache->hasItem($id)) {
-            return $this->orderPayPalCache->get($id);
-        }
+        return $this->orderPayPalCache->get($id, function () use ($id) {
+            $orderPayPal = new PaypalOrder($id);
+            if (!$orderPayPal->isLoaded()) {
+                return false;
+            }
+            return $orderPayPal->getOrder();
+        });
+
+//        if ($this->orderPayPalCache->hasItem($id)) {
+//            return $this->orderPayPalCache->getItem($id)->get();
+//        }
 
         $orderPayPal = new PaypalOrder($id);
 
@@ -61,7 +68,7 @@ class PayPalOrderProvider
 
         $data = $orderPayPal->getOrder();
 
-        $this->orderPayPalCache->set($id, $data);
+//        $this->orderPayPalCache->set($id, $data);
 
         return $data;
     }

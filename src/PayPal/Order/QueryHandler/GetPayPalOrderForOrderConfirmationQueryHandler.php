@@ -42,7 +42,9 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
     public function __invoke(GetPayPalOrderForOrderConfirmationQuery $query)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->orderPayPalCache->get($query->getOrderPayPalId()->getValue());
+        $order = $this->orderPayPalCache->get($query->getOrderPayPalId()->getValue(), function () use ($query) {
+            return (new PaypalOrder($query->getOrderPayPalId()->getValue()))->getOrder();
+        });
 
         if (!empty($order) && ($order['status'] === 'PENDING' || $order['status'] === 'COMPLETED')) {
             return new GetPayPalOrderForOrderConfirmationQueryResult($order);

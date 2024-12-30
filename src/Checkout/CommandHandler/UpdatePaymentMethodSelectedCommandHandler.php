@@ -39,12 +39,17 @@ class UpdatePaymentMethodSelectedCommandHandler
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
+    public function __invoke(UpdatePaymentMethodSelectedCommand $command)
+    {
+        $this->handle($command);
+    }
+
     /**
      * @param UpdatePaymentMethodSelectedCommand $command
      *
      * @throws PsCheckoutSessionException
      */
-    public function __invoke(UpdatePaymentMethodSelectedCommand $command)
+    public function handle(UpdatePaymentMethodSelectedCommand $command)
     {
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */

@@ -128,13 +128,14 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
+
+            /** @var CommandBusInterface $queryBus */
+            $queryBus = $this->module->getService('ps_checkout.bus.query');
+
             $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface $eventDispatcher */
-            $eventDispatcher = $this->module->getService('ps_checkout.event_dispatcher');
-
             /** @var GetPayPalOrderForCartIdQueryResult $getPayPalOrderForCartIdQueryResult */
-            $getPayPalOrderForCartIdQueryResult = $commandBus->handle(new GetPayPalOrderForCartIdQuery($cartId));
+            $getPayPalOrderForCartIdQueryResult = $queryBus->handle(new GetPayPalOrderForCartIdQuery($cartId));
             $order = $getPayPalOrderForCartIdQueryResult->getOrder();
 
             $this->exitWithResponse([

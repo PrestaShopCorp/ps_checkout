@@ -26,11 +26,8 @@ use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Event\OrderMatriceUpdated
 
 class UpdateOrderMatriceCommandHandler
 {
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct()
     {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -46,7 +43,7 @@ class UpdateOrderMatriceCommandHandler
         $res = $orderMatrice->add();
 
         if (!empty($res)) {
-            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
+//            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
         }
     }
 }

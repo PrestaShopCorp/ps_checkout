@@ -22,7 +22,9 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
 use Currency;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
+use PrestaShop\PrestaShop\Core\Localization\CLDR\LocaleRepository;
 use Tools;
+use PrestaShop\PrestaShop\Core\Localization\Locale;
 
 class PayPalOrderPresenter
 {
@@ -95,10 +97,7 @@ class PayPalOrderPresenter
             return '';
         }
 
-        return Tools::displayPrice(
-            (float) $this->paypalOrderDataProvider->getTotalAmount(),
-            Currency::getCurrencyInstance(Currency::getIdByIsoCode($this->paypalOrderDataProvider->getCurrencyCode()))
-        );
+        return \Context::getContext()->getCurrentLocale()->formatPrice((float) $this->paypalOrderDataProvider->getTotalAmount(), $this->paypalOrderDataProvider->getCurrencyCode());
     }
 
     /**

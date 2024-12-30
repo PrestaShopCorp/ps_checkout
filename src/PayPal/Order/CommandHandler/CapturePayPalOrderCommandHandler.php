@@ -88,7 +88,11 @@ class CapturePayPalOrderCommandHandler
         $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
-    public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand)
+    public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand) {
+        $this->handle($capturePayPalOrderCommand);
+    }
+
+    public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
         $context = Context::getContext();
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
@@ -109,7 +113,7 @@ class CapturePayPalOrderCommandHandler
 
         $orderPayPal = json_decode($response->getBody(), true);
 
-        $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
+        $payPalOrderFromCache = $this->orderPayPalCache->getItem($orderPayPal['id'])->get();
 
         $orderPayPal = array_replace_recursive($payPalOrderFromCache, $orderPayPal);
 

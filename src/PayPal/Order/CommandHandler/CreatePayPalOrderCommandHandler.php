@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -35,6 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
@@ -47,10 +47,6 @@ class CreatePayPalOrderCommandHandler
      * @var MaaslandHttpClient
      */
     private $maaslandHttpClient;
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
     /**
      * @var PayPalCustomerRepository
      */
@@ -67,26 +63,33 @@ class CreatePayPalOrderCommandHandler
      * @var PrestaShopContext
      */
     private $prestaShopContext;
+    private PayPalOrderEventSubscriber $payPalOrderEventSubscriber;
 
     public function __construct(
         MaaslandHttpClient $maaslandHttpClient,
         ShopContext $shopContext,
         PrestaShopContext $prestaShopContext,
-//        EventDispatcherInterface $eventDispatcher,
         PayPalCustomerRepository $payPalCustomerRepository,
-        PaymentTokenRepository $paymentTokenRepository
+        PaymentTokenRepository $paymentTokenRepository,
+        PayPalOrderEventSubscriber $payPalOrderEventSubscriber
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->shopContext = $shopContext;
-//        $this->eventDispatcher = $eventDispatcher;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->paymentTokenRepository = $paymentTokenRepository;
         $this->prestaShopContext = $prestaShopContext;
+        $this->payPalOrderEventSubscriber = $payPalOrderEventSubscriber;
+    }
+
+    public function __invoke(CreatePayPalOrderCommand $command)
+    {
+        $this->handle($command);
     }
 
     /**
      * @param CreatePayPalOrderCommand $command
      *
+     * @return void
      * @return void
      *
      * @throws CartNotFoundException
@@ -96,13 +99,11 @@ class CreatePayPalOrderCommandHandler
      * @throws UnprocessableEntityException
      * @throws Exception
      * @throws PsCheckoutException
-     *
-     * @return void
      */
-    public function __invoke(CreatePayPalOrderCommand $command)
+    public function handle(CreatePayPalOrderCommand $command)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter);
+        $cartPresenter = new CartPresenter();
+        $builder = new OrderPayloadBuilder($cartPresenter->present());
 
         try {
             $customerId = $this->prestaShopContext->getCustomerId();
@@ -153,15 +154,17 @@ class CreatePayPalOrderCommandHandler
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
         }
 
-//        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-//            $order['id'],
-//            $order,
-//            $command->getCartId()->getValue(),
-//            $command->getFundingSource(),
-//            $command->isHostedFields(),
-//            $command->isExpressCheckout(),
-//            $customerIntent,
-//            $command->getPaymentTokenId()
-//        ));
+        $event = new PayPalOrderCreatedEvent(
+            $order['id'],
+            $order,
+            $command->getCartId()->getValue(),
+            $command->getFundingSource(),
+            $command->isHostedFields(),
+            $command->isExpressCheckout(),
+            $customerIntent,
+            $command->getPaymentTokenId()
+        );
+        $this->payPalOrderEventSubscriber->saveCreatedPayPalOrder($event);
+        $this->payPalOrderEventSubscriber->updateCache($event);
     }
 }

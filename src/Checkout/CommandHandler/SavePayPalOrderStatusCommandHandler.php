@@ -45,12 +45,17 @@ class SavePayPalOrderStatusCommandHandler
         $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
+    public function __invoke(SavePayPalOrderStatusCommand $command)
+    {
+        $this->handle($command);
+    }
+
     /**
      * @param SavePayPalOrderStatusCommand $command
      *
      * @throws PsCheckoutSessionException
      */
-    public function __invoke(SavePayPalOrderStatusCommand $command)
+    public function handle(SavePayPalOrderStatusCommand $command)
     {
         // TODO: To be repurposed
         try {

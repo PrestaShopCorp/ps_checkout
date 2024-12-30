@@ -3,7 +3,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\AddOrderPaymentCommandHandler'
     public: true
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
@@ -12,24 +11,20 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
       - "@ps_checkout.module"
       - '@PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
+      - '@PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
 
   PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
     public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
 
   PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler\UpdateOrderMatriceCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler\UpdateOrderMatriceCommandHandler'
     public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
@@ -38,27 +33,25 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-#      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
-    tags:
-      - { name: messenger.message_handler, bus: ps_checkout.bus.command }
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+      - '@ps_checkout.event.dispatcher.adapter2'
       - "@ps_checkout.cache.paypal.order"
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
@@ -97,7 +90,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'

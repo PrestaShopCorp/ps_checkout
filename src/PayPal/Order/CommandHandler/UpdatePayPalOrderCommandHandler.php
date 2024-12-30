@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
@@ -36,11 +37,6 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class UpdatePayPalOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     /**
      * @var MaaslandHttpClient
      */
@@ -55,6 +51,7 @@ class UpdatePayPalOrderCommandHandler
      * @var PayPalOrderProvider
      */
     private $paypalOrderProvider;
+    private PayPalOrderEventSubscriber $payPalOrderEventSubscriber;
 
     /**
      * @param MaaslandHttpClient $httpClient
@@ -64,14 +61,14 @@ class UpdatePayPalOrderCommandHandler
      */
     public function __construct(
         MaaslandHttpClient $httpClient,
-        EventDispatcherInterface $eventDispatcher,
         ShopContext $shopContext,
-        PayPalOrderProvider $paypalOrderProvider
+        PayPalOrderProvider $paypalOrderProvider,
+        PayPalOrderEventSubscriber $payPalOrderEventSubscriber
     ) {
         $this->httpClient = $httpClient;
-        $this->eventDispatcher = $eventDispatcher;
         $this->shopContext = $shopContext;
         $this->paypalOrderProvider = $paypalOrderProvider;
+        $this->payPalOrderEventSubscriber = $payPalOrderEventSubscriber;
     }
 
     /**
@@ -146,14 +143,17 @@ class UpdatePayPalOrderCommandHandler
             throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);
         }
 
-        $this->eventDispatcher->dispatch(new PayPalOrderUpdatedEvent(
+        $event = new PayPalOrderUpdatedEvent(
             $command->getPayPalOrderId()->getValue(),
             $updatedPayPalOrder,
             $command->getCartId()->getValue(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),
             $command->getFundingSource()
-        ));
+        );
+
+        $this->payPalOrderEventSubscriber->updatePayPalOrder($event);
+        $this->payPalOrderEventSubscriber->clearCache($event);
     }
 
     /**
