@@ -39,12 +39,16 @@ class CancelCheckoutCommandHandler
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
+    public function __invoke(CancelCheckoutCommand $command) {
+        $this->handle($command);
+    }
+
     /**
      * @param CancelCheckoutCommand $command
      *
      * @throws PsCheckoutSessionException
      */
-    public function __invoke(CancelCheckoutCommand $command)
+    public function handle(CancelCheckoutCommand $command)
     {
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */

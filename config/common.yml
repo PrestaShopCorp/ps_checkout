@@ -47,11 +47,6 @@ services:
     public: true
     factory: [ '@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create" ]
 
-  ps_checkout.bus.command2:
-    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
-    public: true
-    factory: [ '@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create" ]
-
   ps_checkout.bus.query:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianQueryBusAdapter'
     public: true

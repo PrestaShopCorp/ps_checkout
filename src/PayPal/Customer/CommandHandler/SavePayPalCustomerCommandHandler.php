@@ -37,6 +37,11 @@ class SavePayPalCustomerCommandHandler
 
     public function __invoke(SavePayPalCustomerCommand $command)
     {
+        $this->handle($command);
+    }
+
+    public function handle(SavePayPalCustomerCommand $command)
+    {
         try {
             $this->payPalCustomerRepository->findPayPalCustomerIdByCustomerId($command->getCustomerId());
         } catch (\Exception $exception) {
