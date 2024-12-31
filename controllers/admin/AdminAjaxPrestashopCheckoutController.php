@@ -354,13 +354,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $isLegacy = (bool) Tools::getValue('legacy');
         $id_order = (int) Tools::getValue('id_order');
-
         if (empty($id_order)) {
             http_response_code(400);
             $this->exitWithResponse([
                 'status' => false,
                 'errors' => [
-                    $this->l('No PrestaShop Order identifier received'),
+                    $this->trans('No PrestaShop Order identifier received', [], 'Modules.Pscheckout.Admin'),
                 ],
             ]);
         }
@@ -373,7 +372,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'status' => false,
                 'errors' => [
                     strtr(
-                        $this->l('This PrestaShop Order [PRESTASHOP_ORDER_ID] is not paid with PrestaShop Checkout'),
+                        $this->trans('This PrestaShop Order [PRESTASHOP_ORDER_ID] is not paid with PrestaShop Checkout', [], 'Modules.Pscheckout.Admin'),
                         [
                             '[PRESTASHOP_ORDER_ID]' => $order->id,
                         ]
@@ -392,7 +391,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'status' => false,
                 'errors' => [
                     strtr(
-                        $this->l('Unable to find PayPal Order associated to this PrestaShop Order [PRESTASHOP_ORDER_ID]'),
+                        $this->trans('Unable to find PayPal Order associated to this PrestaShop Order [PRESTASHOP_ORDER_ID]', [], 'Modules.Pscheckout.Admin'),
                         [
                             '[PRESTASHOP_ORDER_ID]' => $order->id,
                         ]
@@ -419,7 +418,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'status' => false,
                 'errors' => [
                     strtr(
-                        $this->l('PayPal Order [PAYPAL_ORDER_ID] is not in the same environment as PrestaShop Checkout'),
+                        $this->trans('PayPal Order [PAYPAL_ORDER_ID] is not in the same environment as PrestaShop Checkout', [], 'Modules.Pscheckout.Admin'),
                         [
                             '[PAYPAL_ORDER_ID]' => $psCheckoutCart->paypal_order,
                         ]
@@ -485,23 +484,23 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'httpCode' => $exception->getCode(),
                 'status' => false,
                 'errors' => [
-                    $this->l('Refund cannot be processed by PayPal.', 'translations'),
+                    $this->trans('Refund cannot be processed by PayPal.', [], 'Modules.Pscheckout.Admin'),
                 ],
             ]);
         } catch (PayPalRefundException $invalidArgumentException) {
             $error = '';
             switch ($invalidArgumentException->getCode()) {
                 case PayPalRefundException::INVALID_ORDER_ID:
-                    $error = $this->l('PayPal Order is invalid.', 'translations');
+                    $error = $this->trans('PayPal Order is invalid.', [], 'Modules.Pscheckout.Admin');
                     break;
                 case PayPalRefundException::INVALID_TRANSACTION_ID:
-                    $error = $this->l('PayPal Transaction is invalid.', 'translations');
+                    $error = $this->trans('PayPal Transaction is invalid.', [], 'Modules.Pscheckout.Admin');
                     break;
                 case PayPalRefundException::INVALID_CURRENCY:
-                    $error = $this->l('PayPal refund currency is invalid.', 'translations');
+                    $error = $this->trans('PayPal refund currency is invalid.', [], 'Modules.Pscheckout.Admin');
                     break;
                 case PayPalRefundException::INVALID_AMOUNT:
-                    $error = $this->l('PayPal refund amount is invalid.', 'translations');
+                    $error = $this->trans('PayPal refund amount is invalid.', [], 'Modules.Pscheckout.Admin');
                     break;
                 default:
                     break;
@@ -516,7 +515,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $this->exitWithResponse([
                     'httpCode' => 200,
                     'status' => true,
-                    'content' => $this->l('Refund has been processed by PayPal, but order status change or email sending failed.', 'translations'),
+                    'content' => $this->trans('Refund has been processed by PayPal, but order status change or email sending failed.', [], 'Modules.Pscheckout.Admin'),
                 ]);
             } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
                 $this->exitWithResponse([
@@ -533,7 +532,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'httpCode' => 500,
                 'status' => false,
                 'errors' => [
-                    $this->l('Refund cannot be processed by PayPal.', 'translations'),
+                    $this->trans('Refund cannot be processed by PayPal.', [], 'Modules.Pscheckout.Admin'),
                 ],
                 'error' => $exception->getMessage(),
             ]);
@@ -542,7 +541,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->exitWithResponse([
             'httpCode' => 200,
             'status' => true,
-            'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
+            'content' => $this->trans('Refund has been processed by PayPal.', [], 'Modules.Pscheckout.Admin'),
         ]);
     }
 
