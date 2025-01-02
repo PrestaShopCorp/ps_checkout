@@ -70,10 +70,5 @@ class OrderEventSubscriber implements EventSubscriberInterface
         $orderMatrice->id_order_paypal = $psCheckoutCart->getPaypalOrderId();
 
         $orderMatrice->add();
-
-//        $this->commandBus->handle(new UpdateOrderMatriceCommand(
-//            $event->getOrderId()->getValue(),
-//            $psCheckoutCart->getPaypalOrderId()
-//        ));
     }
 }
