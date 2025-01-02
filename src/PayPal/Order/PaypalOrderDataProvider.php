@@ -159,12 +159,15 @@ class PaypalOrderDataProvider
     public function getPaymentTokenIdentifier()
     {
         if ($this->payPalOrder) {
-            $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
+            $fundingSource = $this->payPalOrder->getFundingSource();
+            if (isset($this->payPalOrder->getPaymentSource()[$fundingSource])) {
+                $paymentSource = $this->payPalOrder->getPaymentSource()[$fundingSource];
 
-            if ($this->payPalOrder->getFundingSource() === 'card') {
-                return (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '');
-            } else {
-                return isset($paymentSource['email_address']) ? $paymentSource['email_address'] : '';
+                if ($fundingSource === 'card') {
+                    return (isset($paymentSource['brand']) ? $paymentSource['brand'] : '') . (isset($paymentSource['last_digits']) ? ' *' . $paymentSource['last_digits'] : '');
+                } else {
+                    return isset($paymentSource['email_address']) ? $paymentSource['email_address'] : '';
+                }
             }
         }
 

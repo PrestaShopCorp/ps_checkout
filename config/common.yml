@@ -269,7 +269,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@ps_checkout.logger'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint'
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\PayPalCustomerIdProvider'
+      - '@ps_checkout.bus.query'
 
   PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
@@ -518,11 +518,3 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Translations\Translations'
-
-  PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\PayPalCustomerIdProvider:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\PayPalCustomerIdProvider'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'

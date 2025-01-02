@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber;
 
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
@@ -44,8 +44,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
-use PrestaShop\Module\PsAccounts\Vendor\Symfony\Component\Cache\CacheItem;
-use Ps_checkout;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -55,7 +53,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private CacheInterface $capturePayPalCache;
     private CacheInterface $orderPayPalCache;
     private OrderStateMapper $orderStateMapper;
-    private CommandBusInterface $queryBus;
+    private QueryBusInterface $queryBus;
     private CreateOrderCommandHandler $createOrderCommandHandler;
     private AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler;
     private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
@@ -65,7 +63,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         CacheInterface $capturePayPalCache,
         CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper,
-        CommandBusInterface $queryBus,
+        QueryBusInterface $queryBus,
         CreateOrderCommandHandler $createOrderCommandHandler,
         AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler,
         UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler

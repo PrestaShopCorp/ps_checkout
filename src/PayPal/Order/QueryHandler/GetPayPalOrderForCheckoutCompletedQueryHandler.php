@@ -27,8 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PsAccounts\Vendor\Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
@@ -50,9 +50,10 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
         /** @var array{id: string, status: string} $order */
         $order = $this->orderPayPalCache->get(
             $getPayPalOrderQuery->getOrderPayPalId()->getValue(),
-            function(CacheItemInterface $cacheItem) use ($getPayPalOrderQuery) {
-                $cacheItem->expiresAfter(60);
-                return new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+            function(ItemInterface $cacheItem) use ($getPayPalOrderQuery) {
+                $payPalOrder = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+                $cacheItem->set($payPalOrder->getOrder());
+                return $payPalOrder->getOrder();
             }
         );
 
@@ -62,10 +63,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-            $cacheItem = $this->orderPayPalCache->getItem($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-            $cacheItem->set($orderPayPal->getOrder());
-            $this->orderPayPalCache->save($cacheItem);
-//            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
+            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {

@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -164,6 +163,7 @@ class CreatePayPalOrderCommandHandler
             $customerIntent,
             $command->getPaymentTokenId()
         );
+
         $this->payPalOrderEventSubscriber->saveCreatedPayPalOrder($event);
         $this->payPalOrderEventSubscriber->updateCache($event);
     }

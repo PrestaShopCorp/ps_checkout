@@ -2,7 +2,28 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-class TacticianQueryBusAdapter extends TacticianCommandBusAdapter
-{
+use PrestaShopBundle\CommandBus\MessengerCommandBus;
 
+class TacticianQueryBusAdapter implements QueryBusInterface
+{
+    /**
+     * @var MessengerCommandBus
+     */
+    private $bus;
+
+    /**
+     * @param MessengerCommandBus $bus
+     */
+    public function __construct(MessengerCommandBus $bus)
+    {
+        $this->bus = $bus;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handle($query)
+    {
+        return $this->bus->handle($query);
+    }
 }

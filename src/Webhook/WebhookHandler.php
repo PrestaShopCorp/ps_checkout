@@ -59,7 +59,7 @@ class WebhookHandler
      *
      * @throws WebhookException
      */
-    public function __invoke(array $payload)
+    public function handle(array $payload)
     {
         foreach ($this->webhookEventHandlers as $handler) {
             if ($handler->supports($payload)) {

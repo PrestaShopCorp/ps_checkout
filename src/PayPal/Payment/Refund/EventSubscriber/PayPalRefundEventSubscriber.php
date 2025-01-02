@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber;
 
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -39,14 +39,14 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
     private CacheInterface $orderPayPalCache;
     private OrderStateMapper $orderStateMapper;
     private PayPalOrderProvider $orderProvider;
-    private CommandBusInterface $queryBus;
+    private QueryBusInterface $queryBus;
     private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
 
     public function __construct(
         CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper,
         PayPalOrderProvider $orderProvider,
-        CommandBusInterface $queryBus,
+        QueryBusInterface $queryBus,
         UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
     ) {
         $this->orderPayPalCache = $orderPayPalCache;

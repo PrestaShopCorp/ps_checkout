@@ -29,10 +29,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
 {
-    public function __construct()
-    {
-    }
-
     public function __invoke(UpdateOrderStatusCommand $command) {
         $this->handle($command);
     }

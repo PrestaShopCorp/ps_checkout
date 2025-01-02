@@ -18,30 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler;
+namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
-
-class UpdateOrderMatriceCommandHandler
+/**
+ * Interface QueryBusInterface defines contract for Query bus.
+ */
+interface QueryBusInterface
 {
-    public function __construct()
-    {
-    }
-
     /**
-     * @throws \PrestaShopException
-     * @throws \PrestaShopDatabaseException
+     * Handle query.
+     *
+     * @param object $query
      */
-    public function __invoke(UpdateOrderMatriceCommand $command)
-    {
-        $orderMatrice = new \OrderMatrice();
-        $orderMatrice->id_order_prestashop = $command->getOrderId()->getValue();
-        $orderMatrice->id_order_paypal = $command->getOrderPayPalId()->getValue();
-
-        $res = $orderMatrice->add();
-
-//        if (!empty($res)) {
-//            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
-//        }
-    }
+    public function handle($query);
 }

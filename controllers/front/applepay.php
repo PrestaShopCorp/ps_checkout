@@ -21,6 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Query\GetApplePayPaymentRequestQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -37,7 +38,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
     private CommandBusInterface $commandBus;
 
-    private CommandBusInterface $queryBus;
+    private QueryBusInterface $queryBus;
 
     /**
      * @see FrontController::postProcess()
@@ -61,6 +62,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
             }
 
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+            $this->queryBus = $this->module->getService('ps_checkout.bus.query');
 
             switch ($action) {
                 case 'getPaymentRequest':

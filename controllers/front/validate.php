@@ -20,7 +20,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
@@ -126,7 +126,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         }
 
         try {
-            /** @var CommandBusInterface $queryBus */
+            /** @var QueryBusInterface $queryBus */
             $queryBus = $this->module->getService('ps_checkout.bus.query');
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
@@ -438,6 +438,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             'body' => [
                 'error' => [
                     'message' => $exceptionMessageForCustomer,
+                    'code' => (int) $exception->getCode() < 400 && $exception->getPrevious() !== null
+                        ? (int) $exception->getPrevious()->getCode()
+                        : (int) $exception->getCode(),
                 ],
             ],
             'exceptionCode' => $exception->getCode(),

@@ -17,31 +17,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
-
-class UpdateOrderMatriceCommandHandler
-{
-    public function __construct()
-    {
-    }
-
-    /**
-     * @throws \PrestaShopException
-     * @throws \PrestaShopDatabaseException
-     */
-    public function __invoke(UpdateOrderMatriceCommand $command)
-    {
-        $orderMatrice = new \OrderMatrice();
-        $orderMatrice->id_order_prestashop = $command->getOrderId()->getValue();
-        $orderMatrice->id_order_paypal = $command->getOrderPayPalId()->getValue();
-
-        $res = $orderMatrice->add();
-
-//        if (!empty($res)) {
-//            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
-//        }
-    }
-}
+header('Location: ../');
+exit;

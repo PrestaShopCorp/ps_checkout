@@ -19,6 +19,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery;
@@ -40,7 +41,7 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
 
-            /** @var CommandBusInterface $queryBus */
+            /** @var QueryBusInterface $queryBus */
             $queryBus = $this->module->getService('ps_checkout.bus.query');
 
             $bodyValues = [];

@@ -27,7 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SavePayPalOrderStatusCommandHandler;
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
@@ -67,11 +67,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private SaveCheckoutCommandHandler $saveCheckoutCommandHandler;
     private SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler;
     private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler;
-    private CommandBusInterface $queryBus;
+    private QueryBusInterface $queryBus;
     private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
 
     public function __construct(
-        CommandBusInterface $queryBus,
+        QueryBusInterface $queryBus,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CacheInterface $orderPayPalCache,
         CheckoutChecker $checkoutChecker,
@@ -280,16 +280,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
     public function updateCache(PayPalOrderEvent $event)
     {
-        $currentOrderPayPal = $this->orderPayPalCache->getItem($event->getOrderPayPalId()->getValue());
+        $currentOrderPayPal = $this->orderPayPalCache->getItem($event->getOrderPayPalId()->getValue())->get();
         $newOrderPayPal = $event->getOrderPayPal();
 
-        if ($currentOrderPayPal->get() && !$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($currentOrderPayPal->get()['status'], $newOrderPayPal['status'])) {
+        if ($currentOrderPayPal && !$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($currentOrderPayPal['status'], $newOrderPayPal['status'])) {
             return;
         }
 
-        $currentOrderPayPal->set($newOrderPayPal);
-        $this->orderPayPalCache->save($currentOrderPayPal);
-//        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
+        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
     }
 
     public function updatePayPalOrder(PayPalOrderEvent $event)

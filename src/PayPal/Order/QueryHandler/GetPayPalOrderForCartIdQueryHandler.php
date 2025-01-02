@@ -43,10 +43,6 @@ class GetPayPalOrderForCartIdQueryHandler
         $this->checkoutCartRepository = $checkoutCartRepository;
     }
 
-    public function __invoke(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
-    {
-        return $this->handle($getPayPalOrderQuery);
-    }
     /**
      * @param GetPayPalOrderForCartIdQuery $getPayPalOrderQuery
      *
@@ -54,7 +50,7 @@ class GetPayPalOrderForCartIdQueryHandler
      *
      * @throws PayPalOrderException
      */
-    public function handle(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
+    public function __invoke(GetPayPalOrderForCartIdQuery $getPayPalOrderQuery)
     {
         $psCheckoutCart = $this->checkoutCartRepository->findOneByCartId($getPayPalOrderQuery->getCartId()->getValue());
 

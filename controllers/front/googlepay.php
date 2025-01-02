@@ -19,7 +19,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\GooglePay\Query\GetGooglePayTransactionInfoQuery;
 
@@ -33,7 +33,7 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
      */
     public $module;
 
-    private CommandBusInterface $queryBus;
+    private QueryBusInterface $queryBus;
 
     /**
      * @see FrontController::postProcess()
