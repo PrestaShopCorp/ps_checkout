@@ -1018,7 +1018,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             $this->name . 'Version' => $version->getSemVersion(),
-            $this->name . 'Locale' => $this->context->language->iso_code,
+            $this->name . 'LanguageIsoCode' => $this->context->language->iso_code,
             $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
