@@ -27,6 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
@@ -131,7 +133,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                         break;
                     case Card3DSecure::PROCEED:
                         $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
-                        $payPalOrderFromCache = $payPalOrderCache->get($orderId);
+                        $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
                         $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         break;
                     case Card3DSecure::NO_DECISION:
@@ -142,7 +144,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             if ($payPalOrderFromCache['status'] === 'APPROVED') {
                 $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
-                $payPalOrderFromCache = $payPalOrderCache->get($orderId);
+                $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
                 $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
         } catch (Exception $exception) {

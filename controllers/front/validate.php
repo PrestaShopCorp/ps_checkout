@@ -472,7 +472,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
         // Cannot use id_cart because we create a new cart to preserve current cart from customer changes
         $token = Tools::substr(
-            Tools::encrypt(implode(
+            Tools::hash(implode(
                 '|',
                 [
                     (int) $cart->id_customer,
