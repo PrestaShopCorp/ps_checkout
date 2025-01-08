@@ -107,7 +107,6 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
-      - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
       - '@ps_checkout.bus.query'
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'
@@ -392,7 +391,6 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
   PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator'

@@ -112,6 +112,7 @@ class MaaslandHttpClient implements HttpClientInterface
      */
     public function captureOrder(array $payload, array $options = [])
     {
+//        $options['NT-PayPalOrderCapture'] = 'INTERNAL_SERVER_ERROR';
         return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
     }
 

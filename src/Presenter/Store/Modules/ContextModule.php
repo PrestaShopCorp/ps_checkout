@@ -33,6 +33,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use PrestaShop\PrestaShop\Core\Module\ModuleManager;
 
 /**
  * Construct the context module
@@ -92,6 +94,7 @@ class ContextModule implements PresenterInterface
      * @var PsAccountRepository
      */
     private $psAccountRepository;
+    private ModuleManager $moduleManager;
 
     /**
      * @param string $moduleName
@@ -128,6 +131,7 @@ class ContextModule implements PresenterInterface
         $this->shopProvider = $shopProvider;
         $this->moduleLinkBuilder = $moduleLinkBuilder;
         $this->psAccountRepository = $psAccountRepository;
+        $this->moduleManager = ModuleManagerBuilder::getInstance()->build();
     }
 
     /**
@@ -142,7 +146,7 @@ class ContextModule implements PresenterInterface
         return [
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
-                'moduleIsEnabled' => (bool) \Module::isEnabled('ps_checkout'),
+                'moduleIsEnabled' => $this->moduleManager->isEnabled('ps_checkout'),
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
@@ -177,8 +181,8 @@ class ContextModule implements PresenterInterface
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
                 'callbackUrl' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
                 'dependencies' => [
-                    'ps_eventbus' => \Module::isEnabled('ps_eventbus'),
-                    'ps_accounts' => \Module::isEnabled('ps_accounts'),
+                    'ps_eventbus' => $this->moduleManager->isEnabled('ps_eventbus'),
+                    'ps_accounts' => $this->moduleManager->isEnabled('ps_accounts'),
                 ],
             ],
         ];

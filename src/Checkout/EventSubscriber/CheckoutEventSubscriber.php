@@ -46,7 +46,6 @@ use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
-    private Ps_checkout $module;
     private QueryBusInterface $queryBus;
     private CheckoutChecker $checkoutChecker;
     private PsCheckoutCartRepository $psCheckoutCartRepository;
@@ -56,7 +55,6 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
 
     public function __construct(
         CheckoutChecker $checkoutChecker,
-        Ps_checkout $module,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         QueryBusInterface $queryBus,
         UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
@@ -64,7 +62,6 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
         CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
     ) {
         $this->checkoutChecker = $checkoutChecker;
-        $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->queryBus = $queryBus;
         $this->updatePaymentMethodSelectedCommandHandler = $updatePaymentMethodSelectedCommandHandler;

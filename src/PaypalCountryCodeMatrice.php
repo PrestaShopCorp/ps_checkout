@@ -64,10 +64,10 @@ class PaypalCountryCodeMatrice
             return false;
         }
 
-        if (false === array_search($isoCode, self::MATCH_ISO_CODE)) {
+        if (!in_array($isoCode, self::MATCH_ISO_CODE)) {
             return $isoCode;
         }
 
-        return array_search($isoCode, self::MATCH_ISO_CODE);
+        return in_array($isoCode, self::MATCH_ISO_CODE);
     }
 }

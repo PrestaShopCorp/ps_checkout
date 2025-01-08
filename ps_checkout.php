@@ -210,7 +210,7 @@ class Ps_checkout extends PaymentModule
 
         // Install specific to prestashop 1.7
         if ($shopContext->isShop17()) {
-            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_17);
+            $result = $result && $this->registerHook(self::HOOK_LIST_17);
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
 
@@ -229,7 +229,7 @@ class Ps_checkout extends PaymentModule
         foreach (\Shop::getShops(false, null, true) as $shopId) {
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
-                    $result = $result && (bool) Configuration::updateValue(
+                    $result = $result && Configuration::updateValue(
                             $name,
                             $value,
                             false,
@@ -777,9 +777,11 @@ class Ps_checkout extends PaymentModule
         $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
-        if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
+        if ('AdminPayment' === Tools::getValue('controller') && $isShop17) {
+            // Display on PrestaShop 1.7.x.x only
+            $moduleManager = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
             if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
-                && Module::isEnabled('ps_checkout')
+                && $moduleManager->isEnabled('ps_checkout')
                 && Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
             ) {
                 return false;
@@ -1201,19 +1203,19 @@ class Ps_checkout extends PaymentModule
      * Add checkbox country restrictions for a new module.
      * Associate with all countries allowed in geolocation management
      *
-     * @see PaymentModuleCore
-     *
-     * @param array $shopsList List of Shop identifier
+     * @param array $shops List of Shop identifier
      *
      * @return bool
+     *@see PaymentModuleCore
+     *
      */
-    public function addCheckboxCountryRestrictionsForModule(array $shopsList = [])
+    public function addCheckboxCountryRestrictionsForModule(array $shops = [])
     {
-        parent::addCheckboxCountryRestrictionsForModule($shopsList);
+        parent::addCheckboxCountryRestrictionsForModule($shops);
         // Then add all countries allowed in geolocation management
         $db = \Db::getInstance();
         // Get active shop ids
-        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        $shops = empty($shops) ? Shop::getShops(true, null, true) : $shops;
         // Get countries
         /** @var array $countries */
         $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
@@ -1223,7 +1225,7 @@ class Ps_checkout extends PaymentModule
         }
         $dataToInsert = [];
 
-        foreach ($shopsList as $idShop) {
+        foreach ($shops as $idShop) {
             // Get countries allowed in geolocation management for this shop
             $activeCountries = \Configuration::get(
                 'PS_ALLOWED_COUNTRIES',

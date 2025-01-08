@@ -34,19 +34,13 @@ class MerchantValidator
      * @var PsAccountRepository
      */
     private $psAccountRepository;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
 
     public function __construct(
         PayPalConfiguration $configuration,
         PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext
     ) {
         $this->configuration = $configuration;
         $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopContext = $prestaShopContext;
     }
 
     public function merchantIsValid()
