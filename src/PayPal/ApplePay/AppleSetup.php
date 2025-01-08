@@ -116,7 +116,7 @@ class AppleSetup
         $sourceFile = $this->getSourceFile();
         $destinationFile = $this->getDestinationFile($wellKnownDir);
 
-        if (!$this->isWritable($destinationFile)) {
+        if (file_exists($destinationFile) && !$this->isWritable($destinationFile)) {
             throw new ApplePaySetupException('The Apple Domain Association file is not writable in the PrestaShop root directory.', ApplePaySetupException::APPLE_DOMAIN_FILE_NOT_WRITABLE);
         }
 
@@ -192,7 +192,7 @@ class AppleSetup
     {
         $moduleWellKnownDir = _PS_MODULE_DIR_ . 'ps_checkout/.well-known';
         $paypalEnvironment = $this->payPalConfiguration->getPaymentMode();
-        $sourceFile = "${$moduleWellKnownDir}/apple-${$paypalEnvironment}-merchantid-domain-association";
+        $sourceFile = "$moduleWellKnownDir/apple-$paypalEnvironment-merchantid-domain-association";
 
         if (!file_exists($sourceFile)) {
             throw new ApplePaySetupException('The Apple Domain Association file could not be found in the module directory.', ApplePaySetupException::APPLE_DOMAIN_FILE_NOT_FOUND);
