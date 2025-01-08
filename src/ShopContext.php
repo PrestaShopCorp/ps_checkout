@@ -61,14 +61,4 @@ class ShopContext
 
         return $this->env->getBnCode();
     }
-
-    public function isShop17()
-    {
-        return version_compare(_PS_VERSION_, '1.7.0.0', '>=');
-    }
-
-    public function isShop171()
-    {
-        return version_compare(_PS_VERSION_, '1.7.1.0', '>=');
-    }
 }

@@ -79,13 +79,7 @@ class CreatePaypalOrderHandler
             $builder->setPaypalOrderId($paypalOrderId);
         }
 
-        if ($shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
+        $builder->buildFullPayload();
 
         $payload = $builder->presentPayload()->getArray();
 
@@ -102,8 +96,7 @@ class CreatePaypalOrderHandler
         } catch (PayPalException $exception) {
             $previousException = $exception->getPrevious();
             $response = method_exists($previousException, 'getResponse') ? $previousException->getResponse() : null;
-            // Retry with minimal payload when full payload failed (only on 1.7)
-            if ($response && substr((string) $response->getStatusCode(), 0, 1) === '4' && $shopContext->isShop17()) {
+            if ($response && substr((string) $response->getStatusCode(), 0, 1) === '4') {
                 $builder->buildMinimalPayload();
                 $payload = $builder->presentPayload()->getArray();
 

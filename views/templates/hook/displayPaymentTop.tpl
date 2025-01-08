@@ -28,7 +28,7 @@
   </div>
 </div>
 
-{if $is17 && $isExpressCheckout}
+{if $isExpressCheckout}
 <div class="express-checkout-block mb-2" id="ps_checkout-express-checkout-banner">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
@@ -37,7 +37,6 @@
 </div>
 {/if}
 
-{if $is17}
 <div id="ps_checkout-loader" class="express-checkout-block mb-2">
   <div class="express-checkout-block-wrapper">
     <p class="express-checkout-spinner-text">
@@ -48,9 +47,7 @@
     </div>
   </div>
 </div>
-{/if}
 
-{if $is17}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('input[name="payment-option"]');
@@ -67,4 +64,3 @@
     }
   });
 </script>
-{/if}

@@ -58,34 +58,19 @@ class LinkAdapter
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         $shop = \Context::getContext()->shop;
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var ShopContext $shopContext */
-        $shopContext = $module->getService(ShopContext::class);
 
-        if ($shopContext->isShop17()) {
-            $adminLink = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
+        $adminLink = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
 
-            if ($shop->virtual_uri !== '') {
-                $adminLink = str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $adminLink);
-            }
-
-            // We have problems with links in our zoid application, since some links generated don't have domain they redirect to CDN domain
-            // Routes that use new symfony router are returned without the domain
-            if (strpos($adminLink, 'http') !== 0) {
-                return \Tools::getShopDomainSsl(true) . $adminLink;
-            }
-
-            return $adminLink;
+        if ($shop->virtual_uri !== '') {
+            $adminLink = str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $adminLink);
         }
 
-        $paramsAsString = '';
-        foreach ($params as $key => $value) {
-            $paramsAsString .= "&$key=$value";
+        // We have problems with links in our zoid application, since some links generated don't have domain they redirect to CDN domain
+        // Routes that use new symfony router are returned without the domain
+        if (strpos($adminLink, 'http') !== 0) {
+            return \Tools::getShopDomainSsl(true) . $adminLink;
         }
 
-        $link = \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
-
-        return $shop->virtual_uri !== '' ? str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $link) : $link;
+        return $adminLink;
     }
 }

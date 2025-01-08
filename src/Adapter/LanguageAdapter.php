@@ -52,13 +52,7 @@ class LanguageAdapter
     {
         $language = \Language::getLanguage($idLang);
 
-        if (false === $this->shopContext->isShop17()) {
-            $locale = explode('-', $language['language_code']);
-            $locale[1] = strtoupper($locale[1]);
-            $language['locale'] = implode('_', $locale);
-        } else {
-            $language['locale'] = str_replace('-', '_', $language['locale']);
-        }
+        $language['locale'] = str_replace('-', '_', $language['locale']);
 
         return $language;
     }

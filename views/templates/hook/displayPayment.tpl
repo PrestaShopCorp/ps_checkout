@@ -29,14 +29,6 @@
 </div>
 
 <section id="ps_checkout-displayPayment">
-  {if !$is17 && $isExpressCheckout}
-  <div class="express-checkout-block" id="ps_checkout-express-checkout-banner">
-    <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
-    <p class="express-checkout-label">
-      {$translatedText|escape:'htmlall':'UTF-8'}
-    </p>
-  </div>
-  {/if}
   <div class="payment-options">
     {foreach from=$paymentOptions item="paymentOptionName" key="fundingSource"}
       <div id="payment-option-{$fundingSource}-container" class="payment-option row" style="display: none;">

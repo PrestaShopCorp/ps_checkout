@@ -133,13 +133,7 @@ class CreatePayPalOrderCommandHandler
         $builder->setSavePaymentMethod($command->vault());
         $builder->setVault($command->getPaymentTokenId() || $command->vault());
 
-        if ($this->shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
+        $builder->buildFullPayload();
 
         $response = $this->maaslandHttpClient->createOrder($builder->presentPayload()->getArray());
         $order = json_decode($response->getBody(), true);

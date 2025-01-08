@@ -25,12 +25,6 @@ if (!defined('_PS_VERSION_')) {
 
 class Ps_checkout extends PaymentModule
 {
-    /**
-     * Default hook to install
-     * 1.6 and 1.7
-     *
-     * @var array
-     */
     const HOOK_LIST = [
         'displayAdminAfterHeader',
         'displayOrderConfirmation',
@@ -47,14 +41,6 @@ class Ps_checkout extends PaymentModule
         'displayPaymentReturn',
         'displayOrderDetail',
         'moduleRoutes',
-    ];
-
-    /**
-     * Hook to install for 1.7
-     *
-     * @var array
-     */
-    const HOOK_LIST_17 = [
         'paymentOptions',
         'actionCartUpdateQuantityBefore',
         'displayInvoiceLegalFreeText',
@@ -67,18 +53,6 @@ class Ps_checkout extends PaymentModule
     const MODULE_ADMIN_CONTROLLERS = [
         'AdminAjaxPrestashopCheckout',
         'AdminPaypalOnboardingPrestashopCheckout',
-    ];
-
-    /**
-     * Hook to install for 1.6
-     *
-     * @var array
-     */
-    const HOOK_LIST_16 = [
-        'actionBeforeCartUpdateQty',
-        'actionAfterDeleteProductInCart',
-        'displayPayment',
-        'displayCartTotalPriceLabel',
     ];
 
     public $configurationList = [
@@ -116,7 +90,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.2.1';
+    const VERSION = '9.4.2.1';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -152,7 +126,7 @@ class Ps_checkout extends PaymentModule
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => _PS_VERSION_];
 
         // $this->disableSegment = false;
     }
@@ -170,7 +144,6 @@ class Ps_checkout extends PaymentModule
         $savedGroupShopId = Shop::getContextShopGroupID();
         Shop::setContext(Shop::CONTEXT_ALL);
 
-        // Install for both 1.7 and 1.6
         $result = parent::install() &&
             $this->installConfiguration() &&
             $this->installHooks() &&
@@ -197,22 +170,8 @@ class Ps_checkout extends PaymentModule
     public function installHooks()
     {
         $result = (bool) $this->registerHook(self::HOOK_LIST);
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
-        // Install specific to prestashop 1.6
-        if (!$shopContext->isShop17()) {
-            $result = $result && $this->registerHook(self::HOOK_LIST_16);
-            $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
-
-            return $result;
-        }
-
-        // Install specific to prestashop 1.7
-        if ($shopContext->isShop17()) {
-            $result = $result && $this->registerHook(self::HOOK_LIST_17);
-            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
-        }
+        $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
 
         return $result;
     }
@@ -460,26 +419,6 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
-     * Deprecated since PrestaShop 1.7.0.0
-     */
-    public function hookActionAfterDeleteProductInCart()
-    {
-        if (!$this->merchantIsValid()) {
-            return;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-
-        if ($shopContext->isShop17()) {
-            return;
-        }
-
-        $this->hookActionCartUpdateQuantityBefore();
-    }
-
-    /**
      * This hook is called only since PrestaShop 1.7.0.0
      */
     public function hookActionCartUpdateQuantityBefore()
@@ -505,26 +444,6 @@ class Ps_checkout extends PaymentModule
         if ($psCheckoutCart->isExpressCheckout || !$psCheckoutCart->isOrderAvailable() || !$this->context->cart->nbProducts()) {
             $this->context->cookie->__unset('paypalEmail');
         }
-    }
-
-    /**
-     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
-     * Deprecated since PrestaShop 1.7.0.0
-     */
-    public function hookActionBeforeCartUpdateQty()
-    {
-        if (!$this->merchantIsValid()) {
-            return;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-
-        if ($shopContext->isShop17()) {
-            return;
-        }
-
-        $this->hookActionCartUpdateQuantityBefore();
     }
 
     /**
@@ -563,12 +482,10 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),
-            'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
-            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
             'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
@@ -770,15 +687,11 @@ class Ps_checkout extends PaymentModule
         $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
         $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
-        $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
-        if ('AdminPayment' === Tools::getValue('controller') && $isShop17) {
-            // Display on PrestaShop 1.7.x.x only
+        if ('AdminPayment' === Tools::getValue('controller')) {
             $moduleManager = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
             if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
                 && $moduleManager->isEnabled('ps_checkout')
@@ -801,20 +714,18 @@ class Ps_checkout extends PaymentModule
             $template = 'views/templates/hook/adminAfterHeader/promotionBlock.tpl';
         } elseif ('AdminCountries' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
-                'isShop17' => $isShop17,
                 'codesType' => 'countries',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $moduleContext->getGeneratedLink('AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
-                'isShop17' => $isShop17,
                 'codesType' => 'currencies',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
-                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $moduleContext->getGeneratedLink('AdminPayment'),
             ];
             $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } else {
@@ -1168,12 +1079,6 @@ class Ps_checkout extends PaymentModule
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-        if (false === $shopContext->isShop17()) {
-            return true;
-        }
-
         $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
         $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
         $allCarriers = array_column($carriersList, 'id_reference');
@@ -1468,9 +1373,6 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
         $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
@@ -1481,9 +1383,7 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'cancelTranslatedText' => $this->l('Choose another payment method'),
-            'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
-            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
             'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
@@ -1562,34 +1462,10 @@ class Ps_checkout extends PaymentModule
      */
     private function getCheckoutPageUrl()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-
-        if ($shopContext->isShop17()) {
-            return $this->context->link->getPageLink(
-                'order',
-                true,
-                (int) $this->context->language->id
-            );
-        }
-
-        // PrestaShop 1.6 legacy native one page checkout
-        if (1 === (int) Configuration::get('PS_ORDER_PROCESS_TYPE')) {
-            return $this->context->link->getPageLink(
-                'order-opc',
-                true,
-                (int) $this->context->language->id
-            );
-        }
-
-        // PrestaShop 1.6 standard checkout
         return $this->context->link->getPageLink(
             'order',
             true,
-            (int) $this->context->language->id,
-            [
-                'step' => 1,
-            ]
+            (int) $this->context->language->id
         );
     }
 

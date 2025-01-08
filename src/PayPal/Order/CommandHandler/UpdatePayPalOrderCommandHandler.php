@@ -97,13 +97,7 @@ class UpdatePayPalOrderCommandHandler
         $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
         $builder->setExpressCheckout($command->isExpressCheckout());
 
-        if ($this->shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
+        $builder->buildFullPayload();
 
         $payload = $builder->presentPayload()->getArray();
         $needToUpdate = false;

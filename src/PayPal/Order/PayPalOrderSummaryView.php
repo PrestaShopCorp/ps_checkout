@@ -106,7 +106,6 @@ class PayPalOrderSummaryView
             'approvalLink' => $this->orderPayPalDataProvider->getApprovalLink(),
             'payerActionLink' => $this->orderPayPalDataProvider->getPayActionLink(),
             'contactUsLink' => $this->router->getContactLink($this->orderDataProvider->getOrderId()),
-            'isShop17' => $this->shopContext->isShop17(),
             'translations' => $this->orderPayPalPresenter->getSummaryTranslations(),
             'vault' => $this->orderPayPalDataProvider->isIntentToVault(),
             'tokenIdentifier' => $this->orderPayPalDataProvider->getPaymentTokenIdentifier(),
