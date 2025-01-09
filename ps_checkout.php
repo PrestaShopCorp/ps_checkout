@@ -447,62 +447,6 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Add payment option at the checkout in the front office (prestashop 1.6)
-     */
-    public function hookDisplayPayment()
-    {
-        if (false === Validate::isLoadedObject($this->context->cart)
-            || false === $this->checkCurrency($this->context->cart)
-            || false === $this->merchantIsValid()
-        ) {
-            return '';
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
-        $paymentOptions = [];
-
-        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
-            $paymentOptions[$fundingSource->name] = $fundingSource->label;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
-
-        /** @var PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-
-        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout && $psCheckoutCart->isOrderAvailable();
-
-        $this->context->smarty->assign([
-            'cancelTranslatedText' => $this->l('Choose another payment method'),
-            'isExpressCheckout' => $isExpressCheckout,
-            'modulePath' => $this->getPathUri(),
-            'paymentOptions' => $paymentOptions,
-            'isHostedFieldsAvailable' => $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
-            'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-            'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
-            'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => strtr(
-                $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.'),
-                [
-                    '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
-                ]
-            ),
-            'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
-            'warningTranslatedText' => $this->l('Warning'),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayPayment.tpl');
-    }
-
-    /**
      * Add payment option at the checkout in the front office (prestashop 1.7)
      *
      * @param array{cookie: Cookie, cart: Cart, altern: int} $params
@@ -1307,31 +1251,6 @@ class Ps_checkout extends PaymentModule
         } elseif ($this->currencies_mode === 'radio') {
             $this->addRadioCurrencyRestrictionsForModule([(int) $shop->id]);
         }
-    }
-
-    /**
-     * This hook called on BO Order view page before 1.7.7
-     *
-     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int} $params
-     *
-     * @return string
-     */
-    public function hookDisplayAdminOrderLeft(array $params)
-    {
-        $order = new Order((int) $params['id_order']);
-
-        if ($order->module !== $this->name) {
-            return '';
-        }
-
-        $this->context->smarty->assign([
-            'moduleLogoUri' => $this->getPathUri() . 'logo.png',
-            'moduleName' => $this->displayName,
-            'orderPrestaShopId' => $order->id,
-            'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderLeft.tpl');
     }
 
     /**
