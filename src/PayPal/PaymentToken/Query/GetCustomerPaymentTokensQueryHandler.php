@@ -47,7 +47,6 @@ class GetCustomerPaymentTokensQueryHandler
      */
     public function __invoke(GetCustomerPaymentTokensQuery $query)
     {
-//        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue(), $query->getPageSize(), $query->getPageNumber());
         $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue());
 
         if ($query->isTotalCountRequired()) {

@@ -24,10 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatric
 
 class UpdateOrderMatriceCommandHandler
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @throws \PrestaShopException
      * @throws \PrestaShopDatabaseException
@@ -38,10 +34,6 @@ class UpdateOrderMatriceCommandHandler
         $orderMatrice->id_order_prestashop = $command->getOrderId()->getValue();
         $orderMatrice->id_order_paypal = $command->getOrderPayPalId()->getValue();
 
-        $res = $orderMatrice->add();
-
-//        if (!empty($res)) {
-//            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
-//        }
+        $orderMatrice->add();
     }
 }

@@ -71,8 +71,6 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
         if (!$historyAdded) {
             throw new OrderException(sprintf('Failed to update status or send email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS);
         }
-
-//        $this->eventDispatcher->dispatch(new OrderStatusUpdatedEvent($orderStateId));
     }
 
     /**
