@@ -27,7 +27,7 @@ use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class PayPalOrderCache extends ChainAdapter
 {
-    const CACHE_TTL = [
+    public const CACHE_TTL = [
         PsCheckoutCart::STATUS_CREATED => 600,
         PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED => 600,
         PsCheckoutCart::STATUS_APPROVED => 600,
@@ -46,11 +46,12 @@ class PayPalOrderCache extends ChainAdapter
      */
     public function set($key, $value, $ttl = null): bool
     {
-        if (!$ttl && isset($value['status']) && isset(self::CACHE_TTL[$value['status']])) {
+        if (!$ttl && isset($value['status'], self::CACHE_TTL[$value['status']])) {
             $ttl = self::CACHE_TTL[$value['status']];
         }
 
         $cacheItem = $this->getItem($key)->set($value)->expiresAfter($ttl);
+
         return $this->save($cacheItem);
     }
 }

@@ -60,7 +60,6 @@ class PayPalOrderProvider
 
             $cacheItem->expiresAfter(PayPalOrderCache::CACHE_TTL[$order['status']]);
 
-            $cacheItem->set($order);
             return $order;
         });
     }
