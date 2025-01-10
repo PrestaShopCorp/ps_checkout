@@ -124,6 +124,15 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
     arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor\PayPalOrderEventProcessor'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor\PayPalOrderEventProcessor:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor\PayPalOrderEventProcessor'
+    public: true
+    arguments:
       - "@ps_checkout.bus.query"
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
       - "@ps_checkout.cache.paypal.order"
@@ -135,7 +144,6 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SavePayPalOrderStatusCommandHandler'
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
       - '@PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber:
