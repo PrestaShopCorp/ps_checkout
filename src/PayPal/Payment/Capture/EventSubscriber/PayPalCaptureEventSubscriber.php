@@ -226,10 +226,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 if ($capture['id'] === $event->getPayPalCaptureId()->getValue()) {
                     $needToClearOrderPayPalCache = false;
                     $orderPayPalCache['purchase_units'][0]['payments']['captures'][$key] = $event->getCapture();
-//                    $this->orderPayPalCache->set($event->getPayPalOrderId()->getValue(), $orderPayPalCache);
-                    $this->orderPayPalCache->get($event->getPayPalOrderId()->getValue(), function () use ($orderPayPalCache) {
-                        return $orderPayPalCache;
-                    });
+                    $this->orderPayPalCache->set($event->getPayPalOrderId()->getValue(), $orderPayPalCache);
                 }
             }
         }

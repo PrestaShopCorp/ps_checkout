@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCusto
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
@@ -70,6 +71,7 @@ class CapturePayPalOrderCommandHandler
      * @var PayPalOrderRepository
      */
     private $payPalOrderRepository;
+    private PayPalOrderEventSubscriber $payPalOrderEventSubscriber;
 
     public function __construct(
         MaaslandHttpClient $maaslandHttpClient,
@@ -77,7 +79,8 @@ class CapturePayPalOrderCommandHandler
         CacheInterface $orderPayPalCache,
         PrestaShopContext $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
-        PayPalOrderRepository $payPalOrderRepository
+        PayPalOrderRepository $payPalOrderRepository,
+        PayPalOrderEventSubscriber $payPalOrderEventSubscriber
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
@@ -85,6 +88,7 @@ class CapturePayPalOrderCommandHandler
         $this->prestaShopContext = $prestaShopContext;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->payPalOrderEventSubscriber = $payPalOrderEventSubscriber;
     }
 
     public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand) {
@@ -146,7 +150,9 @@ class CapturePayPalOrderCommandHandler
         }
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
-            $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
+            $event = new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal);
+            $this->payPalOrderEventSubscriber->saveCompletedPayPalOrder($event);
+            $this->payPalOrderEventSubscriber->updateCache($event);
         }
 
         if ($capturePayPal['status'] === PayPalCaptureStatus::PENDING) {

@@ -52,7 +52,6 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             $getPayPalOrderQuery->getOrderPayPalId()->getValue(),
             function(ItemInterface $cacheItem) use ($getPayPalOrderQuery) {
                 $payPalOrder = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-                $cacheItem->set($payPalOrder->getOrder());
                 return $payPalOrder->getOrder();
             }
         );
