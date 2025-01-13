@@ -28,7 +28,6 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_bc06e3a
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ccf338e772778287ddef6911855e5ba3'] = 'Ordine PayPal non valido.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'Il rimborso è stato effettuato tramite PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Valuta di rimborso PayPal non valida.';
-$_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_e0284fd0919f131573a5b9a542f80a58'] = 'Impossibile recuperare l\'ordine PayPal [PAYPAL_ORDER_ID]';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'Il rimborso non può essere effettuato tramite PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_3f3813d918b5a7fa072490daba788485'] = 'Sembra che il tuo token dipendente non sia valido.';
 $_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_696306162008efe5a5db815d5014b611'] = 'Sembra che tu sia disconnesso.';
@@ -55,7 +54,6 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_c845fcac2ea7b1c490dbe27652e31759'] = 'Vai al PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d59048f21fd887ad520398ce677be586'] = 'Per saperne di più';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7366120e49ccb980dac7e7aefae85e3'] = 'Importi della transazione';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Massimo [AMOUNT_MAX] [CURRENCY] (IVA inclusa)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Importo (tasse incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Annulla';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea620d61461a00502599f2e6a064b931'] = 'Metodo di pagamento';
@@ -105,7 +103,6 @@ $_MODULE['<{ps_checkout}prestashop>cardfields_f92103c13c44bded222d124f5b9743f3']
 $_MODULE['<{ps_checkout}prestashop>cardfields_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Il codice di sicurezza è a';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Il tuo identificatore commerciante PayPal sembra non valido.';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'Non abbiamo ricevuto il tuo identificativo commerciante Paypal.';
-$_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamenti sicuri al 100%';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Il tuo ordine è in attesa della conferma del pagamento. Riceverai un\'email quando il tuo pagamento sarà stato convalidato. Puoi anche controllare lo stato dell\'ordine nella cronologia degli ordini nel tuo account.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Il tuo ordine è stato confermato.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 cifre';
@@ -117,12 +114,6 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a
 $_MODULE['<{ps_checkout}prestashop>displaypayment_f92103c13c44bded222d124f5b9743f3'] = 'Nome del titolare (opzionale)';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Il codice di sicurezza è un codice a';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Pagamento annullato. Scegli un altro metodo di pagamento o riprova più tardi.';
-$_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamenti sicuri al 100%';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Carta';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Paga con un conto PayPal';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Paga tramite carta - pagamenti 100% sicuri';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Paga tramite %s';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_fc9b4762660906602b63bcd99e5e9747'] = 'Paga a rate con PayPal Pay Later';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_05dabaa08b279e85b941a229ea150f01'] = 'Per poter trattare il pagamento, il cliente deve prima aver risolto questo imprevisto.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_1bf3a68908311fdacacf39cd2f05ce27'] = 'Ordine già confermato. Contatta il servizio clienti per verificare che il tuo ordine sia stato regolarmente confermato.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_28bdeeeb111a2556d5ddeb22c5143e91'] = 'Hai superato la verifica 3D Secure, riprova o utilizza un altro metodo di pagamento.';
@@ -185,12 +176,6 @@ $_MODULE['<{ps_checkout}prestashop>orderpresenter_9f004157e4c148dac71da3ae590635
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_cc61945cbbf46721a053467c395c666f'] = 'Rimborsata';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_fbd8a56b7556bf3a2fd8c1905a5c0f9c'] = 'Cancellata';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 cifre';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'sul retro della tua carta di credito/debito. In alcuni casi, può essere di 4 cifre o sul fronte della carta.';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Cod. di sicurezza';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Il codice di sicurezza è un codice a';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_565c23511bb8643ac5552fbd5e4ba358'] = 'Tutti i metodi di pagamento in un unico modulo.';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Offri la gamma più ampia di metodi di pagamento: carte, PayPal, ecc.';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Usufruisci di tutti i vantaggi e l\'esperienza di PayPal';
@@ -209,6 +194,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_2e3e721e530a957f81d5b5dcff0bf0e1'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamenti sicuri al 100%.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_32231b6aa7f7da0da19a691bd78c5680'] = 'L’importo totale del tuo ordine ammonta a';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_39dc86ebdd6c930447215d738bc4d15f'] = 'Si è verificato un errore durante l\'autenticazione del titolare della carta. Si prega di scegliere un altro metodo di pagamento o riprovare.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_3aa23f90376bc10782584d22a91aae97'] = 'Abbiamo riscontrato un problema durante l’elaborazione del tuo pagamento Apple Pay. Verifica i dettagli del tuo ordine e riprova o utilizza un altro metodo di pagamento.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_46b9e3665f187c739c55983f757ccda0'] = 'Confermo l’ordine';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_52afb370f87a4acfe4f1aaee204835eb'] = 'L\'identità del titolare della carta non può essere verificata. Si prega di scegliere un altro metodo di pagamento o riprovare.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'] = 'Altri metodi di pagamento';
@@ -217,6 +203,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Checkout';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Hai scelto di pagare con PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Grazie per l’acquisto!';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_73f9b9812ae06d85ba2e015622a48ad5'] = 'Non possiamo elaborare il tuo pagamento Apple Pay al momento. Questo potrebbe essere dovuto a un problema di verifica della configurazione del pagamento per questo sito. Riprova più tardi o scegli un altro metodo di pagamento.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Autenticazione del titolare della carta annullata. Si prega di scegliere un altro metodo di pagamento o riprovare.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_816565ccf105493c7b15166627f6fc16'] = 'Autenticazione del titolare della carta fallita. Si prega di scegliere un altro metodo di pagamento o riprovare.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_879f6b8877752685a966564d072f498f'] = 'Il tuo carrello è vuoto.';
@@ -236,8 +223,6 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_eb18dd00e86aff4b5b5d15e938382b49'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Confermare l’ordine facendo clic su “Confermo l’ordine”';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Riepilogo dell’ordine';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
-$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Rimborso';
-$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_0010d7e47c9ef468ccad1dde3b4536c5'] = 'Accetta i pagamenti tramite il pulsante PayPal sulla tua pagina di pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_005b798ad83c6496b7a1a29cb9edad5c'] = 'La versione gold offre risultati migliori in termini di conversioni';
 $_MODULE['<{ps_checkout}prestashop>translations_0084da4633913f4fef24e40cec0e38e5'] = 'Express Checkout Shortcut consente di riunire la creazione di un account e il pagamento per semplificare gli acquisti dei tuoi clienti.';
