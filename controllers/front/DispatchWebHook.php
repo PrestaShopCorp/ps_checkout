@@ -103,9 +103,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $validationValues->validateBodyDatas($bodyValues);
             $this->setAtributesBodyValues($bodyValues);
 
-//            if (false === $this->checkPSLSignature($bodyValues)) {
-//                throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
-//            }
+            if (false === $this->checkPSLSignature($bodyValues)) {
+                throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
+            }
 
             // Check if have execution permissions
             if (false === $this->checkExecutionPermissions()) {
