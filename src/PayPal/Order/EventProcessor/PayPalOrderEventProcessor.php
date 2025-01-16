@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler;
@@ -52,18 +51,17 @@ use Symfony\Contracts\Cache\CacheInterface;
 class PayPalOrderEventProcessor
 {
     public function __construct(
-        public QueryBusInterface $queryBus,
-        public PsCheckoutCartRepository $psCheckoutCartRepository,
-        public CacheInterface $orderPayPalCache,
-        public CheckoutChecker $checkoutChecker,
-        public CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        public OrderStateMapper $orderStateMapper,
-        public PayPalConfiguration $payPalConfiguration,
-        public PayPalOrderRepository $payPalOrderRepository,
-        public SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler,
-        public SaveCheckoutCommandHandler $saveCheckoutCommandHandler,
-        public SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler,
-        public UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
+        private QueryBusInterface $queryBus,
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private CacheInterface $orderPayPalCache,
+        private CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
+        private OrderStateMapper $orderStateMapper,
+        private PayPalConfiguration $payPalConfiguration,
+        private PayPalOrderRepository $payPalOrderRepository,
+        private SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler,
+        private SaveCheckoutCommandHandler $saveCheckoutCommandHandler,
+        private SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler,
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
     ) {}
 
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
