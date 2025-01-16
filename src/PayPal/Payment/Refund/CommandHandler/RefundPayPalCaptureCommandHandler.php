@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHand
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
@@ -34,41 +33,13 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 class RefundPayPalCaptureCommandHandler
 {
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $checkoutHttpClient;
-    /**
-     * @var PayPalConfiguration
-     */
-    private $payPalConfiguration;
-    /**
-     * @var PrestaShopConfiguration
-     */
-    private $prestaShopConfiguration;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-    private PayPalRefundEventSubscriber $payPalRefundEventSubscriber;
-
     public function __construct(
-        MaaslandHttpClient $checkoutHttpClient,
-        PayPalConfiguration $payPalConfiguration,
-        PrestaShopConfiguration $prestaShopConfiguration,
-        PrestaShopContext $prestaShopContext,
-        PayPalRefundEventSubscriber $payPalRefundEventSubscriber
-    ) {
-        $this->checkoutHttpClient = $checkoutHttpClient;
-        $this->payPalConfiguration = $payPalConfiguration;
-        $this->prestaShopConfiguration = $prestaShopConfiguration;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->payPalRefundEventSubscriber = $payPalRefundEventSubscriber;
-    }
+        private MaaslandHttpClient $checkoutHttpClient,
+        private PayPalConfiguration $payPalConfiguration,
+        private PrestaShopConfiguration $prestaShopConfiguration,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalRefundEventSubscriber $payPalRefundEventSubscriber
+    ) {}
 
 
     public function __invoke(RefundPayPalCaptureCommand $command)

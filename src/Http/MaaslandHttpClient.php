@@ -33,15 +33,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class MaaslandHttpClient implements HttpClientInterface
 {
-    /**
-     * @var HttpClientInterface
-     */
-    private $httpClient;
-
-    public function __construct(HttpClientInterface $httpClient)
-    {
-        $this->httpClient = $httpClient;
-    }
+    public function __construct(private HttpClientInterface $httpClient)
+    {}
 
     /**
      * @param array $payload

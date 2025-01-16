@@ -283,7 +283,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      *
      * @return false
      */
-    protected function geolocationManagement($default_country)
+    protected function geolocationManagement($defaultCountry)
     {
         return false;
     }

@@ -29,15 +29,8 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class GetPayPalOrderForOrderConfirmationQueryHandler
 {
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    public function __construct(CacheInterface $orderPayPalCache)
-    {
-        $this->orderPayPalCache = $orderPayPalCache;
-    }
+    public function __construct(private CacheInterface $orderPayPalCache)
+    {}
 
     public function __invoke(GetPayPalOrderForOrderConfirmationQuery $query)
     {

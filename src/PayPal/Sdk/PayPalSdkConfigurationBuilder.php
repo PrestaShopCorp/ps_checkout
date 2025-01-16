@@ -47,70 +47,18 @@ class PayPalSdkConfigurationBuilder
      */
     const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
 
-    /**
-     * @var PayPalConfiguration
-     */
-    private $configuration;
-
-    /**
-     * @var PayPalPayLaterConfiguration
-     */
-    private $payLaterConfiguration;
-
-    /**
-     * @var FundingSourceConfigurationRepository
-     */
-    private $fundingSourceConfigurationRepository;
-
-    /** @var ExpressCheckoutConfiguration */
-    private $expressCheckoutConfiguration;
-
-    /** @var ShopContext */
-    private $shopContext;
-
-    /** @var array */
-    private static $cache = [];
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-    /**
-     * @var Env
-     */
-    private $env;
-    /**
-     * @var FundingSourceEligibilityConstraint
-     */
-    private $fundingSourceEligibilityConstraint;
-    private QueryBusInterface $queryBus;
-
     public function __construct(
-        Env $env,
-        PayPalConfiguration $configuration,
-        PayPalPayLaterConfiguration $payLaterConfiguration,
-        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
-        ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        ShopContext $shopContext,
-        PrestaShopContext $prestaShopContext,
-        LoggerInterface $logger,
-        FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
-        QueryBusInterface $queryBus
-    ) {
-        $this->configuration = $configuration;
-        $this->payLaterConfiguration = $payLaterConfiguration;
-        $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
-        $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
-        $this->shopContext = $shopContext;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->logger = $logger;
-        $this->env = $env;
-        $this->fundingSourceEligibilityConstraint = $fundingSourceEligibilityConstraint;
-        $this->queryBus = $queryBus;
-    }
+        private Env $env,
+        private PayPalConfiguration $configuration,
+        private PayPalPayLaterConfiguration $payLaterConfiguration,
+        private FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
+        private ExpressCheckoutConfiguration $expressCheckoutConfiguration,
+        private ShopContext $shopContext,
+        private PrestaShopContext $prestaShopContext,
+        private LoggerInterface $psCheckoutLogger,
+        private  FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
+        private QueryBusInterface $queryBus
+    ) {}
 
     /**
      * @return array
@@ -160,7 +108,7 @@ class PayPalSdkConfigurationBuilder
                 $queryResult = $this->queryBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
                 $params['dataUserIdToken'] = $queryResult->getUserIdToken();
             } catch (Exception $exception) {
-                $this->logger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
+                $this->psCheckoutLogger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
             }
         }
 

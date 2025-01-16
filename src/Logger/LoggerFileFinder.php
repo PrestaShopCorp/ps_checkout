@@ -29,24 +29,13 @@ use Symfony\Component\Finder\Finder;
 class LoggerFileFinder
 {
     /**
-     * @var LoggerDirectory
-     */
-    private $loggerDirectory;
-
-    /**
-     * @var LoggerFilename
-     */
-    private $loggerFilename;
-
-    /**
      * @param LoggerDirectory $loggerDirectory
      * @param LoggerFilename $loggerFilename
      */
-    public function __construct($loggerDirectory, LoggerFilename $loggerFilename)
-    {
-        $this->loggerDirectory = $loggerDirectory;
-        $this->loggerFilename = $loggerFilename;
-    }
+    public function __construct(
+        private LoggerDirectory $loggerDirectory,
+        private LoggerFilename $loggerFilename
+    ) {}
 
     /**
      * @return array|string[]

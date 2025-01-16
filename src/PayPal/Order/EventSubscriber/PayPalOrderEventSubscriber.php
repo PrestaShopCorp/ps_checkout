@@ -38,22 +38,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
 {
-    private PsCheckoutCartRepository $psCheckoutCartRepository;
-    private CheckoutChecker $checkoutChecker;
-    private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler;
-    private PayPalOrderEventProcessor $payPalOrderEventProcessor;
-
     public function __construct(
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        CheckoutChecker $checkoutChecker,
-        CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
-        PayPalOrderEventProcessor $payPalOrderEventProcessor
-    ) {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->checkoutChecker = $checkoutChecker;
-        $this->capturePayPalOrderCommandHandler = $capturePayPalOrderCommandHandler;
-        $this->payPalOrderEventProcessor = $payPalOrderEventProcessor;
-    }
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private CheckoutChecker $checkoutChecker,
+        private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
+        private PayPalOrderEventProcessor $payPalOrderEventProcessor
+    ) {}
 
     /**
      * {@inheritdoc}

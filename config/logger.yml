@@ -1,27 +1,26 @@
 services:
-  PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+  _defaults:
+    autowire: true
+    autoconfigure: true
     public: true
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory:
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory
     arguments:
       - !php/const _PS_VERSION_
       - !php/const _PS_ROOT_DIR_
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Shop\\ShopProvider").getIdentifier()'
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory
     arguments:
       - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerDirectory").getPath()'
       - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerFilename").get()'
@@ -29,20 +28,20 @@ services:
       - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerConfiguration").getLevel()'
 
   ps_checkout.logger.handler:
-    class: 'Monolog\Handler\HandlerInterface'
-    public: true
+    class: Monolog\Handler\HandlerInterface
     factory: ['@PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory', "build"]
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory
     arguments:
       - '@=service("ps_checkout.module").name'
       - "@ps_checkout.logger.handler"
 
   ps_checkout.logger:
-    class: 'Psr\Log\LoggerInterface'
-    public: true
+    class: Psr\Log\LoggerInterface
     factory: ['@PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory', "build"]
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+
+  Psr\Log\LoggerInterface $psCheckoutLogger:
+    alias: 'ps_checkout.logger'

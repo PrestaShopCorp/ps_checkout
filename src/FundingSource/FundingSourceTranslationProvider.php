@@ -20,27 +20,18 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
-use Module;
+use Ps_checkout;
 
 class FundingSourceTranslationProvider
 {
-    /**
-     * @var array
-     */
-    private $fundingSourceNames;
+    private array $fundingSourceNames;
 
-    /**
-     * @var array
-     */
-    private $paymentOptionNames;
+    private array $paymentOptionNames;
 
-    /**
-     * @param Module $module
-     */
-    public function __construct(Module $module)
+    public function __construct(Ps_checkout $psCheckout)
     {
         $this->fundingSourceNames = [
-            'card' => $module->l('Card', 'fundingsourcetranslationprovider'),
+            'card' => $psCheckout->l('Card', 'fundingsourcetranslationprovider'),
             'paypal' => 'PayPal',
             'venmo' => 'Venmo',
             'itau' => 'Itau',
@@ -66,21 +57,21 @@ class FundingSourceTranslationProvider
             'sepa' => 'SEPA',
             'google_pay' => 'Google Pay',
             'apple_pay' => 'Apple Pay',
-            'token' => $module->l('Pay with %s', 'fundingsourcetranslationprovider'),
+            'token' => $psCheckout->l('Pay with %s', 'fundingsourcetranslationprovider'),
         ];
 
-        $payByTranslation = $module->l('Pay by %s', 'fundingsourcetranslationprovider');
+        $payByTranslation = $psCheckout->l('Pay by %s', 'fundingsourcetranslationprovider');
 
         foreach ($this->fundingSourceNames as $fundingSource => $name) {
             switch ($fundingSource) {
                 case 'paypal':
-                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay with a PayPal account', 'fundingsourcetranslationprovider');
+                    $this->paymentOptionNames[$fundingSource] = $psCheckout->l('Pay with a PayPal account', 'fundingsourcetranslationprovider');
                     break;
                 case 'card':
-                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
+                    $this->paymentOptionNames[$fundingSource] = $psCheckout->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
                     break;
                 case 'paylater':
-                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay in installments with PayPal Pay Later', 'fundingsourcetranslationprovider');
+                    $this->paymentOptionNames[$fundingSource] = $psCheckout->l('Pay in installments with PayPal Pay Later', 'fundingsourcetranslationprovider');
                     break;
                 default:
                     $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
@@ -98,7 +89,7 @@ class FundingSourceTranslationProvider
      */
     public function getPaymentMethodName($fundingSource)
     {
-        return isset($this->fundingSourceNames[$fundingSource]) ? $this->fundingSourceNames[$fundingSource] : '';
+        return $this->fundingSourceNames[$fundingSource] ?? '';
     }
 
     /**
@@ -126,6 +117,6 @@ class FundingSourceTranslationProvider
      */
     public function getPaymentOptionName($fundingSource)
     {
-        return isset($this->paymentOptionNames[$fundingSource]) ? $this->paymentOptionNames[$fundingSource] : '';
+        return $this->paymentOptionNames[$fundingSource] ?? '';
     }
 }

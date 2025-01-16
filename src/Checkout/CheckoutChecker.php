@@ -30,18 +30,8 @@ use Validate;
 
 class CheckoutChecker
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(private LoggerInterface $psCheckoutLogger)
+    {}
 
     /**
      * @param int $cartId
@@ -62,7 +52,7 @@ class CheckoutChecker
         if (in_array($paymentSource, ['google_pay', 'card'], true)) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 
-            $this->logger->info(
+            $this->psCheckoutLogger->info(
                 '3D Secure authentication result',
                 [
                     'authentication_result' => isset($orderPayPal['payment_source'][$paymentSource]['authentication_result']) ? $orderPayPal['payment_source'][$paymentSource]['authentication_result'] : null,

@@ -38,58 +38,15 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
 {
     const TIMEOUT = 10;
 
-    /**
-     * @var Env
-     */
-    private $paymentEnv;
-
-    /**
-     * @var Router
-     */
-    private $router;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @var PsAccountRepository
-     */
-    private $psAccountRepository;
-
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-
-    /**
-     * @var LoggerConfiguration
-     */
-    private $loggerConfiguration;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     public function __construct(
-        Env $paymentEnv,
-        Router $router,
-        ShopContext $shopContext,
-        PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext,
-        LoggerConfiguration $loggerConfiguration,
-        LoggerInterface $logger
-    ) {
-        $this->paymentEnv = $paymentEnv;
-        $this->router = $router;
-        $this->shopContext = $shopContext;
-        $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->loggerConfiguration = $loggerConfiguration;
-        $this->logger = $logger;
-    }
+        private Env $paymentEnv,
+        private Router $router,
+        private ShopContext $shopContext,
+        private PsAccountRepository $psAccountRepository,
+        private PrestaShopContext $prestaShopContext,
+        private LoggerConfiguration $loggerConfiguration,
+        private LoggerInterface $psCheckoutLogger
+    ) {}
 
     /**
      * @return array
@@ -119,7 +76,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
             && class_exists(LogMiddleware::class)
         ) {
             $handlerStack = HandlerStack::create();
-            $handlerStack->push(new LogMiddleware($this->logger));
+            $handlerStack->push(new LogMiddleware($this->psCheckoutLogger));
             $configuration['handler'] = $handlerStack;
         } elseif (
             $this->loggerConfiguration->isHttpEnabled()
@@ -130,7 +87,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
         ) {
             $emitter = new Emitter();
             $emitter->attach(new LogSubscriber(
-                $this->logger,
+                $this->psCheckoutLogger,
                 Formatter::DEBUG
             ));
 

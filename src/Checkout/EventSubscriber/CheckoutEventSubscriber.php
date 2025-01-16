@@ -39,35 +39,20 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForChe
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Ps_checkout;
 use PsCheckoutCart;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
-    private QueryBusInterface $queryBus;
-    private CheckoutChecker $checkoutChecker;
-    private PsCheckoutCartRepository $psCheckoutCartRepository;
-    private UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler;
-    private CreateOrderCommandHandler $createOrderCommandHandler;
-    private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler;
-
     public function __construct(
-        CheckoutChecker $checkoutChecker,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        QueryBusInterface $queryBus,
-        UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
-        CreateOrderCommandHandler $createOrderCommandHandler,
-        CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
-    ) {
-        $this->checkoutChecker = $checkoutChecker;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->queryBus = $queryBus;
-        $this->updatePaymentMethodSelectedCommandHandler = $updatePaymentMethodSelectedCommandHandler;
-        $this->createOrderCommandHandler = $createOrderCommandHandler;
-        $this->capturePayPalOrderCommandHandler = $capturePayPalOrderCommandHandler;
-    }
+        private QueryBusInterface $queryBus,
+        private CheckoutChecker $checkoutChecker,
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
+        private CreateOrderCommandHandler $createOrderCommandHandler,
+        private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
+    ) {}
 
     /**
      * {@inheritdoc}

@@ -51,46 +51,20 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class PayPalOrderEventProcessor
 {
-    private PsCheckoutCartRepository $psCheckoutCartRepository;
-    private CacheInterface $orderPayPalCache;
-    private CheckoutChecker $checkoutChecker;
-    private CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService;
-    private OrderStateMapper $orderStateMapper;
-    private PayPalConfiguration $payPalConfiguration;
-    private PayPalOrderRepository $payPalOrderRepository;
-    private SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler;
-    private SaveCheckoutCommandHandler $saveCheckoutCommandHandler;
-    private SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler;
-    private QueryBusInterface $queryBus;
-    private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
-
     public function __construct(
-        QueryBusInterface $queryBus,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        CacheInterface $orderPayPalCache,
-        CheckoutChecker $checkoutChecker,
-        CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        OrderStateMapper $orderStateMapper,
-        PayPalConfiguration $payPalConfiguration,
-        PayPalOrderRepository $payPalOrderRepository,
-        SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler,
-        SaveCheckoutCommandHandler $saveCheckoutCommandHandler,
-        SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler,
-        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {
-        $this->queryBus = $queryBus;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->checkoutChecker = $checkoutChecker;
-        $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
-        $this->orderStateMapper = $orderStateMapper;
-        $this->payPalConfiguration = $payPalConfiguration;
-        $this->payPalOrderRepository = $payPalOrderRepository;
-        $this->savePayPalOrderCommandHandler = $savePayPalOrderCommandHandler;
-        $this->saveCheckoutCommandHandler = $saveCheckoutCommandHandler;
-        $this->savePayPalOrderStatusCommandHandler = $savePayPalOrderStatusCommandHandler;
-        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
-    }
+        public QueryBusInterface $queryBus,
+        public PsCheckoutCartRepository $psCheckoutCartRepository,
+        public CacheInterface $orderPayPalCache,
+        public CheckoutChecker $checkoutChecker,
+        public CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
+        public OrderStateMapper $orderStateMapper,
+        public PayPalConfiguration $payPalConfiguration,
+        public PayPalOrderRepository $payPalOrderRepository,
+        public SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler,
+        public SaveCheckoutCommandHandler $saveCheckoutCommandHandler,
+        public SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler,
+        public UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
+    ) {}
 
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {

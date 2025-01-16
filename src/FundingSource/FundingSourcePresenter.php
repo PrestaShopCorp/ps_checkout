@@ -26,33 +26,11 @@ use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 
 class FundingSourcePresenter
 {
-    /**
-     * @var FundingSourceTranslationProvider
-     */
-    private $translation;
-
-    /**
-     * @var CountryRepository
-     */
-    private $country;
-    /**
-     * @var PaymentMethodLogoProvider
-     */
-    private $paymentMethodLogoProvider;
-
-    /**
-     * @param FundingSourceTranslationProvider $translation
-     * @param CountryRepository $country
-     */
     public function __construct(
-        FundingSourceTranslationProvider $translation,
-        CountryRepository $country,
-        PaymentMethodLogoProvider $paymentMethodLogoProvider
-    ) {
-        $this->translation = $translation;
-        $this->country = $country;
-        $this->paymentMethodLogoProvider = $paymentMethodLogoProvider;
-    }
+        private FundingSourceTranslationProvider $translation,
+        private CountryRepository $country,
+        private PaymentMethodLogoProvider $paymentMethodLogoProvider
+    ) {}
 
     /**
      * @param FundingSourceEntity $entity

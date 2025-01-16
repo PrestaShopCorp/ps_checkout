@@ -34,49 +34,13 @@ use Ps_checkout;
  */
 class ConfigurationModule implements PresenterInterface
 {
-    /**
-     * @var PayPalPayLaterConfiguration
-     */
-    private $payLaterConfiguration;
-
-    /**
-     * @var ExpressCheckoutConfiguration
-     */
-    private $ecConfiguration;
-
-    /**
-     * @var PayPalConfiguration
-     */
-    private $paypalConfiguration;
-
-    /**
-     * @var FundingSourceProvider
-     */
-    private $fundingSourceProvider;
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
-     * @param PayPalPayLaterConfiguration $payLaterConfiguration
-     * @param ExpressCheckoutConfiguration $ecConfiguration
-     * @param PayPalConfiguration $paypalConfiguration
-     * @param FundingSourceProvider $fundingSourceProvider
-     */
     public function __construct(
-        PayPalPayLaterConfiguration $payLaterConfiguration,
-        ExpressCheckoutConfiguration $ecConfiguration,
-        PayPalConfiguration $paypalConfiguration,
-        FundingSourceProvider $fundingSourceProvider,
-        Ps_checkout $module
-    ) {
-        $this->payLaterConfiguration = $payLaterConfiguration;
-        $this->ecConfiguration = $ecConfiguration;
-        $this->paypalConfiguration = $paypalConfiguration;
-        $this->fundingSourceProvider = $fundingSourceProvider;
-        $this->module = $module;
-    }
+        private PayPalPayLaterConfiguration $payLaterConfiguration,
+        private ExpressCheckoutConfiguration $ecConfiguration,
+        private PayPalConfiguration $paypalConfiguration,
+        private FundingSourceProvider $fundingSourceProvider,
+        private Ps_checkout $psCheckout
+    ) {}
 
     /**
      * Present the paypal module (vuex)
@@ -183,7 +147,7 @@ class ConfigurationModule implements PresenterInterface
         $nonDecimalCurrencies = ['HUF', 'JPY', 'TWD'];
 
         // Enabled currencies for PrestaShop Checkout
-        $enabledCurrencies = \Currency::getPaymentCurrencies($this->module->id);
+        $enabledCurrencies = \Currency::getPaymentCurrencies($this->psCheckout->id);
 
         $misConfiguredCurrencies = [];
 

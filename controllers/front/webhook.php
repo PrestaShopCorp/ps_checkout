@@ -178,11 +178,11 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
      *
      * @see FrontController::geolocationManagement()
      *
-     * @param Country $default_country
+     * @param Country $defaultCountry
      *
      * @return false
      */
-    protected function geolocationManagement($default_country)
+    protected function geolocationManagement($defaultCountry)
     {
         return false;
     }

@@ -22,25 +22,10 @@ namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
 class FundingSourceCollectionBuilder
 {
-    /**
-     * @var FundingSourceConfiguration
-     */
-    private $configuration;
-
-    /**
-     * @var FundingSourceEligibilityConstraint
-     */
-    private $eligibilityConstraint;
-
-    /**
-     * @param FundingSourceConfiguration $configuration
-     * @param FundingSourceEligibilityConstraint $eligibilityConstraint
-     */
-    public function __construct(FundingSourceConfiguration $configuration, FundingSourceEligibilityConstraint $eligibilityConstraint)
-    {
-        $this->configuration = $configuration;
-        $this->eligibilityConstraint = $eligibilityConstraint;
-    }
+    public function __construct(
+        private FundingSourceConfiguration $configuration,
+        private FundingSourceEligibilityConstraint $eligibilityConstraint
+    ){}
 
     /**
      * Create the funding sources collection

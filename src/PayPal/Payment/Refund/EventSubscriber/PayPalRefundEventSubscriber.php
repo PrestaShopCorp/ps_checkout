@@ -36,25 +36,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalRefundEventSubscriber implements EventSubscriberInterface
 {
-    private CacheInterface $orderPayPalCache;
-    private OrderStateMapper $orderStateMapper;
-    private PayPalOrderProvider $orderProvider;
-    private QueryBusInterface $queryBus;
-    private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
-
     public function __construct(
-        CacheInterface $orderPayPalCache,
-        OrderStateMapper $orderStateMapper,
-        PayPalOrderProvider $orderProvider,
-        QueryBusInterface $queryBus,
-        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->orderStateMapper = $orderStateMapper;
-        $this->orderProvider = $orderProvider;
-        $this->queryBus = $queryBus;
-        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
-    }
+        private CacheInterface $orderPayPalCache,
+        private OrderStateMapper $orderStateMapper,
+        private PayPalOrderProvider $orderProvider,
+        private QueryBusInterface $queryBus,
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
+    ) {}
 
     /**
      * {@inheritdoc}

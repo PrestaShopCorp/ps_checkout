@@ -27,15 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 
 class GetApplePayPaymentRequestQueryHandler
 {
-    /**
-     * @var ApplePayPaymentRequestBuilder
-     */
-    private $builder;
-
-    public function __construct(ApplePayPaymentRequestBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
+    public function __construct(private ApplePayPaymentRequestBuilder $builder)
+    {}
 
     /**
      * @param GetApplePayPaymentRequestQuery $query

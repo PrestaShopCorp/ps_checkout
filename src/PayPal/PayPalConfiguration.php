@@ -55,21 +55,10 @@ class PayPalConfiguration
     const PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX = 'PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX';
     const PS_CHECKOUT_DOMAIN_REGISTERED_LIVE = 'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE';
 
-    /**
-     * @var PrestaShopConfiguration
-     */
-    private $configuration;
-
-    /**
-     * @var PayPalCodeRepository
-     */
-    private $codeRepository;
-
-    public function __construct(PrestaShopConfiguration $configuration, PayPalCodeRepository $codeRepository)
-    {
-        $this->configuration = $configuration;
-        $this->codeRepository = $codeRepository;
-    }
+    public function __construct(
+        private PrestaShopConfiguration $configuration,
+        private PayPalCodeRepository $codeRepository
+    ) {}
 
     /**
      * Used to return the PS_CHECKOUT_INTENT from the Configuration

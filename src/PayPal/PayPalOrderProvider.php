@@ -28,16 +28,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class PayPalOrderProvider
 {
-    private CacheInterface $orderPayPalCache;
-
-    /**
-     * @param CacheInterface $orderPayPalCache
-     * @param OrderId $orderId
-     */
-    public function __construct(CacheInterface $orderPayPalCache)
-    {
-        $this->orderPayPalCache = $orderPayPalCache;
-    }
+    public function __construct(private CacheInterface $orderPayPalCache)
+    {}
 
     /**
      * @param string $id PayPal Order Id

@@ -27,15 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Environment\Env;
  */
 class ShopContext
 {
-    /**
-     * @var Env
-     */
-    private $env;
-
-    public function __construct(Env $env)
-    {
-        $this->env = $env;
-    }
+    public function __construct(private Env $env)
+    {}
 
     /**
      * Check if the module is installed on ready or download

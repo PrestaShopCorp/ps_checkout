@@ -26,32 +26,12 @@ use Symfony\Component\Messenger\Handler\HandlersLocator;
 use Symfony\Component\Messenger\MessageBus;
 use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
-class TacticianCommandBusFactory
+class CommandBusFactory
 {
-    /**
-     * @var array
-     */
-    private $commandToHandlerMap;
+    public function __construct(private LoggerInterface $logger, private array $commandToHandlerMap)
+    {}
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     * @param array $commandToHandlerMap
-     */
-    public function __construct(LoggerInterface $logger, array $commandToHandlerMap)
-    {
-        $this->logger = $logger;
-        $this->commandToHandlerMap = $commandToHandlerMap;
-    }
-
-    /**
-     * @return TacticianCommandBusAdapter
-     */
-    public function create()
+    public function create(): CommandBusAdapter
     {
         $handlerMiddleWare = new HandleMessageMiddleware(
             new HandlersLocator($this->commandToHandlerMap),
@@ -63,6 +43,6 @@ class TacticianCommandBusFactory
             new MessageBus([$handlerMiddleWare])
         );
 
-        return new TacticianCommandBusAdapter($messengerBus);
+        return new CommandBusAdapter($messengerBus);
     }
 }

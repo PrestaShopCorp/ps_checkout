@@ -30,20 +30,14 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenD
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 {
-    private PayPalOrderRepository $payPalOrderRepository;
-
-    private PaymentTokenRepository $paymentTokenRepository;
-
-    public function __construct(PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->payPalOrderRepository = $payPalOrderRepository;
-        $this->paymentTokenRepository = $paymentTokenRepository;
-    }
+    public function __construct(
+        private PayPalOrderRepository $payPalOrderRepository,
+        private PaymentTokenRepository $paymentTokenRepository
+    ) {}
 
     /**
      * {@inheritdoc}

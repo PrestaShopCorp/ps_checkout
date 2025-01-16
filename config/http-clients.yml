@@ -1,47 +1,28 @@
 services:
+  _defaults:
+    public: true
+    autowire: true
+    autoconfigure: true
+
   PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
-    public: true
     arguments:
       - "@ps_checkout.http.client"
 
   PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder'
+    class: PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient
 
   PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
-      - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
-      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-      - "@ps_checkout.logger"
+    class: PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder
 
   PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory
 
   ps_checkout.http.client:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface
     factory: ['@PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory', "create"]
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\MaaslandHttpClientConfigurationBuilder'
 
   PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder'
-    public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Environment\Env'
-      - '@PrestaShop\Module\PrestashopCheckout\Routing\Router'
-      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
-      - "@ps_checkout.logger"
+    class: PrestaShop\Module\PrestashopCheckout\Builder\Configuration\CheckoutClientConfigurationBuilder

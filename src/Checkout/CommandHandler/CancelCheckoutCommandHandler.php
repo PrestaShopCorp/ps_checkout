@@ -29,15 +29,8 @@ use PsCheckoutCart;
 
 class CancelCheckoutCommandHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-    }
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
     public function __invoke(CancelCheckoutCommand $command) {
         $this->handle($command);

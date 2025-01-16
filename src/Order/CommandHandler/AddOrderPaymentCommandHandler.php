@@ -35,22 +35,10 @@ use Validate;
 
 class AddOrderPaymentCommandHandler extends AbstractOrderHandler
 {
-    /**
-     * @var FundingSourceTranslationProvider
-     */
-    private $fundingSourceTranslationProvider;
-    /**
-     * @var PayPalConfiguration
-     */
-    private $configuration;
-
     public function __construct(
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
-        PayPalConfiguration $configuration
-    ) {
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
-        $this->configuration = $configuration;
-    }
+        private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        private PayPalConfiguration $configuration
+    ) {}
 
     public function __invoke(AddOrderPaymentCommand $command) {
         $this->handle($command);
@@ -91,11 +79,5 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
         if (!$paymentAdded) {
             throw new OrderException(sprintf('Failed to add a payment to Order #%s.', $command->getOrderId()->getValue()), OrderException::FAILED_ADD_PAYMENT);
         }
-
-        /** @var OrderPayment[] $orderPayments */
-        $orderPayments = $order->getOrderPayments();
-        $latestOrderPayment = end($orderPayments);
-
-//        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
     }
 }

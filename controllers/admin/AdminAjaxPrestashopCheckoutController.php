@@ -807,10 +807,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function init()
     {
-//        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
-//            // Avoid redirection to Login page because Ajax doesn't support it
-//            $this->initCursedPage();
-//        }
+        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+            // Avoid redirection to Login page because Ajax doesn't support it
+            $this->initCursedPage();
+        }
 
         parent::init();
     }

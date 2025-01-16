@@ -8,29 +8,12 @@ use Symfony\Component\Messenger\Handler\HandlersLocator;
 use Symfony\Component\Messenger\MessageBus;
 use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
-class TacticianQueryBusFactory
+class QueryBusFactory
 {
-    /**
-     * @var array
-     */
-    private $queryToHandlerMap;
+    public function __construct(private LoggerInterface $logger, private array $queryToHandlerMap)
+    {}
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     * @param array $queryToHandlerMap
-     */
-    public function __construct(LoggerInterface $logger, array $queryToHandlerMap)
-    {
-        $this->logger = $logger;
-        $this->queryToHandlerMap = $queryToHandlerMap;
-    }
-
-    public function create(): TacticianQueryBusAdapter
+    public function create(): QueryBusAdapter
     {
         $handlerMiddleWare = new HandleMessageMiddleware(
             new HandlersLocator($this->queryToHandlerMap),
@@ -42,6 +25,6 @@ class TacticianQueryBusFactory
             new MessageBus([$handlerMiddleWare])
         );
 
-        return new TacticianQueryBusAdapter($messengerBus);
+        return new QueryBusAdapter($messengerBus);
     }
 }

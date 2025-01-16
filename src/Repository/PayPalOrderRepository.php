@@ -34,15 +34,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\Payment
 
 class PayPalOrderRepository
 {
-    /**
-     * @var Db
-     */
-    private $db;
-
-    public function __construct(Db $db)
-    {
-        $this->db = $db;
-    }
+    public function __construct(private Db $db)
+    {}
 
     /**
      * @param PayPalOrder $payPalOrder

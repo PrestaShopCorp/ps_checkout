@@ -31,18 +31,8 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class PsCheckoutCartRepository
 {
-    /**
-     * @var CacheInterface
-     */
-    private $cartPrestaShopCache;
-
-    /**
-     * @param CacheInterface $cartPrestaShopCache
-     */
-    public function __construct(CacheInterface $cartPrestaShopCache)
-    {
-        $this->cartPrestaShopCache = $cartPrestaShopCache;
-    }
+    public function __construct(private CacheInterface $cartPrestaShopCache)
+    {}
 
     /**
      * @param int $cartId

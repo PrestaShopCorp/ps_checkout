@@ -28,20 +28,8 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class GetPayPalOrderForCartIdQueryHandler
 {
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $checkoutCartRepository;
-
-    public function __construct(CacheInterface $orderPayPalCache, PsCheckoutCartRepository $checkoutCartRepository)
-    {
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->checkoutCartRepository = $checkoutCartRepository;
-    }
+    public function __construct(private CacheInterface $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
+    {}
 
     /**
      * @param GetPayPalOrderForCartIdQuery $getPayPalOrderQuery

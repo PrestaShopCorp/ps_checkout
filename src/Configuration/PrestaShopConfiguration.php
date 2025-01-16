@@ -28,18 +28,8 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
  */
 class PrestaShopConfiguration
 {
-    /**
-     * @var PrestaShopConfigurationOptionsResolver
-     */
-    private $optionsResolver;
-
-    /**
-     * @param PrestaShopConfigurationOptionsResolver $optionsResolver
-     */
-    public function __construct(PrestaShopConfigurationOptionsResolver $optionsResolver)
-    {
-        $this->optionsResolver = $optionsResolver;
-    }
+    public function __construct(private PrestaShopConfigurationOptionsResolver $optionsResolver)
+    {}
 
     /**
      * @param string $key

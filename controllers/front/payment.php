@@ -100,7 +100,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             if ($orders->count()) {
                 if ($this->context->customer->isLogged()) {
-                    $this->redirectToOrderHistoryPage();
+                    Tools::redirect('history');
                 } else {
                     $payPalOrderQueryResult = $this->getPayPalOrder($orderId);
                     $payPalOrderFromCache = $payPalOrderQueryResult->getPayPalOrder();
@@ -164,14 +164,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     private function createOrder($payPalOrderFromCache, $payPalOrder)
     {
-        $capture = isset($payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]) ? $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] : null;
+        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] ?? null;
         $this->commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
         if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
             /** @var PaymentTokenRepository $paymentTokenRepository */
             $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
             $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
-        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture ? $capture['id'] : null, $payPalOrderFromCache['status']);
+        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'] ?? null, $payPalOrderFromCache['status']);
     }
 
     /**
@@ -247,10 +247,5 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         $payPalOrderQuery = new GetPayPalOrderForCheckoutCompletedQuery($orderId);
 
         return $this->queryBus->handle($payPalOrderQuery);
-    }
-
-    private function redirectToOrderHistoryPage()
-    {
-        Tools::redirect($this->context->link->getPageLink('history'));
     }
 }

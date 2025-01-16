@@ -46,51 +46,15 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class CapturePayPalOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $maaslandHttpClient;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $payPalCustomerRepository;
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
-    private PayPalOrderEventProcessor $payPalOrderEventProcessor;
-
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
-        EventDispatcherInterface $eventDispatcher,
-        CacheInterface $orderPayPalCache,
-        PrestaShopContext $prestaShopContext,
-        PayPalCustomerRepository $payPalCustomerRepository,
-        PayPalOrderRepository $payPalOrderRepository,
-        PayPalOrderEventProcessor $payPalOrderEventProcessor
-    ) {
-        $this->maaslandHttpClient = $maaslandHttpClient;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->payPalOrderRepository = $payPalOrderRepository;
-        $this->payPalOrderEventProcessor = $payPalOrderEventProcessor;
-    }
+        private MaaslandHttpClient $maaslandHttpClient,
+        private EventDispatcherInterface $eventDispatcher,
+        private CacheInterface $orderPayPalCache,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalCustomerRepository $payPalCustomerRepository,
+        private PayPalOrderRepository $payPalOrderRepository,
+        private PayPalOrderEventProcessor $payPalOrderEventProcessor
+    ) {}
 
     public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {

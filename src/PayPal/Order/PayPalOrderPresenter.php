@@ -22,41 +22,14 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
 use Currency;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
-use PrestaShop\PrestaShop\Core\Localization\CLDR\LocaleRepository;
-use Tools;
-use PrestaShop\PrestaShop\Core\Localization\Locale;
 
 class PayPalOrderPresenter
 {
-    /**
-     * @var PaypalOrderDataProvider
-     */
-    public $paypalOrderDataProvider;
-
-    /**
-     * @var PsCheckoutDataProvider
-     */
-    public $psCheckoutDataProvider;
-
-    /**
-     * @var PayPalOrderTranslationProvider
-     */
-    public $paypalOrderTranslationProvider;
-
-    /**
-     * @param PaypalOrderDataProvider $paypalOrderDataProvider
-     * @param PsCheckoutDataProvider $psCheckoutDataProvider
-     * @param PayPalOrderTranslationProvider $paypalOrderTranslationProvider
-     */
     public function __construct(
-        PaypalOrderDataProvider $paypalOrderDataProvider,
-        PsCheckoutDataProvider $psCheckoutDataProvider,
-        PayPalOrderTranslationProvider $paypalOrderTranslationProvider
-    ) {
-        $this->paypalOrderDataProvider = $paypalOrderDataProvider;
-        $this->psCheckoutDataProvider = $psCheckoutDataProvider;
-        $this->paypalOrderTranslationProvider = $paypalOrderTranslationProvider;
-    }
+        private PaypalOrderDataProvider $paypalOrderDataProvider,
+        private PsCheckoutDataProvider $psCheckoutDataProvider,
+        private PayPalOrderTranslationProvider $paypalOrderTranslationProvider
+    ) {}
 
     /**
      * @param string $orderStatus

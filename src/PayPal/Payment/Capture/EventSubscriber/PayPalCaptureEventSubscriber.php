@@ -49,34 +49,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
-    private CheckOrderAmount $checkOrderAmount;
-    private CacheInterface $capturePayPalCache;
-    private CacheInterface $orderPayPalCache;
-    private OrderStateMapper $orderStateMapper;
-    private QueryBusInterface $queryBus;
-    private CreateOrderCommandHandler $createOrderCommandHandler;
-    private AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler;
-    private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler;
-
     public function __construct(
-        CheckOrderAmount $checkOrderAmount,
-        CacheInterface $capturePayPalCache,
-        CacheInterface $orderPayPalCache,
-        OrderStateMapper $orderStateMapper,
-        QueryBusInterface $queryBus,
-        CreateOrderCommandHandler $createOrderCommandHandler,
-        AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler,
-        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {
-        $this->checkOrderAmount = $checkOrderAmount;
-        $this->capturePayPalCache = $capturePayPalCache;
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->orderStateMapper = $orderStateMapper;
-        $this->queryBus = $queryBus;
-        $this->createOrderCommandHandler = $createOrderCommandHandler;
-        $this->addOrderPaymentCommandHandler = $addOrderPaymentCommandHandler;
-        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
-    }
+        private CheckOrderAmount $checkOrderAmount,
+        private CacheInterface $capturePayPalCache,
+        private CacheInterface $orderPayPalCache,
+        private OrderStateMapper $orderStateMapper,
+        private QueryBusInterface $queryBus,
+        private CreateOrderCommandHandler $createOrderCommandHandler,
+        private AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler,
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
+    ) {}
 
     /**
      * {@inheritdoc}

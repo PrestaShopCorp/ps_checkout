@@ -28,18 +28,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
  */
 class PaypalModule implements PresenterInterface
 {
-    /**
-     * @var PayPalConfiguration
-     */
-    private $configuration;
-
-    /**
-     * @param PayPalConfiguration $configuration
-     */
-    public function __construct(PayPalConfiguration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+    public function __construct(private PayPalConfiguration $configuration)
+    {}
 
     /**
      * Present the paypal module (vuex)

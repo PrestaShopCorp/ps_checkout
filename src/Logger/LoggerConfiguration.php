@@ -77,17 +77,10 @@ class LoggerConfiguration
     const LEVEL_EMERGENCY = 600;
 
     /**
-     * @var PrestaShopConfiguration
-     */
-    private $configuration;
-
-    /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+    public function __construct(private PrestaShopConfiguration $configuration)
+    {}
 
     /**
      * @return int

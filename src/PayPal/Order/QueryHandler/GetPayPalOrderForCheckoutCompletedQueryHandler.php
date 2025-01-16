@@ -28,22 +28,14 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForChe
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
  */
 class GetPayPalOrderForCheckoutCompletedQueryHandler
 {
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    public function __construct(CacheInterface $orderPayPalCache)
-    {
-        $this->orderPayPalCache = $orderPayPalCache;
-    }
+    public function __construct(private CacheInterface $orderPayPalCache)
+    {}
 
     public function __invoke(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {

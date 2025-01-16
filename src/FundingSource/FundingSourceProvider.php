@@ -22,43 +22,19 @@ namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
+use PrestaShopDatabaseException;
 
 class FundingSourceProvider
 {
-    /**
-     * @var FundingSourceCollection
-     */
-    private $collection;
+    private FundingSourceCollection $collection;
 
-    /**
-     * @var FundingSourcePresenter
-     */
-    private $presenter;
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-    /**
-     * @var PayPalConfiguration
-     */
-    private $payPalConfiguration;
-
-    /**
-     * @param FundingSourceCollectionBuilder $fundingSourceCollectionBuilder
-     * @param FundingSourcePresenter $presenter
-     * @param PaymentTokenRepository $paymentTokenRepository
-     * @param PayPalConfiguration $payPalConfiguration
-     */
     public function __construct(
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
-        FundingSourcePresenter $presenter,
-        PaymentTokenRepository $paymentTokenRepository,
-        PayPalConfiguration $payPalConfiguration
+        private FundingSourcePresenter $presenter,
+        private PaymentTokenRepository $paymentTokenRepository,
+        private PayPalConfiguration $payPalConfiguration
     ) {
         $this->collection = new FundingSourceCollection($fundingSourceCollectionBuilder->create());
-        $this->presenter = $presenter;
-        $this->paymentTokenRepository = $paymentTokenRepository;
-        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -89,7 +65,7 @@ class FundingSourceProvider
      *
      * @return FundingSource[]
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public function getSavedTokens($customerId)
     {

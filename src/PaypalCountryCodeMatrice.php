@@ -68,6 +68,6 @@ class PaypalCountryCodeMatrice
             return $isoCode;
         }
 
-        return in_array($isoCode, self::MATCH_ISO_CODE);
+        return array_search($isoCode, self::MATCH_ISO_CODE);
     }
 }

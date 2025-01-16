@@ -25,18 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class GetCustomerPaymentTokensQueryHandler
 {
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-
-    /**
-     * @param PaymentTokenRepository $paymentTokenRepository
-     */
-    public function __construct(PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->paymentTokenRepository = $paymentTokenRepository;
-    }
+    public function __construct(private PaymentTokenRepository $paymentTokenRepository)
+    {}
 
     /**
      * @param GetCustomerPaymentTokensQuery $query

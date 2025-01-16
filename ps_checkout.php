@@ -169,9 +169,9 @@ class Ps_checkout extends PaymentModule
 
     public function installHooks()
     {
-        $result = (bool) $this->registerHook(self::HOOK_LIST);
+        $result = $this->registerHook(self::HOOK_LIST);
 
-        $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+        $this->updatePosition(Hook::getIdByName('paymentOptions'), false, 1);
 
         return $result;
     }
@@ -185,7 +185,7 @@ class Ps_checkout extends PaymentModule
     {
         $result = true;
 
-        foreach (\Shop::getShops(false, null, true) as $shopId) {
+        foreach (Shop::getShops(false, null, true) as $shopId) {
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
                     $result = $result && Configuration::updateValue(
@@ -244,7 +244,7 @@ class Ps_checkout extends PaymentModule
         $result = true;
 
         foreach ($incompatibleCodes as $incompatibleCode) {
-            $db = \Db::getInstance();
+            $db = Db::getInstance();
 
             $result = $result && $db->execute('
                 DELETE FROM ' . _DB_PREFIX_ . 'module_country
@@ -270,7 +270,7 @@ class Ps_checkout extends PaymentModule
         $result = true;
 
         foreach ($incompatibleCodes as $incompatibleCode) {
-            $db = \Db::getInstance();
+            $db = Db::getInstance();
 
             $result = $result && $db->execute('
                 DELETE FROM ' . _DB_PREFIX_ . 'module_currency
@@ -326,7 +326,7 @@ class Ps_checkout extends PaymentModule
         $uninstallTabCompleted = true;
 
         foreach (static::MODULE_ADMIN_CONTROLLERS as $controllerName) {
-            $id_tab = (int) Tab::getIdFromClassName($controllerName);
+            $id_tab = Tab::getIdFromClassName($controllerName);
             $tab = new Tab($id_tab);
             if (Validate::isLoadedObject($tab)) {
                 $uninstallTabCompleted = $uninstallTabCompleted && $tab->delete();
@@ -1055,8 +1055,7 @@ class Ps_checkout extends PaymentModule
      * @param array $shops List of Shop identifier
      *
      * @return bool
-     *@see PaymentModuleCore
-     *
+     * @see PaymentModuleCore
      */
     public function addCheckboxCountryRestrictionsForModule(array $shops = [])
     {
@@ -1381,11 +1380,7 @@ class Ps_checkout extends PaymentModule
      */
     private function getCheckoutPageUrl()
     {
-        return $this->context->link->getPageLink(
-            'order',
-            true,
-            (int) $this->context->language->id
-        );
+        return $this->context->link->getPageLink('order');
     }
 
     /**

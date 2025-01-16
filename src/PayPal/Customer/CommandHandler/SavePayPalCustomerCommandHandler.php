@@ -25,15 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 
 class SavePayPalCustomerCommandHandler
 {
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $payPalCustomerRepository;
-
-    public function __construct(PayPalCustomerRepository $payPalCustomerRepository)
-    {
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-    }
+    public function __construct(private PayPalCustomerRepository $payPalCustomerRepository)
+    {}
 
     public function __invoke(SavePayPalCustomerCommand $command)
     {
