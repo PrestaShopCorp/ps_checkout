@@ -39,62 +39,24 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\PrestaShop\Adapter\Validate;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Ps_checkout;
 use PsCheckoutCart;
-use Validate;
 
 class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
-    /**
-     * @var ContextStateManager
-     */
-    private $contextStateManager;
-
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    /**
-     * @var OrderStateMapper
-     */
-    private $psOrderStateMapper;
-
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
-     * @var CheckOrderAmount
-     */
-    private $checkOrderAmount;
-    /**
-     * @var FundingSourceTranslationProvider
-     */
-    private $fundingSourceTranslationProvider;
-    private OrderEventSubscriber $orderEventSubscriber;
-
     public function __construct(
-        ContextStateManager $contextStateManager,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        OrderStateMapper $psOrderStateMapper,
-        Ps_checkout $module,
-        CheckOrderAmount $checkOrderAmount,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
-        OrderEventSubscriber $orderEventSubscriber
-    ) {
-        $this->contextStateManager = $contextStateManager;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->psOrderStateMapper = $psOrderStateMapper;
-        $this->module = $module;
-        $this->checkOrderAmount = $checkOrderAmount;
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
-        $this->orderEventSubscriber = $orderEventSubscriber;
-    }
+        private ContextStateManager $contextStateManager,
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private OrderStateMapper $psOrderStateMapper,
+        private Ps_checkout $module,
+        private CheckOrderAmount $checkOrderAmount,
+        private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        private OrderEventSubscriber $orderEventSubscriber
+    ) {}
 
     public function __invoke(CreateOrderCommand $command) {
         $this->handle($command);
