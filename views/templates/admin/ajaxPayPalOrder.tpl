@@ -82,7 +82,11 @@
           {if $psCheckoutCart->paypal_funding === 'card'}
             <dt data-grid-area="card-sca">{l s='3D Secure' mod='ps_checkout'}</dt>
             <dd data-grid-area="card-sca-value">
-              {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
+              {if $orderPayPal.is3DSNotRequired}
+                <span class="badge rounded badge-warning">
+                  {l s='Not required' mod='ps_checkout'}
+                </span>
+              {elseif $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
                 <span class="badge rounded badge-success">
                   {l s='Success' mod='ps_checkout'}
                 </span>

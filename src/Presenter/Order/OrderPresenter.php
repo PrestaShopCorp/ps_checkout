@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationP
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use PsCheckoutCart;
 
@@ -42,6 +43,10 @@ class OrderPresenter
      * @var FundingSourceTranslationProvider
      */
     private $fundingSourceTranslationProvider;
+    /**
+     * @var PsCheckoutCartRepository
+     */
+    private $psCheckoutCartRepository;
 
     /**
      * @param Ps_checkout $module
@@ -54,6 +59,7 @@ class OrderPresenter
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
     }
 
     /**
@@ -65,6 +71,8 @@ class OrderPresenter
             return [];
         }
 
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($this->orderPayPal['id']);
+
         $card3DSecure = new Card3DSecure();
 
         return array_merge(
@@ -73,6 +81,7 @@ class OrderPresenter
                 'intent' => $this->orderPayPal['intent'],
                 'status' => $this->getOrderStatus(),
                 'transactions' => $this->getTransactions(),
+                'is3DSNotRequired' => in_array(PsCheckoutCart::THREE_D_SECURE_NOT_REQUIRED, $psCheckoutCart->getAdditionalTags()),
                 'is3DSecureAvailable' => $card3DSecure->is3DSecureAvailable($this->orderPayPal),
                 'isLiabilityShifted' => $card3DSecure->isLiabilityShifted($this->orderPayPal),
                 'paymentSource' => $this->getPaymentSourceName($this->orderPayPal),

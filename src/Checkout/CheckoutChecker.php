@@ -25,6 +25,9 @@ use Configuration;
 use Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
 use Validate;
 
@@ -36,11 +39,22 @@ class CheckoutChecker
     private $logger;
 
     /**
+     * @var PsCheckoutCartRepository
+     */
+    private $psCheckoutCartRepository;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
+
+    /**
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, PsCheckoutCartRepository $psCheckoutCartRepository, PayPalConfiguration $payPalConfiguration)
     {
         $this->logger = $logger;
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -90,8 +104,12 @@ class CheckoutChecker
                 case Card3DSecure::RETRY:
                     throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
                 case Card3DSecure::NO_DECISION:
-                    if (Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
-                        throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                    if ($this->payPalConfiguration->getHostedFieldsContingencies() === 'SCA_WHEN_REQUIRED') {
+                        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
+                        if ($psCheckoutCart ) {
+                            $psCheckoutCart->addAdditionalTag(PsCheckoutCart::THREE_D_SECURE_NOT_REQUIRED);
+                            $psCheckoutCart->save();
+                        }
                     }
                     break;
             }
