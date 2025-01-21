@@ -116,6 +116,9 @@
         </dl>
         {if $psCheckoutCart->paypal_funding === 'card' && !$orderPayPal.isLiabilityShifted}
           <div class="liability-explanation">
+            {if $orderPayPal.is3DSNotRequired}
+              {l s='Your 3D Secure settings for this transaction was SCA_WHEN_REQUIRED and the current transaction doesn’t require it.' mod='ps_checkout'}
+            {/if}
             {l s='The bank issuer declined the liability shift. We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
           </div>
         {/if}

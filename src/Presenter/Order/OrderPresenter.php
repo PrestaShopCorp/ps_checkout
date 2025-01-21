@@ -82,6 +82,7 @@ class OrderPresenter
             $threeDSNotRequired = in_array(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED, $payPalOrder->getTags());
         } catch (PsCheckoutException $e) {}
 
+
         $card3DSecure = new Card3DSecure();
 
         return array_merge(
