@@ -68,6 +68,7 @@ class PayPalOrderRepository
                 'is_express_checkout' => (int) $payPalOrder->isExpressCheckout(),
                 'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
                 'payment_token_id' => $payPalOrder->getPaymentTokenId() ? pSQL($payPalOrder->getPaymentTokenId()->getValue()) : null,
+                'tags' => pSQL(implode(',', $payPalOrder->getTags())),
             ],
             false,
             true,
@@ -112,7 +113,8 @@ class PayPalOrderRepository
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
             explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null,
+            explode(',', $queryResult['tags'])
         );
     }
 
@@ -150,7 +152,8 @@ class PayPalOrderRepository
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
             explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null,
+            explode(',', $queryResult['tags'])
         );
     }
 

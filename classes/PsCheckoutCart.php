@@ -29,7 +29,6 @@ class PsCheckoutCart extends ObjectModel
     const STATUS_APPROVAL_REVERSED = 'REVERSED';
     const STATUS_PENDING_APPROVAL = 'PENDING_APPROVAL';
     const STATUS_PARTIALLY_COMPLETED = 'PARTIALLY_COMPLETED';
-    const THREE_D_SECURE_NOT_REQUIRED = 'THREE_D_SECURE_NOT_REQUIRED';
 
     /**
      * @var int|null Cart Identifier
@@ -75,8 +74,6 @@ class PsCheckoutCart extends ObjectModel
      * @var string|null PayPal environment information
      */
     public $environment = 'LIVE';
-
-    public $additional_tags = '';
 
     /**
      * @var bool
@@ -157,12 +154,6 @@ class PsCheckoutCart extends ObjectModel
             ],
             'environment' => [
                 'type' => self::TYPE_STRING,
-                'allow_null' => true,
-                'required' => false,
-            ],
-            'additional_tags' => [
-                'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
                 'allow_null' => true,
                 'required' => false,
             ],
@@ -337,35 +328,5 @@ class PsCheckoutCart extends ObjectModel
         return $this->getPaypalOrderId()
             && in_array($this->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED], true)
             && !$this->isPayPalOrderExpired();
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAdditionalTags()
-    {
-        return explode(',', (string) $this->additional_tags);
-    }
-
-    /**
-     * @param array $tags
-     *
-     * @return void
-     */
-    public function setAdditionalTags(array $tags)
-    {
-        $this->additional_tags = implode(',', $tags);
-    }
-
-    /**
-     * @param string $tag
-     *
-     * @return void
-     */
-    public function addAdditionalTag($tag)
-    {
-        $tags = $this->getAdditionalTags();
-        $tags[] = $tag;
-        $this->setAdditionalTags(array_unique($tags));
     }
 }

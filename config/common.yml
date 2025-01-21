@@ -454,7 +454,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.logger"
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:

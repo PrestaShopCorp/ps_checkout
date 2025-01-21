@@ -33,7 +33,7 @@ function upgrade_module_8_4_2_0($module)
     try {
         $db = Db::getInstance();
 
-        $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `additional_tags` varchar(255) DEFAULT NULL;');
+        $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `tags` varchar(255) DEFAULT NULL;');
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 

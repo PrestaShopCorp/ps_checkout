@@ -25,7 +25,9 @@ use Configuration;
 use Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
@@ -37,23 +39,26 @@ class CheckoutChecker
      * @var LoggerInterface
      */
     private $logger;
-
     /**
-     * @var PsCheckoutCartRepository
+     * @var PayPalOrderRepository
      */
-    private $psCheckoutCartRepository;
+    private $payPalOrderRepository;
     /**
      * @var PayPalConfiguration
      */
     private $payPalConfiguration;
 
+
     /**
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger, PsCheckoutCartRepository $psCheckoutCartRepository, PayPalConfiguration $payPalConfiguration)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        PayPalOrderRepository $payPalOrderRepository,
+        PayPalConfiguration $payPalConfiguration
+    ) {
         $this->logger = $logger;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->payPalOrderRepository = $payPalOrderRepository;
         $this->payPalConfiguration = $payPalConfiguration;
     }
 
@@ -105,10 +110,10 @@ class CheckoutChecker
                     throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
                 case Card3DSecure::NO_DECISION:
                     if ($this->payPalConfiguration->getHostedFieldsContingencies() === 'SCA_WHEN_REQUIRED') {
-                        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
-                        if ($psCheckoutCart ) {
-                            $psCheckoutCart->addAdditionalTag(PsCheckoutCart::THREE_D_SECURE_NOT_REQUIRED);
-                            $psCheckoutCart->save();
+                        $payPalOrder = $this->payPalOrderRepository->getPayPalOrderByCartId($cartId);
+                        if ($payPalOrder) {
+                            $payPalOrder->addTag(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED);
+                            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
                         }
                     }
                     break;
