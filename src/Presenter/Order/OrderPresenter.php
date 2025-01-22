@@ -28,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use PsCheckoutCart;
 
@@ -80,8 +79,8 @@ class OrderPresenter
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($this->orderPayPal['id']));
             $threeDSNotRequired = in_array(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED, $payPalOrder->getTags());
-        } catch (PsCheckoutException $e) {}
-
+        } catch (PsCheckoutException $e) {
+        }
 
         $card3DSecure = new Card3DSecure();
 

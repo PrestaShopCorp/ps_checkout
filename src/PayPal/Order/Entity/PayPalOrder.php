@@ -324,7 +324,6 @@ class PayPalOrder
         $this->paymentTokenId = $paymentTokenId;
     }
 
-
     /**
      * @return string[]
      */

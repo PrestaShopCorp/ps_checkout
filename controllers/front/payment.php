@@ -144,6 +144,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                             $payPalOrderFromCache = $payPalOrderCache->get($orderId);
                             $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         }
+                        // no break
                     default:
                         break;
                 }

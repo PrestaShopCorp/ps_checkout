@@ -45,7 +45,6 @@ class CheckoutChecker
      */
     private $payPalConfiguration;
 
-
     /**
      * @param LoggerInterface $logger
      */
@@ -116,7 +115,8 @@ class CheckoutChecker
                         try {
                             $payPalOrder->addTag(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED);
                             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
-                        } catch (PsCheckoutException $e) {}
+                        } catch (PsCheckoutException $e) {
+                        }
                     }
                     break;
             }
