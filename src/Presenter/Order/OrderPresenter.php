@@ -77,7 +77,8 @@ class OrderPresenter
         $threeDSNotRequired = false;
 
         try {
-            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($this->orderPayPal['id']));
+            $payPalOrderId = new PayPalOrderId($this->orderPayPal['id']);
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($payPalOrderId);
             $threeDSNotRequired = in_array(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED, $payPalOrder->getTags());
         } catch (PsCheckoutException $e) {
         }

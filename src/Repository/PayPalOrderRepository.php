@@ -102,20 +102,7 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
-        return new PayPalOrder(
-            $queryResult['id'],
-            (int) $queryResult['id_cart'],
-            $queryResult['intent'],
-            $queryResult['funding_source'],
-            $queryResult['status'],
-            json_decode($queryResult['payment_source'], true),
-            $queryResult['environment'],
-            $queryResult['is_card_fields'],
-            $queryResult['is_express_checkout'],
-            explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null,
-            explode(',', $queryResult['tags'])
-        );
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
     }
 
     /**
@@ -141,6 +128,16 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
+    }
+
+    /**
+     * @param array $queryResult
+     *
+     * @return PayPalOrder
+     */
+    private function buildPayPalOrderFromQueryResult($queryResult)
+    {
         return new PayPalOrder(
             $queryResult['id'],
             (int) $queryResult['id_cart'],

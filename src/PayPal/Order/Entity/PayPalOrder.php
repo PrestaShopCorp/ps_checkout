@@ -80,8 +80,20 @@ class PayPalOrder
      */
     private $tags;
 
-    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = [], $paymentTokenId = null, $tags = [])
-    {
+    public function __construct(
+        $id,
+        $idCart,
+        $intent,
+        $fundingSource,
+        $status,
+        $paymentSource = [],
+        $environment = 'LIVE',
+        $isCardFields = false,
+        $isExpressCheckout = false,
+        $customerIntent = [],
+        $paymentTokenId = null,
+        $tags = []
+    ) {
         $this->id = new PayPalOrderId($id);
         $this->idCart = $idCart;
         $this->intent = $intent;
