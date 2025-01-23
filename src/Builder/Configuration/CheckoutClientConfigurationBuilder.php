@@ -77,7 +77,8 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
                 && class_exists(LogMiddleware::class)
             ) {
                 $handlerStack = HandlerStack::create();
-                $handlerStack->push(new LogMiddleware($this->psCheckoutLogger));
+                $logMiddleWare = new LogMiddleware($this->psCheckoutLogger);
+                $handlerStack->push($logMiddleWare);
                 $configuration['handler'] = $handlerStack;
             } elseif (
                 defined('\GuzzleHttp\ClientInterface::VERSION')
@@ -86,10 +87,8 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
                 && class_exists(Formatter::class)
             ) {
                 $emitter = new Emitter();
-                $emitter->attach(new LogSubscriber(
-                    $this->psCheckoutLogger,
-                    Formatter::DEBUG
-                ));
+                $logSubscriber = new LogSubscriber($this->psCheckoutLogger, Formatter::DEBUG);
+                $emitter->attach($logSubscriber);
 
                 $configuration['emitter'] = $emitter;
             }

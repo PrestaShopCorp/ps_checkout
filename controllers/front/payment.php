@@ -30,7 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
@@ -165,13 +164,17 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     private function createOrder($payPalOrderFromCache, $payPalOrder)
     {
         $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] ?? null;
+        $captureId = $capture['id'] ?? null;
+
         $this->commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+
         if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
             /** @var PaymentTokenRepository $paymentTokenRepository */
             $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
             $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
-        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'] ?? null, $payPalOrderFromCache['status']);
+        
+        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $captureId, $payPalOrderFromCache['status']);
     }
 
     /**

@@ -56,7 +56,7 @@ class PayPalSdkConfigurationBuilder
         private ShopContext $shopContext,
         private PrestaShopContext $prestaShopContext,
         private LoggerInterface $psCheckoutLogger,
-        private  FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
+        private FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
         private QueryBusInterface $queryBus
     ) {}
 

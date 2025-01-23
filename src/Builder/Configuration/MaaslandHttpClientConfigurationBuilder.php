@@ -76,7 +76,8 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
             && class_exists(LogMiddleware::class)
         ) {
             $handlerStack = HandlerStack::create();
-            $handlerStack->push(new LogMiddleware($this->psCheckoutLogger));
+            $logMiddleware = new LogMiddleware($this->psCheckoutLogger);
+            $handlerStack->push($logMiddleware);
             $configuration['handler'] = $handlerStack;
         } elseif (
             $this->loggerConfiguration->isHttpEnabled()
@@ -86,10 +87,11 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
             && class_exists(Formatter::class)
         ) {
             $emitter = new Emitter();
-            $emitter->attach(new LogSubscriber(
+            $logSubscriber = new LogSubscriber(
                 $this->psCheckoutLogger,
                 Formatter::DEBUG
-            ));
+            );
+            $emitter->attach();
 
             $configuration['emitter'] = $emitter;
         }

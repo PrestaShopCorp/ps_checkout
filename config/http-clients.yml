@@ -5,7 +5,7 @@ services:
     autoconfigure: true
 
   PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
+    class: PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient
     arguments:
       - "@ps_checkout.http.client"
 
