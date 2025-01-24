@@ -20,121 +20,324 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-
 class PayPalProcessorResponse
 {
+    const PROCESSOR_RESPONSE_CODE = [
+        '1000' => 'PARTIAL_AUTHORIZATION',
+        '1300' => 'INVALID_DATA_FORMAT',
+        '1310' => 'INVALID_AMOUNT',
+        '1312' => 'INVALID_TRANSACTION_CARD_ISSUER_ACQUIRER',
+        '1317' => 'INVALID_CAPTURE_DATE',
+        '1320' => 'INVALID_CURRENCY_CODE',
+        '1330' => 'INVALID_ACCOUNT',
+        '1335' => 'INVALID_ACCOUNT_RECURRING',
+        '1340' => 'INVALID_TERMINAL',
+        '1350' => 'INVALID_MERCHANT',
+        '1352' => 'RESTRICTED_OR_INACTIVE_ACCOUNT',
+        '1360' => 'BAD_PROCESSING_CODE',
+        '1370' => 'INVALID_MCC',
+        '1380' => 'INVALID_EXPIRATION',
+        '1382' => 'INVALID_CARD_VERIFICATION_VALUE',
+        '1384' => 'INVALID_LIFE_CYCLE_OF_TRANSACTION',
+        '1390' => 'INVALID_ORDER',
+        '1393' => 'TRANSACTION_CANNOT_BE_COMPLETED',
+        '5100' => 'GENERIC_DECLINE',
+        '5110' => 'CVV2_FAILURE',
+        '5120' => 'INSUFFICIENT_FUNDS',
+        '5130' => 'INVALID_PIN',
+        '5135' => 'DECLINED_PIN_TRY_EXCEEDED',
+        '5140' => 'CARD_CLOSED',
+        '5150' => 'PICKUP_CARD_SPECIAL_CONDITIONS',
+        '5160' => 'UNAUTHORIZED_USER',
+        '5170' => 'AVS_FAILURE',
+        '5180' => 'INVALID_OR_RESTRICTED_CARD',
+        '5190' => 'SOFT_AVS',
+        '5200' => 'DUPLICATE_TRANSACTION',
+        '5210' => 'INVALID_TRANSACTION',
+        '5400' => 'EXPIRED_CARD',
+        '5500' => 'INCORRECT_PIN_REENTER',
+        '5650' => 'DECLINED_SCA_REQUIRED',
+        '5700' => 'TRANSACTION_NOT_PERMITTED',
+        '5710' => 'TX_ATTEMPTS_EXCEED_LIMIT',
+        '5800' => 'REVERSAL_REJECTED',
+        '5900' => 'INVALID_ISSUE',
+        '5910' => 'ISSUER_NOT_AVAILABLE_NOT_RETRIABLE',
+        '5920' => 'ISSUER_NOT_AVAILABLE_RETRIABLE',
+        '5930' => 'CARD_NOT_ACTIVATED',
+        '5950' => 'DECLINED_DUE_TO_UPDATED_ACCOUNT',
+        '6300' => 'ACCOUNT_NOT_ON_FILE',
+        '7600' => 'APPROVED_NON_CAPTURE',
+        '7700' => 'ERROR_3DS',
+        '7710' => 'AUTHENTICATION_FAILED',
+        '7800' => 'BIN_ERROR',
+        '7900' => 'PIN_ERROR',
+        '8000' => 'PROCESSOR_SYSTEM_ERROR',
+        '8010' => 'HOST_KEY_ERROR',
+        '8020' => 'CONFIGURATION_ERROR',
+        '8030' => 'UNSUPPORTED_OPERATION',
+        '8100' => 'FATAL_COMMUNICATION_ERROR',
+        '8110' => 'RETRIABLE_COMMUNICATION_ERROR',
+        '8220' => 'SYSTEM_UNAVAILABLE',
+        '9100' => 'DECLINED_PLEASE_RETRY',
+        '9500' => 'SUSPECTED_FRAUD',
+        '9510' => 'SECURITY_VIOLATION',
+        '9520' => 'LOST_OR_STOLEN',
+        '9530' => 'HOLD_CALL_CENTER',
+        '9540' => 'REFUSED_CARD',
+        '9600' => 'UNRECOGNIZED_RESPONSE_CODE',
+        '0000' => 'APPROVED',
+        '00N7' => 'CVV2_FAILURE_POSSIBLE_RETRY_WITH_CVV',
+        '0100' => 'REFERRAL',
+        '0390' => 'ACCOUNT_NOT_FOUND',
+        '0500' => 'DO_NOT_HONOR',
+        '0580' => 'UNAUTHORIZED_TRANSACTION',
+        '0800' => 'BAD_RESPONSE_REVERSAL_REQUIRED',
+        '0880' => 'CRYPTOGRAPHIC_FAILURE',
+        '0890' => 'UNACCEPTABLE_PIN',
+        '0960' => 'SYSTEM_MALFUNCTION',
+        '0R00' => 'CANCELLED_PAYMENT',
+        '10BR' => 'ISSUER_REJECTED',
+        'PCNR' => 'CONTINGENCIES_NOT_RESOLVED',
+        'PCVV' => 'CVV_FAILURE',
+        'PP06' => 'ACCOUNT_CLOSED',
+        'PPRN' => 'REATTEMPT_NOT_PERMITTED',
+        'PPAD' => 'BILLING_ADDRESS',
+        'PPAB' => 'ACCOUNT_BLOCKED_BY_ISSUER',
+        'PPAE' => 'AMEX_DISABLED',
+        'PPAG' => 'ADULT_GAMING_UNSUPPORTED',
+        'PPAI' => 'AMOUNT_INCOMPATIBLE',
+        'PPAR' => 'AUTH_RESULT',
+        'PPAU' => 'MCC_CODE',
+        'PPAV' => 'ARC_AVS',
+        'PPAX' => 'AMOUNT_EXCEEDED',
+        'PPBG' => 'BAD_GAMING',
+        'PPC2' => 'ARC_CVV',
+        'PPCE' => 'CE_REGISTRATION_INCOMPLETE',
+        'PPCO' => 'COUNTRY',
+        'PPCR' => 'CREDIT_ERROR',
+        'PPCT' => 'CARD_TYPE_UNSUPPORTED',
+        'PPCU' => 'CURRENCY_USED_INVALID',
+        'PPD3' => 'SECURE_ERROR_3DS',
+        'PPDC' => 'DCC_UNSUPPORTED',
+        'PPDI' => 'DINERS_REJECT',
+        'PPDV' => 'AUTH_MESSAGE',
+        'PPDT' => 'DECLINE_THRESHOLD_BREACH',
+        'PPEF' => 'EXPIRED_FUNDING_INSTRUMENT',
+        'PPEL' => 'EXCEEDS_FREQUENCY_LIMIT',
+        'PPER' => 'INTERNAL_SYSTEM_ERROR',
+        'PPEX' => 'EXPIRY_DATE',
+        'PPFE' => 'FUNDING_SOURCE_ALREADY_EXISTS',
+        'PPFI' => 'INVALID_FUNDING_INSTRUMENT',
+        'PPFR' => 'RESTRICTED_FUNDING_INSTRUMENT',
+        'PPFV' => 'FIELD_VALIDATION_FAILED',
+        'PPGR' => 'GAMING_REFUND_ERROR',
+        'PPH1' => 'H1_ERROR',
+        'PPIF' => 'IDEMPOTENCY_FAILURE',
+        'PPII' => 'INVALID_INPUT_FAILURE',
+        'PPIM' => 'ID_MISMATCH',
+        'PPIT' => 'INVALID_TRACE_ID',
+        'PPLR' => 'LATE_REVERSAL',
+        'PPLS' => 'LARGE_STATUS_CODE',
+        'PPMB' => 'MISSING_BUSINESS_RULE_OR_DATA',
+        'PPMC' => 'BLOCKED_Mastercard',
+        'PPMD' => 'PPMD',
+        'PPNC' => 'NOT_SUPPORTED_NRC',
+        'PPNL' => 'EXCEEDS_NETWORK_FREQUENCY_LIMIT',
+        'PPNM' => 'NO_MID_FOUND',
+        'PPNT' => 'NETWORK_ERROR',
+        'PPPH' => 'NO_PHONE_FOR_DCC_TRANSACTION',
+        'PPPI' => 'INVALID_PRODUCT',
+        'PPPM' => 'INVALID_PAYMENT_METHOD',
+        'PPQC' => 'QUASI_CASH_UNSUPPORTED',
+        'PPRE' => 'UNSUPPORT_REFUND_ON_PENDING_BC',
+        'PPRF' => 'INVALID_PARENT_TRANSACTION_STATUS',
+        'PPRR' => 'MERCHANT_NOT_REGISTERED',
+        'PPS0' => 'BANKAUTH_ROW_MISMATCH',
+        'PPS1' => 'BANKAUTH_ROW_SETTLED',
+        'PPS2' => 'BANKAUTH_ROW_VOIDED',
+        'PPS3' => 'BANKAUTH_EXPIRED',
+        'PPS4' => 'CURRENCY_MISMATCH',
+        'PPS5' => 'CREDITCARD_MISMATCH',
+        'PPS6' => 'AMOUNT_MISMATCH',
+        'PPSC' => 'ARC_SCORE',
+        'PPSD' => 'STATUS_DESCRIPTION',
+        'PPSE' => 'AMEX_DENIED',
+        'PPTE' => 'VERIFICATION_TOKEN_EXPIRED',
+        'PPTF' => 'INVALID_TRACE_REFERENCE',
+        'PPTI' => 'INVALID_TRANSACTION_ID',
+        'PPTR' => 'VERIFICATION_TOKEN_REVOKED',
+        'PPTT' => 'TRANSACTION_TYPE_UNSUPPORTED',
+        'PPTV' => 'INVALID_VERIFICATION_TOKEN',
+        'PPUA' => 'USER_NOT_AUTHORIZED',
+        'PPUC' => 'CURRENCY_CODE_UNSUPPORTED',
+        'PPUE' => 'UNSUPPORT_ENTITY',
+        'PPUI' => 'UNSUPPORT_INSTALLMENT',
+        'PPUP' => 'UNSUPPORT_POS_FLAG',
+        'PPUR' => 'UNSUPPORTED_REVERSAL',
+        'PPVC' => 'VALIDATE_CURRENCY',
+        'PPVE' => 'VALIDATION_ERROR',
+        'PPVT' => 'VIRTUAL_TERMINAL_UNSUPPORTED',
+    ];
+
     /**
-     * @var string
+     * @var string|null
      */
     private $cardBrand;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $cardType;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $codeAvs;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $codeCvv;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $codeResponse;
+    private $paymentAdviceCode;
 
     /**
-     * @param string $cardBrand
-     * @param string $cardType
-     * @param string $codeAvs
-     * @param string $codeCvv
-     * @param string $codeResponse
+     * @var string|null
      */
-    public function __construct($cardBrand, $cardType, $codeAvs, $codeCvv, $codeResponse)
+    private $responseCode;
+
+    /**
+     * @param string|null $cardBrand
+     * @param string|null $cardType
+     * @param string|null $codeAvs
+     * @param string|null $codeCvv
+     * @param string|null $paymentAdviceCode
+     * @param string|null $responseCode
+     */
+    public function __construct($cardBrand, $cardType, $codeAvs, $codeCvv, $paymentAdviceCode, $responseCode)
     {
         $this->cardBrand = $cardBrand;
         $this->cardType = $cardType;
         $this->codeAvs = $codeAvs;
         $this->codeCvv = $codeCvv;
-        $this->codeResponse = $codeResponse;
+        $this->paymentAdviceCode = $paymentAdviceCode;
+        $this->responseCode = $responseCode;
     }
 
     /**
-     * @throws PsCheckoutException
+     * @return string|null
      */
-    public function throwException()
+    public function getCardBrand()
+    {
+        return $this->cardBrand;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCardType()
+    {
+        return $this->cardType;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAvsCode()
+    {
+        return $this->codeAvs;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAvsCodeDescription()
     {
         switch ($this->cardBrand) {
             case 'VISA':
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s RESPONSE : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->getAvsCommon(),
-                    $this->getCvvCommon(),
-                    $this->getResponseVisa()
-                );
-                break;
             case 'MASTERCARD':
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s RESPONSE : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->getAvsCommon(),
-                    $this->getCvvCommon(),
-                    $this->getResponseMasterCard()
-                );
-                break;
             case 'DISCOVER':
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->getAvsCommon(),
-                    $this->getCvvCommon()
-                );
-                break;
+            return $this->getAvsCommon();
             case 'AMEX':
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->getAvsAmex(),
-                    $this->getCvvCommon()
-                );
-                break;
+                return $this->getAvsAmex();
             case 'MAESTRO':
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->getAvsMaestro(),
-                    $this->getCvvMaestro()
-                );
-                break;
+                return $this->getAvsMaestro();
             default:
-                $message = sprintf(
-                    'Card brand: %s Type: %s AVS : %s CVV : %s RESPONSE : %s',
-                    $this->cardBrand,
-                    $this->cardType,
-                    $this->codeAvs,
-                    $this->codeCvv,
-                    $this->codeResponse
-                );
+                return $this->codeAvs;
         }
-
-        throw new PsCheckoutException($message, PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR);
     }
 
     /**
-     * AVS response codes for VISA, MASTERCARD, DISCOVER, AMEX
-     *
+     * @return string|null
+     */
+    public function getCvvCode()
+    {
+        return $this->codeCvv;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCvvCodeDescription()
+    {
+        switch ($this->cardBrand) {
+            case 'VISA':
+            case 'MASTERCARD':
+            case 'DISCOVER':
+            case 'AMEX':
+                return $this->getCvvCommon();
+            case 'MAESTRO':
+                return $this->getCvvMaestro();
+            default:
+                return $this->codeCvv;
+        }
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentAdviceCode()
+    {
+        return $this->paymentAdviceCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentAdviceCodeDescription()
+    {
+        switch ($this->cardBrand) {
+            case 'VISA':
+                return $this->getResponseVisa();
+            case 'MASTERCARD':
+                return $this->getResponseMasterCard();
+            default:
+                return $this->paymentAdviceCode;
+        }
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResponseCode()
+    {
+        return $this->responseCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResponseCodeDescription()
+    {
+        $responseCode = self::PROCESSOR_RESPONSE_CODE;
+
+        return isset($responseCode[$this->responseCode]) ? $responseCode[$this->responseCode] : $this->responseCode;
+    }
+
+    /**
      * @return string
      */
     private function getAvsCommon()
@@ -177,13 +380,11 @@ class PayPalProcessorResponse
             case 'Z':
                 return 'ZIP - Five-digit ZIP code (no Address)';
             default:
-                return 'Error';
+                return 'Error ' . var_export($this->codeAvs, true);
         }
     }
 
     /**
-     * AVS response codes for MAESTRO
-     *
      * @return string
      */
     private function getAvsMaestro()
@@ -206,8 +407,6 @@ class PayPalProcessorResponse
     }
 
     /**
-     * AVS response codes for AMEX
-     *
      * @return string
      */
     private function getAvsAmex()
@@ -244,13 +443,11 @@ class PayPalProcessorResponse
             case 'Z':
                 return 'Card holder postal code only correct.';
             default:
-                return 'Error';
+                return 'Error ' . var_export($this->codeAvs, true);
         }
     }
 
     /**
-     * CVV2 response codes for VISA, MASTERCARD, DISCOVER, AMEX
-     *
      * @return string
      */
     private function getCvvCommon()
@@ -273,7 +470,7 @@ class PayPalProcessorResponse
             case 'X':
                 return 'No response';
             default:
-                return 'Error';
+                return 'Error ' . var_export($this->codeCvv, true);
         }
     }
 
@@ -297,7 +494,7 @@ class PayPalProcessorResponse
             case 'X':
                 return 'Service not available';
             default:
-                return 'Error';
+                return $this->codeCvv;
         }
     }
 
@@ -308,10 +505,10 @@ class PayPalProcessorResponse
      */
     private function getResponseMasterCard()
     {
-        switch ($this->codeResponse) {
+        switch ($this->paymentAdviceCode) {
             case '01':
                 // Obtain new account information before next billing cycle.
-                return 'Expired Card Account upgrade, or Portfolio Sale Conversion.';
+                return 'Expired Card.';
             case '02':
                 // Obtain another type of payment from customer.
                 return 'Over Credit Limit, or insufficient funds. Retry the transaction 72 hours later.';
@@ -322,7 +519,7 @@ class PayPalProcessorResponse
                 // Stop recurring payment requests.
                 return 'Card holder has been unsuccessful at canceling recurring payment through merchant.';
             default:
-                return 'Error';
+                return $this->paymentAdviceCode;
         }
     }
 
@@ -333,7 +530,7 @@ class PayPalProcessorResponse
      */
     private function getResponseVisa()
     {
-        switch ($this->codeResponse) {
+        switch ($this->paymentAdviceCode) {
             case '02':
                 // The merchant must NOT resubmit the same transaction. The merchant can continue the billing process in the subsequent billing period.
                 return 'Card holder wants to stop only one specific payment in the recurring payment relationship.';
@@ -344,7 +541,7 @@ class PayPalProcessorResponse
                 // Stop recurring payment requests.
                 return 'All recurring payments have been canceled for the card number requested.';
             default:
-                return 'Error';
+                return $this->paymentAdviceCode;
         }
     }
 }
