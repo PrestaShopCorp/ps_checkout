@@ -200,7 +200,7 @@ class CapturePayPalOrderCommandHandler
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
-            $this->logger->info('');
+            $this->logger->info('success !');
             $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
         }
 
