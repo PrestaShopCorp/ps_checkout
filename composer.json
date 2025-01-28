@@ -66,13 +66,13 @@
             "@php ./vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,node_modules,vendor,tests,_dev"
         ],
         "php-cs-fixer:check": [
-          "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff"
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff"
         ],
         "php-cs-fixer:fix": [
-          "@php ./vendor/bin/php-cs-fixer fix"
+            "@php ./vendor/bin/php-cs-fixer fix"
         ],
         "auto-index": [
-          "@php ./vendor/bin/autoindex --exclude=_dev,vendor,tests"
+            "@php ./vendor/bin/autoindex --exclude=_dev,vendor,tests"
         ]
     },
     "author": "PrestaShop"
