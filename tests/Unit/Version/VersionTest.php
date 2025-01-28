@@ -48,7 +48,7 @@ class VersionTest extends TestCase
     const ANOTHER_MINOR_VERSION = 1;
     const ANOTHER_RELEASE_VERSION = 0;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->version = new Version(
             self::VERSION,

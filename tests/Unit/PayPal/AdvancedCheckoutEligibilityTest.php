@@ -27,7 +27,7 @@ class AdvancedCheckoutEligibilityTest extends TestCase
 {
     private $advancedCheckoutEligibility;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->advancedCheckoutEligibility = new AdvancedCheckoutEligibility();
     }
