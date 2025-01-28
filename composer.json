@@ -41,6 +41,7 @@
         "phpunit/php-code-coverage": "^9.2.31",
         "phpunit/phpunit": "~9.6.7",
         "prestashop/autoindex": "^2.1",
+        "prestashop/header-stamp": "^2.3",
         "prestashop/php-dev-tools": "~5.0"
     },
     "autoload": {
