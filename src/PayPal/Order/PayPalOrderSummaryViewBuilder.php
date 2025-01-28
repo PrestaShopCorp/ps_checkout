@@ -86,7 +86,7 @@ class PayPalOrderSummaryViewBuilder
             new OrderDataProvider($order),
             $checkoutDataProvider,
             $this->router,
-            new PayPalOrderPresenter($orderPayPalDataProvider, $checkoutDataProvider, $this->orderPayPalTranslationProvider),
+            new PayPalOrderPresenter($orderPayPalDataProvider, $this->orderPayPalTranslationProvider),
             $this->shopContext
         );
     }
