@@ -30,7 +30,6 @@
         "prestashop/module-lib-service-container": "^2.0",
         "prestashop/prestashop-accounts-installer": "^1.0",
         "ramsey/uuid": "^3.8",
-        "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.0",
         "webmozart/assert": "^1.0"
     },
