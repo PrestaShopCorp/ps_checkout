@@ -57,8 +57,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer:v2
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - run: composer install
+
       - name: Run PHP-CS-Fixer
-        uses: prestashopcorp/github-action-php-cs-fixer@master
+        run: php vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no
 
   phpstan:
     name: PHPStan
