@@ -25,7 +25,7 @@ class PaypalCountryCodeMatriceTest extends TestCase
     /**
      * @dataProvider isoCodeDataProviderPaypal
      */
-    public function testgetPaypalIsoCode($resultExpect, $dataToValidate)
+    public function testGetPaypalIsoCode($resultExpect, $dataToValidate)
     {
         $this->assertSame(
             $resultExpect,
