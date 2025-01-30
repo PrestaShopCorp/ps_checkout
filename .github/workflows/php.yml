@@ -86,12 +86,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
-      - name: Setup PHP 8.1
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-          tools: composer:v2
-
       - name: Cache vendor folder
         uses: actions/cache@v1
         with:
@@ -110,7 +104,7 @@ jobs:
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
 
       - name: Run PHPStan
-        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module ghcr.io/phpstan/phpstan:latest-php8.1 analyse --configuration=/web/module/tests/phpstan/phpstan-PS-8.neon --error-format github
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module ghcr.io/phpstan/phpstan:latest-php8.1 analyse --configuration=/web/module/tests/phpstan/phpstan-PS-8.neon --error-format=github
 
   phpunit:
     name: PHPUnit
