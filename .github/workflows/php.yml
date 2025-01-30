@@ -37,7 +37,7 @@ jobs:
         run: php vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,vendor,tests --dry-run
 
   php-linter:
-    name: PHP Syntax check 8.1|8.2|8.2
+    name: PHP Syntax check 8.1|8.2|8.3
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'ready to review')
     steps:
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: ["9.0.x", "latest"]
+        presta-versions: ["9.0.x-apache"]
     if: contains(github.event.pull_request.labels.*.name, 'ready to review')
     steps:
       - name: Checkout
@@ -104,8 +104,10 @@ jobs:
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
 
       - name: Run PHPStan
-        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module ghcr.io/phpstan/phpstan:latest-php8.1 analyse --configuration=/web/module/tests/phpstan/phpstan-PS-8.neon --error-format=github
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/var/www/html/modules/ps_checkout -e _PS_ROOT_DIR_=/var/www/html/ --workdir=/var/www/html/modules/ps_checkout ghcr.io/phpstan/phpstan:latest-php8.1 analyse --configuration=/var/www/html/modules/ps_checkout/tests/phpstan/phpstan-PS-9.neon --error-format=github
 
+      - name: test
+        run: docker exec temp-ps ls -la /var/www/html/modules/ps_checkout
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
