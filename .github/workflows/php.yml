@@ -75,44 +75,6 @@ jobs:
       - name: Run PHP-CS-Fixer
         run: php vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no
 
-  phpstan2:
-    name: PHPStan
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        presta-versions: ["9.0.x-apache"]
-    if: contains(github.event.pull_request.labels.*.name, 'ready to review')
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
-
-      - name: Setup PHP 8.1
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-          tools: composer:v2
-
-      - run: composer install
-
-      - name: Run PrestaShop Docker container
-        run: docker run -tid --rm --name prestashop-container prestashop/prestashop:${{ matrix.presta-versions }}
-
-      - name: Wait for PrestaShop to be ready
-        run: |
-          while ! docker exec prestashop-container curl -sSf http://localhost > /dev/null; do
-            echo "Waiting for PrestaShop to be ready..."
-            sleep 10
-          done
-
-      - name: Remove ps_checkout module from PrestaShop container
-        run: docker exec prestashop-container rm -rf /var/www/html/modules/ps_checkout
-
-      - name: Copy module to PrestaShop container
-        run: docker cp $PWD prestashop-container:/var/www/html/modules/ps_checkout/
-
-      - name: Run PHPStan
-        run: docker exec prestashop-container bash -c "cd /var/www/html/modules/ps_checkout && _PS_ROOT_DIR_=/var/www/html php vendor/bin/phpstan analyse -c ./tests/phpstan/phpstan-PS-9.neon --error-format=github"
-
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
