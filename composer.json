@@ -37,6 +37,7 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "monolog/monolog": "^1.27.1",
         "nikic/php-parser": "^4.19.1",
+        "phpstan/phpstan": "^2.1",
         "phpunit/php-code-coverage": "^9.2.31",
         "phpunit/phpunit": "~9.6.7",
         "prestashop/autoindex": "^2.1",
