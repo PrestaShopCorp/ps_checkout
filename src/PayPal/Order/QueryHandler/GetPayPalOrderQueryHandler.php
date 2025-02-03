@@ -24,11 +24,11 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class GetPayPalOrderQueryHandler
 {
-    public function __construct(private CacheInterface $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
+    public function __construct(private ChainAdapter $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
     {}
 
     /**
@@ -47,6 +47,6 @@ class GetPayPalOrderQueryHandler
             $orderId = $psCheckoutCart->paypal_order;
         }
 
-        return new GetPayPalOrderQueryResult($this->orderPayPalCache->get($orderId));
+        return new GetPayPalOrderQueryResult($this->orderPayPalCache->getItem($orderId)->get());
     }
 }

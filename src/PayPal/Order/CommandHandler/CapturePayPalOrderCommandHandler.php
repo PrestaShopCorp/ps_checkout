@@ -42,19 +42,20 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenC
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class CapturePayPalOrderCommandHandler
 {
     public function __construct(
         private MaaslandHttpClient $maaslandHttpClient,
         private EventDispatcherInterface $eventDispatcher,
-        private CacheInterface $orderPayPalCache,
+        private ChainAdapter $orderPayPalCache,
         private PrestaShopContext $prestaShopContext,
         private PayPalCustomerRepository $payPalCustomerRepository,
         private PayPalOrderRepository $payPalOrderRepository,
         private PayPalOrderEventProcessor $payPalOrderEventProcessor
-    ) {}
+    ) {
+    }
 
     public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {

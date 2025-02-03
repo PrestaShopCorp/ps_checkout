@@ -50,14 +50,14 @@ services:
   ps_checkout.cache.order:
     class: Symfony\Component\Cache\Adapter\ArrayAdapter
 
-  Symfony\Contracts\Cache\CacheInterface $orderPayPalCache:
+  Symfony\Component\Cache\Adapter\ChainAdapter $orderPayPalCache:
     alias: 'ps_checkout.cache.paypal.order'
 
-  Symfony\Contracts\Cache\CacheInterface $orderCache:
+  Symfony\Component\Cache\Adapter\ArrayAdapter $orderCache:
     alias: 'ps_checkout.cache.order'
 
-  Symfony\Contracts\Cache\CacheInterface $cartPrestaShopCache:
+  Symfony\Component\Cache\Adapter\ArrayAdapter $cartPrestaShopCache:
     alias: 'ps_checkout.cache.pscheckoutcart'
 
-  Symfony\Contracts\Cache\CacheInterface $capturePayPalCache:
+  Symfony\Component\Cache\Adapter\ChainAdapter $capturePayPalCache:
     alias: 'ps_checkout.cache.paypal.capture'

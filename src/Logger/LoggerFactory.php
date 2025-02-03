@@ -78,7 +78,7 @@ class LoggerFactory
     }
 
     /**
-     * @param string $name
+     * @param string|mixed $name
      *
      * @throws PsCheckoutException
      */

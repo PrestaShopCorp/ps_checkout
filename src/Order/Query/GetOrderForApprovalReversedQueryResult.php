@@ -47,7 +47,6 @@ class GetOrderForApprovalReversedQueryResult
      * @param bool $hasBeenCanceled
      *
      * @throws OrderException
-     * @throws OrderStateException
      */
     public function __construct(
         $orderId,

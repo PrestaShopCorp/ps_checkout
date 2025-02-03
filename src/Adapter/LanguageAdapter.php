@@ -28,9 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
  */
 class LanguageAdapter
 {
-    public function __construct(private ShopContext $shopContext)
-    {}
-
     /**
      * Adapter for getLanguage from prestashop language class
      * Add locale key to the returned array on 1.6

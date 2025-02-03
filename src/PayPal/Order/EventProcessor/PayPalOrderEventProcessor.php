@@ -46,14 +46,14 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class PayPalOrderEventProcessor
 {
     public function __construct(
         private QueryBusInterface $queryBus,
         private PsCheckoutCartRepository $psCheckoutCartRepository,
-        private CacheInterface $orderPayPalCache,
+        private ChainAdapter $orderPayPalCache,
         private CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
         private OrderStateMapper $orderStateMapper,
         private PayPalConfiguration $payPalConfiguration,
@@ -195,14 +195,16 @@ class PayPalOrderEventProcessor
 
     public function updateCache(PayPalOrderEvent $event)
     {
-        $currentOrderPayPal = $this->orderPayPalCache->getItem($event->getOrderPayPalId()->getValue())->get();
+        $currentOrderPayPalCacheItem = $this->orderPayPalCache->getItem($event->getOrderPayPalId()->getValue());
+        $currentOrderPayPal = $currentOrderPayPalCacheItem->get();
         $newOrderPayPal = $event->getOrderPayPal();
 
         if ($currentOrderPayPal && !$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($currentOrderPayPal['status'], $newOrderPayPal['status'])) {
             return;
         }
 
-        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
+        $currentOrderPayPalCacheItem->set($newOrderPayPal);
+        $this->orderPayPalCache->save($currentOrderPayPalCacheItem);
     }
 
     public function clearCache(PayPalOrderEvent $event)

@@ -59,7 +59,7 @@ class LoggerFilename
     }
 
     /**
-     * @param string $name
+     * @param string|mixed $name
      *
      * @throws PsCheckoutException
      */

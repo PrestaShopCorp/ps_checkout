@@ -49,7 +49,7 @@ class PayPalCustomerId
     }
 
     /**
-     * @param string $customerId
+     * @param string|mixed $customerId
      *
      * @return void
      *

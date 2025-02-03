@@ -253,18 +253,6 @@ class ContextModule implements PresenterInterface
     }
 
     /**
-     * Get the countries link
-     *
-     * @return string
-     */
-    private function getCountriesLink()
-    {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink('AdminCountries');
-    }
-
-    /**
      * Get a generated link
      *
      * @param string $link

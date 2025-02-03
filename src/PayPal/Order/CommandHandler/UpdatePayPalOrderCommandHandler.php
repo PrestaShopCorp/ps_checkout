@@ -37,39 +37,11 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class UpdatePayPalOrderCommandHandler
 {
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @var PayPalOrderProvider
-     */
-    private $paypalOrderProvider;
-    private PayPalOrderEventSubscriber $payPalOrderEventSubscriber;
-
-    /**
-     * @param MaaslandHttpClient $httpClient
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ShopContext $shopContext
-     * @param PayPalOrderProvider $paypalOrderProvider
-     */
     public function __construct(
-        MaaslandHttpClient $httpClient,
-        ShopContext $shopContext,
-        PayPalOrderProvider $paypalOrderProvider,
-        PayPalOrderEventSubscriber $payPalOrderEventSubscriber
-    ) {
-        $this->httpClient = $httpClient;
-        $this->shopContext = $shopContext;
-        $this->paypalOrderProvider = $paypalOrderProvider;
-        $this->payPalOrderEventSubscriber = $payPalOrderEventSubscriber;
-    }
+        private MaaslandHttpClient $httpClient,
+        private PayPalOrderProvider $paypalOrderProvider,
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
+    ) {}
 
     /**
      * @param UpdatePayPalOrderCommand $command

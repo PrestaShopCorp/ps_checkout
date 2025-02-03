@@ -35,8 +35,8 @@ class CheckOrderAmount
     const ORDER_TO_MUCH_PAID = 3;
 
     /**
-     * @param string $totalAmount
-     * @param string $totalAmountPaid
+     * @param string|mixed $totalAmount
+     * @param string|mixed $totalAmountPaid
      *
      * @return int
      *

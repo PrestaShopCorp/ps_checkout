@@ -50,7 +50,7 @@ class CustomerId
     }
 
     /**
-     * @param int $customerId
+     * @param int|mixed $customerId
      *
      * @throws CustomerException
      */

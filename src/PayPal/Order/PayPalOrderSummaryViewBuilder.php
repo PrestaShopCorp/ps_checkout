@@ -39,7 +39,6 @@ class PayPalOrderSummaryViewBuilder
         private PayPalOrderProvider $orderPayPalProvider,
         private Router $router,
         private PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
-        private ShopContext $shopContext,
         private PayPalOrderRepository $payPalOrderRepository
     ) {}
 
@@ -86,8 +85,7 @@ class PayPalOrderSummaryViewBuilder
             new OrderDataProvider($order),
             $checkoutDataProvider,
             $this->router,
-            new PayPalOrderPresenter($orderPayPalDataProvider, $this->orderPayPalTranslationProvider),
-            $this->shopContext
+            new PayPalOrderPresenter($orderPayPalDataProvider, $this->orderPayPalTranslationProvider)
         );
     }
 }

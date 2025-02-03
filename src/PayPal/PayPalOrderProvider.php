@@ -22,13 +22,12 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\PayPalOrderCache;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\PrestaShop\Core\Domain\Order\ValueObject\OrderId;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class PayPalOrderProvider
 {
-    public function __construct(private CacheInterface $orderPayPalCache)
+    public function __construct(private ChainAdapter $orderPayPalCache)
     {}
 
     /**

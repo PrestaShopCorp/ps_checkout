@@ -35,7 +35,7 @@ class CheckoutChecker
 
     /**
      * @param int $cartId
-     * @param array{id: string, status: string, intent: string, payment_source: array, purchase_units: array} $orderPayPal
+     * @param array{id: string, status: string, intent: string, payment_source?: array, purchase_units?: array} $orderPayPal
      *
      * @return void
      *
@@ -100,8 +100,8 @@ class CheckoutChecker
         }
 
         if ($cart->isAllProductsInStock() !== true ||
-            (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-            (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
+            ($cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
+            ($cart->checkAllProductsHaveMinimalQuantities() !== true)
         ) {
             throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }

@@ -101,8 +101,8 @@ class Ps_checkout extends PaymentModule
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $serviceContainer;
-    private static $merchantIsValid;
-    private static $currencyIsAllowed;
+    private ?bool $merchantIsValid;
+    private array $currencyIsAllowed = [];
 
     public function __construct()
     {
@@ -538,7 +538,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Hook executed at the order confirmation
      *
-     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder?: Order} $params
      *
      * @return string
      */
@@ -579,8 +579,8 @@ class Ps_checkout extends PaymentModule
      */
     public function checkCurrency($cart)
     {
-        if (isset(static::$currencyIsAllowed[$cart->id_currency])) {
-            return static::$currencyIsAllowed[$cart->id_currency];
+        if (isset($this->currencyIsAllowed[$cart->id_currency])) {
+            return $this->currencyIsAllowed[$cart->id_currency];
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository $codeRepository */
@@ -595,7 +595,7 @@ class Ps_checkout extends PaymentModule
         }
 
         if (!$isCurrencySupported) {
-            static::$currencyIsAllowed[$cart->id_currency] = false;
+            $this->currencyIsAllowed[$cart->id_currency] = false;
 
             return false;
         }
@@ -604,20 +604,20 @@ class Ps_checkout extends PaymentModule
         $currencies_module = $this->getCurrency($cart->id_currency);
 
         if (empty($currencies_module)) {
-            static::$currencyIsAllowed[$cart->id_currency] = false;
+            $this->currencyIsAllowed[$cart->id_currency] = false;
 
             return false;
         }
 
         foreach ($currencies_module as $currency_module) {
             if ($currency_order->id == $currency_module['id_currency']) {
-                static::$currencyIsAllowed[$cart->id_currency] = true;
+                $this->currencyIsAllowed[$cart->id_currency] = true;
 
                 return true;
             }
         }
 
-        static::$currencyIsAllowed[$cart->id_currency] = false;
+        $this->currencyIsAllowed[$cart->id_currency] = false;
 
         return false;
     }
@@ -746,13 +746,13 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        if (static::$merchantIsValid === null) {
+        if ($this->merchantIsValid === null) {
             /** @var \PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator $merchantValidator */
             $merchantValidator = $this->getService(\PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator::class);
-            static::$merchantIsValid = $merchantValidator->merchantIsValid();
+            $this->merchantIsValid = $merchantValidator->merchantIsValid();
         }
 
-        return static::$merchantIsValid;
+        return $this->merchantIsValid;
     }
 
     /**
@@ -1406,7 +1406,7 @@ class Ps_checkout extends PaymentModule
     /**
      * When an OrderPayment is created or updated we should update fields payment_method and transaction_id
      *
-     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderPayment} $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object?: OrderPayment} $params
      *
      * @return void
      */
@@ -1494,7 +1494,7 @@ class Ps_checkout extends PaymentModule
     {
         $defaultCountry = '';
 
-        if (empty($defaultCountry) && Configuration::hasKey('PS_COUNTRY_DEFAULT')) {
+        if (Configuration::hasKey('PS_COUNTRY_DEFAULT')) {
             $defaultCountry = (new Country((int) Configuration::get('PS_COUNTRY_DEFAULT')))->iso_code;
         }
 
@@ -1520,7 +1520,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Display payment status on order confirmation page
      *
-     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder?: Order} $params
      *
      * @return string
      */

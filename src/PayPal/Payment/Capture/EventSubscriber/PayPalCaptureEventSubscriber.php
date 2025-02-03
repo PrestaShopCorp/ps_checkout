@@ -44,15 +44,16 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private CheckOrderAmount $checkOrderAmount,
-        private CacheInterface $capturePayPalCache,
-        private CacheInterface $orderPayPalCache,
+        private ChainAdapter $capturePayPalCache,
+        private ChainAdapter $orderPayPalCache,
         private OrderStateMapper $orderStateMapper,
         private QueryBusInterface $queryBus,
         private CreateOrderCommandHandler $createOrderCommandHandler,
@@ -195,7 +196,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function updateCache(PayPalCaptureEvent $event)
     {
-//        $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());
         $this->capturePayPalCache->get($event->getPayPalCaptureId()->getValue(), function () use ($event) {
             return $event->getCapture();
         });
@@ -208,7 +208,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 if ($capture['id'] === $event->getPayPalCaptureId()->getValue()) {
                     $needToClearOrderPayPalCache = false;
                     $orderPayPalCache['purchase_units'][0]['payments']['captures'][$key] = $event->getCapture();
-                    $this->orderPayPalCache->set($event->getPayPalOrderId()->getValue(), $orderPayPalCache);
+                    $this->capturePayPalCache->get($event->getPayPalCaptureId()->getValue(), function () use ($orderPayPalCache) {
+                        return $orderPayPalCache;
+                    });
                 }
             }
         }

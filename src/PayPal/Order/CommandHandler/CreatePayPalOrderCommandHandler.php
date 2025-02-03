@@ -42,43 +42,13 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class CreatePayPalOrderCommandHandler
 {
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $maaslandHttpClient;
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $payPalCustomerRepository;
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    private PayPalOrderEventSubscriber $payPalOrderEventSubscriber;
-
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
-        ShopContext $shopContext,
-        PrestaShopContext $prestaShopContext,
-        PayPalCustomerRepository $payPalCustomerRepository,
-        PaymentTokenRepository $paymentTokenRepository,
-        PayPalOrderEventSubscriber $payPalOrderEventSubscriber
-    ) {
-        $this->maaslandHttpClient = $maaslandHttpClient;
-        $this->shopContext = $shopContext;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->paymentTokenRepository = $paymentTokenRepository;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->payPalOrderEventSubscriber = $payPalOrderEventSubscriber;
-    }
+        private MaaslandHttpClient $maaslandHttpClient,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalCustomerRepository $payPalCustomerRepository,
+        private PaymentTokenRepository $paymentTokenRepository,
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
+    ) {}
 
     public function __invoke(CreatePayPalOrderCommand $command)
     {

@@ -27,21 +27,21 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
  */
 class GetPayPalOrderForCheckoutCompletedQueryHandler
 {
-    public function __construct(private CacheInterface $orderPayPalCache)
+    public function __construct(private ChainAdapter $orderPayPalCache)
     {}
 
     public function __invoke(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         $payPalOrderId = $getPayPalOrderQuery->getOrderPayPalId()->getValue();
 
-        /** @var array{id: string, status: string} $order */
+        /** @var array{id: string, status: string}|array $order */
         $order = $this->orderPayPalCache->getItem($payPalOrderId)->get();
 
         if (!empty($order) && in_array($order['status'], ['COMPLETED', 'CANCELED'])) {
@@ -51,7 +51,9 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
         try {
             $orderPayPal = new PaypalOrder($payPalOrderId);
             $orderToStoreInCache = !empty($order) ? array_replace_recursive($order, $orderPayPal->getOrder()) : $orderPayPal->getOrder();
-            $this->orderPayPalCache->set($payPalOrderId, $orderToStoreInCache);
+            $cacheItem = $this->orderPayPalCache->getItem($payPalOrderId);
+            $cacheItem->set($orderToStoreInCache);
+            $this->orderPayPalCache->save($cacheItem);
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {

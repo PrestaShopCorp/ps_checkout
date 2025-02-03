@@ -31,13 +31,13 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalRefundEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalRefundEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private CacheInterface $orderPayPalCache,
+        private ChainAdapter $orderPayPalCache,
         private OrderStateMapper $orderStateMapper,
         private PayPalOrderProvider $orderProvider,
         private QueryBusInterface $queryBus,

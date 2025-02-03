@@ -50,7 +50,7 @@ class PayPalMerchantId
     }
 
     /**
-     * @param string $value
+     * @param string|mixed $value
      *
      * @throws PayPalMerchantException
      */

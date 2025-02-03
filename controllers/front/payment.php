@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForChe
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 {
@@ -43,13 +44,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     public $display_header = true;
 
-    private $orderPageUrl;
-
-    /**
-     * @var PayPalOrderId
-     */
-    private $paypalOrderId;
-
+    private string $orderPageUrl;
+    private PayPalOrderId $paypalOrderId;
     private CommandBusInterface $commandBus;
     private QueryBusInterface $queryBus;
 
@@ -70,7 +66,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function setMedia()
     {
         $this->registerStylesheet('ps_checkout_payment', '/modules/ps_checkout/views/css/payment.css');
-        parent::setMedia();
+        return parent::setMedia();
     }
 
     public function postProcess()
@@ -89,7 +85,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
-            /** @var Symfony\Contracts\Cache\CacheInterface $payPalOrderCache */
+            /** @var AdapterInterface $payPalOrderCache */
             $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
@@ -173,7 +169,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
             $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
-        
+
         $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $captureId, $payPalOrderFromCache['status']);
     }
 

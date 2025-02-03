@@ -164,18 +164,4 @@ class ConfigurationModule implements PresenterInterface
             'currencies' => $implodedMisconfiguredCurrencies,
         ];
     }
-
-    /**
-     * @param array $currency
-     *
-     * @return bool
-     */
-    private function checkCurrencyPrecision($currency)
-    {
-        if (isset($currency['precision'])) {
-            return (int) $currency['precision'] !== 0;
-        }
-
-        return (int) $currency['decimals'] !== 0;
-    }
 }

@@ -50,7 +50,7 @@ class PayPalOrderId
     }
 
     /**
-     * @param string $value
+     * @param string|mixed $value
      *
      * @throws PayPalOrderException
      */

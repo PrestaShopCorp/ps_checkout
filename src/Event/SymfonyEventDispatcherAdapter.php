@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyComponentEventDispatcherInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as SymfonyContractsEventDispatcherInterface;
 
 class SymfonyEventDispatcherAdapter implements EventDispatcherInterface
 {
@@ -43,12 +42,6 @@ class SymfonyEventDispatcherAdapter implements EventDispatcherInterface
      */
     public function dispatch($event)
     {
-        if (interface_exists(SymfonyContractsEventDispatcherInterface::class) && $this->eventDispatcher instanceof SymfonyContractsEventDispatcherInterface) {
-            // @phpstan-ignore-next-line
-            return $this->eventDispatcher->dispatch($event, get_class($event));
-        } else {
-            // @phpstan-ignore-next-line
-            return $this->eventDispatcher->dispatch(get_class($event), $event);
-        }
+        return $this->eventDispatcher->dispatch($event, get_class($event));
     }
 }

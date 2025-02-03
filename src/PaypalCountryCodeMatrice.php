@@ -34,7 +34,7 @@ class PaypalCountryCodeMatrice
     /**
      * Get the PayPal ISO code from PrestaShop ISO Code
      *
-     * @param string $isoCode
+     * @param string|mixed $isoCode
      *
      * @return string|false
      */
@@ -54,7 +54,7 @@ class PaypalCountryCodeMatrice
     /**
      * Get the PrestaShop ISO code from PayPal ISO Code
      *
-     * @param string $isoCode
+     * @param string|mixed $isoCode
      *
      * @return string|false
      */

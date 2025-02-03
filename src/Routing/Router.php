@@ -71,17 +71,4 @@ class Router
     {
         return $this->context->link->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, (int) Configuration::get('PS_LANG_DEFAULT'), (int) $idShop);
     }
-
-    /**
-     * @param int $idShop
-     *
-     * @return string
-     */
-    private function getBaseLink($idShop)
-    {
-        $shop = new Shop($idShop);
-        $base = Configuration::get('PS_SSL_ENABLED') ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain;
-
-        return $base . $shop->physical_uri;
-    }
 }

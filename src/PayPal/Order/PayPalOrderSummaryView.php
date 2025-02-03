@@ -23,70 +23,21 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderDataProvider;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class PayPalOrderSummaryView
 {
-    /**
-     * @var PaypalOrderDataProvider
-     */
-    private $orderPayPalDataProvider;
-
-    /**
-     * @var OrderDataProvider
-     */
-    private $orderDataProvider;
-
-    /**
-     * @var PsCheckoutDataProvider
-     */
-    private $checkoutDataProvider;
-
-    /**
-     * @var Router
-     */
-    private $router;
-
-    /**
-     * @var PayPalOrderPresenter
-     */
-    private $orderPayPalPresenter;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @param PaypalOrderDataProvider $orderPayPalDataProvider
-     * @param OrderDataProvider $orderDataProvider
-     * @param PsCheckoutDataProvider $checkoutDataProvider
-     * @param Router $router
-     * @param PayPalOrderPresenter $orderPayPalPresenter
-     * @param ShopContext $shopContext
-     */
     public function __construct(
-        PaypalOrderDataProvider $orderPayPalDataProvider,
-        OrderDataProvider $orderDataProvider,
-        PsCheckoutDataProvider $checkoutDataProvider,
-        Router $router,
-        PayPalOrderPresenter $orderPayPalPresenter,
-        ShopContext $shopContext
-    ) {
-        $this->orderPayPalDataProvider = $orderPayPalDataProvider;
-        $this->orderDataProvider = $orderDataProvider;
-        $this->checkoutDataProvider = $checkoutDataProvider;
-        $this->router = $router;
-        $this->orderPayPalPresenter = $orderPayPalPresenter;
-        $this->shopContext = $shopContext;
-    }
+        private PaypalOrderDataProvider $orderPayPalDataProvider,
+        private OrderDataProvider $orderDataProvider,
+        private PsCheckoutDataProvider $checkoutDataProvider,
+        private Router $router,
+        private PayPalOrderPresenter $orderPayPalPresenter
+    ) {}
 
     /**
      * Returns an array of template variables for smarty
-     *
-     * @return array
      */
-    public function getTemplateVars()
+    public function getTemplateVars(): array
     {
         $orderStatus = $this->orderPayPalDataProvider->getOrderStatus() ? $this->orderPayPalDataProvider->getOrderStatus() : $this->checkoutDataProvider->getPaypalOrderStatus();
         $orderTransactionStatus = $this->orderPayPalDataProvider->getTransactionStatus();

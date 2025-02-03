@@ -26,12 +26,12 @@ use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PsCheckoutCart;
-use Symfony\Component\Cache\CacheItem;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class PsCheckoutCartRepository
 {
-    public function __construct(private CacheInterface $cartPrestaShopCache)
+    public function __construct(private ArrayAdapter $cartPrestaShopCache)
     {}
 
     /**
@@ -43,7 +43,7 @@ class PsCheckoutCartRepository
      */
     public function findOneByCartId($cartId)
     {
-        return $this->cartPrestaShopCache->get(CacheSettings::CART_ID . $cartId, function (CacheItem $item) use ($cartId) {
+        return $this->cartPrestaShopCache->get(CacheSettings::CART_ID . $cartId, function (ItemInterface $item) use ($cartId) {
             $item->expiresAfter(3600);
             $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $cartId);
@@ -64,7 +64,7 @@ class PsCheckoutCartRepository
      */
     public function findOneByPayPalOrderId($payPalOrderId)
     {
-        return $this->cartPrestaShopCache->get(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId, function (CacheItem $item) use ($payPalOrderId) {
+        return $this->cartPrestaShopCache->get(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId, function (ItemInterface $item) use ($payPalOrderId) {
             $item->expiresAfter(3600);
             $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('paypal_order', '=', $payPalOrderId);

@@ -69,7 +69,7 @@ class FundingSourceConfigurationRepository
     {
         $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
 
-        if (isset($this->fundingSources[$shopId]) && null !== $this->fundingSources[$shopId]) {
+        if (isset($this->fundingSources[$shopId]) && !empty($this->fundingSources[$shopId])) {
             return $this->fundingSources[$shopId];
         }
 

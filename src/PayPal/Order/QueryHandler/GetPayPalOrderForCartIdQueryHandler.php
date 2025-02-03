@@ -24,11 +24,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class GetPayPalOrderForCartIdQueryHandler
 {
-    public function __construct(private CacheInterface $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
+    public function __construct(private ChainAdapter $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
     {}
 
     /**

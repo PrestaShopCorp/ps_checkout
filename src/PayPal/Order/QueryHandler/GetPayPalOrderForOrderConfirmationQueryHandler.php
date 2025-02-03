@@ -25,11 +25,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class GetPayPalOrderForOrderConfirmationQueryHandler
 {
-    public function __construct(private CacheInterface $orderPayPalCache)
+    public function __construct(private ChainAdapter $orderPayPalCache)
     {}
 
     public function __invoke(GetPayPalOrderForOrderConfirmationQuery $query)
@@ -39,7 +39,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
             return (new PaypalOrder($query->getOrderPayPalId()->getValue()))->getOrder();
         });
 
-        if (!empty($order) && ($order['status'] === 'PENDING' || $order['status'] === 'COMPLETED')) {
+        if ($order['status'] === 'PENDING' || $order['status'] === 'COMPLETED') {
             return new GetPayPalOrderForOrderConfirmationQueryResult($order);
         }
 
