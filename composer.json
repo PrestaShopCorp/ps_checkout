@@ -78,6 +78,9 @@
         "phpstan": [
             "@putenv _PS_ROOT_DIR_=../../.",
             "@php phpstan analyse -c tests/phpstan/phpstan.neon"
+        ],
+        "phpunit": [
+          "@php phpunit tests -c tests/Unit/phpunit.xml"
         ]
     },
     "author": "PrestaShop"
