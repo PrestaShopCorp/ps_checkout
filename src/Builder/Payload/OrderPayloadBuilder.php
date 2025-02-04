@@ -63,11 +63,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     /**
      * @var bool
      */
-    private $isPatch;
-
-    /**
-     * @var bool
-     */
     private $isCard = false;
 
     /**
@@ -137,12 +132,10 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * @param array $cart
-     * @param bool $isPatch
      */
-    public function __construct(array $cart, $isPatch = false)
+    public function __construct(array $cart)
     {
         $this->cart = $cart;
-        $this->isPatch = $isPatch;
 
         parent::__construct();
     }

@@ -63,7 +63,7 @@ class UpdatePayPalOrderCommandHandler
         }
 
         $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter, true);
+        $builder = new OrderPayloadBuilder($cartPresenter);
         $builder->setIsUpdate(true);
         $builder->setPaypalOrderId($command->getPayPalOrderId()->getValue());
         $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
