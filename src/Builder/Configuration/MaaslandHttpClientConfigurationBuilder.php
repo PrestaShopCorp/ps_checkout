@@ -91,7 +91,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
                 $this->psCheckoutLogger,
                 Formatter::DEBUG
             );
-            $emitter->attach();
+            $emitter->attach($logSubscriber);
 
             $configuration['emitter'] = $emitter;
         }
