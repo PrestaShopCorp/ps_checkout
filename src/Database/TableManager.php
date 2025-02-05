@@ -46,121 +46,138 @@ class TableManager
      */
     public function createTable()
     {
-        $result = $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order_matrice` (
-            `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
-            `id_order_prestashop` int(10) unsigned NOT NULL,
-            `id_order_paypal` varchar(20) NOT NULL,
-            PRIMARY KEY (`id_order_matrice`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
-              `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
-              `id_cart` int unsigned NOT NULL,
-              `paypal_intent` varchar(20) DEFAULT "CAPTURE",
-              `paypal_order` varchar(20) NULL,
-              `paypal_status` varchar(30) NULL,
-              `paypal_funding` varchar(20) NULL,
-              `paypal_token` text DEFAULT NULL,
-              `paypal_token_expire` datetime NULL,
-              `paypal_authorization_expire` datetime NULL,
-              `environment` varchar(20) NULL,
-              `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-              `isHostedFields` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-              `date_add` datetime NOT NULL,
-              `date_upd` datetime NOT NULL,
-              PRIMARY KEY (`id_pscheckout_cart`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
-            `name` varchar(20) NOT NULL,
-            `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-            `position` tinyint(2) unsigned NOT NULL,
-            `id_shop` int unsigned NOT NULL,
-            PRIMARY KEY (`name`, `id_shop`),
-            INDEX (`id_shop`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
-            `id` varchar(50) NOT NULL,
-            `id_cart` int unsigned NOT NULL,
-            `status` varchar(30) NOT NULL,
-            `intent` varchar(50) DEFAULT "CAPTURE",
-            `funding_source` varchar(50) NOT NULL,
-            `payment_source` text,
-            `environment` varchar(50) NOT NULL,
-            `is_card_fields` tinyint(1) NOT NULL,
-            `is_express_checkout` tinyint(1) NOT NULL,
-            `customer_intent` varchar(50),
-            `payment_token_id` varchar(50),
-            `tags` varchar(255) DEFAULT NULL,
-            PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_capture` (
-            `id` varchar(50) NOT NULL,
-            `id_order` varchar(50) NOT NULL,
-            `status` varchar(30) NOT NULL,
-            `final_capture` tinyint(1) NOT NULL,
-            `created_at` varchar(50) NOT NULL,
-            `updated_at` varchar(50) NOT NULL,
-            `seller_protection` text,
-            `seller_receivable_breakdown` text,
-            PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_refund` (
-            `id` varchar(50) NOT NULL,
-            `id_order` varchar(50) NOT NULL,
-            `status` varchar(30) NOT NULL,
-            `invoice_id` varchar(50) NOT NULL,
-            `custom_id` varchar(50) NOT NULL,
-            `acquirer_reference_number` varchar(50) NOT NULL,
-            `seller_payable_breakdown` text,
-            `id_order_slip` INT UNSIGNED,
-            PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_authorization` (
-            `id` varchar(50) NOT NULL,
-            `id_order` varchar(50) NOT NULL,
-            `status` varchar(30) NOT NULL,
-            `expiration_time` varchar(50) NOT NULL,
-            `seller_protection` text,
-            PRIMARY KEY (`id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_purchase_unit` (
-            `id_order` varchar(50) NOT NULL,
-            `checksum` varchar(50) NOT NULL,
-            `reference_id` varchar(50) NOT NULL,
-            `items` text,
-            PRIMARY KEY (`reference_id`, `id_order`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
-            `id_customer` int unsigned NOT NULL,
-            `paypal_customer_id` varchar(50) NOT NULL,
-            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
-            `id` INT UNSIGNED AUTO_INCREMENT,
-            `token_id` varchar(50) NOT NULL,
-            `paypal_customer_id` varchar(50) NOT NULL,
-            `payment_source` varchar(50) NOT NULL,
-            `data` text NOT NULL,
-            `merchant_id` varchar(50) NOT NULL,
-            `status` varchar(50) NOT NULL,
-            `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ');
+        $tables = [
+            'pscheckout_order_matrice' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order_matrice` (
+                `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                `id_order_prestashop` int(10) unsigned NOT NULL,
+                `id_order_paypal` varchar(20) NOT NULL,
+                PRIMARY KEY (`id_order_matrice`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_cart' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
+                  `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `id_cart` int unsigned NOT NULL,
+                  `paypal_intent` varchar(20) DEFAULT "CAPTURE",
+                  `paypal_order` varchar(20) NULL,
+                  `paypal_status` varchar(30) NULL,
+                  `paypal_funding` varchar(20) NULL,
+                  `paypal_token` text DEFAULT NULL,
+                  `paypal_token_expire` datetime NULL,
+                  `paypal_authorization_expire` datetime NULL,
+                  `environment` varchar(20) NULL,
+                  `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+                  `isHostedFields` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+                  `date_add` datetime NOT NULL,
+                  `date_upd` datetime NOT NULL,
+                  PRIMARY KEY (`id_pscheckout_cart`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_funding_source' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
+                `name` varchar(20) NOT NULL,
+                `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+                `position` tinyint(2) unsigned NOT NULL,
+                `id_shop` int unsigned NOT NULL,
+                PRIMARY KEY (`name`, `id_shop`),
+                INDEX (`id_shop`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_order' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
+                `id` varchar(50) NOT NULL,
+                `id_cart` int unsigned NOT NULL,
+                `status` varchar(30) NOT NULL,
+                `intent` varchar(50) DEFAULT "CAPTURE",
+                `funding_source` varchar(50) NOT NULL,
+                `payment_source` text,
+                `environment` varchar(50) NOT NULL,
+                `is_card_fields` tinyint(1) NOT NULL,
+                `is_express_checkout` tinyint(1) NOT NULL,
+                `customer_intent` varchar(50),
+                `payment_token_id` varchar(50),
+                `tags` varchar(255) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_capture' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_capture` (
+                `id` varchar(50) NOT NULL,
+                `id_order` varchar(50) NOT NULL,
+                `status` varchar(30) NOT NULL,
+                `final_capture` tinyint(1) NOT NULL,
+                `created_at` varchar(50) NOT NULL,
+                `updated_at` varchar(50) NOT NULL,
+                `seller_protection` text,
+                `seller_receivable_breakdown` text,
+                PRIMARY KEY (`id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_refund' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_refund` (
+                `id` varchar(50) NOT NULL,
+                `id_order` varchar(50) NOT NULL,
+                `status` varchar(30) NOT NULL,
+                `invoice_id` varchar(50) NOT NULL,
+                `custom_id` varchar(50) NOT NULL,
+                `acquirer_reference_number` varchar(50) NOT NULL,
+                `seller_payable_breakdown` text,
+                `id_order_slip` INT UNSIGNED,
+                PRIMARY KEY (`id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_authorization' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_authorization` (
+                `id` varchar(50) NOT NULL,
+                `id_order` varchar(50) NOT NULL,
+                `status` varchar(30) NOT NULL,
+                `expiration_time` varchar(50) NOT NULL,
+                `seller_protection` text,
+                PRIMARY KEY (`id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_purchase_unit' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_purchase_unit` (
+                `id_order` varchar(50) NOT NULL,
+                `checksum` varchar(50) NOT NULL,
+                `reference_id` varchar(50) NOT NULL,
+                `items` text,
+                PRIMARY KEY (`reference_id`, `id_order`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_customer' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
+                `id_customer` int unsigned NOT NULL,
+                `paypal_customer_id` varchar(50) NOT NULL,
+                PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+            'pscheckout_payment_token' => '
+                CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
+                `id` INT UNSIGNED AUTO_INCREMENT,
+                `token_id` varchar(50) NOT NULL,
+                `paypal_customer_id` varchar(50) NOT NULL,
+                `payment_source` varchar(50) NOT NULL,
+                `data` text NOT NULL,
+                `merchant_id` varchar(50) NOT NULL,
+                `status` varchar(50) NOT NULL,
+                `is_favorite` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `token_id_merchant_id_paypal_customer_id` (`token_id`, `merchant_id`, `paypal_customer_id`)
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+            ',
+        ];
+
+        foreach ($tables as $tableName => $query) {
+            if (!$this->execute($query)) {
+                throw new \Exception(sprintf('Error while creating table %s', $tableName));
+            }
+        }
 
         $this->checkTable();
 
-        return (bool) $result;
+        return true;
     }
 
     /**
