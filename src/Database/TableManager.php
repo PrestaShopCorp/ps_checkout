@@ -46,14 +46,14 @@ class TableManager
      */
     public function createTable()
     {
-        $result = $this->db->execute('
+        $result = $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order_matrice` (
             `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
             `id_order_prestashop` int(10) unsigned NOT NULL,
             `id_order_paypal` varchar(20) NOT NULL,
             PRIMARY KEY (`id_order_matrice`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
               `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
               `id_cart` int unsigned NOT NULL,
@@ -71,7 +71,7 @@ class TableManager
               `date_upd` datetime NOT NULL,
               PRIMARY KEY (`id_pscheckout_cart`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
             `name` varchar(20) NOT NULL,
             `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
@@ -80,7 +80,7 @@ class TableManager
             PRIMARY KEY (`name`, `id_shop`),
             INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
             `id` varchar(50) NOT NULL,
             `id_cart` int unsigned NOT NULL,
@@ -96,7 +96,7 @@ class TableManager
             `tags` varchar(255) DEFAULT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_capture` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
@@ -108,7 +108,7 @@ class TableManager
             `seller_receivable_breakdown` text,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_refund` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
@@ -120,7 +120,7 @@ class TableManager
             `id_order_slip` INT UNSIGNED,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_authorization` (
             `id` varchar(50) NOT NULL,
             `id_order` varchar(50) NOT NULL,
@@ -129,7 +129,7 @@ class TableManager
             `seller_protection` text,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_purchase_unit` (
             `id_order` varchar(50) NOT NULL,
             `checksum` varchar(50) NOT NULL,
@@ -137,13 +137,13 @@ class TableManager
             `items` text,
             PRIMARY KEY (`reference_id`, `id_order`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_customer` (
             `id_customer` int unsigned NOT NULL,
             `paypal_customer_id` varchar(50) NOT NULL,
             PRIMARY KEY (`id_customer`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ') && $this->db->execute('
+        ') && $this->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_payment_token` (
             `id` INT UNSIGNED AUTO_INCREMENT,
             `token_id` varchar(50) NOT NULL,
@@ -170,7 +170,7 @@ class TableManager
      */
     public function dropTable()
     {
-        // Avoid to loose PayPal data if module is reset or uninstall
+        // Avoid to lose PayPal data if module is reset or uninstalled
         return true;
     }
 
@@ -182,7 +182,7 @@ class TableManager
      */
     public function populatePsCartFromOrderMatrice()
     {
-        return $this->db->execute('
+        return $this->execute('
             INSERT INTO `' . _DB_PREFIX_ . 'pscheckout_cart` (`id_cart`, `paypal_order`, `date_add`, `date_upd`)
             SELECT o.id_cart, om.id_order_paypal, o.date_add, o.date_upd
             FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` AS om
@@ -205,11 +205,11 @@ class TableManager
             foreach ($fields as $field) {
                 $databaseFields[] = $field['Field'];
                 if ($field['Field'] === 'paypal_token' && $field['Type'] !== 'text') {
-                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
+                    $this->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
                 }
 
                 if ($field['Field'] === 'paypal_status' && $field['Type'] !== 'varchar(30)') {
-                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_status` `paypal_status` varchar(30) NULL;');
+                    $this->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_status` `paypal_status` varchar(30) NULL;');
                 }
             }
         }
@@ -219,7 +219,24 @@ class TableManager
         $missingFields = array_diff($objectFields, $databaseFields);
 
         if (in_array('environment', $missingFields, true)) {
-            $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `environment` varchar(20) DEFAULT NULL;');
+            $this->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `environment` varchar(20) DEFAULT NULL;');
         }
+
+        $fields = $this->db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_order`');
+
+        if (!empty($fields)) {
+            $field = array_filter($fields, function ($field) {
+                return $field['Field'] === 'tags';
+            });
+
+            if (empty($field)) {
+                $this->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `tags` varchar(255) DEFAULT NULL;');
+            }
+        }
+    }
+
+    private function execute($sql)
+    {
+        return $this->db->execute($sql, false);
     }
 }
