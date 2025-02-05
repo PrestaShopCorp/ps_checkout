@@ -93,6 +93,7 @@ class TableManager
             `is_express_checkout` tinyint(1) NOT NULL,
             `customer_intent` varchar(50),
             `payment_token_id` varchar(50),
+            `tags` varchar(255) DEFAULT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
