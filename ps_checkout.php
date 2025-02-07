@@ -89,7 +89,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '9.4.3.0';
+    const VERSION = '9.4.3.1';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -110,7 +110,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '9.4.3.0';
+        $this->version = '9.4.3.1';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -979,7 +979,7 @@ class Ps_checkout extends PaymentModule
                 'checkout.payment.token.delete.modal.confirm-button' => $this->l('Delete payment method'),
                 'checkout.payment.loader.processing-request' => $this->l('Please wait, we are processing your request'),
                 'APPLE_PAY_MERCHANT_SESSION_VALIDATION_ERROR' => $this->l('We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.'),
-                'APPROVE_APPLE_PAY_VALIDATION_ERROR' => $this->l('We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.')
+                'APPROVE_APPLE_PAY_VALIDATION_ERROR' => $this->l('We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.'),
             ],
         ]);
 

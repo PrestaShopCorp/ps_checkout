@@ -20,10 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
 use PsCheckoutCart;
 
@@ -42,6 +46,10 @@ class OrderPresenter
      * @var FundingSourceTranslationProvider
      */
     private $fundingSourceTranslationProvider;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     /**
      * @param Ps_checkout $module
@@ -54,6 +62,7 @@ class OrderPresenter
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
     }
 
     /**
@@ -65,6 +74,15 @@ class OrderPresenter
             return [];
         }
 
+        $threeDSNotRequired = false;
+
+        try {
+            $payPalOrderId = new PayPalOrderId($this->orderPayPal['id']);
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($payPalOrderId);
+            $threeDSNotRequired = in_array(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED, $payPalOrder->getTags());
+        } catch (PsCheckoutException $e) {
+        }
+
         $card3DSecure = new Card3DSecure();
 
         return array_merge(
@@ -73,6 +91,7 @@ class OrderPresenter
                 'intent' => $this->orderPayPal['intent'],
                 'status' => $this->getOrderStatus(),
                 'transactions' => $this->getTransactions(),
+                'is3DSNotRequired' => $threeDSNotRequired,
                 'is3DSecureAvailable' => $card3DSecure->is3DSecureAvailable($this->orderPayPal),
                 'isLiabilityShifted' => $card3DSecure->isLiabilityShifted($this->orderPayPal),
                 'paymentSource' => $this->getPaymentSourceName($this->orderPayPal),

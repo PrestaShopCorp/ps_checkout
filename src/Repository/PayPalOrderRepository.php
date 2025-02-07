@@ -61,6 +61,7 @@ class PayPalOrderRepository
                 'is_express_checkout' => (int) $payPalOrder->isExpressCheckout(),
                 'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
                 'payment_token_id' => $payPalOrder->getPaymentTokenId() ? pSQL($payPalOrder->getPaymentTokenId()->getValue()) : null,
+                'tags' => pSQL(implode(',', $payPalOrder->getTags())),
             ],
             false,
             true,
@@ -94,19 +95,7 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
-        return new PayPalOrder(
-            $queryResult['id'],
-            (int) $queryResult['id_cart'],
-            $queryResult['intent'],
-            $queryResult['funding_source'],
-            $queryResult['status'],
-            json_decode($queryResult['payment_source'], true),
-            $queryResult['environment'],
-            $queryResult['is_card_fields'],
-            $queryResult['is_express_checkout'],
-            explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
-        );
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
     }
 
     /**
@@ -132,6 +121,16 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
+    }
+
+    /**
+     * @param array $queryResult
+     *
+     * @return PayPalOrder
+     */
+    private function buildPayPalOrderFromQueryResult($queryResult)
+    {
         return new PayPalOrder(
             $queryResult['id'],
             (int) $queryResult['id_cart'],
@@ -143,7 +142,8 @@ class PayPalOrderRepository
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
             explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null,
+            explode(',', $queryResult['tags'])
         );
     }
 

@@ -307,6 +307,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
     arguments:
       - "@ps_checkout.logger"
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
