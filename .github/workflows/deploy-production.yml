@@ -6,7 +6,6 @@ on:
 
 jobs:
   push-to-repository:
-    name: PRODUCTION - Create module zip
     strategy:
       fail-fast: false
     uses: ./.github/workflows/push-to-repository.yml
@@ -38,7 +37,7 @@ jobs:
 
       - name: Prepare zip for release 👷
         run: |
-          cd ${{ inputs.repository-name }}
+          cd ${{ github.event.repository.name }}
           zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
 
       - name: Publish to GitHub Release 🛩️
