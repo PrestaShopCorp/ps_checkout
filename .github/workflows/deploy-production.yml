@@ -20,6 +20,7 @@ jobs:
 
   update-release-draft:
     name: PRODUCTION - Update release draft
+    needs: push-to-repository
     runs-on: ubuntu-latest
     environment: production
     permissions:
