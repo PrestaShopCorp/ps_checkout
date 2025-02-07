@@ -82,7 +82,11 @@
           {if $psCheckoutCart->paypal_funding === 'card'}
             <dt data-grid-area="card-sca">{l s='3D Secure' mod='ps_checkout'}</dt>
             <dd data-grid-area="card-sca-value">
-              {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
+              {if $orderPayPal.is3DSNotRequired}
+                <span class="badge rounded badge-warning">
+                  {l s='Not required' mod='ps_checkout'}
+                </span>
+              {elseif $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
                 <span class="badge rounded badge-success">
                   {l s='Success' mod='ps_checkout'}
                 </span>
@@ -112,6 +116,9 @@
         </dl>
         {if $psCheckoutCart->paypal_funding === 'card' && !$orderPayPal.isLiabilityShifted}
           <div class="liability-explanation">
+            {if $orderPayPal.is3DSNotRequired}
+              {l s='Your 3D Secure settings for this transaction were set to "Strong Customer Authentication (SCA) when required", but the current transaction does not require it as per the regulation.' mod='ps_checkout'}
+            {/if}
             {l s='The bank issuer declined the liability shift. We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
           </div>
         {/if}
