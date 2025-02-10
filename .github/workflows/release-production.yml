@@ -18,6 +18,7 @@ jobs:
             echo "artifact_exists=true" >> $GITHUB_OUTPUT
           else
             echo "artifact_exists=false" >> $GITHUB_OUTPUT
+          fi
 
   push-to-repository:
     name: PRODUCTION - Generate release artifact
