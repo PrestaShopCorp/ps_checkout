@@ -2,7 +2,7 @@ name: Deploy to Production
 
 on:
   release:
-    types: [published, prereleased]
+    types: [prereleased]
 
 jobs:
   push-to-repository:
@@ -17,8 +17,8 @@ jobs:
       repository-name: ${{ github.event.repository.name }}
     secrets: inherit
 
-  update-release-draft:
-    name: PRODUCTION - Update release draft
+  update-release:
+    name: PRODUCTION - Update release
     needs: push-to-repository
     runs-on: ubuntu-latest
     environment: production
