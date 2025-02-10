@@ -2,11 +2,27 @@ name: Deploy to Production
 
 on:
   release:
-    types: [prereleased]
+    types: [prereleased, released]
 
 jobs:
+  check-artifact:
+    name: PRODUCTION - Check if release artifact exists
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_exists: ${{ steps.check.outputs.artifact_exists }}
+    steps:
+      - name: Check for artifact
+        id: check
+        run: |
+          if [ -f "${{ github.event.repository.name }}.zip" ]; then
+            echo "artifact_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "artifact_exists=false" >> $GITHUB_OUTPUT
+
   push-to-repository:
     name: PRODUCTION - Generate release artifact
+    needs: check-artifact
+    if: needs.check-artifact.outputs.artifact_exists == 'false'
     strategy:
       fail-fast: false
     uses: ./.github/workflows/push-to-repository.yml
