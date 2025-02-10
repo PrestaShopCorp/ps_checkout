@@ -6,6 +6,7 @@ on:
 
 jobs:
   push-to-repository:
+    name: PRODUCTION - Generate release artifact
     strategy:
       fail-fast: false
     uses: ./.github/workflows/push-to-repository.yml
