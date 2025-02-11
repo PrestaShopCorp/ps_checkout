@@ -37,8 +37,6 @@ jobs:
       - name: Build module
         run: |
           composer install
-          cd _dev
-          yarn
 
       - name: Delete old module
         uses: appleboy/ssh-action@master
