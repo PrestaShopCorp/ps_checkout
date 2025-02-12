@@ -64,7 +64,7 @@
             "@php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml"
         ],
         "set-license-header": [
-            "@php ./vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,node_modules,vendor,tests,_dev"
+            "@php ./vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,vendor,tests"
         ],
         "php-cs-fixer:check": [
             "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff"
@@ -73,7 +73,7 @@
             "@php ./vendor/bin/php-cs-fixer fix"
         ],
         "auto-index": [
-            "@php ./vendor/bin/autoindex --exclude=_dev,vendor,tests"
+            "@php ./vendor/bin/autoindex --exclude=vendor,tests"
         ],
         "phpstan": [
             "@putenv _PS_ROOT_DIR_=../../.",

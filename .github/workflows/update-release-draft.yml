@@ -1,0 +1,57 @@
+name: Update release draft
+
+on:
+  workflow_call:
+    inputs:
+      env-lower:
+        required: true
+        type: string
+      triggered:
+        required: true
+        type: boolean
+      repository-name:
+        required: true
+        type: string
+        default: "ps_checkout"
+
+jobs:
+  update-release-draft:
+    name: PRODUCTION - Update release draft
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env-lower }}
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+    if: inputs.triggered == true
+    env:
+      ZIP_NAME: ${{ inputs.repository-name }}.zip
+
+    steps:
+      - name: Download artifact 🚚
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ZIP_NAME }}
+
+      - name: Release drafter 🏗️
+        id: release_info
+        uses: toolmantim/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commitish: prestashop/9.x
+
+      - name: Prepare zip for release 👷
+        run: |
+          cd ${{ inputs.repository-name }}
+          zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
+
+      - name: Publish to GitHub Release 🛩️
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          asset_path: ./${{ env.ZIP_NAME }}
+          asset_name: ${{ env.ZIP_NAME }}
+          asset_content_type: application/zip
