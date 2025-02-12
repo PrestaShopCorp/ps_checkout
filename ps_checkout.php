@@ -28,7 +28,6 @@ class Ps_checkout extends PaymentModule
     const HOOK_LIST = [
         'displayAdminAfterHeader',
         'displayOrderConfirmation',
-        'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
         'actionObjectShopDeleteAfter',

@@ -32,7 +32,7 @@ class StorePresenter implements PresenterInterface
      */
     private array $presenters;
 
-    private array $store;
+    private array $store = [];
 
     public function __construct(array $presenters, array $store = [])
     {
@@ -51,7 +51,7 @@ class StorePresenter implements PresenterInterface
      */
     public function present()
     {
-        if ([] !== $this->store) {
+        if (!empty($this->store)) {
             return $this->store;
         }
 
