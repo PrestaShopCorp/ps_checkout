@@ -9,22 +9,6 @@
 ### PrestaShop cache
 config_*.xml
 
-### NPM
-/node_modules/
-
-### Vuejs ignore build files ###
-/views/js/back/
-/views/js/app.js
-/views/js/app.js.map
-/views/js/front.js
-/views/js/front.js.LICENSE.txt
-/views/img/almost-ready.png
-/views/img/paypal-logo.png
-/views/img/brush.png
-/views/img/ps-services-account.png
-/views/img/paypal-logo-thumbnail.png
-/views/img/pscheckout.png
-
 ### Composer ###
 composer.phar
 /vendor/
@@ -271,13 +255,6 @@ tags
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
-
-### Vuejs ###
-# Recommended template: Node.gitignore
-
-node_modules/
-npm-debug.log
-yarn-error.log
 
 ### Windows ###
 # Windows thumbnail cache files

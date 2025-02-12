@@ -16,9 +16,13 @@ jobs:
         with:
           repo: ${{ github.event.repository.full_name }}
           version: ${{ github.event.release.id }}
-          file: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
+          file: ${{ github.event.repository.name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename release asset
+        run: |
+          mv $PWD/${{ github.event.repository.name }}.zip $PWD/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
 
       - name: Prepare publishing tool
         run: |

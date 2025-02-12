@@ -79,7 +79,7 @@ jobs:
       - name: Prepare zip for push 👷
         run: |
           cd ${{ inputs.repository-name }}
-          zip -r ../${{ needs.bucket-zip-name.outputs[inputs.env-lower] }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
+          zip -r ../${{ needs.bucket-zip-name.outputs[inputs.env-lower] }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
 
       - name: Push to GCP bucket storage 🛩️
         shell: bash

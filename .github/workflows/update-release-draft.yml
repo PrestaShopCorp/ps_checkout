@@ -44,7 +44,7 @@ jobs:
       - name: Prepare zip for release 👷
         run: |
           cd ${{ inputs.repository-name }}
-          zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/node_modules' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*_dev*' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
+          zip -r ../${{ env.ZIP_NAME }} . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
 
       - name: Publish to GitHub Release 🛩️
         uses: actions/upload-release-asset@v1.0.2
