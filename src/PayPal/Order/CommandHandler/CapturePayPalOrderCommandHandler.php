@@ -41,6 +41,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
@@ -127,6 +128,10 @@ class CapturePayPalOrderCommandHandler
                 if (isset($vault['id'])) {
                     $this->createPaymentTokenEvent($capturePayPalOrderCommand, $orderPayPal, $vault, $merchantId);
                 }
+            }
+
+            if (isset($orderPayPal['payment_source']['card']['from_request'])) {
+                $this->updatePaymentTokenEvent($capturePayPalOrderCommand, $orderPayPal, $merchantId);
             }
 
             $this->processCapture($orderPayPal);
@@ -229,6 +234,11 @@ class CapturePayPalOrderCommandHandler
             $paymentToken,
             $merchantId
         ));
+    }
+
+    private function updatePaymentTokenEvent(CapturePayPalOrderCommand $capturePayPalOrderCommand, array $orderPayPal, bool $merchantId)
+    {
+        $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal, $merchantId));
     }
 
     /**

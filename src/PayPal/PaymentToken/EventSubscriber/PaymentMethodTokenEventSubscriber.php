@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePayment
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
@@ -67,6 +68,10 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             PaymentTokenCreatedEvent::class => [
                 ['saveCreatedPaymentMethodToken'],
             ],
+
+            PaymentTokenUpdatedEvent::class => [
+                ['saveUpdatedPaymentMethodToken'],
+            ],
             PaymentTokenDeletedEvent::class => [
                 ['deletePaymentMethodToken'],
             ],
@@ -99,6 +104,23 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             $event->getMerchantId(),
             $setFavorite
         ));
+    }
+
+    public function saveUpdatedPaymentMethodToken(PaymentTokenUpdatedEvent $event)
+    {
+        $resource = $event->getResource();
+        $orderId = $resource['id'];
+        try {
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
+            $paymentToken = $this->paymentTokenRepository->findById($payPalOrder->getPaymentTokenId());
+            $paymentTokenData = $paymentToken->getData();
+            $paymentTokenData['payment_source'] = $resource['payment_source'];
+            $paymentToken->setData($paymentTokenData);
+            $this->paymentTokenRepository->save($paymentToken);
+        } catch (\Exception $exception) {
+            return;
+        }
+
     }
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)
