@@ -68,7 +68,6 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             PaymentTokenCreatedEvent::class => [
                 ['saveCreatedPaymentMethodToken'],
             ],
-
             PaymentTokenUpdatedEvent::class => [
                 ['saveUpdatedPaymentMethodToken'],
             ],
@@ -120,7 +119,6 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
         } catch (\Exception $exception) {
             return;
         }
-
     }
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)

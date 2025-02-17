@@ -236,7 +236,7 @@ class CapturePayPalOrderCommandHandler
         ));
     }
 
-    private function updatePaymentTokenEvent(CapturePayPalOrderCommand $capturePayPalOrderCommand, array $orderPayPal, bool $merchantId)
+    private function updatePaymentTokenEvent(array $orderPayPal, bool $merchantId)
     {
         $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal, $merchantId));
     }
