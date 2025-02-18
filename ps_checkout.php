@@ -100,7 +100,7 @@ class Ps_checkout extends PaymentModule
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $serviceContainer;
-    private ?bool $merchantIsValid;
+    private ?bool $merchantIsValid = null;
     private array $currencyIsAllowed = [];
 
     public function __construct()
