@@ -41,6 +41,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
@@ -118,7 +119,14 @@ class CapturePayPalOrderCommandHandler
 
         $capturePayload = $this->buildCapturePayload($capturePayPalOrderCommand);
 
-        $orderPayPal = $this->captureOrder($capturePayload);
+        try {
+            $orderPayPal = $this->captureOrder($capturePayload);
+        } catch (PayPalException $exception) {
+            if ($exception->getCode() === PayPalException::CARD_CLOSED) {
+                $this->deletePaymentTokenEvent($capturePayPalOrderCommand);
+            }
+            throw $exception;
+        }
 
         if (!empty($orderPayPal)) {
             if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
@@ -239,6 +247,19 @@ class CapturePayPalOrderCommandHandler
     private function updatePaymentTokenEvent(array $orderPayPal)
     {
         $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal));
+    }
+
+    private function deletePaymentTokenEvent(CapturePayPalOrderCommand $command)
+    {
+        $order = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderId());
+
+        if ($order->getPaymentTokenId()) {
+            try {
+                $this->eventDispatcher->dispatch(
+                    new PaymentTokenDeletedEvent(['id' => $order->getPaymentTokenId()->getValue()])
+                );
+            } catch (\Exception $e) {}
+        }
     }
 
     /**
