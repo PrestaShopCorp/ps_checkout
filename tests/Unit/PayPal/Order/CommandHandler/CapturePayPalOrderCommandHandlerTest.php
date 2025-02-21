@@ -198,6 +198,8 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
         $payPalConfiguration = $this->createMock(PayPalConfiguration::class);
         $payPalConfiguration->method('getMerchantId')->willReturn($merchantId);
 
+        $logger = $this->createMock(LoggerInterface::class);
+
         $commandHandler = new CapturePayPalOrderCommandHandler(
             $maaslandHttpClient,
             $eventDispatcher,
@@ -205,7 +207,8 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $prestaShopContext,
             $payPalCustomerRepository,
             $payPalOrderRepository,
-            $payPalConfiguration
+            $payPalConfiguration,
+            $logger
         );
 
         $expectedEvents = [new PaymentTokenDeletedEvent(['id' => $paymentTokenId->getValue()])];
