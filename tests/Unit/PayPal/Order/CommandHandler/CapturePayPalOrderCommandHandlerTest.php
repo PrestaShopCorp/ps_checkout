@@ -49,6 +49,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class CapturePayPalOrderCommandHandlerTest extends TestCase
@@ -145,6 +146,8 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
+        $logger = $this->createMock(LoggerInterface::class);
+
         $commandHandler = new CapturePayPalOrderCommandHandler(
             $maaslandHttpClient,
             $eventDispatcher,
@@ -152,7 +155,8 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $prestaShopContext,
             $payPalCustomerRepository,
             $payPalOrderRepository,
-            $payPalConfiguration
+            $payPalConfiguration,
+            $logger
         );
         $commandHandler->handle(new CapturePayPalOrderCommand($order['id'], $fundingSource));
     }
