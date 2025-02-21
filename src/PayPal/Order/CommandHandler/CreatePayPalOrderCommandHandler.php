@@ -35,6 +35,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderC
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
@@ -160,5 +161,9 @@ class CreatePayPalOrderCommandHandler
             $customerIntent,
             $command->getPaymentTokenId()
         ));
+
+        if ($command->getPaymentTokenId() && $command->getFundingSource() === 'card') {
+            $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($order));
+        }
     }
 }

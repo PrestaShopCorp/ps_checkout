@@ -130,8 +130,8 @@ class CapturePayPalOrderCommandHandler
                 }
             }
 
-            if (isset($orderPayPal['payment_source']['card']['from_request'])) {
-                $this->updatePaymentTokenEvent($orderPayPal, $merchantId);
+            if (isset($orderPayPal['payment_source']['card'])) {
+                $this->updatePaymentTokenEvent($orderPayPal);
             }
 
             $this->processCapture($orderPayPal);
@@ -236,9 +236,9 @@ class CapturePayPalOrderCommandHandler
         ));
     }
 
-    private function updatePaymentTokenEvent(array $orderPayPal, $merchantId)
+    private function updatePaymentTokenEvent(array $orderPayPal)
     {
-        $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal, $merchantId));
+        $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal));
     }
 
     /**

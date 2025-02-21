@@ -33,6 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\Payment
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
@@ -50,13 +51,18 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
      * @var PaymentTokenRepository
      */
     private $paymentTokenRepository;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
+    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository, LoggerInterface $logger)
     {
         $this->module = $module;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -111,13 +117,25 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
         $orderId = $resource['id'];
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
-            $paymentToken = $this->paymentTokenRepository->findById($payPalOrder->getPaymentTokenId());
-            $paymentTokenData = $paymentToken->getData();
-            $paymentTokenData['payment_source'] = $resource['payment_source'];
-            $paymentToken->setData($paymentTokenData);
-            $this->paymentTokenRepository->save($paymentToken);
+            if ($payPalOrder->getPaymentTokenId()) {
+                $paymentToken = $this->paymentTokenRepository->findById($payPalOrder->getPaymentTokenId());
+                $paymentTokenData = $paymentToken->getData();
+                $paymentSource = $resource['payment_source'];
+
+                $tokenCardData = $paymentTokenData['payment_source']['card'];
+                $orderCardData = $paymentSource['card'];
+                if (
+                    $tokenCardData['last_digits'] !== $orderCardData['last_digits']
+                    || $tokenCardData['expiry'] !== $orderCardData['expiry']
+                    || $tokenCardData['brand'] !== $orderCardData['brand']
+                ) {
+                    $paymentTokenData['payment_source'] = $paymentSource;
+                    $paymentToken->setData($paymentTokenData);
+                    $this->paymentTokenRepository->save($paymentToken);
+                }
+            }
         } catch (\Exception $exception) {
-            return;
+            $this->logger->error('Failed to update payment token', ['exception' => $exception]);
         }
     }
 

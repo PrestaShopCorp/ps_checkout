@@ -89,7 +89,7 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $expectedEvents[] = [new PaymentTokenCreatedEvent($resource, $merchantId)];
         }
 
-        if (isset($order['payment_source']['card']['from_request'])) {
+        if (isset($order['payment_source']['card'])) {
             $expectedEvents[] = [new PaymentTokenUpdatedEvent($order, $merchantId)];
         }
 
@@ -139,8 +139,6 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-
         $commandHandler = new CapturePayPalOrderCommandHandler(
             $maaslandHttpClient,
             $eventDispatcher,
@@ -149,7 +147,6 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $payPalCustomerRepository,
             $payPalOrderRepository,
             $payPalConfiguration,
-            $loggerMock
         );
         $commandHandler->handle(new CapturePayPalOrderCommand($order['id'], $fundingSource));
     }
@@ -1852,10 +1849,6 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
                         'name' => 'aaa vvv',
                         'last_digits' => '4424',
                         'expiry' => '2025-01',
-                        'from_request' => [
-                            'last_digits'=> '3892',
-                            'expiry'=> '2023-01',
-                        ],
                         'brand' => 'VISA',
                         'available_networks' => [
                             0 => 'VISA',
