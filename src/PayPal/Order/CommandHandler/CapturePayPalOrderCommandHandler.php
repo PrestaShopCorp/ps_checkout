@@ -251,15 +251,15 @@ class CapturePayPalOrderCommandHandler
 
     private function deletePaymentTokenEvent(CapturePayPalOrderCommand $command)
     {
-        $order = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderId());
+        try {
+            $order = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderId());
 
-        if ($order->getPaymentTokenId()) {
-            try {
+            if ($order->getPaymentTokenId()) {
                 $this->eventDispatcher->dispatch(
                     new PaymentTokenDeletedEvent(['id' => $order->getPaymentTokenId()->getValue()])
                 );
-            } catch (\Exception $e) {}
-        }
+            }
+        } catch (\Exception $e) {}
     }
 
     /**
