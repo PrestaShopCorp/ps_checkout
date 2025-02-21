@@ -47,6 +47,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
@@ -82,15 +83,20 @@ class CapturePayPalOrderCommandHandler
      * @var PayPalConfiguration
      */
     private $payPalConfiguration;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
+        MaaslandHttpClient       $maaslandHttpClient,
         EventDispatcherInterface $eventDispatcher,
-        CacheInterface $orderPayPalCache,
-        PrestaShopContext $prestaShopContext,
+        CacheInterface           $orderPayPalCache,
+        PrestaShopContext        $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
-        PayPalOrderRepository $payPalOrderRepository,
-        PayPalConfiguration $payPalConfiguration
+        PayPalOrderRepository    $payPalOrderRepository,
+        PayPalConfiguration      $payPalConfiguration,
+        LoggerInterface          $logger
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
@@ -99,6 +105,7 @@ class CapturePayPalOrderCommandHandler
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->payPalConfiguration = $payPalConfiguration;
+        $this->logger = $logger;
     }
 
     /**
@@ -259,7 +266,9 @@ class CapturePayPalOrderCommandHandler
                     new PaymentTokenDeletedEvent(['id' => $order->getPaymentTokenId()->getValue()])
                 );
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to delete payment token', ['exception' => $e]);
+        }
     }
 
     /**

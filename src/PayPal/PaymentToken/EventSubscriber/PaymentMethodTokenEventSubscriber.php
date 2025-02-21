@@ -141,6 +141,10 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)
     {
-        $this->paymentTokenRepository->deleteById(new PaymentTokenId($event->getResource()['id']));
+        try {
+            $this->paymentTokenRepository->deleteById(new PaymentTokenId($event->getResource()['id']));
+        } catch (\Exception $exception) {
+            $this->logger->error('Failed to delete payment token', ['exception' => $exception]);
+        }
     }
 }
