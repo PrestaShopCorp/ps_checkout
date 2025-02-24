@@ -99,8 +99,7 @@ class CreatePayPalOrderCommandHandler
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter);
+        $builder = $this->getPayloadBuilder();
 
         try {
             $customerId = $this->prestaShopContext->getCustomerId();
@@ -165,5 +164,11 @@ class CreatePayPalOrderCommandHandler
         if ($command->getPaymentTokenId() && $command->getFundingSource() === 'card') {
             $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($order));
         }
+    }
+
+    protected function getPayloadBuilder()
+    {
+        $cartPresenter = (new CartPresenter())->present();
+        return new OrderPayloadBuilder($cartPresenter);
     }
 }
