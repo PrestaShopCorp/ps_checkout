@@ -47,7 +47,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -106,7 +105,6 @@ class CapturePayPalOrderCommandHandler
      * @return void
      *
      * @throws CustomerException
-     * @throws InvalidArgumentException
      * @throws PayPalCaptureException
      * @throws PayPalException
      * @throws PayPalOrderException
@@ -167,7 +165,6 @@ class CapturePayPalOrderCommandHandler
      *
      * @return array
      *
-     * @throws InvalidArgumentException
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
