@@ -17,6 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+namespace Tests\Unit;
+
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
@@ -25,7 +28,7 @@ class PaypalCountryCodeMatriceTest extends TestCase
     /**
      * @dataProvider isoCodeDataProviderPaypal
      */
-    public function testgetPaypalIsoCode($resultExpect, $dataToValidate)
+    public function testGetPaypalIsoCode($resultExpect, $dataToValidate)
     {
         $this->assertSame(
             $resultExpect,

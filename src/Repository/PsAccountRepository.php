@@ -30,18 +30,10 @@ use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
  */
 class PsAccountRepository
 {
-    /** @var PrestaShopConfiguration */
-    private $configuration;
-
     private $psAccountsService;
 
-    /**
-     * @param PrestaShopConfiguration $configuration
-     * @param PsAccounts $psAccountsFacade
-     */
-    public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
+    public function __construct(PsAccounts $psAccountsFacade)
     {
-        $this->configuration = $configuration;
         try {
             $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
         } catch (Exception $exception) {

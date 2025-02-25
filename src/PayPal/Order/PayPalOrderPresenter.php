@@ -20,41 +20,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
-use Currency;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
+use Context;
 use Tools;
 
 class PayPalOrderPresenter
 {
-    /**
-     * @var PaypalOrderDataProvider
-     */
-    public $paypalOrderDataProvider;
-
-    /**
-     * @var PsCheckoutDataProvider
-     */
-    public $psCheckoutDataProvider;
-
-    /**
-     * @var PayPalOrderTranslationProvider
-     */
-    public $paypalOrderTranslationProvider;
-
-    /**
-     * @param PaypalOrderDataProvider $paypalOrderDataProvider
-     * @param PsCheckoutDataProvider $psCheckoutDataProvider
-     * @param PayPalOrderTranslationProvider $paypalOrderTranslationProvider
-     */
     public function __construct(
-        PaypalOrderDataProvider $paypalOrderDataProvider,
-        PsCheckoutDataProvider $psCheckoutDataProvider,
-        PayPalOrderTranslationProvider $paypalOrderTranslationProvider
-    ) {
-        $this->paypalOrderDataProvider = $paypalOrderDataProvider;
-        $this->psCheckoutDataProvider = $psCheckoutDataProvider;
-        $this->paypalOrderTranslationProvider = $paypalOrderTranslationProvider;
-    }
+        private PaypalOrderDataProvider $paypalOrderDataProvider,
+        private PayPalOrderTranslationProvider $paypalOrderTranslationProvider
+    ) {}
 
     /**
      * @param string $orderStatus
@@ -95,10 +69,7 @@ class PayPalOrderPresenter
             return '';
         }
 
-        return Tools::displayPrice(
-            (float) $this->paypalOrderDataProvider->getTotalAmount(),
-            Currency::getCurrencyInstance(Currency::getIdByIsoCode($this->paypalOrderDataProvider->getCurrencyCode()))
-        );
+        return Tools::getContextLocale(Context::getContext())->formatPrice((float) $this->paypalOrderDataProvider->getTotalAmount(), $this->paypalOrderDataProvider->getCurrencyCode());
     }
 
     /**

@@ -27,15 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Environment\Env;
  */
 class ShopContext
 {
-    /**
-     * @var Env
-     */
-    private $env;
-
-    public function __construct(Env $env)
-    {
-        $this->env = $env;
-    }
+    public function __construct(private Env $env)
+    {}
 
     /**
      * Check if the module is installed on ready or download
@@ -60,15 +53,5 @@ class ShopContext
         }
 
         return $this->env->getBnCode();
-    }
-
-    public function isShop17()
-    {
-        return version_compare(_PS_VERSION_, '1.7.0.0', '>=');
-    }
-
-    public function isShop171()
-    {
-        return version_compare(_PS_VERSION_, '1.7.1.0', '>=');
     }
 }

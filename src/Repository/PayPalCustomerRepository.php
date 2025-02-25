@@ -29,18 +29,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCusto
 
 class PayPalCustomerRepository
 {
-    /**
-     * @var Db
-     */
-    private $db;
-
-    /**
-     * @param Db $db
-     */
-    public function __construct(Db $db)
-    {
-        $this->db = $db;
-    }
+    public function __construct(private Db $db)
+    {}
 
     /**
      * @param CustomerId $customerId

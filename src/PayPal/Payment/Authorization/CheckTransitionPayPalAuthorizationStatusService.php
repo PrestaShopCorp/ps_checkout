@@ -25,8 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 class CheckTransitionPayPalAuthorizationStatusService
 {
     /**
-     * @param string $oldStatus
-     * @param string $newStatus
+     * @param string|mixed $oldStatus
+     * @param string|mixed $newStatus
      *
      * @return bool
      *

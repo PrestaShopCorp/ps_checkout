@@ -50,7 +50,7 @@ class OrderId
     }
 
     /**
-     * @param int $orderId
+     * @param int|mixed $orderId
      *
      * @throws OrderException
      */

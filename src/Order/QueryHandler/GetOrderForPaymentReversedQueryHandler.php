@@ -38,15 +38,8 @@ use Validate;
 
 class GetOrderForPaymentReversedQueryHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-    }
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
     /**
      * @param GetOrderForPaymentReversedQuery $query
@@ -57,7 +50,7 @@ class GetOrderForPaymentReversedQueryHandler
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForPaymentReversedQuery $query)
+    public function __invoke(GetOrderForPaymentReversedQuery $query)
     {
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());

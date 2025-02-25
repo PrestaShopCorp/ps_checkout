@@ -30,21 +30,14 @@ class StorePresenter implements PresenterInterface
     /**
      * @var PresenterInterface[]
      */
-    private $presenters;
+    private array $presenters;
 
-    /**
-     * @var array
-     */
-    private $store;
+    private array $store = [];
 
-    /**
-     * @param PresenterInterface[] $presenters
-     * @param array $store
-     */
-    public function __construct($presenters, array $store = [])
+    public function __construct(array $presenters, array $store = [])
     {
         // Allow to set a custom store for tests purpose
-        if (null !== $store) {
+        if (!empty($store)) {
             $this->store = $store;
         }
 
@@ -58,14 +51,12 @@ class StorePresenter implements PresenterInterface
      */
     public function present()
     {
-        if ([] !== $this->store) {
+        if (!empty($this->store)) {
             return $this->store;
         }
 
         foreach ($this->presenters as $presenter) {
-            if ($presenter instanceof PresenterInterface) {
-                $this->store = array_merge($this->store, $presenter->present());
-            }
+            $this->store = array_merge($this->store, $presenter->present());
         }
 
         return $this->store;

@@ -26,28 +26,10 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 class MerchantValidator
 {
-    /**
-     * @var PayPalConfiguration
-     */
-    private $configuration;
-    /**
-     * @var PsAccountRepository
-     */
-    private $psAccountRepository;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-
     public function __construct(
-        PayPalConfiguration $configuration,
-        PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext
-    ) {
-        $this->configuration = $configuration;
-        $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopContext = $prestaShopContext;
-    }
+        private PayPalConfiguration $configuration,
+        private PsAccountRepository $psAccountRepository,
+    ) {}
 
     public function merchantIsValid()
     {

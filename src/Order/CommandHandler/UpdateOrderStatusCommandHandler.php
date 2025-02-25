@@ -23,22 +23,14 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 use Exception;
 use OrderHistory;
 use OrderState;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __invoke(UpdateOrderStatusCommand $command) {
+        $this->handle($command);
     }
 
     /**
@@ -79,8 +71,6 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
         if (!$historyAdded) {
             throw new OrderException(sprintf('Failed to update status or send email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS);
         }
-
-        $this->eventDispatcher->dispatch(new OrderStatusUpdatedEvent($orderStateId));
     }
 
     /**

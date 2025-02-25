@@ -27,15 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 
 class GetGooglePayTransactionInfoQueryHandler
 {
-    /**
-     * @var GooglePayTransactionInfoBuilder
-     */
-    private $builder;
-
-    public function __construct(GooglePayTransactionInfoBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
+    public function __construct(private GooglePayTransactionInfoBuilder $builder)
+    {}
 
     /**
      * @param GetGooglePayTransactionInfoQuery $query
@@ -44,7 +37,7 @@ class GetGooglePayTransactionInfoQueryHandler
      *
      * @throws PsCheckoutException
      */
-    public function handle(GetGooglePayTransactionInfoQuery $query)
+    public function __invoke(GetGooglePayTransactionInfoQuery $query)
     {
         $cartPresenter = (new CartPresenter())->present();
         $orderPayloadBuilder = new OrderPayloadBuilder($cartPresenter);

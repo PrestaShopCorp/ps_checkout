@@ -22,50 +22,29 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHand
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundFailedException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 class RefundPayPalCaptureCommandHandler
 {
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $checkoutHttpClient;
-    /**
-     * @var PayPalConfiguration
-     */
-    private $payPalConfiguration;
-    /**
-     * @var PrestaShopConfiguration
-     */
-    private $prestaShopConfiguration;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     public function __construct(
-        MaaslandHttpClient $checkoutHttpClient,
-        PayPalConfiguration $payPalConfiguration,
-        PrestaShopConfiguration $prestaShopConfiguration,
-        PrestaShopContext $prestaShopContext,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->checkoutHttpClient = $checkoutHttpClient;
-        $this->payPalConfiguration = $payPalConfiguration;
-        $this->prestaShopConfiguration = $prestaShopConfiguration;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->eventDispatcher = $eventDispatcher;
+        private MaaslandHttpClient $checkoutHttpClient,
+        private PayPalConfiguration $payPalConfiguration,
+        private PrestaShopConfiguration $prestaShopConfiguration,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalRefundEventSubscriber $payPalRefundEventSubscriber
+    ) {}
+
+
+    public function __invoke(RefundPayPalCaptureCommand $command)
+    {
+        $this->handle($command);
     }
 
     /**
@@ -95,12 +74,14 @@ class RefundPayPalCaptureCommandHandler
         ]);
 
         $refund = json_decode($response->getBody(), true);
-        $this->eventDispatcher->dispatch(
-            new PayPalCaptureRefundedEvent(
-                $refund['id'],
-                $command->getOrderPayPalId(),
-                $refund
-            )
+
+        $event = new PayPalCaptureRefundedEvent(
+            $refund['id'],
+            $command->getOrderPayPalId(),
+            $refund
         );
+
+        $this->payPalRefundEventSubscriber->setPaymentRefundedOrderStatus($event);
+        $this->payPalRefundEventSubscriber->updateCache($event);
     }
 }

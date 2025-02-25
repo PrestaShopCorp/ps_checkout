@@ -22,18 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
 class FundingSourceConfiguration
 {
-    /**
-     * @var FundingSourceConfigurationRepository
-     */
-    private $repository;
-
-    /**
-     * @param FundingSourceConfigurationRepository $repository
-     */
-    public function __construct(FundingSourceConfigurationRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(private FundingSourceConfigurationRepository $repository)
+    {}
 
     /**
      * Get the funding source position stored in database configuration if exists or the default position

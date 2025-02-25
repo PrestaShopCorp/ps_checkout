@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
+use Language;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -27,19 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
  */
 class LanguageAdapter
 {
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @param ShopContext $shopContext
-     */
-    public function __construct(ShopContext $shopContext)
-    {
-        $this->shopContext = $shopContext;
-    }
-
     /**
      * Adapter for getLanguage from prestashop language class
      * Add locale key to the returned array on 1.6
@@ -50,15 +38,9 @@ class LanguageAdapter
      */
     public function getLanguage($idLang)
     {
-        $language = \Language::getLanguage($idLang);
+        $language = Language::getLanguage($idLang);
 
-        if (false === $this->shopContext->isShop17()) {
-            $locale = explode('-', $language['language_code']);
-            $locale[1] = strtoupper($locale[1]);
-            $language['locale'] = implode('_', $locale);
-        } else {
-            $language['locale'] = str_replace('-', '_', $language['locale']);
-        }
+        $language['locale'] = str_replace('-', '_', $language['locale']);
 
         return $language;
     }

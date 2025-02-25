@@ -39,7 +39,7 @@ class BatchConfigurationValidator
      */
     public function validateAjaxBatchConfiguration($configuration)
     {
-        if (empty($configuration) || !is_array($configuration)) {
+        if (empty($configuration)) {
             throw new Exception("Config can't be empty");
         }
 

@@ -49,7 +49,7 @@ class PaymentTokenId
     }
 
     /**
-     * @param string $id
+     * @param string|mixed $id
      *
      * @return void
      *

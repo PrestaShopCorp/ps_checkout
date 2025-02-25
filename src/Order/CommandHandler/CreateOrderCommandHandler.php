@@ -26,11 +26,11 @@ use Exception;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
@@ -39,65 +39,27 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\PrestaShop\Adapter\Validate;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Ps_checkout;
 use PsCheckoutCart;
-use Validate;
 
 class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var ContextStateManager
-     */
-    private $contextStateManager;
-
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    /**
-     * @var OrderStateMapper
-     */
-    private $psOrderStateMapper;
-
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
-     * @var CheckOrderAmount
-     */
-    private $checkOrderAmount;
-    /**
-     * @var FundingSourceTranslationProvider
-     */
-    private $fundingSourceTranslationProvider;
-
     public function __construct(
-        ContextStateManager $contextStateManager,
-        EventDispatcherInterface $eventDispatcher,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        OrderStateMapper $psOrderStateMapper,
-        Ps_checkout $module,
-        CheckOrderAmount $checkOrderAmount,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider
-    ) {
-        $this->contextStateManager = $contextStateManager;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->psOrderStateMapper = $psOrderStateMapper;
-        $this->module = $module;
-        $this->checkOrderAmount = $checkOrderAmount;
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        private ContextStateManager $contextStateManager,
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private OrderStateMapper $psOrderStateMapper,
+        private Ps_checkout $module,
+        private CheckOrderAmount $checkOrderAmount,
+        private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        private OrderEventSubscriber $orderEventSubscriber
+    ) {}
+
+    public function __invoke(CreateOrderCommand $command) {
+        $this->handle($command);
     }
 
     /**
@@ -209,7 +171,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         }
 
         foreach ($orders as $order) {
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
+            $this->orderEventSubscriber->updateOrderMatrice(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
         }
     }
 }

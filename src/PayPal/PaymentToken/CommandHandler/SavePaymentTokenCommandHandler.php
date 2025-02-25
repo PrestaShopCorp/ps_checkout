@@ -27,18 +27,13 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class SavePaymentTokenCommandHandler
 {
-    /** @var PaymentTokenRepository */
-    private $paymentTokenRepository;
-
-    public function __construct(PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->paymentTokenRepository = $paymentTokenRepository;
-    }
+    public function __construct(private PaymentTokenRepository $paymentTokenRepository)
+    {}
 
     /**
      * @throws Exception
      */
-    public function handle(SavePaymentTokenCommand $command)
+    public function __invoke(SavePaymentTokenCommand $command)
     {
         $token = new PaymentToken(
             $command->getPaymentTokenId()->getValue(),

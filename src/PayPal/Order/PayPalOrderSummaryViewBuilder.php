@@ -34,57 +34,13 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class PayPalOrderSummaryViewBuilder
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    /**
-     * @var PayPalOrderProvider
-     */
-    private $orderPayPalProvider;
-
-    /**
-     * @var Router
-     */
-    private $router;
-
-    /**
-     * @var PayPalOrderTranslationProvider
-     */
-    private $orderPayPalTranslationProvider;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
-
-    /**
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param PayPalOrderProvider $orderPayPalProvider
-     * @param Router $router
-     * @param PayPalOrderTranslationProvider $orderPayPalTranslationProvider
-     * @param ShopContext $shopContext
-     */
     public function __construct(
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        PayPalOrderProvider $orderPayPalProvider,
-        Router $router,
-        PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
-        ShopContext $shopContext,
-        PayPalOrderRepository $payPalOrderRepository
-    ) {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->orderPayPalProvider = $orderPayPalProvider;
-        $this->router = $router;
-        $this->orderPayPalTranslationProvider = $orderPayPalTranslationProvider;
-        $this->shopContext = $shopContext;
-        $this->payPalOrderRepository = $payPalOrderRepository;
-    }
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private PayPalOrderProvider $orderPayPalProvider,
+        private Router $router,
+        private PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
+        private PayPalOrderRepository $payPalOrderRepository
+    ) {}
 
     /**
      * @param Order $order
@@ -129,8 +85,7 @@ class PayPalOrderSummaryViewBuilder
             new OrderDataProvider($order),
             $checkoutDataProvider,
             $this->router,
-            new PayPalOrderPresenter($orderPayPalDataProvider, $checkoutDataProvider, $this->orderPayPalTranslationProvider),
-            $this->shopContext
+            new PayPalOrderPresenter($orderPayPalDataProvider, $this->orderPayPalTranslationProvider)
         );
     }
 }

@@ -2,13 +2,13 @@ imports:
   - { resource: ../common.yml }
 
 services:
-  PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder'
+  _defaults:
+    autowire: true
+    autoconfigure: true
     public: true
-    arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
-      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename'
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder:
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader:
-    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
-    public: true
+    class: PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader

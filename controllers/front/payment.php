@@ -19,6 +19,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
@@ -26,10 +27,12 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 {
@@ -41,16 +44,14 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     public $display_header = true;
 
-    private $orderPageUrl;
-
-    /**
-     * @var PayPalOrderId
-     */
-    private $paypalOrderId;
+    private string $orderPageUrl;
+    private PayPalOrderId $paypalOrderId;
+    private CommandBusInterface $commandBus;
+    private QueryBusInterface $queryBus;
 
     public function checkAccess()
     {
-        return $this->context->customer && $this->context->customer->isLogged() && $this->context->cart;
+        return $this->context->customer && $this->context->cart;
     }
 
     public function initContent()
@@ -65,7 +66,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function setMedia()
     {
         $this->registerStylesheet('ps_checkout_payment', '/modules/ps_checkout/views/css/payment.css');
-        parent::setMedia();
+        return parent::setMedia();
     }
 
     public function postProcess()
@@ -79,33 +80,42 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         try {
             $this->paypalOrderId = new PayPalOrderId($orderId);
 
+            $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+            $this->queryBus = $this->module->getService('ps_checkout.bus.query');
+
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
-            /** @var PayPalOrderProvider $payPalOrderProvider */
-            $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-            /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
-            /** @var Psr\SimpleCache\CacheInterface $payPalOrderCache */
+            /** @var AdapterInterface $payPalOrderCache */
             $payPalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
 
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
-            if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
-                throw new Exception('PayPal order does not belong to this customer');
+            $orders = new PrestaShopCollection(Order::class);
+            $orders->where('id_cart', '=', $payPalOrder->getIdCart());
+
+            if ($orders->count()) {
+                if ($this->context->customer->isLogged()) {
+                    Tools::redirect('history');
+                } else {
+                    $payPalOrderQueryResult = $this->getPayPalOrder($orderId);
+                    $payPalOrderFromCache = $payPalOrderQueryResult->getPayPalOrder();
+
+                    $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0]['id'], $payPalOrderFromCache['status']);
+                }
             }
 
-            $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
+            if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
+                $this->redirectToOrderPage();
+            }
+
+            $payPalOrderQueryResult = $this->getPayPalOrder($orderId);
+            $payPalOrderFromCache = $payPalOrderQueryResult->getPayPalOrder();
 
             if ($payPalOrderFromCache['status'] === 'COMPLETED') {
                 $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
 
             if ($payPalOrderFromCache['status'] === 'PAYER_ACTION_REQUIRED') {
-                // Delete from cache so when user is redirected from 3DS authentication page the order is fetched from PayPal
-                if ($payPalOrderCache->has($this->paypalOrderId->getValue())) {
-                    $payPalOrderCache->delete($this->paypalOrderId->getValue());
-                }
-
                 $this->redirectTo3DSVerification($payPalOrderFromCache);
             }
 
@@ -117,14 +127,20 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                         $this->redirectTo3DSVerification($payPalOrderFromCache);
                         break;
                     case Card3DSecure::PROCEED:
-                        $commandBus->handle(new CapturePayPalOrderCommand($this->paypalOrderId->getValue(), array_keys($payPalOrderFromCache['payment_source'])[0]));
-                        $payPalOrderFromCache = $payPalOrderCache->get($this->paypalOrderId->getValue());
+                        $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
+                        $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
                         $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         break;
                     case Card3DSecure::NO_DECISION:
                     default:
                         break;
                 }
+            }
+
+            if ($payPalOrderFromCache['status'] === 'APPROVED') {
+                $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
+                $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
+                $this->createOrder($payPalOrderFromCache, $payPalOrder);
             }
         } catch (Exception $exception) {
             $this->context->smarty->assign('error', $exception->getMessage());
@@ -143,19 +159,18 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     private function createOrder($payPalOrderFromCache, $payPalOrder)
     {
-        /** @var CommandBusInterface $commandBus */
-        $commandBus = $this->module->getService('ps_checkout.bus.command');
+        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0] ?? null;
+        $captureId = $capture['id'] ?? null;
 
-        $capture = $payPalOrderFromCache['purchase_units'][0]['payments']['captures'][0];
-        if ($capture['status'] === 'COMPLETED') {
-            $commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
-            if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
-                /** @var PaymentTokenRepository $paymentTokenRepository */
-                $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
-                $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
-            }
-            $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $capture['id'], $payPalOrderFromCache['status']);
+        $this->commandBus->handle(new CreateOrderCommand($payPalOrder->getId()->getValue(), $capture));
+
+        if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE)) {
+            /** @var PaymentTokenRepository $paymentTokenRepository */
+            $paymentTokenRepository = $this->module->getService(PaymentTokenRepository::class);
+            $paymentTokenRepository->setTokenFavorite($payPalOrder->getPaymentTokenId());
         }
+
+        $this->redirectToOrderConfirmationPage($payPalOrder->getIdCart(), $captureId, $payPalOrderFromCache['status']);
     }
 
     /**
@@ -217,5 +232,19 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 ]
             ));
         }
+    }
+
+    /**
+     * @param string $orderId
+     *
+     * @return GetPayPalOrderForCheckoutCompletedQueryResult
+     *
+     * @throws PayPalOrderException
+     */
+    private function getPayPalOrder($orderId)
+    {
+        $payPalOrderQuery = new GetPayPalOrderForCheckoutCompletedQuery($orderId);
+
+        return $this->queryBus->handle($payPalOrderQuery);
     }
 }

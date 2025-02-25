@@ -38,15 +38,8 @@ use Validate;
 
 class GetOrderForPaymentPendingQueryHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-    }
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
     /**
      * @param GetOrderForPaymentPendingQuery $query
@@ -57,7 +50,7 @@ class GetOrderForPaymentPendingQueryHandler
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForPaymentPendingQuery $query)
+    public function __invoke(GetOrderForPaymentPendingQuery $query)
     {
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());

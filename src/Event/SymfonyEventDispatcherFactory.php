@@ -30,25 +30,10 @@ use Symfony\Component\Stopwatch\Stopwatch as SymfonyStopwatch;
 
 class SymfonyEventDispatcherFactory
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var LoggerConfiguration
-     */
-    private $configuration;
-
-    /**
-     * @param LoggerInterface $logger
-     * @param LoggerConfiguration $configuration
-     */
-    public function __construct(LoggerInterface $logger, LoggerConfiguration $configuration)
-    {
-        $this->logger = $logger;
-        $this->configuration = $configuration;
-    }
+    public function __construct(
+        private LoggerInterface $psCheckoutLogger,
+        private LoggerConfiguration $configuration
+    ) {}
 
     /**
      * @param SymfonyEventSubscriberInterface[] $eventSubscribers
@@ -61,7 +46,7 @@ class SymfonyEventDispatcherFactory
             ? new SymfonyTraceableEventDispatcher(
                 new SymfonyEventDispatcher(),
                 new SymfonyStopwatch(),
-                $this->logger
+                $this->psCheckoutLogger
             )
             : new SymfonyEventDispatcher();
 

@@ -20,43 +20,24 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 {
-    /** @var Ps_checkout */
-    private $module;
-
-    /** @var CommandBusInterface */
-    private $commandBus;
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-
-    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->module = $module;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
-        $this->payPalOrderRepository = $payPalOrderRepository;
-        $this->paymentTokenRepository = $paymentTokenRepository;
-    }
+    public function __construct(
+        private PayPalOrderRepository $payPalOrderRepository,
+        private PaymentTokenRepository $paymentTokenRepository
+    ) {}
 
     /**
      * {@inheritdoc}
@@ -86,19 +67,24 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             try {
                 $order = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
                 $setFavorite = $order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
             }
         }
 
-        $this->commandBus->handle(new SavePaymentTokenCommand(
-            new PaymentTokenId($resource['id']),
-            new PayPalCustomerId($resource['customer']['id']),
-            $resource['payment_source'][array_keys($resource['payment_source'])[0]]['verification_status'],
+        $token = new PaymentToken(
+            $resource['id'],
+            $resource['customer']['id'],
             array_keys($resource['payment_source'])[0],
             $resource,
             $event->getMerchantId(),
+            $resource['payment_source'][array_keys($resource['payment_source'])[0]]['verification_status'],
             $setFavorite
-        ));
+        );
+        $this->paymentTokenRepository->save($token);
+
+        if ($setFavorite) {
+            $this->paymentTokenRepository->setTokenFavorite($resource['id']);
+        }
     }
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)

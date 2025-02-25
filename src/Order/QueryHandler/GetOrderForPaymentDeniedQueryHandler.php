@@ -38,15 +38,8 @@ use Validate;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-    }
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
     /**
      * @param GetOrderForPaymentDeniedQuery $query
@@ -57,7 +50,7 @@ class GetOrderForPaymentDeniedQueryHandler
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForPaymentDeniedQuery $query)
+    public function __invoke(GetOrderForPaymentDeniedQuery $query)
     {
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());

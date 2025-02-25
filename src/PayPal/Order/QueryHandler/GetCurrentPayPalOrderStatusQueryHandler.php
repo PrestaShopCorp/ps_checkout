@@ -29,17 +29,10 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 class GetCurrentPayPalOrderStatusQueryHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-    }
-
-    public function handle(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
+    public function __invoke(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
     {
         try {
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getOrderPayPalId()->getValue());

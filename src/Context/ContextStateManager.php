@@ -132,11 +132,7 @@ class ContextStateManager
         $this->saveContextField('language');
         $this->getContext()->language = $language;
 
-        if ($language
-            && method_exists($this->getContext(), 'getTranslator')
-            && property_exists($language, 'locale')) {
-            $this->getContext()->getTranslator()->setLocale($language->locale);
-        }
+        $this->getContext()->getTranslator()->setLocale($language->locale);
 
         return $this;
     }
@@ -293,13 +289,7 @@ class ContextStateManager
                 $this->restoreShopContext($currentStashIndex);
             }
 
-            if ('language' === $fieldName
-                && $this->contextFieldsStack[$currentStashIndex][$fieldName] instanceof Language
-                && method_exists($this->getContext(), 'getTranslator')
-                && property_exists($this->contextFieldsStack[$currentStashIndex][$fieldName], 'locale')
-            ) {
-                $this->getContext()->getTranslator()->setLocale($this->contextFieldsStack[$currentStashIndex][$fieldName]->locale);
-            }
+            $this->getContext()->getTranslator()->setLocale($this->contextFieldsStack[$currentStashIndex][$fieldName]->locale);
 
             $this->getContext()->$fieldName = $this->contextFieldsStack[$currentStashIndex][$fieldName];
             unset($this->contextFieldsStack[$currentStashIndex][$fieldName]);

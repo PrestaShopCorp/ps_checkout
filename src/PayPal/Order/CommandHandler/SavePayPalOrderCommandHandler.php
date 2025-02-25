@@ -32,14 +32,12 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class SavePayPalOrderCommandHandler
 {
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
+    public function __construct(private PayPalOrderRepository $payPalOrderRepository)
+    {}
 
-    public function __construct(PayPalOrderRepository $payPalOrderRepository)
+    public function __invoke(SavePayPalOrderCommand $command)
     {
-        $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->handle($command);
     }
 
     public function handle(SavePayPalOrderCommand $command)

@@ -25,26 +25,13 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 class PayPalOrderTranslationProvider
 {
-    /**
-     * @var array
-     */
-    private $translations;
+    private array $translations;
 
-    /**
-     * @var FundingSourceTranslationProvider
-     */
-    private $fundingSourceTranslationProvider;
-
-    /**
-     * @param Translations $translations
-     * @param FundingSourceTranslationProvider $fundingSourceTranslationProvider
-     */
     public function __construct(
         Translations $translations,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider
+        private FundingSourceTranslationProvider $fundingSourceTranslationProvider
     ) {
         $this->translations = current($translations->getTranslations());
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
     }
 
     /**
@@ -54,9 +41,7 @@ class PayPalOrderTranslationProvider
      */
     public function getTransactionStatusTranslated($transactionStatus)
     {
-        return isset($this->translations['paypal']['capture']['status'][$transactionStatus])
-            ? $this->translations['paypal']['capture']['status'][$transactionStatus]
-            : '';
+        return $this->translations['paypal']['capture']['status'][$transactionStatus] ?? '';
     }
 
     /**
@@ -66,9 +51,7 @@ class PayPalOrderTranslationProvider
      */
     public function getOrderStatusTranslated($orderStatus)
     {
-        return isset($this->translations['paypal']['order']['status'][$orderStatus])
-            ? $this->translations['paypal']['order']['status'][$orderStatus]
-            : '';
+        return $this->translations['paypal']['order']['status'][$orderStatus] ?? '';
     }
 
     /**

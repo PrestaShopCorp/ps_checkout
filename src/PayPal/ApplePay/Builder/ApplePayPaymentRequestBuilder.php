@@ -52,30 +52,4 @@ class ApplePayPaymentRequestBuilder
 
         return $paymentRequest;
     }
-
-    /**
-     * Get decimal to round correspondent to the payment currency used
-     * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
-     * currencies which require a round with 0 decimal
-     *
-     * @return int
-     */
-    private function getNbDecimalToRound($currencyIsoCode)
-    {
-        if (in_array($currencyIsoCode, ['HUF', 'JPY', 'TWD'], true)) {
-            return 0;
-        }
-
-        return 2;
-    }
-
-    /**
-     * @param float|int|string $amount
-     *
-     * @return string
-     */
-    private function formatAmount($amount, $currencyIsoCode)
-    {
-        return sprintf("%01.{$this->getNbDecimalToRound($currencyIsoCode)}F", $amount);
-    }
 }

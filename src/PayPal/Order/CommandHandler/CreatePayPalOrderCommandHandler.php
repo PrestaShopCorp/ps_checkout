@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -34,6 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
@@ -42,50 +42,23 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class CreatePayPalOrderCommandHandler
 {
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $maaslandHttpClient;
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $payPalCustomerRepository;
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
-        ShopContext $shopContext,
-        PrestaShopContext $prestaShopContext,
-        EventDispatcherInterface $eventDispatcher,
-        PayPalCustomerRepository $payPalCustomerRepository,
-        PaymentTokenRepository $paymentTokenRepository
-    ) {
-        $this->maaslandHttpClient = $maaslandHttpClient;
-        $this->shopContext = $shopContext;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->paymentTokenRepository = $paymentTokenRepository;
-        $this->prestaShopContext = $prestaShopContext;
+        private MaaslandHttpClient $maaslandHttpClient,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalCustomerRepository $payPalCustomerRepository,
+        private PaymentTokenRepository $paymentTokenRepository,
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
+    ) {}
+
+    public function __invoke(CreatePayPalOrderCommand $command)
+    {
+        $this->handle($command);
     }
 
     /**
      * @param CreatePayPalOrderCommand $command
      *
+     * @return void
      * @return void
      *
      * @throws CartNotFoundException
@@ -98,8 +71,8 @@ class CreatePayPalOrderCommandHandler
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter);
+        $cartPresenter = new CartPresenter();
+        $builder = new OrderPayloadBuilder($cartPresenter->present());
 
         try {
             $customerId = $this->prestaShopContext->getCustomerId();
@@ -130,13 +103,7 @@ class CreatePayPalOrderCommandHandler
         $builder->setSavePaymentMethod($command->vault());
         $builder->setVault($command->getPaymentTokenId() || $command->vault());
 
-        if ($this->shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
+        $builder->buildFullPayload();
 
         $response = $this->maaslandHttpClient->createOrder($builder->presentPayload()->getArray());
         $order = json_decode($response->getBody(), true);
@@ -150,7 +117,7 @@ class CreatePayPalOrderCommandHandler
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
         }
 
-        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+        $event = new PayPalOrderCreatedEvent(
             $order['id'],
             $order,
             $command->getCartId()->getValue(),
@@ -159,6 +126,9 @@ class CreatePayPalOrderCommandHandler
             $command->isExpressCheckout(),
             $customerIntent,
             $command->getPaymentTokenId()
-        ));
+        );
+
+        $this->payPalOrderEventSubscriber->saveCreatedPayPalOrder($event);
+        $this->payPalOrderEventSubscriber->updateCache($event);
     }
 }

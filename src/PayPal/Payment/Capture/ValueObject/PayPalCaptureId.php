@@ -30,7 +30,7 @@ class PayPalCaptureId
     private $value;
 
     /**
-     * @param string $value
+     * @param string|mixed $value
      *
      * @throws PayPalCaptureException
      */
@@ -50,7 +50,7 @@ class PayPalCaptureId
     }
 
     /**
-     * @param string $value
+     * @param string|mixed $value
      *
      * @throws PayPalCaptureException
      */

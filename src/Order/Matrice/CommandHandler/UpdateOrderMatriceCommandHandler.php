@@ -20,33 +20,20 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler;
 
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Event\OrderMatriceUpdatedEvent;
 
 class UpdateOrderMatriceCommandHandler
 {
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     /**
      * @throws \PrestaShopException
      * @throws \PrestaShopDatabaseException
      */
-    public function handle(UpdateOrderMatriceCommand $command)
+    public function __invoke(UpdateOrderMatriceCommand $command)
     {
         $orderMatrice = new \OrderMatrice();
         $orderMatrice->id_order_prestashop = $command->getOrderId()->getValue();
         $orderMatrice->id_order_paypal = $command->getOrderPayPalId()->getValue();
 
-        $res = $orderMatrice->add();
-
-        if (!empty($res)) {
-            $this->eventDispatcher->dispatch(new OrderMatriceUpdatedEvent());
-        }
+        $orderMatrice->add();
     }
 }

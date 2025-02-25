@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use Db;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 
 class FundingSourceInstaller
@@ -33,7 +34,7 @@ class FundingSourceInstaller
      */
     public function createFundingSources($shopId = null)
     {
-        $fundingSourceConfigurationRepository = new FundingSourceConfigurationRepository(new PrestaShopContext());
+        $fundingSourceConfigurationRepository = new FundingSourceConfigurationRepository(new PrestaShopContext(), Db::getInstance());
         $fundingSourceCollectionBuilder = new FundingSourceCollectionBuilder(
             new FundingSourceConfiguration($fundingSourceConfigurationRepository),
             new FundingSourceEligibilityConstraint()

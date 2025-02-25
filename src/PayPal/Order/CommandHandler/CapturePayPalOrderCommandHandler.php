@@ -22,7 +22,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Configuration;
-use Context;
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCusto
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor\PayPalOrderEventProcessor;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
@@ -41,57 +42,29 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenC
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class CapturePayPalOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $maaslandHttpClient;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $payPalCustomerRepository;
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
-
     public function __construct(
-        MaaslandHttpClient $maaslandHttpClient,
-        EventDispatcherInterface $eventDispatcher,
-        CacheInterface $orderPayPalCache,
-        PrestaShopContext $prestaShopContext,
-        PayPalCustomerRepository $payPalCustomerRepository,
-        PayPalOrderRepository $payPalOrderRepository
+        private MaaslandHttpClient $maaslandHttpClient,
+        private EventDispatcherInterface $eventDispatcher,
+        private ChainAdapter $orderPayPalCache,
+        private PrestaShopContext $prestaShopContext,
+        private PayPalCustomerRepository $payPalCustomerRepository,
+        private PayPalOrderRepository $payPalOrderRepository,
+        private PayPalOrderEventProcessor $payPalOrderEventProcessor
     ) {
-        $this->maaslandHttpClient = $maaslandHttpClient;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->orderPayPalCache = $orderPayPalCache;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->payPalOrderRepository = $payPalOrderRepository;
+    }
+
+    public function __invoke(CapturePayPalOrderCommand $capturePayPalOrderCommand)
+    {
+        $this->handle($capturePayPalOrderCommand);
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
-        $context = Context::getContext();
-        $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
+        $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $this->prestaShopContext->getShopId());
 
         $payload = [
             'mode' => $capturePayPalOrderCommand->getFundingSource(),
@@ -109,7 +82,7 @@ class CapturePayPalOrderCommandHandler
 
         $orderPayPal = json_decode($response->getBody(), true);
 
-        $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
+        $payPalOrderFromCache = $this->orderPayPalCache->getItem($orderPayPal['id'])->get();
 
         $orderPayPal = array_replace_recursive($payPalOrderFromCache, $orderPayPal);
 
@@ -122,7 +95,7 @@ class CapturePayPalOrderCommandHandler
                     $payPalCustomerId = new PayPalCustomerId($vault['customer']['id']);
                     $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
                     $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                 }
             }
 
@@ -144,7 +117,9 @@ class CapturePayPalOrderCommandHandler
         }
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
-            $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
+            $event = new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal);
+            $this->payPalOrderEventProcessor->saveCompletedPayPalOrder($event);
+            $this->payPalOrderEventProcessor->updateCache($event);
         }
 
         if ($capturePayPal['status'] === PayPalCaptureStatus::PENDING) {

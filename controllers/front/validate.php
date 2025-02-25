@@ -20,7 +20,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
@@ -126,8 +126,8 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         }
 
         try {
-            /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
+            /** @var QueryBusInterface $queryBus */
+            $queryBus = $this->module->getService('ps_checkout.bus.query');
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
@@ -141,7 +141,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             try {
                 /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrder */
-                $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
+                $paypalOrder = $queryBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
                     $psCheckoutCart->paypal_order
                 ));
             } catch (Exception $exception) {
@@ -438,6 +438,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             'body' => [
                 'error' => [
                     'message' => $exceptionMessageForCustomer,
+                    'code' => (int) $exception->getCode() < 400 && $exception->getPrevious() !== null
+                        ? (int) $exception->getPrevious()->getCode()
+                        : (int) $exception->getCode(),
                 ],
             ],
             'exceptionCode' => $exception->getCode(),
@@ -469,7 +472,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
         // Cannot use id_cart because we create a new cart to preserve current cart from customer changes
         $token = Tools::substr(
-            Tools::encrypt(implode(
+            Tools::hash(implode(
                 '|',
                 [
                     (int) $cart->id_customer,

@@ -27,30 +27,11 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 
 class GetPayPalGetUserIdTokenQueryHandler
 {
-    /**
-     * @var OAuthService
-     */
-    private $OAuthService;
-
-    /**
-     * @var PayPalCustomerRepository
-     */
-    private $customerRepository;
-    /**
-     * @var PayPalConfiguration
-     */
-    private $payPalConfiguration;
-
-    /**
-     * @param OAuthService $OAuthService
-     * @param PayPalCustomerRepository $customerRepository
-     */
-    public function __construct(OAuthService $OAuthService, PayPalCustomerRepository $customerRepository, PayPalConfiguration $payPalConfiguration)
-    {
-        $this->OAuthService = $OAuthService;
-        $this->customerRepository = $customerRepository;
-        $this->payPalConfiguration = $payPalConfiguration;
-    }
+    public function __construct(
+        private OAuthService $OAuthService,
+        private PayPalCustomerRepository $customerRepository,
+        private PayPalConfiguration $payPalConfiguration
+    ) {}
 
     /**
      * @param GetPayPalGetUserIdTokenQuery $query
@@ -59,7 +40,7 @@ class GetPayPalGetUserIdTokenQueryHandler
      *
      * @throws Exception
      */
-    public function handle(GetPayPalGetUserIdTokenQuery $query)
+    public function __invoke(GetPayPalGetUserIdTokenQuery $query)
     {
         $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
         $merchantId = $this->payPalConfiguration->getMerchantId();

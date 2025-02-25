@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -33,101 +34,32 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use PrestaShop\PrestaShop\Core\Module\ModuleManager;
+use Ps_checkout;
+use Shop;
 
 /**
  * Construct the context module
  */
 class ContextModule implements PresenterInterface
 {
-    /**
-     * @var string
-     */
-    private $moduleName;
+    private ModuleManager $moduleManager;
 
-    /**
-     * @var string
-     */
-    private $moduleKey;
-
-    /**
-     * @var PrestaShopContext
-     */
-    private $psContext;
-
-    /**
-     * @var PayPalConfiguration
-     */
-    private $paypalConfiguration;
-
-    /**
-     * @var LiveStep
-     */
-    private $liveStep;
-
-    /**
-     * @var ValueBanner
-     */
-    private $valueBanner;
-
-    /**
-     * @var Translations
-     */
-    private $translations;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @var ShopProvider
-     */
-    private $shopProvider;
-
-    /**
-     * @var ModuleLinkBuilder
-     */
-    private $moduleLinkBuilder;
-    /**
-     * @var PsAccountRepository
-     */
-    private $psAccountRepository;
-
-    /**
-     * @param string $moduleName
-     * @param string $moduleKey
-     * @param PrestaShopContext $psContext
-     * @param PayPalConfiguration $payPalConfiguration
-     * @param LiveStep $liveStep
-     * @param ValueBanner $valueBanner
-     * @param Translations $translations
-     * @param ShopContext $shopContext
-     * @param ShopProvider $shopProvider
-     */
     public function __construct(
-        $moduleName,
-        $moduleKey,
-        PrestaShopContext $psContext,
-        PayPalConfiguration $payPalConfiguration,
-        LiveStep $liveStep,
-        ValueBanner $valueBanner,
-        Translations $translations,
-        ShopContext $shopContext,
-        ShopProvider $shopProvider,
-        ModuleLinkBuilder $moduleLinkBuilder,
-        PsAccountRepository $psAccountRepository
+        private $moduleName,
+        private $moduleKey,
+        private PrestaShopContext $psContext,
+        private PayPalConfiguration $payPalConfiguration,
+        private LiveStep $liveStep,
+        private ValueBanner $valueBanner,
+        private Translations $translations,
+        private ShopContext $shopContext,
+        private ShopProvider $shopProvider,
+        private ModuleLinkBuilder $moduleLinkBuilder,
+        private PsAccountRepository $psAccountRepository
     ) {
-        $this->moduleName = $moduleName;
-        $this->moduleKey = $moduleKey;
-        $this->psContext = $psContext;
-        $this->paypalConfiguration = $payPalConfiguration;
-        $this->liveStep = $liveStep;
-        $this->valueBanner = $valueBanner;
-        $this->translations = $translations;
-        $this->shopContext = $shopContext;
-        $this->shopProvider = $shopProvider;
-        $this->moduleLinkBuilder = $moduleLinkBuilder;
-        $this->psAccountRepository = $psAccountRepository;
+        $this->moduleManager = ModuleManagerBuilder::getInstance()->build();
     }
 
     /**
@@ -137,15 +69,14 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopId = (int) \Context::getContext()->shop->id;
+        $shopId = (int) Context::getContext()->shop->id;
 
         return [
             'context' => [
-                'moduleVersion' => \Ps_checkout::VERSION,
-                'moduleIsEnabled' => (bool) \Module::isEnabled('ps_checkout'),
+                'moduleVersion' => Ps_checkout::VERSION,
+                'moduleIsEnabled' => $this->moduleManager->isEnabled('ps_checkout'),
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
-                'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
                 'shopId' => $this->psAccountRepository->getShopUuid(),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
@@ -160,16 +91,16 @@ class ContextModule implements PresenterInterface
                 'cguUrl' => $this->getCgu(),
                 'privacyPolicyUrl' => $this->getPrivacyPolicyUrl(),
                 'pricingUrl' => $this->getPricingUrl(),
-                'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
+                'roundingSettingsIsCorrect' => $this->payPalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
                 'liveStepViewed' => $this->liveStep->isViewed(),
                 'valueBannerClosed' => $this->valueBanner->isClosed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
-                'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
-                'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
+                'incompatibleCountryCodes' => $this->payPalConfiguration->getIncompatibleCountryCodes(),
+                'incompatibleCurrencyCodes' => $this->payPalConfiguration->getIncompatibleCurrencyCodes(),
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
-                'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'paymentPreferencesLink' => $this->getGeneratedLink('AdminPaymentPreferences'),
                 'maintenanceLink' => $this->getGeneratedLink('AdminMaintenance'),
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
@@ -177,8 +108,8 @@ class ContextModule implements PresenterInterface
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
                 'callbackUrl' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
                 'dependencies' => [
-                    'ps_eventbus' => \Module::isEnabled('ps_eventbus'),
-                    'ps_accounts' => \Module::isEnabled('ps_accounts'),
+                    'ps_eventbus' => $this->moduleManager->isEnabled('ps_eventbus'),
+                    'ps_accounts' => $this->moduleManager->isEnabled('ps_accounts'),
                 ],
             ],
         ];
@@ -189,7 +120,7 @@ class ContextModule implements PresenterInterface
      */
     private function isShopContext()
     {
-        if (\Shop::isFeatureActive() && \Shop::getContext() !== \Shop::CONTEXT_SHOP) {
+        if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
             return false;
         }
 
@@ -209,7 +140,7 @@ class ContextModule implements PresenterInterface
 
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
-        foreach (\Shop::getTree() as $groupId => $groupData) {
+        foreach (Shop::getTree() as $groupId => $groupData) {
             $shops = [];
 
             foreach ($groupData['shops'] as $shopId => $shopData) {
@@ -319,18 +250,6 @@ class ContextModule implements PresenterInterface
             default:
                 return $youtube . 'uovtJVCLaD8';
         }
-    }
-
-    /**
-     * Get the countries link
-     *
-     * @return string
-     */
-    private function getCountriesLink()
-    {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink('AdminCountries');
     }
 
     /**

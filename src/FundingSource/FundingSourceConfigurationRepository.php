@@ -20,20 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use Db;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShopDatabaseException;
 
 class FundingSourceConfigurationRepository
 {
-    /**
-     * @var \Db
-     */
-    private $db;
-
-    /**
-     * @var PrestaShopContext
-     */
-    private $context;
-
     /**
      * @var array In memory cache of funding sources
      */
@@ -42,11 +34,8 @@ class FundingSourceConfigurationRepository
     /**
      * @param PrestaShopContext $context
      */
-    public function __construct(PrestaShopContext $context)
-    {
-        $this->db = \Db::getInstance();
-        $this->context = $context;
-    }
+    public function __construct(private PrestaShopContext $context, private Db $db)
+    {}
 
     /**
      * @param string $name
@@ -80,7 +69,7 @@ class FundingSourceConfigurationRepository
     {
         $shopId = (int) ($shopId === null ? $this->context->getShopId() : $shopId);
 
-        if (isset($this->fundingSources[$shopId]) && null !== $this->fundingSources[$shopId]) {
+        if (isset($this->fundingSources[$shopId]) && !empty($this->fundingSources[$shopId])) {
             return $this->fundingSources[$shopId];
         }
 
@@ -103,7 +92,7 @@ class FundingSourceConfigurationRepository
      *
      * @return bool
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public function save($data, $shopId = null)
     {

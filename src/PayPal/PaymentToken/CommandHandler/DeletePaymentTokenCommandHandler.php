@@ -27,23 +27,15 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class DeletePaymentTokenCommandHandler
 {
-    /** @var PaymentTokenRepository */
-    private $paymentTokenRepository;
-    /**
-     * @var PaymentMethodTokenService
-     */
-    private $paymentMethodTokenService;
-
-    public function __construct(PaymentMethodTokenService $paymentMethodTokenService, PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->paymentTokenRepository = $paymentTokenRepository;
-        $this->paymentMethodTokenService = $paymentMethodTokenService;
-    }
+    public function __construct(
+        private PaymentMethodTokenService $paymentMethodTokenService,
+        private PaymentTokenRepository $paymentTokenRepository
+    ) {}
 
     /**
      * @throws Exception
      */
-    public function handle(DeletePaymentTokenCommand $command)
+    public function __invoke(DeletePaymentTokenCommand $command)
     {
         $tokenBelongsToCustomer = false;
         $tokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($command->getCustomerId()->getValue());

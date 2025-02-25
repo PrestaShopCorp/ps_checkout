@@ -34,6 +34,10 @@ class ToggleShopConfigurationCommandHandler
         $this->db = Db::getInstance();
     }
 
+    public function __invoke(ToggleShopConfigurationCommand $command) {
+        $this->handle($command);
+    }
+
     /**
      * @param ToggleShopConfigurationCommand $command
      */

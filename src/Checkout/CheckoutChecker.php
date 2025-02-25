@@ -30,22 +30,12 @@ use Validate;
 
 class CheckoutChecker
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(private LoggerInterface $psCheckoutLogger)
+    {}
 
     /**
      * @param int $cartId
-     * @param array{id: string, status: string, intent: string, payment_source: array, purchase_units: array} $orderPayPal
+     * @param array{id: string, status: string, intent: string, payment_source?: array, purchase_units?: array} $orderPayPal
      *
      * @return void
      *
@@ -54,7 +44,7 @@ class CheckoutChecker
     public function continueWithAuthorization($cartId, $orderPayPal)
     {
         if ($orderPayPal['status'] === 'COMPLETED') {
-            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']));
+            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
 
         $paymentSource = isset($orderPayPal['payment_source']) ? key($orderPayPal['payment_source']) : '';
@@ -62,7 +52,7 @@ class CheckoutChecker
         if (in_array($paymentSource, ['google_pay', 'card'], true)) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 
-            $this->logger->info(
+            $this->psCheckoutLogger->info(
                 '3D Secure authentication result',
                 [
                     'authentication_result' => isset($orderPayPal['payment_source'][$paymentSource]['authentication_result']) ? $orderPayPal['payment_source'][$paymentSource]['authentication_result'] : null,
@@ -110,8 +100,8 @@ class CheckoutChecker
         }
 
         if ($cart->isAllProductsInStock() !== true ||
-            (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-            (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
+            ($cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
+            ($cart->checkAllProductsHaveMinimalQuantities() !== true)
         ) {
             throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }

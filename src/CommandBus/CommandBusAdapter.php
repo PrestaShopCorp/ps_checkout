@@ -20,22 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-use League\Tactician\CommandBus;
+use PrestaShopBundle\CommandBus\MessengerCommandBus;
 
-class TacticianCommandBusAdapter implements CommandBusInterface
+class CommandBusAdapter implements CommandBusInterface
 {
-    /**
-     * @var CommandBus
-     */
-    private $bus;
-
-    /**
-     * @param CommandBus $bus
-     */
-    public function __construct(CommandBus $bus)
-    {
-        $this->bus = $bus;
-    }
+    public function __construct(private MessengerCommandBus $bus)
+    {}
 
     /**
      * {@inheritdoc}

@@ -19,14 +19,10 @@
 
 {if $incompatibleCodes}
     <div class="container">
-        {if $isShop17}
-            <div class="banner-alert">
-                <div class="banner-icon">
-                    <i class="material-icons">error_outline</i>
-                </div>
-        {else}
-            <div class="alert alert-warning">
-        {/if}
+        <div class="banner-alert">
+            <div class="banner-icon">
+                <i class="material-icons">error_outline</i>
+            </div>
 
             <div class="banner-text">
                 <h2>
@@ -59,12 +55,7 @@
 
                 <a class="btn btn-link banner-link" href="{$paypalLink}" target="_blank">
                     {l s='Know more about compliant ISO Codes' mod='ps_checkout'}
-
-                    {if $isShop17}
-                        <i class="material-icons banner-link-icon">trending_flat</i>
-                    {else}
-                        <i class="icon-long-arrow-right"></i>
-                    {/if}
+                    <i class="material-icons banner-link-icon">trending_flat</i>
                 </a>
             </div>
         </div>

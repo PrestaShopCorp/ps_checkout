@@ -25,15 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class ExpressCheckoutConfiguration
 {
-    /**
-     * @var PrestaShopConfiguration
-     */
-    private $configuration;
-
-    public function __construct(PrestaShopConfiguration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+    public function __construct(private PrestaShopConfiguration $configuration)
+    {}
 
     public function isOrderPageEnabled()
     {

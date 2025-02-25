@@ -25,18 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class GetCustomerPaymentTokensQueryHandler
 {
-    /**
-     * @var PaymentTokenRepository
-     */
-    private $paymentTokenRepository;
-
-    /**
-     * @param PaymentTokenRepository $paymentTokenRepository
-     */
-    public function __construct(PaymentTokenRepository $paymentTokenRepository)
-    {
-        $this->paymentTokenRepository = $paymentTokenRepository;
-    }
+    public function __construct(private PaymentTokenRepository $paymentTokenRepository)
+    {}
 
     /**
      * @param GetCustomerPaymentTokensQuery $query
@@ -45,9 +35,8 @@ class GetCustomerPaymentTokensQueryHandler
      *
      * @throws Exception
      */
-    public function handle(GetCustomerPaymentTokensQuery $query)
+    public function __invoke(GetCustomerPaymentTokensQuery $query)
     {
-//        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue(), $query->getPageSize(), $query->getPageNumber());
         $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue());
 
         if ($query->isTotalCountRequired()) {

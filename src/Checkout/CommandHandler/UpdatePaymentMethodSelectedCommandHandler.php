@@ -29,14 +29,12 @@ use PsCheckoutCart;
 
 class UpdatePaymentMethodSelectedCommandHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
+    public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
+    {}
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __invoke(UpdatePaymentMethodSelectedCommand $command)
     {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->handle($command);
     }
 
     /**

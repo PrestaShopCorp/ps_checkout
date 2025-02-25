@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,20 +16,13 @@
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
- *}
+ */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-<div id="ps_checkout" class="panel">
-  <div class="panel-heading">
-    <img src="{$moduleLogoUri|escape:'html':'UTF-8'}" alt="{$moduleName|escape:'html':'UTF-8'}" width="15" height="15">
-    {$moduleName|escape:'html':'UTF-8'}
-  </div>
-  <div class="paypal-order-notifications">
-  </div>
-  <div class="paypal-order-container">
-  </div>
-  <div class="paypal-order-loader">
-    <i class="process-icon-loading"></i>
-  </div>
-</div>
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-{include file='./partials/adminOrderView.tpl' legacy=true orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+header('Location: ../');
+exit;

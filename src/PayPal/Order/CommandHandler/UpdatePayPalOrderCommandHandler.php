@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
@@ -36,43 +37,11 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class UpdatePayPalOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var MaaslandHttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
-    /**
-     * @var PayPalOrderProvider
-     */
-    private $paypalOrderProvider;
-
-    /**
-     * @param MaaslandHttpClient $httpClient
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ShopContext $shopContext
-     * @param PayPalOrderProvider $paypalOrderProvider
-     */
     public function __construct(
-        MaaslandHttpClient $httpClient,
-        EventDispatcherInterface $eventDispatcher,
-        ShopContext $shopContext,
-        PayPalOrderProvider $paypalOrderProvider
-    ) {
-        $this->httpClient = $httpClient;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->shopContext = $shopContext;
-        $this->paypalOrderProvider = $paypalOrderProvider;
-    }
+        private MaaslandHttpClient $httpClient,
+        private PayPalOrderProvider $paypalOrderProvider,
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
+    ) {}
 
     /**
      * @param UpdatePayPalOrderCommand $command
@@ -81,7 +50,7 @@ class UpdatePayPalOrderCommandHandler
      *
      * @throws CartException|PayPalException|PayPalOrderException|PsCheckoutException|Exception
      */
-    public function handle(UpdatePayPalOrderCommand $command)
+    public function __invoke(UpdatePayPalOrderCommand $command)
     {
         try {
             $paypalOrder = $this->paypalOrderProvider->getById($command->getPayPalOrderId()->getValue());
@@ -94,19 +63,13 @@ class UpdatePayPalOrderCommandHandler
         }
 
         $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter, true);
+        $builder = new OrderPayloadBuilder($cartPresenter);
         $builder->setIsUpdate(true);
         $builder->setPaypalOrderId($command->getPayPalOrderId()->getValue());
         $builder->setIsCard($command->getFundingSource() === 'card' && $command->isHostedFields());
         $builder->setExpressCheckout($command->isExpressCheckout());
 
-        if ($this->shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
+        $builder->buildFullPayload();
 
         $payload = $builder->presentPayload()->getArray();
         $needToUpdate = false;
@@ -146,14 +109,17 @@ class UpdatePayPalOrderCommandHandler
             throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);
         }
 
-        $this->eventDispatcher->dispatch(new PayPalOrderUpdatedEvent(
+        $event = new PayPalOrderUpdatedEvent(
             $command->getPayPalOrderId()->getValue(),
             $updatedPayPalOrder,
             $command->getCartId()->getValue(),
             $command->isHostedFields(),
             $command->isExpressCheckout(),
             $command->getFundingSource()
-        ));
+        );
+
+        $this->payPalOrderEventSubscriber->updatePayPalOrder($event);
+        $this->payPalOrderEventSubscriber->clearCache($event);
     }
 
     /**

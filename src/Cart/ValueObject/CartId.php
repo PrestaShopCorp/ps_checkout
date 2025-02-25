@@ -50,7 +50,7 @@ class CartId
     }
 
     /**
-     * @param int $cartId
+     * @param int|mixed $cartId
      *
      * @throws CartException
      */

@@ -30,19 +30,14 @@ use PsCheckoutCart;
 
 class SavePayPalOrderStatusCommandHandler
 {
-    /**
-     * @var PsCheckoutCartRepository
-     */
-    private $psCheckoutCartRepository;
-    /**
-     * @var PayPalOrderRepository
-     */
-    private $payPalOrderRepository;
+    public function __construct(
+        private PsCheckoutCartRepository $psCheckoutCartRepository,
+        private PayPalOrderRepository $payPalOrderRepository
+    ) {}
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository, PayPalOrderRepository $payPalOrderRepository)
+    public function __invoke(SavePayPalOrderStatusCommand $command)
     {
-        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->handle($command);
     }
 
     /**
