@@ -27,7 +27,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
 
         $order = [
             'id' => 'ORDERID',
-            'status' => 'COMPLETED'
+            'status' => 'COMPLETED',
         ];
 
         $httpResponse = new Response(200, [], json_encode($order));
@@ -64,7 +64,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
                 $prestaShopContext,
                 $eventDispatcher,
                 $payPalCustomerRepository,
-                $paymentTokenRepository
+                $paymentTokenRepository,
             ])
             ->setMethods(['getPayloadBuilder'])
             ->getMock();
@@ -85,7 +85,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
                 '',
                 $command->getPaymentTokenId()
             ),
-            new PaymentTokenUpdatedEvent([])];
+            new PaymentTokenUpdatedEvent([]), ];
 
         $eventDispatcher->expects($this->exactly(count($expectedEvents)))
             ->method('dispatch')

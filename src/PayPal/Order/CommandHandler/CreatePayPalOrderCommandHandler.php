@@ -169,6 +169,7 @@ class CreatePayPalOrderCommandHandler
     protected function getPayloadBuilder()
     {
         $cartPresenter = (new CartPresenter())->present();
+
         return new OrderPayloadBuilder($cartPresenter);
     }
 }
