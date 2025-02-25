@@ -2704,7 +2704,7 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
         return [
             [
                 [
-                    'id' => "9Y936175RH7229522",
+                    'id' => '9Y936175RH7229522',
                     'funding_source' => 'card',
                 ],
                 422,
@@ -2727,7 +2727,7 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
                         "method": "GET"
                     }
                 ]
-            }'],
+            }', ],
         ];
     }
 }

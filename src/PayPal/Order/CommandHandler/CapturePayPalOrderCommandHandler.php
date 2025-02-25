@@ -89,14 +89,14 @@ class CapturePayPalOrderCommandHandler
     private $logger;
 
     public function __construct(
-        MaaslandHttpClient       $maaslandHttpClient,
+        MaaslandHttpClient $maaslandHttpClient,
         EventDispatcherInterface $eventDispatcher,
-        CacheInterface           $orderPayPalCache,
-        PrestaShopContext        $prestaShopContext,
+        CacheInterface $orderPayPalCache,
+        PrestaShopContext $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
-        PayPalOrderRepository    $payPalOrderRepository,
-        PayPalConfiguration      $payPalConfiguration,
-        LoggerInterface          $logger
+        PayPalOrderRepository $payPalOrderRepository,
+        PayPalConfiguration $payPalConfiguration,
+        LoggerInterface $logger
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;

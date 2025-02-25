@@ -143,7 +143,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
                 $prestaShopContext,
                 $eventDispatcher,
                 $payPalCustomerRepository,
-                $paymentTokenRepository
+                $paymentTokenRepository,
             ])
             ->setMethods(['getPayloadBuilder'])
             ->getMock();
@@ -157,7 +157,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
 
         if (str_contains($response, 'CARD_CLOSED')) {
             $expectedEvents = [
-                new PaymentTokenDeletedEvent([])
+                new PaymentTokenDeletedEvent([]),
             ];
         }
 
@@ -175,7 +175,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
         return [
             [
                 [
-                    'id' => "9Y936175RH7229522",
+                    'id' => '9Y936175RH7229522',
                     'funding_source' => 'card',
                 ],
                 422,
@@ -198,11 +198,11 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
                             "method": "GET"
                         }
                     ]
-                }'
+                }',
             ],
             [
                 [
-                    'id' => "9Y936175RH7229522",
+                    'id' => '9Y936175RH7229522',
                     'funding_source' => 'card',
                 ],
                 422,
@@ -225,7 +225,7 @@ class CreatePayPalOrderCommandHandlerTest extends TestCase
                             "method": "GET"
                         }
                     ]
-                }'
+                }',
             ],
         ];
     }
