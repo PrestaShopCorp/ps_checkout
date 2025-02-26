@@ -25,13 +25,13 @@ use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * {@inheritdoc}
@@ -50,7 +50,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
      *
      * @throws OrderException
      * @throws PayPalOrderException
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function updateOrderMatrice(OrderCreatedEvent $event)
     {

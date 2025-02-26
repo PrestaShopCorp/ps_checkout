@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,9 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 
-use Cart;
-use Currency;
-use Exception;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager;
@@ -40,11 +38,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\PrestaShop\Adapter\Validate;
-use PrestaShopCollection;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Ps_checkout;
-use PsCheckoutCart;
 
 class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
@@ -52,13 +45,15 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         private ContextStateManager $contextStateManager,
         private PsCheckoutCartRepository $psCheckoutCartRepository,
         private OrderStateMapper $psOrderStateMapper,
-        private Ps_checkout $module,
+        private \Ps_checkout $module,
         private CheckOrderAmount $checkOrderAmount,
         private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
-        private OrderEventSubscriber $orderEventSubscriber
-    ) {}
+        private OrderEventSubscriber $orderEventSubscriber,
+    ) {
+    }
 
-    public function __invoke(CreateOrderCommand $command) {
+    public function __invoke(CreateOrderCommand $command)
+    {
         $this->handle($command);
     }
 
@@ -70,26 +65,26 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
      * @throws CartException
      * @throws OrderException
      * @throws OrderNotFoundException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      * @throws PsCheckoutException
      */
     public function handle(CreateOrderCommand $command)
     {
-        /** @var PsCheckoutCart $psCheckoutCart */
+        /** @var \PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
 
         if (Validate::isLoadedObject($this->contextStateManager->getContext()->cart) && (int) $this->contextStateManager->getContext()->cart->id === $psCheckoutCart->getIdCart()) {
             $cart = $this->contextStateManager->getContext()->cart;
         } else {
-            $cart = new Cart($psCheckoutCart->getIdCart());
+            $cart = new \Cart($psCheckoutCart->getIdCart());
         }
 
         if (!Validate::isLoadedObject($cart)) {
             throw new PsCheckoutException('Cart not found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        $orders = new PrestaShopCollection(Order::class);
+        $orders = new \PrestaShopCollection(\Order::class);
         $orders->where('id_cart', '=', (int) $cart->id);
 
         if ($orders->count()) {
@@ -110,7 +105,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         if ($capture) {
             $transactionId = $capture['id'];
             $paidAmount = $capture['status'] === 'COMPLETED' ? $capture['amount']['value'] : '';
-            $currencyId = Currency::getIdByIsoCode($capture['amount']['currency_code'], (int) $cart->id_shop);
+            $currencyId = \Currency::getIdByIsoCode($capture['amount']['currency_code'], (int) $cart->id_shop);
         }
 
         try {
@@ -159,11 +154,11 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                 false,
                 $cart->secure_key
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::FAILED_ADD_ORDER, $exception);
         }
 
-        $orders = new PrestaShopCollection(Order::class);
+        $orders = new \PrestaShopCollection(\Order::class);
         $orders->where('id_cart', '=', (int) $cart->id);
 
         if (!$orders->count()) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -41,8 +42,9 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
         private OrderStateMapper $orderStateMapper,
         private PayPalOrderProvider $orderProvider,
         private QueryBusInterface $queryBus,
-        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {}
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
+    ) {
+    }
 
     /**
      * {@inheritdoc}

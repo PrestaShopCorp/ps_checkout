@@ -5,7 +5,6 @@ namespace Tests\Unit\Cart\ValueObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use stdClass;
 
 class CartIdTest extends TestCase
 {
@@ -33,7 +32,7 @@ class CartIdTest extends TestCase
             [3.14],
             [[]],
             [false],
-            [new stdClass()],
+            [new \stdClass()],
             [-1],
             [0],
         ];

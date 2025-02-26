@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,12 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\State;
 
-use Configuration;
-use Language;
-use OrderState;
-use Tools;
-use Validate;
-
 class OrderStateInstaller
 {
     /**
@@ -35,15 +30,15 @@ class OrderStateInstaller
 
     public function __construct()
     {
-        $this->languages = Language::getLanguages(false);
+        $this->languages = \Language::getLanguages(false);
     }
 
     public function install()
     {
-        Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED, Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_PAYMENT));
-        Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED, Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_CANCELED));
-        Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR, Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_ERROR));
-        Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED, Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_REFUND));
+        \Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED, \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_PAYMENT));
+        \Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED, \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_CANCELED));
+        \Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR, \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_ERROR));
+        \Configuration::updateGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED, \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_OS_REFUND));
 
         if (!$this->checkAlreadyInstalled(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING)) {
             $this->createOrderState(
@@ -121,7 +116,7 @@ class OrderStateInstaller
      */
     private function createOrderState($configuration_key, $color, array $nameByLangIsoCode)
     {
-        $orderState = new OrderState();
+        $orderState = new \OrderState();
         $orderState->name = $this->fillOrderStateName($nameByLangIsoCode);
         $orderState->module_name = 'ps_checkout';
         $orderState->unremovable = true;
@@ -139,7 +134,7 @@ class OrderStateInstaller
         $orderState->template = [];
         $orderState->save();
 
-        Configuration::updateGlobalValue($configuration_key, $orderState->id);
+        \Configuration::updateGlobalValue($configuration_key, $orderState->id);
         $this->setStateIcons($configuration_key, $orderState->id);
     }
 
@@ -153,7 +148,7 @@ class OrderStateInstaller
         $orderStateNameByLangId = [];
 
         foreach ($this->languages as $language) {
-            $languageIsoCode = Tools::strtolower($language['iso_code']);
+            $languageIsoCode = \Tools::strtolower($language['iso_code']);
 
             if (isset($nameByLangIsoCode[$languageIsoCode])) {
                 $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode[$languageIsoCode];
@@ -172,15 +167,15 @@ class OrderStateInstaller
      */
     private function checkAlreadyInstalled($orderStateKey)
     {
-        $orderStateId = (int) Configuration::getGlobalValue($orderStateKey);
+        $orderStateId = (int) \Configuration::getGlobalValue($orderStateKey);
 
         if (!$orderStateId) {
             return false;
         }
 
-        $orderState = new OrderState($orderStateId);
+        $orderState = new \OrderState($orderStateId);
 
-        if (!Validate::isLoadedObject($orderState)) {
+        if (!\Validate::isLoadedObject($orderState)) {
             return false;
         }
 
@@ -202,11 +197,11 @@ class OrderStateInstaller
         $coreOrderStateImgPath = _PS_IMG_DIR_ . 'os/' . $orderStateId . '.gif';
 
         if (
-            Tools::file_exists_cache($moduleOrderStateImgPath)
-            && !Tools::file_exists_cache($coreOrderStateImgPath)
+            \Tools::file_exists_cache($moduleOrderStateImgPath)
+            && !\Tools::file_exists_cache($coreOrderStateImgPath)
             && is_writable(_PS_IMG_DIR_ . 'os/')
         ) {
-            Tools::copy($moduleOrderStateImgPath, $coreOrderStateImgPath);
+            \Tools::copy($moduleOrderStateImgPath, $coreOrderStateImgPath);
         }
     }
 }

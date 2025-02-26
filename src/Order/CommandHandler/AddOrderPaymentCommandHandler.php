@@ -21,26 +21,23 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 
-use Currency;
-use DateTimeZone;
-use OrderInvoice;
-use OrderPayment;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\AbstractOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use Validate;
 
 class AddOrderPaymentCommandHandler extends AbstractOrderHandler
 {
     public function __construct(
         private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
-        private PayPalConfiguration $configuration
-    ) {}
+        private PayPalConfiguration $configuration,
+    ) {
+    }
 
-    public function __invoke(AddOrderPaymentCommand $command) {
+    public function __invoke(AddOrderPaymentCommand $command)
+    {
         $this->handle($command);
     }
 
@@ -53,17 +50,17 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
     public function handle(AddOrderPaymentCommand $command)
     {
         $order = $this->getOrder($command->getOrderId());
-        $currency = Currency::getCurrencyInstance($command->getPaymentCurrencyId());
+        $currency = \Currency::getCurrencyInstance($command->getPaymentCurrencyId());
 
-        if (!Validate::isLoadedObject($currency)) {
+        if (!\Validate::isLoadedObject($currency)) {
             throw new OrderException('The selected currency is invalid.', OrderException::INVALID_CURRENCY);
         }
 
         $orderHasInvoice = $order->hasInvoice();
-        /** @var OrderInvoice|null $orderInvoice */
+        /** @var \OrderInvoice|null $orderInvoice */
         $orderInvoice = $orderHasInvoice ? $order->getNotPaidInvoicesCollection()->getFirst() : null;
 
-        if ($orderHasInvoice && !Validate::isLoadedObject($orderInvoice)) {
+        if ($orderHasInvoice && !\Validate::isLoadedObject($orderInvoice)) {
             $orderInvoice = null;
         }
 
@@ -72,7 +69,7 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
             $this->fundingSourceTranslationProvider->getPaymentMethodName($command->getPaymentMethod()),
             $command->getPaymentTransactionId(),
             $currency,
-            $command->getPaymentDate()->setTimezone(new DateTimeZone($this->configuration->getTimeZone()))->format('Y-m-d H:i:s'),
+            $command->getPaymentDate()->setTimezone(new \DateTimeZone($this->configuration->getTimeZone()))->format('Y-m-d H:i:s'),
             $orderInvoice
         );
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -37,11 +38,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use PsCheckoutCart;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
@@ -51,8 +48,9 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
         private PsCheckoutCartRepository $psCheckoutCartRepository,
         private UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
         private CreateOrderCommandHandler $createOrderCommandHandler,
-        private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
-    ) {}
+        private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
+    ) {
+    }
 
     /**
      * {@inheritdoc}
@@ -100,8 +98,8 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      *
      * @throws PayPalException
      * @throws PayPalOrderException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      * @throws PsCheckoutException
      * @throws HttpTimeoutException
      */
@@ -144,8 +142,8 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             } elseif ($exception->getCode() === PayPalException::RESOURCE_NOT_FOUND) {
                 $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($payPalOrderId);
 
-                if (Validate::isLoadedObject($psCheckoutCart)) {
-                    $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
+                if (\Validate::isLoadedObject($psCheckoutCart)) {
+                    $psCheckoutCart->paypal_status = \PsCheckoutCart::STATUS_CANCELED;
                     $this->psCheckoutCartRepository->save($psCheckoutCart);
                 }
 

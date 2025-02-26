@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -41,7 +42,8 @@ class PayPalPayLaterConfiguration
      * @param PrestaShopConfiguration $configuration
      */
     public function __construct(private PrestaShopConfiguration $configuration)
-    {}
+    {
+    }
 
     public function isOrderPageMessageActive()
     {

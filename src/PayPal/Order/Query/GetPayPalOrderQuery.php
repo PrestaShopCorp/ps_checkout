@@ -35,7 +35,7 @@ class GetPayPalOrderQuery
      */
     private $cartId;
 
-    public function __construct(OrderId $orderId = null, CartId $cartId = null)
+    public function __construct(?OrderId $orderId = null, ?CartId $cartId = null)
     {
         $this->orderId = $orderId;
         $this->cartId = $cartId;

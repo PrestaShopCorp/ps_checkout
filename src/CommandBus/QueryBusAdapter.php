@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -25,7 +26,8 @@ use PrestaShopBundle\CommandBus\MessengerCommandBus;
 class QueryBusAdapter implements QueryBusInterface
 {
     public function __construct(private MessengerCommandBus $bus)
-    {}
+    {
+    }
 
     /**
      * {@inheritdoc}

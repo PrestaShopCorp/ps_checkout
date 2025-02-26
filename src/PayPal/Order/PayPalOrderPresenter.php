@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,15 +21,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
-use Context;
-use Tools;
-
 class PayPalOrderPresenter
 {
     public function __construct(
         private PaypalOrderDataProvider $paypalOrderDataProvider,
-        private PayPalOrderTranslationProvider $paypalOrderTranslationProvider
-    ) {}
+        private PayPalOrderTranslationProvider $paypalOrderTranslationProvider,
+    ) {
+    }
 
     /**
      * @param string $orderStatus
@@ -69,7 +68,7 @@ class PayPalOrderPresenter
             return '';
         }
 
-        return Tools::getContextLocale(Context::getContext())->formatPrice((float) $this->paypalOrderDataProvider->getTotalAmount(), $this->paypalOrderDataProvider->getCurrencyCode());
+        return \Tools::getContextLocale(\Context::getContext())->formatPrice((float) $this->paypalOrderDataProvider->getTotalAmount(), $this->paypalOrderDataProvider->getCurrencyCode());
     }
 
     /**

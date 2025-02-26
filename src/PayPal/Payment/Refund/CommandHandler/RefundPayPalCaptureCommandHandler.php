@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -38,9 +39,9 @@ class RefundPayPalCaptureCommandHandler
         private PayPalConfiguration $payPalConfiguration,
         private PrestaShopConfiguration $prestaShopConfiguration,
         private PrestaShopContext $prestaShopContext,
-        private PayPalRefundEventSubscriber $payPalRefundEventSubscriber
-    ) {}
-
+        private PayPalRefundEventSubscriber $payPalRefundEventSubscriber,
+    ) {
+    }
 
     public function __invoke(RefundPayPalCaptureCommand $command)
     {

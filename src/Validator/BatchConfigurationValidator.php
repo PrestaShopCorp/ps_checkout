@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 class BatchConfigurationValidator
@@ -35,21 +35,21 @@ class BatchConfigurationValidator
     /**
      * @param array $configuration
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function validateAjaxBatchConfiguration($configuration)
     {
         if (empty($configuration)) {
-            throw new Exception("Config can't be empty");
+            throw new \Exception("Config can't be empty");
         }
 
         foreach ($configuration as $configurationItem) {
             if (empty($configurationItem['name']) || 0 !== strpos($configurationItem['name'], 'PS_CHECKOUT_')) {
-                throw new Exception('Received invalid configuration key');
+                throw new \Exception('Received invalid configuration key');
             }
 
             if (array_search($configurationItem['name'], self::BLACKLISTED_CONFIGURATION_KEYS)) {
-                throw new Exception('Received blacklisted configuration key');
+                throw new \Exception('Received blacklisted configuration key');
             }
         }
     }

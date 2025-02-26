@@ -21,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
-use Configuration;
-use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -30,16 +28,12 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQue
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopCollection;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use PsCheckoutCart;
-use Validate;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * @param GetOrderForPaymentDeniedQuery $query
@@ -47,29 +41,29 @@ class GetOrderForPaymentDeniedQueryHandler
      * @return GetOrderForPaymentDeniedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function __invoke(GetOrderForPaymentDeniedQuery $query)
     {
-        /** @var PsCheckoutCart|false $psCheckoutCart */
+        /** @var \PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
 
         if (!$psCheckoutCart) {
             throw new CartNotFoundException('No PrestaShop Cart associated to this PayPal Order at this time.');
         }
 
-        $orders = new PrestaShopCollection(Order::class);
+        $orders = new \PrestaShopCollection(\Order::class);
         $orders->where('id_cart', '=', $psCheckoutCart->getIdCart());
 
         if (!$orders->count()) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        /** @var Order $order */
+        /** @var \Order $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
@@ -80,13 +74,13 @@ class GetOrderForPaymentDeniedQueryHandler
     }
 
     /**
-     * @param Order $order
+     * @param \Order $order
      *
      * @return bool
      */
-    private function hasBeenError(Order $order)
+    private function hasBeenError(\Order $order)
     {
-        return count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)))
-            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
+        return count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)))
+            || count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
     }
 }

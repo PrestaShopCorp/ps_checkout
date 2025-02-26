@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,6 @@ namespace Tests\Unit\PayPal\Payment\Capture\ValueObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
-use stdClass;
 
 class PayPalCaptureIdTest extends TestCase
 {
@@ -63,7 +63,7 @@ class PayPalCaptureIdTest extends TestCase
             ['test'],
             [[]],
             [false],
-            [new stdClass()],
+            [new \stdClass()],
             [-1],
             [0],
         ];

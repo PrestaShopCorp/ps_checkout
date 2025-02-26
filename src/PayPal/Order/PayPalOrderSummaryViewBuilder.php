@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
-use Exception;
-use Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderDataProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
@@ -30,7 +29,6 @@ use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class PayPalOrderSummaryViewBuilder
 {
@@ -39,21 +37,22 @@ class PayPalOrderSummaryViewBuilder
         private PayPalOrderProvider $orderPayPalProvider,
         private Router $router,
         private PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
-        private PayPalOrderRepository $payPalOrderRepository
-    ) {}
+        private PayPalOrderRepository $payPalOrderRepository,
+    ) {
+    }
 
     /**
-     * @param Order $order
+     * @param \Order $order
      *
      * @return PayPalOrderSummaryView
      *
      * @throws PsCheckoutException
      */
-    public function build(Order $order)
+    public function build(\Order $order)
     {
         try {
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($order->id_cart);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Unable to retrieve cart data', 0, $exception);
         }
 
@@ -69,7 +68,7 @@ class PayPalOrderSummaryViewBuilder
 
         try {
             $orderPayPal = $this->orderPayPalProvider->getById($psCheckoutCart->paypal_order);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $orderPayPal = [];
         }
 

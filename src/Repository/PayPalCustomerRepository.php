@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,17 +21,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use Db;
-use DbQuery;
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class PayPalCustomerRepository
 {
-    public function __construct(private Db $db)
-    {}
+    public function __construct(private \Db $db)
+    {
+    }
 
     /**
      * @param CustomerId $customerId
@@ -42,14 +41,14 @@ class PayPalCustomerRepository
     public function findPayPalCustomerIdByCustomerId(CustomerId $customerId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('`paypal_customer_id`');
             $query->from('pscheckout_customer');
             $query->where(sprintf('`id_customer` = %d', (int) $customerId->getValue()));
             $customerIdPayPal = $this->db->getValue($query);
 
             return $customerIdPayPal ? new PayPalCustomerId($customerIdPayPal) : null;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Failed to find PayPal Customer ID', 0, $exception);
         }
     }
@@ -66,13 +65,13 @@ class PayPalCustomerRepository
     {
         try {
             $this->db->insert(
-            'pscheckout_customer',
-            [
-                'id_customer' => (int) $customerId->getValue(),
-                'paypal_customer_id' => pSQL($paypalCustomerId->getValue()),
-            ]
-        );
-        } catch (Exception $exception) {
+                'pscheckout_customer',
+                [
+                    'id_customer' => (int) $customerId->getValue(),
+                    'paypal_customer_id' => pSQL($paypalCustomerId->getValue()),
+                ]
+            );
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Failed to save PayPal Customer ID', 0, $exception);
         }
     }

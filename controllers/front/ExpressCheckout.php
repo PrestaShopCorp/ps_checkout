@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\Module\PrestashopCheckout\Updater\CustomerUpdater;
 
 /**
  * This controller receive ajax call when customer click on an express checkout button
@@ -157,7 +157,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     private function createAndLoginCustomer(
         $email,
         $firstName,
-        $lastName
+        $lastName,
     ) {
         /** @var int $idCustomerExists */
         $idCustomerExists = Customer::customerExists($email, true);
@@ -249,7 +249,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $city,
         $countryIsoCode,
         $phone,
-        $idPaypalOrder
+        $idPaypalOrder,
     ) {
         // check if country is available for delivery
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);

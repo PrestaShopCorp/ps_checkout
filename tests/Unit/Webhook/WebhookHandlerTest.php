@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace Tests\Unit\Webhook;
 
-use Generator;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookEventHandlerInterface;
@@ -112,7 +112,7 @@ class WebhookHandlerTest extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getValidWebhook()
     {
@@ -125,7 +125,7 @@ class WebhookHandlerTest extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getInvalidWebhook()
     {

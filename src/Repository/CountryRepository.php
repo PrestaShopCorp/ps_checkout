@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,10 +21,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use Context;
 use Country;
-use Db;
-use DbQuery;
 
 class CountryRepository
 {
@@ -36,7 +34,7 @@ class CountryRepository
      */
     public function getByIso($country)
     {
-        return (int) Country::getByIso($country);
+        return (int) \Country::getByIso($country);
     }
 
     /**
@@ -49,7 +47,7 @@ class CountryRepository
         $names = [];
 
         foreach ($countries as $country) {
-            $names[] = Country::getNameById((int) Context::getContext()->language->id, $this->getByIso($country));
+            $names[] = \Country::getNameById((int) \Context::getContext()->language->id, $this->getByIso($country));
         }
 
         return $names;
@@ -63,9 +61,9 @@ class CountryRepository
      */
     public function getStateId($idCountry, $state)
     {
-        $db = Db::getInstance();
+        $db = \Db::getInstance();
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('id_state');
         $query->from('state');
         $query->where('iso_code LIKE \'%' . pSQL($state) . '%\'');
@@ -77,7 +75,7 @@ class CountryRepository
             return $idState;
         }
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('id_state');
         $query->from('state');
         $query->where('name LIKE \'%' . pSQL($state) . '%\'');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,35 +23,33 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Cache\CacheSettings;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShopCollection;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use PsCheckoutCart;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class PsCheckoutCartRepository
 {
     public function __construct(private ArrayAdapter $cartPrestaShopCache)
-    {}
+    {
+    }
 
     /**
      * @param int $cartId
      *
-     * @return PsCheckoutCart|false
+     * @return \PsCheckoutCart|false
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function findOneByCartId($cartId)
     {
         return $this->cartPrestaShopCache->get(CacheSettings::CART_ID . $cartId, function (ItemInterface $item) use ($cartId) {
             $item->expiresAfter(3600);
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $cartId);
             $psCheckoutCartCollection->orderBy('date_upd', 'desc');
 
-            /** @var PsCheckoutCart|false $psCheckoutCart */
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
             return $psCheckoutCart;
         });
     }
@@ -58,31 +57,32 @@ class PsCheckoutCartRepository
     /**
      * @param string $payPalOrderId
      *
-     * @return PsCheckoutCart|false
+     * @return \PsCheckoutCart|false
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function findOneByPayPalOrderId($payPalOrderId)
     {
         return $this->cartPrestaShopCache->get(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId, function (ItemInterface $item) use ($payPalOrderId) {
             $item->expiresAfter(3600);
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('paypal_order', '=', $payPalOrderId);
 
-            /** @var PsCheckoutCart|false $psCheckoutCart */
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
             return $psCheckoutCart;
         });
     }
 
     /**
-     * @param PsCheckoutCart $psCheckoutCart
+     * @param \PsCheckoutCart $psCheckoutCart
      *
      * @return bool
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
-    public function save(PsCheckoutCart $psCheckoutCart)
+    public function save(\PsCheckoutCart $psCheckoutCart)
     {
         if (empty($psCheckoutCart->id_cart)) {
             throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -103,13 +103,13 @@ class PsCheckoutCartRepository
     }
 
     /**
-     * @param PsCheckoutCart $psCheckoutCart
+     * @param \PsCheckoutCart $psCheckoutCart
      *
      * @return bool
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
-    public function remove(PsCheckoutCart $psCheckoutCart)
+    public function remove(\PsCheckoutCart $psCheckoutCart)
     {
         if (empty($psCheckoutCart->id_cart)) {
             throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);

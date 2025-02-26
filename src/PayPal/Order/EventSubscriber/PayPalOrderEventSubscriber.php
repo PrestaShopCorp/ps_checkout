@@ -42,8 +42,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         private PsCheckoutCartRepository $psCheckoutCartRepository,
         private CheckoutChecker $checkoutChecker,
         private CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
-        private PayPalOrderEventProcessor $payPalOrderEventProcessor
-    ) {}
+        private PayPalOrderEventProcessor $payPalOrderEventProcessor,
+    ) {
+    }
 
     /**
      * {@inheritdoc}
@@ -115,7 +116,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         $this->checkoutChecker->continueWithAuthorization($psCheckoutCart->getIdCart(), $event->getOrderPayPal());
 
-        $this->capturePayPalOrderCommandHandler->handle( new CapturePayPalOrderCommand(
+        $this->capturePayPalOrderCommandHandler->handle(new CapturePayPalOrderCommand(
             $event->getOrderPayPalId()->getValue(),
             $psCheckoutCart->getPaypalFundingSource()
         ));

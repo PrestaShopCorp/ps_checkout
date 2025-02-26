@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,15 +21,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
-use Ps_checkout;
-
 class FundingSourceTranslationProvider
 {
     private array $fundingSourceNames;
 
     private array $paymentOptionNames;
 
-    public function __construct(Ps_checkout $psCheckout)
+    public function __construct(\Ps_checkout $psCheckout)
     {
         $this->fundingSourceNames = [
             'card' => $psCheckout->l('Card', 'fundingsourcetranslationprovider'),

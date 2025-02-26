@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -37,7 +38,6 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PrestaShop\Core\Module\ModuleManager;
 use Ps_checkout;
-use Shop;
 
 /**
  * Construct the context module
@@ -57,7 +57,7 @@ class ContextModule implements PresenterInterface
         private ShopContext $shopContext,
         private ShopProvider $shopProvider,
         private ModuleLinkBuilder $moduleLinkBuilder,
-        private PsAccountRepository $psAccountRepository
+        private PsAccountRepository $psAccountRepository,
     ) {
         $this->moduleManager = ModuleManagerBuilder::getInstance()->build();
     }
@@ -69,11 +69,11 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopId = (int) Context::getContext()->shop->id;
+        $shopId = (int) \Context::getContext()->shop->id;
 
         return [
             'context' => [
-                'moduleVersion' => Ps_checkout::VERSION,
+                'moduleVersion' => \Ps_checkout::VERSION,
                 'moduleIsEnabled' => $this->moduleManager->isEnabled('ps_checkout'),
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
@@ -120,7 +120,7 @@ class ContextModule implements PresenterInterface
      */
     private function isShopContext()
     {
-        if (Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP) {
+        if (\Shop::isFeatureActive() && \Shop::getContext() !== \Shop::CONTEXT_SHOP) {
             return false;
         }
 
@@ -140,7 +140,7 @@ class ContextModule implements PresenterInterface
 
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
-        foreach (Shop::getTree() as $groupId => $groupData) {
+        foreach (\Shop::getTree() as $groupId => $groupData) {
             $shops = [];
 
             foreach ($groupData['shops'] as $shopId => $shopData) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -42,7 +43,7 @@ class FrontControllerValidator
     public function __construct(
         MerchantValidator $merchantValidator,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        PayPalPayLaterConfiguration $payLaterConfiguration
+        PayPalPayLaterConfiguration $payLaterConfiguration,
     ) {
         $this->merchantValidator = $merchantValidator;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
@@ -64,7 +65,7 @@ class FrontControllerValidator
             // Homepage
             case 'index':
                 return $this->payLaterConfiguration->isHomePageBannerActive();
-            // Category
+                // Category
             case 'category':
                 return $this->payLaterConfiguration->isCategoryPageBannerActive();
             case 'orderopc':
@@ -105,17 +106,17 @@ class FrontControllerValidator
             // Homepage
             case 'index':
                 return $this->payLaterConfiguration->isHomePageBannerActive();
-            // Category
+                // Category
             case 'category':
                 return $this->payLaterConfiguration->isCategoryPageBannerActive();
-            // Payment step
+                // Payment step
             case 'orderopc':
             case 'order':
-            // Payment methods logos (always if merchant is valid), Payment4X banner, ExpressCheckout button
+                // Payment methods logos (always if merchant is valid), Payment4X banner, ExpressCheckout button
             case 'product':
             case 'cart':
                 return true;
-            // ExpressCheckout button
+                // ExpressCheckout button
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
                     || $this->payLaterConfiguration->isOrderPageButtonActive();

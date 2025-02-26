@@ -21,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQueryResult;
@@ -30,13 +29,14 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 class GetCurrentPayPalOrderStatusQueryHandler
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     public function __invoke(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
     {
         try {
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getOrderPayPalId()->getValue());
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PayPalOrderException('Cannot retrieve cart', PayPalOrderException::PRESTASHOP_CART_NOT_FOUND, $exception);
         }
 

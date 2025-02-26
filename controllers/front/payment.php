@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -67,6 +68,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function setMedia()
     {
         $this->registerStylesheet('ps_checkout_payment', '/modules/ps_checkout/views/css/payment.css');
+
         return parent::setMedia();
     }
 
@@ -158,7 +160,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     /**
      * @param array $payPalOrderFromCache
-     * @param PayPalOrder$payPalOrder
+     * @param PayPalOrder $payPalOrder
      *
      * @return void
      *

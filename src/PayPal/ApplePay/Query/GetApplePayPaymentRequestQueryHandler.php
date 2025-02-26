@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -28,7 +29,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 class GetApplePayPaymentRequestQueryHandler
 {
     public function __construct(private ApplePayPaymentRequestBuilder $builder)
-    {}
+    {
+    }
 
     /**
      * @param GetApplePayPaymentRequestQuery $query

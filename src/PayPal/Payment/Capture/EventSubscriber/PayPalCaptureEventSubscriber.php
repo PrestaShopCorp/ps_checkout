@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -44,7 +45,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -58,8 +58,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         private QueryBusInterface $queryBus,
         private CreateOrderCommandHandler $createOrderCommandHandler,
         private AddOrderPaymentCommandHandler $addOrderPaymentCommandHandler,
-        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {}
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
+    ) {
+    }
 
     /**
      * {@inheritdoc}

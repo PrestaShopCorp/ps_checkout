@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber;
 
-use Exception;
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Entity\PaymentToken;
@@ -36,8 +35,9 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private PayPalOrderRepository $payPalOrderRepository,
-        private PaymentTokenRepository $paymentTokenRepository
-    ) {}
+        private PaymentTokenRepository $paymentTokenRepository,
+    ) {
+    }
 
     /**
      * {@inheritdoc}
@@ -67,7 +67,7 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             try {
                 $order = $this->payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($orderId));
                 $setFavorite = $order->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_FAVORITE);
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
             }
         }
 

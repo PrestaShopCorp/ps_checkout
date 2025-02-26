@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
-use PrestaShopDatabaseException;
 
 class FundingSourceProvider
 {
@@ -32,7 +32,7 @@ class FundingSourceProvider
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
         private FundingSourcePresenter $presenter,
         private PaymentTokenRepository $paymentTokenRepository,
-        private PayPalConfiguration $payPalConfiguration
+        private PayPalConfiguration $payPalConfiguration,
     ) {
         $this->collection = new FundingSourceCollection($fundingSourceCollectionBuilder->create());
     }
@@ -65,7 +65,7 @@ class FundingSourceProvider
      *
      * @return FundingSource[]
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public function getSavedTokens($customerId)
     {

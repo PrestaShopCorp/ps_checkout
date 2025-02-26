@@ -21,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Configuration;
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
@@ -53,7 +51,7 @@ class CapturePayPalOrderCommandHandler
         private PrestaShopContext $prestaShopContext,
         private PayPalCustomerRepository $payPalCustomerRepository,
         private PayPalOrderRepository $payPalOrderRepository,
-        private PayPalOrderEventProcessor $payPalOrderEventProcessor
+        private PayPalOrderEventProcessor $payPalOrderEventProcessor,
     ) {
     }
 
@@ -64,7 +62,7 @@ class CapturePayPalOrderCommandHandler
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
-        $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $this->prestaShopContext->getShopId());
+        $merchantId = \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $this->prestaShopContext->getShopId());
 
         $payload = [
             'mode' => $capturePayPalOrderCommand->getFundingSource(),
@@ -95,7 +93,7 @@ class CapturePayPalOrderCommandHandler
                     $payPalCustomerId = new PayPalCustomerId($vault['customer']['id']);
                     $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
                     $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (Exception $exception) {
+                } catch (\Exception $exception) {
                 }
             }
 

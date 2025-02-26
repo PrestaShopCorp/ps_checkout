@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,6 @@ namespace Tests\Unit\Order\ValueObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
-use stdClass;
 
 class OrderIdTest extends TestCase
 {
@@ -51,7 +51,7 @@ class OrderIdTest extends TestCase
             [3.14],
             [[]],
             [false],
-            [new stdClass()],
+            [new \stdClass()],
             [-1],
             [0],
         ];

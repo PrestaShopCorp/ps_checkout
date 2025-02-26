@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,16 +21,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PsCheckoutCart;
 
 class SaveCheckoutCommandHandler
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * @param SaveCheckoutCommand $command
@@ -39,11 +39,11 @@ class SaveCheckoutCommandHandler
     public function handle(SaveCheckoutCommand $command)
     {
         try {
-            /** @var PsCheckoutCart|false $psCheckoutCart */
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($command->getCartId()->getValue());
 
             if (false === $psCheckoutCart) {
-                $psCheckoutCart = new PsCheckoutCart();
+                $psCheckoutCart = new \PsCheckoutCart();
             }
 
             $psCheckoutCart->id_cart = $command->getCartId()->getValue();
@@ -55,7 +55,7 @@ class SaveCheckoutCommandHandler
             $psCheckoutCart->paypal_intent = $command->getIntent();
             $psCheckoutCart->environment = $command->getEnvironment();
             $this->psCheckoutCartRepository->save($psCheckoutCart);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutSessionException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($command->getCartId()->getValue(), true)), PsCheckoutSessionException::UPDATE_FAILED, $exception);
         }
     }

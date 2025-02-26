@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Sdk;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\QueryBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
@@ -28,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint;
-use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\PayPalCustomerIdProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -57,8 +56,9 @@ class PayPalSdkConfigurationBuilder
         private PrestaShopContext $prestaShopContext,
         private LoggerInterface $psCheckoutLogger,
         private FundingSourceEligibilityConstraint $fundingSourceEligibilityConstraint,
-        private QueryBusInterface $queryBus
-    ) {}
+        private QueryBusInterface $queryBus,
+    ) {
+    }
 
     /**
      * @return array
@@ -107,7 +107,7 @@ class PayPalSdkConfigurationBuilder
                 /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
                 $queryResult = $this->queryBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
                 $params['dataUserIdToken'] = $queryResult->getUserIdToken();
-            } catch (Exception $exception) {
+            } catch (\Exception $exception) {
                 $this->psCheckoutLogger->error('Failed to get PayPal User ID token.', ['exception' => $exception]);
             }
         }
@@ -117,7 +117,7 @@ class PayPalSdkConfigurationBuilder
         }
 
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
-//            $params['debug'] = 'true';
+            //            $params['debug'] = 'true';
             $params['buyerCountry'] = $this->getCountry();
         }
 

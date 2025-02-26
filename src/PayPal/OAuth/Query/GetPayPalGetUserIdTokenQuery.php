@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,7 +33,7 @@ class GetPayPalGetUserIdTokenQuery
     /**
      * @param CustomerId|null $customerId
      */
-    public function __construct(CustomerId $customerId = null)
+    public function __construct(?CustomerId $customerId = null)
     {
         $this->customerId = $customerId;
     }

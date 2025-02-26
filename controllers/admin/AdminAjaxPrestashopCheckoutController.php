@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -111,8 +112,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
         $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
 
         $this->ajaxDie(true);
@@ -758,8 +759,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSavePaypalButtonConfiguration()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
 
         $this->ajaxDie(true);

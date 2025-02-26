@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -57,8 +58,9 @@ class PayPalConfiguration
 
     public function __construct(
         private PrestaShopConfiguration $configuration,
-        private PayPalCodeRepository $codeRepository
-    ) {}
+        private PayPalCodeRepository $codeRepository,
+    ) {
+    }
 
     /**
      * Used to return the PS_CHECKOUT_INTENT from the Configuration

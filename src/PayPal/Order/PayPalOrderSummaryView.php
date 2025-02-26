@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -31,8 +32,9 @@ class PayPalOrderSummaryView
         private OrderDataProvider $orderDataProvider,
         private PsCheckoutDataProvider $checkoutDataProvider,
         private Router $router,
-        private PayPalOrderPresenter $orderPayPalPresenter
-    ) {}
+        private PayPalOrderPresenter $orderPayPalPresenter,
+    ) {
+    }
 
     /**
      * Returns an array of template variables for smarty

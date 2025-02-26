@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,7 +30,8 @@ use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 class QueryBusFactory
 {
     public function __construct(private LoggerInterface $logger, private array $queryToHandlerMap)
-    {}
+    {
+    }
 
     public function create(): QueryBusAdapter
     {

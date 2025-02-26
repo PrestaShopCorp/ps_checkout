@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -31,7 +32,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
 class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
@@ -45,8 +45,9 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
         private PsAccountRepository $psAccountRepository,
         private PrestaShopContext $prestaShopContext,
         private LoggerConfiguration $loggerConfiguration,
-        private LoggerInterface $psCheckoutLogger
-    ) {}
+        private LoggerInterface $psCheckoutLogger,
+    ) {
+    }
 
     /**
      * @return array
@@ -64,7 +65,7 @@ class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationB
                 'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
                 'Hook-Url' => $this->router->getDispatchWebhookLink($this->prestaShopContext->getShopId()),
                 'Bn-Code' => $this->shopContext->getBnCode(),
-                'Module-Version' => Ps_checkout::VERSION, // version of the module
+                'Module-Version' => \Ps_checkout::VERSION, // version of the module
                 'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];

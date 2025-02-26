@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -28,13 +29,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Ps_checkout;
-use PsCheckoutCart;
 
 class OrderPresenter
 {
     /**
-     * @var Ps_checkout
+     * @var \Ps_checkout
      */
     private $module;
 
@@ -52,10 +51,10 @@ class OrderPresenter
     private $payPalOrderRepository;
 
     /**
-     * @param Ps_checkout $module
+     * @param \Ps_checkout $module
      * @param array $orderPayPal
      */
-    public function __construct(Ps_checkout $module, array $orderPayPal)
+    public function __construct(\Ps_checkout $module, array $orderPayPal)
     {
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
@@ -109,27 +108,27 @@ class OrderPresenter
         $translated = '';
         $class = '';
 
-        if (PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Created', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Saved', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Approved', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Voided', 'orderpresenter');
             $class = 'warning';
         }
 
-        if (PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Completed', 'orderpresenter');
             $class = 'success';
         }

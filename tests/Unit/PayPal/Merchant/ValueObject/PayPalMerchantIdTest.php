@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,6 @@ namespace Tests\Unit\PayPal\Merchant\ValueObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Merchant\Exception\PayPalMerchantException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Merchant\ValueObject\PayPalMerchantId;
-use stdClass;
 
 class PayPalMerchantIdTest extends TestCase
 {
@@ -51,7 +51,7 @@ class PayPalMerchantIdTest extends TestCase
             [3.14],
             [[]],
             [false],
-            [new stdClass()],
+            [new \stdClass()],
         ];
     }
 }

@@ -21,20 +21,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache;
 
-use PsCheckoutCart;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\ChainAdapter;
 
 class PayPalOrderCache extends ChainAdapter
 {
     public const CACHE_TTL = [
-        PsCheckoutCart::STATUS_CREATED => 600,
-        PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED => 600,
-        PsCheckoutCart::STATUS_APPROVED => 600,
-        PsCheckoutCart::STATUS_VOIDED => 3600,
-        PsCheckoutCart::STATUS_SAVED => 3600,
-        PsCheckoutCart::STATUS_CANCELED => 3600,
-        PsCheckoutCart::STATUS_COMPLETED => 3600,
+        \PsCheckoutCart::STATUS_CREATED => 600,
+        \PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED => 600,
+        \PsCheckoutCart::STATUS_APPROVED => 600,
+        \PsCheckoutCart::STATUS_VOIDED => 3600,
+        \PsCheckoutCart::STATUS_SAVED => 3600,
+        \PsCheckoutCart::STATUS_CANCELED => 3600,
+        \PsCheckoutCart::STATUS_COMPLETED => 3600,
     ];
 
     /**

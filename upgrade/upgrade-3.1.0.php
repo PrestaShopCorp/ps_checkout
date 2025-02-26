@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -35,7 +36,7 @@ function upgrade_module_3_1_0($module)
     $savedShopId = Shop::getContextShopID();
     $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
-    $shopsList = \Shop::getShops(false, null, true);
+    $shopsList = Shop::getShops(false, null, true);
 
     foreach ($shopsList as $shopId) {
         Configuration::updateValue('PS_CHECKOUT_LIABILITY_SHIFT_REQ', '1', false, null, (int) $shopId);

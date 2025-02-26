@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
@@ -33,7 +33,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 class SavePayPalOrderCommandHandler
 {
     public function __construct(private PayPalOrderRepository $payPalOrderRepository)
-    {}
+    {
+    }
 
     public function __invoke(SavePayPalOrderCommand $command)
     {
@@ -54,7 +55,7 @@ class SavePayPalOrderCommandHandler
                 $payPalOrder->setPaymentSource($order['payment_source']);
             }
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $payPalOrder = new PayPalOrder(
                 $order['id'],
                 $command->getCartId()->getValue(),

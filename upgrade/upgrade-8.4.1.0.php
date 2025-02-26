@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,10 +33,10 @@ function upgrade_module_8_4_1_0($module)
 {
     try {
         $db = Db::getInstance();
-        $shopsList = \Shop::getShops(false, null, true);
+        $shopsList = Shop::getShops(false, null, true);
 
         foreach ($shopsList as $shopId) {
-            $isGooglePayEligible = (bool) \Configuration::get(
+            $isGooglePayEligible = (bool) Configuration::get(
                 'PS_CHECKOUT_GOOGLE_PAY',
                 null,
                 null,

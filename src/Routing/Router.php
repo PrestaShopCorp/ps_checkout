@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,20 +21,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Routing;
 
-use Configuration;
-use Context;
-use Shop;
-
 class Router
 {
     /**
-     * @var Context
+     * @var \Context
      */
     public $context;
 
     public function __construct()
     {
-        $this->context = Context::getContext();
+        $this->context = \Context::getContext();
     }
 
     /**
@@ -69,6 +66,6 @@ class Router
      */
     public function getDispatchWebhookLink($idShop)
     {
-        return $this->context->link->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, (int) Configuration::get('PS_LANG_DEFAULT'), (int) $idShop);
+        return $this->context->link->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, (int) \Configuration::get('PS_LANG_DEFAULT'), (int) $idShop);
     }
 }

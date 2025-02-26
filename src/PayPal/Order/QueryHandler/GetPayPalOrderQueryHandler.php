@@ -29,7 +29,8 @@ use Symfony\Component\Cache\Adapter\ChainAdapter;
 class GetPayPalOrderQueryHandler
 {
     public function __construct(private ChainAdapter $orderPayPalCache, private PsCheckoutCartRepository $checkoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * @param GetPayPalOrderQuery $query

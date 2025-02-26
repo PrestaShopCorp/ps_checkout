@@ -44,7 +44,7 @@ class GetOrderForPaymentPendingQueryResult
      */
     public function __construct(
         $orderId,
-        $isInPending
+        $isInPending,
     ) {
         $this->orderId = new OrderId($orderId);
         $this->isInPending = $isInPending;
