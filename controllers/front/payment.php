@@ -137,7 +137,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                     case Card3DSecure::NO_DECISION:
                         if ($payPalConfiguration->getHostedFieldsContingencies() === 'SCA_WHEN_REQUIRED') {
                             $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
-                            $payPalOrderFromCache = $payPalOrderCache->get($orderId);
+                            $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
                             $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         }
                         // no break
