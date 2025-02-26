@@ -25,6 +25,9 @@ use Configuration;
 use Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Product;
 use Psr\Log\LoggerInterface;
 use Validate;
@@ -35,13 +38,26 @@ class CheckoutChecker
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
 
     /**
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        PayPalOrderRepository $payPalOrderRepository,
+        PayPalConfiguration $payPalConfiguration
+    ) {
         $this->logger = $logger;
+        $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -57,6 +73,8 @@ class CheckoutChecker
         if ($orderPayPal['status'] === 'COMPLETED') {
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
+
+        $contingencies = $this->payPalConfiguration->getHostedFieldsContingencies();
 
         $paymentSource = isset($orderPayPal['payment_source']) ? key($orderPayPal['payment_source']) : '';
 
@@ -75,7 +93,7 @@ class CheckoutChecker
                             (string) Card3DSecure::RETRY,
                         ],
                         [
-                            Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            $contingencies === 'SCA_ALWAYS' ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
                             'Proceed, liability shift is possible',
                             'Rejected',
                             'Retry, ask customer to retry',
@@ -91,8 +109,17 @@ class CheckoutChecker
                 case Card3DSecure::RETRY:
                     throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
                 case Card3DSecure::NO_DECISION:
-                    if (Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                    if ($contingencies === 'SCA_ALWAYS') {
                         throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                    }
+                    if ($contingencies === 'SCA_WHEN_REQUIRED') {
+                        $payPalOrder = $this->payPalOrderRepository->getPayPalOrderByCartId($cartId);
+                        try {
+                            $payPalOrder->addTag(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED);
+                            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
+                        } catch (PsCheckoutException $e) {
+                            $this->logger->error('Failed to save PayPal Order tag for 3D Secure not required', ['exception' => $e]);
+                        }
                     }
                     break;
             }
