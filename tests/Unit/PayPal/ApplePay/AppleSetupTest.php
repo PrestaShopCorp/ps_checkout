@@ -32,7 +32,7 @@ class AppleSetupTest extends TestCase
     private $systemConfigurationMock;
     private $payPalConfigurationMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->systemConfigurationMock = $this->createMock(SystemConfiguration::class);
         $this->payPalConfigurationMock = $this->createMock(PayPalConfiguration::class);
