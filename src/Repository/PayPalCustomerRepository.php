@@ -76,12 +76,15 @@ class PayPalCustomerRepository
     {
         try {
             $this->db->insert(
-            'pscheckout_customer',
-            [
-                'id_customer' => (int) $customerId->getValue(),
-                'paypal_customer_id' => pSQL($paypalCustomerId->getValue()),
-            ]
-        );
+                'pscheckout_customer',
+                [
+                    'id_customer' => (int) $customerId->getValue(),
+                    'paypal_customer_id' => pSQL($paypalCustomerId->getValue()),
+                ],
+                false,
+                false,
+                Db::INSERT_IGNORE
+            );
         } catch (Exception $exception) {
             throw new PsCheckoutException('Failed to save PayPal Customer ID', 0, $exception);
         }
