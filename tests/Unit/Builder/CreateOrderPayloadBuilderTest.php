@@ -155,13 +155,16 @@ class CreateOrderPayloadBuilderTest extends TestCase
 
         $this->assertEquals(
             $amount,
-            $breakdownItemTotal
-            + $breakdownTaxTotal
-            + $breakdownShipping
-            + $breakdownHandling
-            + $breakdownInsurance
-            - $breakdownShippingDiscount
-            - $breakdownDiscount,
+            round(
+                $breakdownItemTotal
+                + $breakdownTaxTotal
+                + $breakdownShipping
+                + $breakdownHandling
+                + $breakdownInsurance
+                - $breakdownShippingDiscount
+                - $breakdownDiscount,
+                2
+            ),
             'amount value not equals'
         );
     }
