@@ -20,11 +20,16 @@
 
 namespace Tests\Unit\PayPal\Order\CommandHandler;
 
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Http\Client\Exception\HttpException;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
@@ -37,11 +42,14 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class CapturePayPalOrderCommandHandlerTest extends TestCase
@@ -138,6 +146,8 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
+        $logger = $this->createMock(LoggerInterface::class);
+
         $commandHandler = new CapturePayPalOrderCommandHandler(
             $maaslandHttpClient,
             $eventDispatcher,
@@ -145,9 +155,72 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $prestaShopContext,
             $payPalCustomerRepository,
             $payPalOrderRepository,
-            $payPalConfiguration
+            $payPalConfiguration,
+            $logger
         );
         $commandHandler->handle(new CapturePayPalOrderCommand($order['id'], $fundingSource));
+    }
+
+    /**
+     * @dataProvider captureErrorProvider
+     */
+    public function testCapturePayPalOrderResponseDeletesPaymentToken(array $request, $errorCode, $response)
+    {
+        $merchantId = '12345';
+
+        $httpClient = $this->createMock(HttpClientInterface::class);
+
+        $maaslandHttpClient = new MaaslandHttpClient($httpClient);
+
+        $httpRequest = new Request('POST', '/payments/order/capture', [], json_encode($request));
+        $httpResponse = new Response($errorCode, [], $response);
+        $exception = new HttpException('', $httpRequest, $httpResponse);
+        $httpClient->method('sendRequest')->willThrowException($exception);
+
+        $orderPayPalCache = $this->createMock(CacheInterface::class);
+
+        $prestaShopContext = $this->createMock(PrestaShopContext::class);
+        $payPalCustomerRepository = $this->createMock(PayPalCustomerRepository::class);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $payPalOrderRepository = $this->createMock(PayPalOrderRepository::class);
+
+        $payPalOrder = new PayPalOrder(
+            $request['id'], 1, 'CAPTURE', $request['funding_source'], 'APPROVED'
+        );
+
+        $paymentTokenId = new PaymentTokenId('XHAHASJNSSD21');
+        $payPalOrder->setPaymentTokenId($paymentTokenId);
+
+        $payPalOrderRepository->method('getPayPalOrderById')->willReturn($payPalOrder);
+
+        $payPalConfiguration = $this->createMock(PayPalConfiguration::class);
+        $payPalConfiguration->method('getMerchantId')->willReturn($merchantId);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $commandHandler = new CapturePayPalOrderCommandHandler(
+            $maaslandHttpClient,
+            $eventDispatcher,
+            $orderPayPalCache,
+            $prestaShopContext,
+            $payPalCustomerRepository,
+            $payPalOrderRepository,
+            $payPalConfiguration,
+            $logger
+        );
+
+        $expectedEvents = [new PaymentTokenDeletedEvent(['id' => $paymentTokenId->getValue()])];
+
+        $eventDispatcher->expects($this->exactly(count($expectedEvents)))
+            ->method('dispatch')
+            ->withConsecutive(...$expectedEvents);
+
+        $this->expectException(PayPalException::class);
+        $this->expectExceptionCode(PayPalException::CARD_CLOSED);
+
+        $commandHandler->handle(new CapturePayPalOrderCommand($request['id'], $request['funding_source']));
     }
 
     public function completedPayPalOrderProvider()
@@ -2623,6 +2696,38 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
                             ],
                     ],
             ],
+        ];
+    }
+
+    public function captureErrorProvider()
+    {
+        return [
+            [
+                [
+                    'id' => '9Y936175RH7229522',
+                    'funding_source' => 'card',
+                ],
+                422,
+                '{
+                "name": "UNPROCESSABLE_ENTITY",
+                "details": [
+                    {
+                        "field": "payment_source/card",
+                        "location": "body",
+                        "issue": "CARD_CLOSED",
+                        "description": "The card is closed."
+                    }
+                ],
+                "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
+                "debug_id": "990b09d46b647",
+                "links": [
+                    {
+                        "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#CARD_CLOSED",
+                        "rel": "information_link",
+                        "method": "GET"
+                    }
+                ]
+            }', ],
         ];
     }
 }
