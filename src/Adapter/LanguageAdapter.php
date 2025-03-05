@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
 use Language;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Language adapter
@@ -38,7 +38,7 @@ class LanguageAdapter
      */
     public function getLanguage($idLang)
     {
-        $language = Language::getLanguage($idLang);
+        $language = \Language::getLanguage($idLang);
 
         $language['locale'] = str_replace('-', '_', $language['locale']);
 

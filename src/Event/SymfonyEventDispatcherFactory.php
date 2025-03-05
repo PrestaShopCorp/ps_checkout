@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,8 +33,9 @@ class SymfonyEventDispatcherFactory
 {
     public function __construct(
         private LoggerInterface $psCheckoutLogger,
-        private LoggerConfiguration $configuration
-    ) {}
+        private LoggerConfiguration $configuration,
+    ) {
+    }
 
     /**
      * @param SymfonyEventSubscriberInterface[] $eventSubscribers

@@ -21,9 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
-use Configuration;
-use Order;
-use OrderPayment;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -31,15 +28,12 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompleted
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopCollection;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Validate;
 
 class GetOrderForPaymentCompletedQueryHandler
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * @param GetOrderForPaymentCompletedQuery $query
@@ -47,8 +41,8 @@ class GetOrderForPaymentCompletedQueryHandler
      * @return GetOrderForPaymentCompletedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function __invoke(GetOrderForPaymentCompletedQuery $query)
     {
@@ -58,21 +52,21 @@ class GetOrderForPaymentCompletedQueryHandler
             throw new CartNotFoundException('No PrestaShop Cart associated to this PayPal Order at this time.');
         }
 
-        $orders = new PrestaShopCollection(Order::class);
+        $orders = new \PrestaShopCollection(\Order::class);
         $orders->where('id_cart', '=', $psCheckoutCart->getIdCart());
 
         if (!$orders->count()) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        /** @var Order $order */
+        /** @var \Order $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        /** @var OrderPayment[] $orderPayments */
+        /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
         $orderPaymentId = null;
 
@@ -85,8 +79,8 @@ class GetOrderForPaymentCompletedQueryHandler
         }
 
         $hasBeenPaid = $order->hasBeenPaid();
-        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
-        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
 
         return new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -34,7 +35,7 @@ function upgrade_module_8_4_2_0($module)
         $module->registerHook('moduleRoutes');
 
         $db = Db::getInstance();
-        $shopsList = \Shop::getShops(false, null, true);
+        $shopsList = Shop::getShops(false, null, true);
 
         foreach ($shopsList as $shopId) {
             $hasFundingSourceApplePay = (bool) $db->getValue('

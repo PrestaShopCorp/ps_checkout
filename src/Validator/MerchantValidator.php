@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -29,7 +29,8 @@ class MerchantValidator
     public function __construct(
         private PayPalConfiguration $configuration,
         private PsAccountRepository $psAccountRepository,
-    ) {}
+    ) {
+    }
 
     public function merchantIsValid()
     {

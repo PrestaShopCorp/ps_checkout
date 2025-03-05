@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,7 +22,7 @@
 /**
  * Makes a matrice between Prestashop Order and Paypal Order
  */
-class OrderMatrice extends \ObjectModel
+class OrderMatrice extends ObjectModel
 {
     public $id_order_prestashop;
     public $id_order_paypal;
@@ -47,13 +48,13 @@ class OrderMatrice extends \ObjectModel
      */
     public function getOrderPrestashopFromPaypal($orderPaypal)
     {
-        $query = new \DbQuery();
+        $query = new DbQuery();
         $query->select('id_order_prestashop');
         $query->from('pscheckout_order_matrice');
         $query->where('id_order_paypal = "' . pSQL($orderPaypal) . '"');
         $query->orderBy('id_order_matrice DESC');
 
-        return (int) \Db::getInstance()->getValue($query);
+        return (int) Db::getInstance()->getValue($query);
     }
 
     /**
@@ -65,13 +66,13 @@ class OrderMatrice extends \ObjectModel
      */
     public function getOrderPaypalFromPrestashop($orderPrestashop)
     {
-        $query = new \DbQuery();
+        $query = new DbQuery();
         $query->select('id_order_paypal');
         $query->from('pscheckout_order_matrice');
         $query->where('id_order_prestashop = ' . (int) $orderPrestashop);
         $query->orderBy('id_order_matrice DESC');
 
-        return \Db::getInstance()->getValue($query);
+        return Db::getInstance()->getValue($query);
     }
 
     /**
@@ -89,11 +90,11 @@ class OrderMatrice extends \ObjectModel
         }
 
         // If more than one order found, there are inconsistencies for this order
-        $query = new \DbQuery();
+        $query = new DbQuery();
         $query->select('COUNT(*)');
         $query->from('pscheckout_order_matrice');
         $query->where('id_order_prestashop = ' . (int) $orderId);
 
-        return (bool) \Db::getInstance()->getValue($query);
+        return (bool) Db::getInstance()->getValue($query);
     }
 }

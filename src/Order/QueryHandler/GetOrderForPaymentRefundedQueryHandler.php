@@ -21,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
-use Configuration;
-use Order;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -30,16 +28,12 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQ
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopCollection;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use PsCheckoutCart;
-use Validate;
 
 class GetOrderForPaymentRefundedQueryHandler
 {
     public function __construct(private PsCheckoutCartRepository $psCheckoutCartRepository)
-    {}
+    {
+    }
 
     /**
      * @param GetOrderForPaymentRefundedQuery $query
@@ -47,42 +41,42 @@ class GetOrderForPaymentRefundedQueryHandler
      * @return GetOrderForPaymentRefundedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function __invoke(GetOrderForPaymentRefundedQuery $query)
     {
-        /** @var PsCheckoutCart|false $psCheckoutCart */
+        /** @var \PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
 
         if (!$psCheckoutCart) {
             throw new CartNotFoundException('No PrestaShop Cart associated to this PayPal Order at this time.');
         }
 
-        $orders = new PrestaShopCollection(Order::class);
+        $orders = new \PrestaShopCollection(\Order::class);
         $orders->where('id_cart', '=', $psCheckoutCart->getIdCart());
 
         if (!$orders->count()) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        /** @var Order $order */
+        /** @var \Order $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
         $hasBeenPaid = $order->hasBeenPaid();
-        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
-        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
+        $hasBeenPartiallyPaid = count($order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
 
         return new GetOrderForPaymentRefundedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid,
-            (bool) count($order->getHistory((int) $order->id_lang, Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
-            (bool) count($order->getHistory((int) $order->id_lang, Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, \Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_REFUNDED'))),
+            (bool) count($order->getHistory((int) $order->id_lang, \Configuration::get('PS_CHECKOUT_STATE_REFUNDED'))),
             (string) $order->getTotalPaid(),
             (int) $order->id_currency
         );

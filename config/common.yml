@@ -307,6 +307,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
     arguments:
       - "@ps_checkout.logger"
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
@@ -334,3 +336,14 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Builder\ApplePayPaymentRequestBuilder'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Translations\Translations'
+
+  PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration:
+    class: 'PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration'
+    public: true
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\AppleSetup:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\AppleSetup'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'

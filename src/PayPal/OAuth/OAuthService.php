@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
@@ -38,9 +38,9 @@ class OAuthService
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getUserIdToken($merchantId, PayPalCustomerId $customerId = null)
+    public function getUserIdToken($merchantId, ?PayPalCustomerId $customerId = null)
     {
         try {
             $response = $this->httpClient->getUserIdToken($merchantId, $customerId);
@@ -48,12 +48,12 @@ class OAuthService
             $data = json_decode($response->getBody(), true);
 
             if (empty($data['id_token'])) {
-                throw new Exception('Failed to get PayPal User ID token from response.');
+                throw new \Exception('Failed to get PayPal User ID token from response.');
             }
 
             return $data['id_token'];
-        } catch (Exception $exception) {
-            throw new Exception('Failed to get PayPal User ID token.', 0, $exception);
+        } catch (\Exception $exception) {
+            throw new \Exception('Failed to get PayPal User ID token.', 0, $exception);
         }
     }
 }

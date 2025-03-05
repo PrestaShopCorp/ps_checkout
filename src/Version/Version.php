@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -99,7 +100,7 @@ class Version
         $minorVersion = 0,
         $patchVersion = 0,
         $preReleaseVersion = '',
-        $buildMetadata = ''
+        $buildMetadata = '',
     ) {
         $this->version = $version;
         $this->prefixVersion = $prefixVersion;

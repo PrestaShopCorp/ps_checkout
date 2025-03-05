@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -27,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use Ps_checkout;
 
 /**
  * Construct the configuration module
@@ -39,8 +39,9 @@ class ConfigurationModule implements PresenterInterface
         private ExpressCheckoutConfiguration $ecConfiguration,
         private PayPalConfiguration $paypalConfiguration,
         private FundingSourceProvider $fundingSourceProvider,
-        private Ps_checkout $psCheckout
-    ) {}
+        private \Ps_checkout $psCheckout,
+    ) {
+    }
 
     /**
      * Present the paypal module (vuex)

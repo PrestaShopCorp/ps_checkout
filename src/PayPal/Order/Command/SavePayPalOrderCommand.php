@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -61,7 +62,7 @@ class SavePayPalOrderCommand
     /**
      * @param array $order
      */
-    public function __construct($order, CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = [], $isExpressCheckout = null, $isCardFields = null, $paymentTokenId = null)
+    public function __construct($order, ?CartId $cartId = null, $fundingSource = null, $paymentMode = null, $customerIntent = [], $isExpressCheckout = null, $isCardFields = null, $paymentTokenId = null)
     {
         $this->order = $order;
         $this->cartId = $cartId;

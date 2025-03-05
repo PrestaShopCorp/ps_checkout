@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,17 +21,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\Provider\PaymentMethodLogoProvider;
-use Ps_checkout;
-use PsCheckoutCart;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class OrderPresenter
 {
     /**
-     * @var Ps_checkout
+     * @var \Ps_checkout
      */
     private $module;
 
@@ -42,18 +45,23 @@ class OrderPresenter
      * @var FundingSourceTranslationProvider
      */
     private $fundingSourceTranslationProvider;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     /**
-     * @param Ps_checkout $module
+     * @param \Ps_checkout $module
      * @param array $orderPayPal
      */
-    public function __construct(Ps_checkout $module, array $orderPayPal)
+    public function __construct(\Ps_checkout $module, array $orderPayPal)
     {
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
     }
 
     /**
@@ -65,6 +73,15 @@ class OrderPresenter
             return [];
         }
 
+        $threeDSNotRequired = false;
+
+        try {
+            $payPalOrderId = new PayPalOrderId($this->orderPayPal['id']);
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($payPalOrderId);
+            $threeDSNotRequired = in_array(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED, $payPalOrder->getTags());
+        } catch (PsCheckoutException $e) {
+        }
+
         $card3DSecure = new Card3DSecure();
 
         return array_merge(
@@ -73,6 +90,7 @@ class OrderPresenter
                 'intent' => $this->orderPayPal['intent'],
                 'status' => $this->getOrderStatus(),
                 'transactions' => $this->getTransactions(),
+                'is3DSNotRequired' => $threeDSNotRequired,
                 'is3DSecureAvailable' => $card3DSecure->is3DSecureAvailable($this->orderPayPal),
                 'isLiabilityShifted' => $card3DSecure->isLiabilityShifted($this->orderPayPal),
                 'paymentSource' => $this->getPaymentSourceName($this->orderPayPal),
@@ -90,27 +108,27 @@ class OrderPresenter
         $translated = '';
         $class = '';
 
-        if (PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Created', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Saved', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Approved', 'orderpresenter');
             $class = 'info';
         }
 
-        if (PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Voided', 'orderpresenter');
             $class = 'warning';
         }
 
-        if (PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
+        if (\PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Completed', 'orderpresenter');
             $class = 'success';
         }

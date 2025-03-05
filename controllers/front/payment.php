@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -30,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -66,6 +68,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     public function setMedia()
     {
         $this->registerStylesheet('ps_checkout_payment', '/modules/ps_checkout/views/css/payment.css');
+
         return parent::setMedia();
     }
 
@@ -83,6 +86,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $this->commandBus = $this->module->getService('ps_checkout.bus.command');
             $this->queryBus = $this->module->getService('ps_checkout.bus.query');
 
+            /** @var PayPalConfiguration $payPalConfiguration */
+            $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
             /** @var AdapterInterface $payPalOrderCache */
@@ -132,6 +137,12 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                         $this->createOrder($payPalOrderFromCache, $payPalOrder);
                         break;
                     case Card3DSecure::NO_DECISION:
+                        if ($payPalConfiguration->getHostedFieldsContingencies() === 'SCA_WHEN_REQUIRED') {
+                            $this->commandBus->handle(new CapturePayPalOrderCommand($orderId, array_keys($payPalOrderFromCache['payment_source'])[0]));
+                            $payPalOrderFromCache = $payPalOrderCache->getItem($orderId)->get();
+                            $this->createOrder($payPalOrderFromCache, $payPalOrder);
+                        }
+                        // no break
                     default:
                         break;
                 }
@@ -149,7 +160,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
     /**
      * @param array $payPalOrderFromCache
-     * @param PayPalOrder$payPalOrder
+     * @param PayPalOrder $payPalOrder
      *
      * @return void
      *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,20 +21,20 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class GetCustomerPaymentTokensQueryHandler
 {
     public function __construct(private PaymentTokenRepository $paymentTokenRepository)
-    {}
+    {
+    }
 
     /**
      * @param GetCustomerPaymentTokensQuery $query
      *
      * @return GetCustomerPaymentTokensQueryResult
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function __invoke(GetCustomerPaymentTokensQuery $query)
     {

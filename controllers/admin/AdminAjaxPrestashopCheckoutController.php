@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -37,6 +38,8 @@ use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
+use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\AppleSetup;
+use PrestaShop\Module\PrestashopCheckout\PayPal\ApplePay\Exception\ApplePaySetupException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundException;
@@ -109,8 +112,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
         $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
 
         $this->ajaxDie(true);
@@ -756,8 +759,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSavePaypalButtonConfiguration()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
 
         $this->ajaxDie(true);
@@ -1062,6 +1065,29 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         header('Content-Length: ' . $file->getSize());
         readfile($file->getRealPath());
         exit;
+    }
+
+    public function ajaxProcessSetupApplePay()
+    {
+        /** @var AppleSetup $appleSetup */
+        $appleSetup = $this->module->getService(AppleSetup::class);
+
+        try {
+            $appleSetup->setup();
+        } catch (ApplePaySetupException $e) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                ],
+            ]);
+        }
+
+        $this->exitWithResponse([
+            'status' => true,
+        ]);
     }
 
     public function ajaxDie($value = null, $controller = null, $method = null)

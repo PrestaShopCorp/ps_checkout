@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,10 +21,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
@@ -33,28 +32,28 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrde
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class UpdatePayPalOrderCommandHandler
 {
     public function __construct(
         private MaaslandHttpClient $httpClient,
         private PayPalOrderProvider $paypalOrderProvider,
-        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
-    ) {}
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber,
+    ) {
+    }
 
     /**
      * @param UpdatePayPalOrderCommand $command
      *
      * @return void
      *
-     * @throws CartException|PayPalException|PayPalOrderException|PsCheckoutException|Exception
+     * @throws CartException|PayPalException|PayPalOrderException|PsCheckoutException|\Exception
      */
     public function __invoke(UpdatePayPalOrderCommand $command)
     {
         try {
             $paypalOrder = $this->paypalOrderProvider->getById($command->getPayPalOrderId()->getValue());
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return;
         }
 

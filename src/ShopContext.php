@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -28,7 +29,8 @@ use PrestaShop\Module\PrestashopCheckout\Environment\Env;
 class ShopContext
 {
     public function __construct(private Env $env)
-    {}
+    {
+    }
 
     /**
      * Check if the module is installed on ready or download

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,16 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Provider;
 
-use Ps_checkout;
-
 class PaymentMethodLogoProvider
 {
     /**
-     * @var Ps_checkout
+     * @var \Ps_checkout
      */
     private $module;
 
-    public function __construct(Ps_checkout $module)
+    public function __construct(\Ps_checkout $module)
     {
         $this->module = $module;
     }

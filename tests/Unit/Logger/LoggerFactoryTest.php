@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,12 +21,10 @@
 
 namespace Tests\Unit\Logger;
 
-use Generator;
 use Monolog\Handler\HandlerInterface;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
-use TypeError;
 
 class LoggerFactoryTest extends TestCase
 {
@@ -54,14 +53,14 @@ class LoggerFactoryTest extends TestCase
             $this->expectException(PsCheckoutException::class);
             $this->expectExceptionCode(PsCheckoutException::UNKNOWN);
         } else {
-            $this->expectException(TypeError::class);
+            $this->expectException(\TypeError::class);
         }
 
         new LoggerFactory($data['name'], $data['loggerHandler']);
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getValidValue()
     {
@@ -72,7 +71,7 @@ class LoggerFactoryTest extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getInvalidValue()
     {

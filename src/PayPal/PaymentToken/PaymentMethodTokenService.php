@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken;
 
-use Exception;
 use GuzzleHttp\Psr7\Request;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
@@ -51,7 +51,7 @@ class PaymentMethodTokenService
      *
      * @return array
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function fetchPaymentMethodTokens(PayPalCustomerId $customerId)
     {
@@ -62,12 +62,12 @@ class PaymentMethodTokenService
             $data = json_decode($response->getBody(), true);
 
             if (empty($data['payment_tokens'])) {
-                throw new Exception('Failed to fetch PayPal Payment Method tokens from response.');
+                throw new \Exception('Failed to fetch PayPal Payment Method tokens from response.');
             }
 
             return $data['payment_tokens'];
-        } catch (Exception $exception) {
-            throw new Exception('Failed to fetch PayPal Payment Method tokens.', 0, $exception);
+        } catch (\Exception $exception) {
+            throw new \Exception('Failed to fetch PayPal Payment Method tokens.', 0, $exception);
         }
     }
 
@@ -77,10 +77,10 @@ class PaymentMethodTokenService
             $response = $this->checkoutHttpClient->deletePaymentToken($this->payPalConfiguration->getMerchantId(), $paymentTokenId);
 
             if ($response->getStatusCode() !== 204) {
-                throw new Exception('Failed to delete payment token', $response->getStatusCode());
+                throw new \Exception('Failed to delete payment token', $response->getStatusCode());
             }
-        } catch (Exception $exception) {
-            throw new Exception('Failed to delete payment token', 0, $exception);
+        } catch (\Exception $exception) {
+            throw new \Exception('Failed to delete payment token', 0, $exception);
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventProcessor;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler;
@@ -61,8 +61,9 @@ class PayPalOrderEventProcessor
         private SavePayPalOrderCommandHandler $savePayPalOrderCommandHandler,
         private SaveCheckoutCommandHandler $saveCheckoutCommandHandler,
         private SavePayPalOrderStatusCommandHandler $savePayPalOrderStatusCommandHandler,
-        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-    ) {}
+        private UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
+    ) {
+    }
 
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {
@@ -71,7 +72,7 @@ class PayPalOrderEventProcessor
         try {
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderByCartId($event->getCartId()->getValue());
             $this->payPalOrderRepository->deletePayPalOrder($payPalOrder->getId());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $this->savePayPalOrderCommandHandler->handle(new SavePayPalOrderCommand(
@@ -111,7 +112,7 @@ class PayPalOrderEventProcessor
 
         try {
             $this->savePayPalOrderCommandHandler->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
         }
 
         $this->savePayPalOrderStatusCommandHandler->handle(new SavePayPalOrderStatusCommand(
@@ -134,7 +135,7 @@ class PayPalOrderEventProcessor
 
         try {
             $this->savePayPalOrderCommandHandler->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
         }
 
         $this->savePayPalOrderStatusCommandHandler->handle(new SavePayPalOrderStatusCommand(

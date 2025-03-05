@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
@@ -30,15 +30,16 @@ class GetPayPalGetUserIdTokenQueryHandler
     public function __construct(
         private OAuthService $OAuthService,
         private PayPalCustomerRepository $customerRepository,
-        private PayPalConfiguration $payPalConfiguration
-    ) {}
+        private PayPalConfiguration $payPalConfiguration,
+    ) {
+    }
 
     /**
      * @param GetPayPalGetUserIdTokenQuery $query
      *
      * @return GetPayPalGetUserIdTokenQueryResult
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function __invoke(GetPayPalGetUserIdTokenQuery $query)
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -28,7 +29,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 class PayPalOrderProvider
 {
     public function __construct(private ChainAdapter $orderPayPalCache)
-    {}
+    {
+    }
 
     /**
      * @param string $id PayPal Order Id

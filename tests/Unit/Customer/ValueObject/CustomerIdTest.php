@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,6 @@ namespace Tests\Unit\Customer\ValueObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use stdClass;
 
 class CustomerIdTest extends TestCase
 {
@@ -51,7 +51,7 @@ class CustomerIdTest extends TestCase
             [3.14],
             [[]],
             [false],
-            [new stdClass()],
+            [new \stdClass()],
             [-1],
             [0],
         ];

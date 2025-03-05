@@ -287,4 +287,4 @@ $RECYCLE.BIN/
 .php-cs-fixer.cache
 
 # PHPUnit
-./tests/Unit/.phpunit.result.cache
+tests/Unit/.phpunit.result.cache

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,19 +21,17 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order;
 
-use Order;
-
 class OrderDataProvider
 {
     /**
-     * @var Order
+     * @var \Order
      */
     private $order;
 
     /**
-     * @param Order $order
+     * @param \Order $order
      */
-    public function __construct(Order $order)
+    public function __construct(\Order $order)
     {
         $this->order = $order;
     }

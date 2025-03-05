@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -154,13 +155,16 @@ class CreateOrderPayloadBuilderTest extends TestCase
 
         $this->assertEquals(
             $amount,
-            $breakdownItemTotal
-            + $breakdownTaxTotal
-            + $breakdownShipping
-            + $breakdownHandling
-            + $breakdownInsurance
-            - $breakdownShippingDiscount
-            - $breakdownDiscount,
+            round(
+                $breakdownItemTotal
+                + $breakdownTaxTotal
+                + $breakdownShipping
+                + $breakdownHandling
+                + $breakdownInsurance
+                - $breakdownShippingDiscount
+                - $breakdownDiscount,
+                2
+            ),
             'amount value not equals'
         );
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -38,7 +38,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenC
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
 class OrderDispatcher implements Dispatcher
@@ -71,8 +70,8 @@ class OrderDispatcher implements Dispatcher
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 
-        /** @var Ps_checkout $module */
-        $module = Module::getInstanceByName('ps_checkout');
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $module->getService(SymfonyEventDispatcherAdapter::class);

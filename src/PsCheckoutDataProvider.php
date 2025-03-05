@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,16 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PsCheckoutCart;
-
 class PsCheckoutDataProvider
 {
     /**
-     * @var PsCheckoutCart
+     * @var \PsCheckoutCart
      */
     private $checkoutData;
 
-    public function __construct(PsCheckoutCart $checkoutCart)
+    public function __construct(\PsCheckoutCart $checkoutCart)
     {
         $this->checkoutData = $checkoutCart;
     }

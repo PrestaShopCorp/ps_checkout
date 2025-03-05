@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,20 +21,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PsCheckoutCart;
 
 class SavePayPalOrderStatusCommandHandler
 {
     public function __construct(
         private PsCheckoutCartRepository $psCheckoutCartRepository,
-        private PayPalOrderRepository $payPalOrderRepository
-    ) {}
+        private PayPalOrderRepository $payPalOrderRepository,
+    ) {
+    }
 
     public function __invoke(SavePayPalOrderStatusCommand $command)
     {
@@ -52,11 +52,11 @@ class SavePayPalOrderStatusCommandHandler
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderPayPalId());
             $payPalOrder->setStatus($command->getOrderPayPalStatus());
             $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
         }
 
         try {
-            /** @var PsCheckoutCart|false $psCheckoutCart */
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
 
             if (false === $psCheckoutCart) {
@@ -66,7 +66,7 @@ class SavePayPalOrderStatusCommandHandler
             $psCheckoutCart->paypal_order = $command->getOrderPayPalId()->getValue();
             $psCheckoutCart->paypal_status = $command->getOrderPayPalStatus();
             $this->psCheckoutCartRepository->save($psCheckoutCart);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $sessionId = isset($psCheckoutCart) ? $psCheckoutCart->getIdCart() : $command->getOrderPayPalId()->getValue();
             throw new PsCheckoutSessionException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($sessionId, true)), PsCheckoutSessionException::UPDATE_FAILED, $exception);
         }

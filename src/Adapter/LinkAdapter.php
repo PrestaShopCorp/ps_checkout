@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
-
 /**
  * Link adapter
  */
@@ -34,7 +33,7 @@ class LinkAdapter
      */
     private $link;
 
-    public function __construct(\Link $link = null)
+    public function __construct(?\Link $link = null)
     {
         if (null === $link) {
             $link = new \Link();

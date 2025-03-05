@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command;
 
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundException;
-use Validate;
 
 class RefundPayPalCaptureCommand
 {
@@ -52,11 +52,11 @@ class RefundPayPalCaptureCommand
      */
     public function __construct($orderPayPalId, $captureId, $currencyCode, $amount)
     {
-        if (empty($orderPayPalId) || !Validate::isGenericName($orderPayPalId)) {
+        if (empty($orderPayPalId) || !\Validate::isGenericName($orderPayPalId)) {
             throw new PayPalRefundException('', PayPalRefundException::INVALID_ORDER_ID);
         }
 
-        if (empty($captureId) || !Validate::isGenericName($captureId)) {
+        if (empty($captureId) || !\Validate::isGenericName($captureId)) {
             throw new PayPalRefundException('', PayPalRefundException::INVALID_TRANSACTION_ID);
         }
 
@@ -65,7 +65,7 @@ class RefundPayPalCaptureCommand
             throw new PayPalRefundException('', PayPalRefundException::INVALID_CURRENCY);
         }
 
-        if (empty($amount) || !Validate::isPrice($amount) || $amount <= 0) {
+        if (empty($amount) || !\Validate::isPrice($amount) || $amount <= 0) {
             throw new PayPalRefundException('', PayPalRefundException::INVALID_AMOUNT);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -35,7 +36,7 @@ function upgrade_module_3_0_0($module)
     $savedShopId = Shop::getContextShopID();
     $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
-    $shopsList = \Shop::getShops(false, null, true);
+    $shopsList = Shop::getShops(false, null, true);
 
     $module->registerHook('actionObjectShopDeleteAfter', $shopsList);
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,7 +30,7 @@ class PayPalOrderTranslationProvider
 
     public function __construct(
         Translations $translations,
-        private FundingSourceTranslationProvider $fundingSourceTranslationProvider
+        private FundingSourceTranslationProvider $fundingSourceTranslationProvider,
     ) {
         $this->translations = current($translations->getTranslations());
     }

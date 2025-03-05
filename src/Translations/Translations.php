@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,13 +21,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Translations;
 
-use Context;
-use Ps_checkout;
-
 class Translations
 {
-    public function __construct(private Ps_checkout $psCheckout)
-    {}
+    public function __construct(private \Ps_checkout $psCheckout)
+    {
+    }
 
     /**
      * Create all translations (backoffice)
@@ -35,7 +34,7 @@ class Translations
      */
     public function getTranslations()
     {
-        $locale = Context::getContext()->language->iso_code;
+        $locale = \Context::getContext()->language->iso_code;
         $linkTranslations = new LinksTranslations($locale);
 
         $translations[$locale] = [
@@ -431,7 +430,7 @@ class Translations
                     'submitIdea' => $this->psCheckout->l('Submit idea', 'translations'),
                 ],
                 'dispute' => [
-                    'pendingDispute' => '{disputeCount}' . ' ' . $this->psCheckout->l('pending dispute(s)', 'translations'),
+                    'pendingDispute' => '{disputeCount} ' . $this->psCheckout->l('pending dispute(s)', 'translations'),
                     'goToDispute' => $this->psCheckout->l('Go to the dispute management platform', 'translations'),
                 ],
                 'payment-status' => [

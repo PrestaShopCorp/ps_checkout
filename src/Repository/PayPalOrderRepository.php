@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,9 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use Db;
-use DbQuery;
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrderAuthorization;
@@ -34,8 +32,9 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\Payment
 
 class PayPalOrderRepository
 {
-    public function __construct(private Db $db)
-    {}
+    public function __construct(private \Db $db)
+    {
+    }
 
     /**
      * @param PayPalOrder $payPalOrder
@@ -48,25 +47,26 @@ class PayPalOrderRepository
     {
         try {
             return $this->db->insert(
-            PayPalOrder::TABLE,
-            [
-                'id' => pSQL($payPalOrder->getId()->getValue()),
-                'id_cart' => (int) $payPalOrder->getIdCart(),
-                'status' => pSQL($payPalOrder->getStatus()),
-                'intent' => pSQL($payPalOrder->getIntent()),
-                'funding_source' => pSQL($payPalOrder->getFundingSource()),
-                'payment_source' => pSQL(json_encode($payPalOrder->getPaymentSource())),
-                'environment' => pSQL($payPalOrder->getEnvironment()),
-                'is_card_fields' => (int) $payPalOrder->isCardFields(),
-                'is_express_checkout' => (int) $payPalOrder->isExpressCheckout(),
-                'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
-                'payment_token_id' => $payPalOrder->getPaymentTokenId() ? pSQL($payPalOrder->getPaymentTokenId()->getValue()) : null,
-            ],
-            false,
-            true,
-            Db::REPLACE
-        );
-        } catch (Exception $exception) {
+                PayPalOrder::TABLE,
+                [
+                    'id' => pSQL($payPalOrder->getId()->getValue()),
+                    'id_cart' => (int) $payPalOrder->getIdCart(),
+                    'status' => pSQL($payPalOrder->getStatus()),
+                    'intent' => pSQL($payPalOrder->getIntent()),
+                    'funding_source' => pSQL($payPalOrder->getFundingSource()),
+                    'payment_source' => pSQL(json_encode($payPalOrder->getPaymentSource())),
+                    'environment' => pSQL($payPalOrder->getEnvironment()),
+                    'is_card_fields' => (int) $payPalOrder->isCardFields(),
+                    'is_express_checkout' => (int) $payPalOrder->isExpressCheckout(),
+                    'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
+                    'payment_token_id' => $payPalOrder->getPaymentTokenId() ? pSQL($payPalOrder->getPaymentTokenId()->getValue()) : null,
+                    'tags' => pSQL(implode(',', $payPalOrder->getTags())),
+                ],
+                false,
+                true,
+                \Db::REPLACE
+            );
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while saving PayPal Order', 0, $exception);
         }
     }
@@ -81,12 +81,12 @@ class PayPalOrderRepository
     public function getPayPalOrderById(PayPalOrderId $payPalOrderId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrder::TABLE, 'o');
             $query->where(sprintf('o.`id` = "%s"', pSQL($payPalOrderId->getValue())));
             $queryResult = $this->db->getRow($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order', 0, $exception);
         }
 
@@ -94,19 +94,7 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
-        return new PayPalOrder(
-            $queryResult['id'],
-            (int) $queryResult['id_cart'],
-            $queryResult['intent'],
-            $queryResult['funding_source'],
-            $queryResult['status'],
-            json_decode($queryResult['payment_source'], true),
-            $queryResult['environment'],
-            $queryResult['is_card_fields'],
-            $queryResult['is_express_checkout'],
-            explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
-        );
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
     }
 
     /**
@@ -119,12 +107,12 @@ class PayPalOrderRepository
     public function getPayPalOrderByCartId($cartId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrder::TABLE, 'o');
             $query->where(sprintf('o.`id_cart` = %d', (int) $cartId));
             $queryResult = $this->db->getRow($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order', 0, $exception);
         }
 
@@ -132,6 +120,16 @@ class PayPalOrderRepository
             throw new PsCheckoutException('PayPal Order not found');
         }
 
+        return $this->buildPayPalOrderFromQueryResult($queryResult);
+    }
+
+    /**
+     * @param array $queryResult
+     *
+     * @return PayPalOrder
+     */
+    private function buildPayPalOrderFromQueryResult($queryResult)
+    {
         return new PayPalOrder(
             $queryResult['id'],
             (int) $queryResult['id_cart'],
@@ -143,7 +141,8 @@ class PayPalOrderRepository
             $queryResult['is_card_fields'],
             $queryResult['is_express_checkout'],
             explode(',', $queryResult['customer_intent']),
-            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null
+            $queryResult['payment_token_id'] ? new PaymentTokenId($queryResult['payment_token_id']) : null,
+            explode(',', $queryResult['tags'])
         );
     }
 
@@ -162,7 +161,7 @@ class PayPalOrderRepository
             $this->db->delete(PayPalOrderRefund::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
             $this->db->delete(PayPalOrderCapture::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
             $this->db->delete(PayPalOrderPurchaseUnit::TABLE, sprintf('`id_order` = "%s"', pSQL($payPalOrderId->getValue())));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while deleting PayPal Order', 0, $exception);
         }
 
@@ -190,9 +189,9 @@ class PayPalOrderRepository
                 ],
                 false,
                 true,
-                Db::REPLACE
+                \Db::REPLACE
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while saving PayPal Order Authorization', 0, $exception);
         }
     }
@@ -207,12 +206,12 @@ class PayPalOrderRepository
     public function getPayPalOrderAuthorizations($payPalOrderId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrderAuthorization::TABLE, 'a');
             $query->where(sprintf('a.`id_order` = "%s"', pSQL($payPalOrderId)));
             $queryResult = $this->db->executeS($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order Authorization', 0, $exception);
         }
 
@@ -255,9 +254,9 @@ class PayPalOrderRepository
                 ],
                 false,
                 true,
-                Db::REPLACE
+                \Db::REPLACE
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while saving PayPal Order Capture', 0, $exception);
         }
     }
@@ -272,12 +271,12 @@ class PayPalOrderRepository
     public function getPayPalOrderCaptures($payPalOrderId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrderCapture::TABLE, 'c');
             $query->where(sprintf('c.`id_order` = "%s"', pSQL($payPalOrderId)));
             $queryResult = $this->db->executeS($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order Capture', 0, $exception);
         }
 
@@ -323,9 +322,9 @@ class PayPalOrderRepository
                 ],
                 false,
                 true,
-                Db::REPLACE
+                \Db::REPLACE
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while saving PayPal Order Refund', 0, $exception);
         }
     }
@@ -340,12 +339,12 @@ class PayPalOrderRepository
     public function getPayPalOrderRefunds($payPalOrderId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrderRefund::TABLE, 'r');
             $query->where(sprintf('r.`id_order` = "%s"', pSQL($payPalOrderId)));
             $queryResult = $this->db->executeS($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order Refund', 0, $exception);
         }
 
@@ -387,9 +386,9 @@ class PayPalOrderRepository
                 ],
                 false,
                 true,
-                Db::REPLACE
+                \Db::REPLACE
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while saving PayPal Order Purchase Unit', 0, $exception);
         }
     }
@@ -404,12 +403,12 @@ class PayPalOrderRepository
     public function getPayPalOrderPurchaseUnits($payPalOrderId)
     {
         try {
-            $query = new DbQuery();
+            $query = new \DbQuery();
             $query->select('*');
             $query->from(PayPalOrderPurchaseUnit::TABLE, 'p');
             $query->where(sprintf('p.`id_order` = "%s"', pSQL($payPalOrderId)));
             $queryResult = $this->db->executeS($query);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PsCheckoutException('Error while retrieve PayPal Order Purchase Unit', 0, $exception);
         }
 

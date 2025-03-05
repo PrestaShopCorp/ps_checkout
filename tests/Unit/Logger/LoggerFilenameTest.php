@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace Tests\Unit\Logger;
 
-use Generator;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename;
@@ -57,7 +57,7 @@ class LoggerFilenameTest extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getValidValue()
     {
@@ -68,7 +68,7 @@ class LoggerFilenameTest extends TestCase
     }
 
     /**
-     * @return Generator
+     * @return \Generator
      */
     public function getInvalidValue()
     {

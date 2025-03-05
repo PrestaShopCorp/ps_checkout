@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,8 +30,9 @@ class FundingSourcePresenter
     public function __construct(
         private FundingSourceTranslationProvider $translation,
         private CountryRepository $country,
-        private PaymentMethodLogoProvider $paymentMethodLogoProvider
-    ) {}
+        private PaymentMethodLogoProvider $paymentMethodLogoProvider,
+    ) {
+    }
 
     /**
      * @param FundingSourceEntity $entity

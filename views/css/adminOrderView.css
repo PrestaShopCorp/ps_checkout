@@ -133,7 +133,7 @@
   margin-bottom: 0;
   padding-bottom: 16px;
   display: grid;
-  grid-template-columns: 116px 1fr;
+  grid-template-columns: 130px 1fr;
   grid-column-gap: 16px;
   grid-row-gap: 8px;
 }
@@ -263,15 +263,12 @@
   background: rgba(56, 56, 56, 0.33);
 }
 
-#ps_checkout .balance-info-icon:after,
-#ps_checkout .environment-info-icon:after,
-#ps_checkout .seller-protection-info-icon:after{
-  font-style: normal;
-  font-family: "Material Icons";
-  content: "\E001";
+#ps_checkout i.material-icons{
+  font-size: 20px;
   display: inline-block;
   vertical-align: middle;
   color: #878787;
+  cursor: pointer;
 }
 .modal.ps-checkout-refund .modal-header{
   margin: 0 10px 10px 10px;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -24,8 +25,9 @@ class FundingSourceCollectionBuilder
 {
     public function __construct(
         private FundingSourceConfiguration $configuration,
-        private FundingSourceEligibilityConstraint $eligibilityConstraint
-    ){}
+        private FundingSourceEligibilityConstraint $eligibilityConstraint,
+    ) {
+    }
 
     /**
      * Create the funding sources collection

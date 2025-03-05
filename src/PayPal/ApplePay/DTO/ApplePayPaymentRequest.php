@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -33,7 +34,7 @@ class ApplePayPaymentRequest
     /**
      * @var ApplePayLineItem|null
      */
-    private $total = null;
+    private $total;
     /**
      * @var ApplePayLineItem[]
      */
@@ -42,11 +43,11 @@ class ApplePayPaymentRequest
     /**
      * @var ApplePayPaymentContact|null
      */
-    private $shippingContact = null;
+    private $shippingContact;
     /**
      * @var ApplePayPaymentContact|null
      */
-    private $billingContact = null;
+    private $billingContact;
 
     /**
      * @return string

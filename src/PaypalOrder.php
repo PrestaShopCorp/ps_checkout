@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,8 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use Exception;
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
@@ -29,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder as PayP
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
-use Ps_checkout;
 
 /**
  * Allow to instantiate a paypal order
@@ -56,8 +54,8 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        /** @var Ps_checkout $module */
-        $module = Module::getInstanceByName('ps_checkout');
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
         /** @var MaaslandHttpClient $maaslandHttpClient */
         $maaslandHttpClient = $module->getService(MaaslandHttpClient::class);
@@ -70,7 +68,7 @@ class PaypalOrder
 
         try {
             $order = $payPalOrderRepository->getPayPalOrderById(new PayPalOrderId($id));
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $order = null;
         }
 
@@ -104,7 +102,7 @@ class PaypalOrder
                     'paypal_order = "' . pSQL($id) . '"'
                 );
                 \Db::getInstance()->update(
-                    \PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder::TABLE,
+                    PayPalOrderEntity::TABLE,
                     [
                         'status' => \PsCheckoutCart::STATUS_CANCELED,
                     ],

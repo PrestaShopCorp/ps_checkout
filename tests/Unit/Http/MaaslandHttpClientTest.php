@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -112,6 +113,14 @@ class MaaslandHttpClientTest extends TestCase
     }
 
     /**
+     * @dataProvider notAuthorizedErrorsProvider
+     */
+    public function testNotAuthorizedErrorsCaptureOrderLegacy($errorName, $errorCode)
+    {
+        $this->handleTestErrorsCaptureOrder(401, $errorName, $errorCode);
+    }
+
+    /**
      * @param int $statusCode
      * @param string $errorName
      * @param int $errorCode
@@ -132,8 +141,29 @@ class MaaslandHttpClientTest extends TestCase
         $httpClient->method('sendRequest')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
         $this->expectExceptionCode($errorCode);
         $this->expectException(PayPalException::class);
-        $checkoutHttpClient = new MaaslandHttpClient($httpClient);
-        $checkoutHttpClient->createOrder([]);
+        $maaslandHttpClient = new MaaslandHttpClient($httpClient);
+        $maaslandHttpClient->createOrder([]);
+    }
+
+    private function handleTestErrorsCaptureOrder($statusCode, $errorName, $errorCode, $legacy = false)
+    {
+        $error = $this->getErrorResponse($statusCode, $errorName, $legacy);
+        $requestMock = $this->createMock(RequestInterface::class);
+        $streamMock = $this->createMock(StreamInterface::class);
+        $streamMock->method('__toString')->willReturn(json_encode($error));
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $responseMock->method('getStatusCode')->willReturn($statusCode);
+        $responseMock->method('getBody')->willReturn($streamMock);
+        $httpClient = $this->createMock(HttpClientInterface::class);
+        $httpClient->method('sendRequest')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
+        $this->expectExceptionCode($errorCode);
+        $this->expectException(PayPalException::class);
+        $maaslandHttpClient = new MaaslandHttpClient($httpClient);
+
+        $httpClient->expects($this->once())
+            ->method('sendRequest');
+
+        $maaslandHttpClient->captureOrder([]);
     }
 
     private function getInvalidRequestError($issueError)

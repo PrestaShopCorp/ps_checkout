@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,7 +30,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class PaypalModule implements PresenterInterface
 {
     public function __construct(private PayPalConfiguration $configuration)
-    {}
+    {
+    }
 
     /**
      * Present the paypal module (vuex)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Shop;
 
-use Context;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use Shop;
 
@@ -36,11 +36,11 @@ class ShopProvider
      */
     public function getIdentifier()
     {
-        /** @var Shop|null $shop */
-        $shop = Context::getContext()->shop;
+        /** @var \Shop|null $shop */
+        $shop = \Context::getContext()->shop;
 
-        if ($shop instanceof Shop) {
-            return (int) Context::getContext()->shop->id;
+        if ($shop instanceof \Shop) {
+            return (int) \Context::getContext()->shop->id;
         }
 
         throw new PsCheckoutException('Unable to retrieve current shop identifier.');
@@ -53,11 +53,11 @@ class ShopProvider
      */
     public function getGroupIdentifier()
     {
-        /** @var Shop|null $shop */
-        $shop = Context::getContext()->shop;
+        /** @var \Shop|null $shop */
+        $shop = \Context::getContext()->shop;
 
-        if ($shop instanceof Shop) {
-            return (int) Context::getContext()->shop->id_shop_group;
+        if ($shop instanceof \Shop) {
+            return (int) \Context::getContext()->shop->id_shop_group;
         }
 
         throw new PsCheckoutException('Unable to retrieve current shop group identifier.');

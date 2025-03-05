@@ -30,7 +30,8 @@ use Symfony\Component\Cache\Adapter\ChainAdapter;
 class GetPayPalOrderForOrderConfirmationQueryHandler
 {
     public function __construct(private ChainAdapter $orderPayPalCache)
-    {}
+    {
+    }
 
     public function __invoke(GetPayPalOrderForOrderConfirmationQuery $query)
     {

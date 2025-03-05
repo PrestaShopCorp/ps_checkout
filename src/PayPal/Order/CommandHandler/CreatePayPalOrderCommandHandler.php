@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -38,7 +38,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class CreatePayPalOrderCommandHandler
 {
@@ -47,8 +46,9 @@ class CreatePayPalOrderCommandHandler
         private PrestaShopContext $prestaShopContext,
         private PayPalCustomerRepository $payPalCustomerRepository,
         private PaymentTokenRepository $paymentTokenRepository,
-        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber
-    ) {}
+        private PayPalOrderEventSubscriber $payPalOrderEventSubscriber,
+    ) {
+    }
 
     public function __invoke(CreatePayPalOrderCommand $command)
     {
@@ -66,7 +66,7 @@ class CreatePayPalOrderCommandHandler
      * @throws InvalidRequestException
      * @throws NotAuthorizedException
      * @throws UnprocessableEntityException
-     * @throws Exception
+     * @throws \Exception
      * @throws PsCheckoutException
      */
     public function handle(CreatePayPalOrderCommand $command)

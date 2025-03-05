@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -31,7 +32,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
 class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
@@ -45,8 +45,9 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
         private PsAccountRepository $psAccountRepository,
         private PrestaShopContext $prestaShopContext,
         private LoggerConfiguration $loggerConfiguration,
-        private LoggerInterface $psCheckoutLogger
-    ) {}
+        private LoggerInterface $psCheckoutLogger,
+    ) {
+    }
 
     /**
      * @return array
@@ -58,14 +59,14 @@ class CheckoutClientConfigurationBuilder implements HttpClientConfigurationBuild
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
-//                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                //                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
                 'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
                 'Checkout-Hook-Url' => $this->router->getDispatchWebhookLink($this->prestaShopContext->getShopId()),
                 'Checkout-Bn-Code' => $this->shopContext->getBnCode(),
-                'Checkout-Module-Version' => Ps_checkout::VERSION, // version of the module
+                'Checkout-Module-Version' => \Ps_checkout::VERSION, // version of the module
                 'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,8 @@ namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 class FundingSourceConfiguration
 {
     public function __construct(private FundingSourceConfigurationRepository $repository)
-    {}
+    {
+    }
 
     /**
      * Get the funding source position stored in database configuration if exists or the default position

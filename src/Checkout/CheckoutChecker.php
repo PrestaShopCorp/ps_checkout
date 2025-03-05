@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,17 +22,21 @@
 namespace PrestaShop\Module\PrestashopCheckout\Checkout;
 
 use Cart;
-use Configuration;
-use Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Psr\Log\LoggerInterface;
-use Validate;
 
 class CheckoutChecker
 {
-    public function __construct(private LoggerInterface $psCheckoutLogger)
-    {}
+    public function __construct(
+        private LoggerInterface $psCheckoutLogger,
+        private PayPalOrderRepository $payPalOrderRepository,
+        private PayPalConfiguration $payPalConfiguration,
+    ) {
+    }
 
     /**
      * @param int $cartId
@@ -46,6 +51,8 @@ class CheckoutChecker
         if ($orderPayPal['status'] === 'COMPLETED') {
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
+
+        $contingencies = $this->payPalConfiguration->getHostedFieldsContingencies();
 
         $paymentSource = isset($orderPayPal['payment_source']) ? key($orderPayPal['payment_source']) : '';
 
@@ -64,7 +71,7 @@ class CheckoutChecker
                             (string) Card3DSecure::RETRY,
                         ],
                         [
-                            Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            $contingencies === 'SCA_ALWAYS' ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
                             'Proceed, liability shift is possible',
                             'Rejected',
                             'Retry, ask customer to retry',
@@ -80,16 +87,24 @@ class CheckoutChecker
                 case Card3DSecure::RETRY:
                     throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
                 case Card3DSecure::NO_DECISION:
-                    if (Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                    if ($contingencies === 'SCA_ALWAYS') {
                         throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                    }
+                    if ($contingencies === 'SCA_WHEN_REQUIRED') {
+                        $payPalOrder = $this->payPalOrderRepository->getPayPalOrderByCartId($cartId);
+                        try {
+                            $payPalOrder->addTag(PayPalOrder::THREE_D_SECURE_NOT_REQUIRED);
+                            $this->payPalOrderRepository->savePayPalOrder($payPalOrder);
+                        } catch (PsCheckoutException $e) {
+                        }
                     }
                     break;
             }
         }
 
-        $cart = new Cart($cartId);
+        $cart = new \Cart($cartId);
 
-        if (!Validate::isLoadedObject($cart)) {
+        if (!\Validate::isLoadedObject($cart)) {
             throw new PsCheckoutException(sprintf('Cart with id %s not found.', var_export($cartId, true)), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
@@ -99,18 +114,18 @@ class CheckoutChecker
             throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
-        if ($cart->isAllProductsInStock() !== true ||
-            ($cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-            ($cart->checkAllProductsHaveMinimalQuantities() !== true)
+        if ($cart->isAllProductsInStock() !== true
+            || ($cart->checkAllProductsAreStillAvailableInThisState() !== true)
+            || ($cart->checkAllProductsHaveMinimalQuantities() !== true)
         ) {
             throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }
 
-        if (!Customer::customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
+        if (!\Customer::customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
             throw new PsCheckoutException(sprintf('Invoice address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_invoice, true)), PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
-        if (!$cart->isVirtualCart() && !Customer::customerHasAddress($cart->id_customer, $cart->id_address_delivery)) {
+        if (!$cart->isVirtualCart() && !\Customer::customerHasAddress($cart->id_customer, $cart->id_address_delivery)) {
             throw new PsCheckoutException(sprintf('Delivery address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID);
         }
 
@@ -120,7 +135,7 @@ class CheckoutChecker
 
         // Check if PayPal order amount is the same than the cart amount : we tolerate a difference of more or less 0.05
         $paypalOrderAmount = (float) sprintf('%01.2f', $orderPayPal['purchase_units'][0]['amount']['value']);
-        $cartAmount = (float) sprintf('%01.2f', $cart->getOrderTotal(true, Cart::BOTH));
+        $cartAmount = (float) sprintf('%01.2f', $cart->getOrderTotal(true, \Cart::BOTH));
 
         if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
             throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);

@@ -21,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
@@ -35,7 +34,8 @@ use Symfony\Component\Cache\Adapter\ChainAdapter;
 class GetPayPalOrderForCheckoutCompletedQueryHandler
 {
     public function __construct(private ChainAdapter $orderPayPalCache)
-    {}
+    {
+    }
 
     public function __invoke(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
@@ -56,7 +56,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             $this->orderPayPalCache->save($cacheItem);
         } catch (HttpTimeoutException $exception) {
             throw $exception;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $payPalOrderId), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -29,6 +30,7 @@ class PayPalOrder
     const CUSTOMER_INTENT_VAULT = 'VAULT';
     const CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
     const CUSTOMER_INTENT_USES_VAULTING = 'USES_VAULTING';
+    const THREE_D_SECURE_NOT_REQUIRED = '3DS_NOT_REQUIRED';
 
     /**
      * @var PayPalOrderId
@@ -74,9 +76,25 @@ class PayPalOrder
      * @var PaymentTokenId|null
      */
     private $paymentTokenId;
+    /**
+     * @var array
+     */
+    private $tags;
 
-    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = [], $paymentTokenId = null)
-    {
+    public function __construct(
+        $id,
+        $idCart,
+        $intent,
+        $fundingSource,
+        $status,
+        $paymentSource = [],
+        $environment = 'LIVE',
+        $isCardFields = false,
+        $isExpressCheckout = false,
+        $customerIntent = [],
+        $paymentTokenId = null,
+        $tags = [],
+    ) {
         $this->id = new PayPalOrderId($id);
         $this->idCart = $idCart;
         $this->intent = $intent;
@@ -88,6 +106,7 @@ class PayPalOrder
         $this->isExpressCheckout = (bool) $isExpressCheckout;
         $this->customerIntent = $customerIntent;
         $this->paymentTokenId = $paymentTokenId;
+        $this->tags = $tags;
     }
 
     /**
@@ -316,5 +335,33 @@ class PayPalOrder
     public function setPaymentTokenId($paymentTokenId)
     {
         $this->paymentTokenId = $paymentTokenId;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     *
+     * @return void
+     */
+    public function setTags(array $tags)
+    {
+        $this->tags = $tags;
+    }
+
+    /**
+     * @param string $tag
+     *
+     * @return void
+     */
+    public function addTag($tag)
+    {
+        $this->tags[] = $tag;
     }
 }

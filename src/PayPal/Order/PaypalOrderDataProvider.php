@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -36,7 +37,7 @@ class PaypalOrderDataProvider
     /**
      * @param array $order
      */
-    public function __construct(array $order, PayPalOrder $payPalOrder = null)
+    public function __construct(array $order, ?PayPalOrder $payPalOrder = null)
     {
         $this->orderData = $order;
         $this->payPalOrder = $payPalOrder;
@@ -148,9 +149,9 @@ class PaypalOrderDataProvider
         if ($this->payPalOrder && isset($this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()])) {
             $paymentSource = $this->payPalOrder->getPaymentSource()[$this->payPalOrder->getFundingSource()];
 
-            return isset($paymentSource['attributes']['vault']['id']) &&
-                isset($paymentSource['attributes']['vault']['status']) &&
-                $paymentSource['attributes']['vault']['status'] === 'VAULTED';
+            return isset($paymentSource['attributes']['vault']['id'])
+                && isset($paymentSource['attributes']['vault']['status'])
+                && $paymentSource['attributes']['vault']['status'] === 'VAULTED';
         }
 
         return false;

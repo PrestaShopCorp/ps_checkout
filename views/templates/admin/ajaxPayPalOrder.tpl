@@ -61,12 +61,12 @@
           <dd data-test="total-value">{$orderPayPal.total}</dd>
           <dt data-grid-area="balance">
             {l s='Balance' mod='ps_checkout'}
-            <i class="balance-info-icon" title="{l s='Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds' mod='ps_checkout'}"></i>
+            <i class="material-icons" title="{l s='Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds' mod='ps_checkout'}">info</i>
           </dt>
           <dd data-test="balance-value">{$orderPayPal.balance}</dd>
           <dt data-grid-area="environment">
             {l s='Environment' mod='ps_checkout'}
-            <i class="environment-info-icon" title="{l s='The environment in which the transaction was made: Test or Production' mod='ps_checkout'}"></i>
+            <i class="material-icons" title="{l s='The environment in which the transaction was made: Test or Production' mod='ps_checkout'}">info</i>
           </dt>
           <dd data-grid-area="environment-value">
             <span data-test="payment-env-value" class="badge rounded badge-paypal-environment-{if $isProductionEnv}live{else}sandbox{/if}" data-value="{$psCheckoutCart->getEnvironment()|escape:'html':'UTF-8'}">
@@ -82,7 +82,11 @@
           {if $psCheckoutCart->paypal_funding === 'card'}
             <dt data-grid-area="card-sca">{l s='3D Secure' mod='ps_checkout'}</dt>
             <dd data-grid-area="card-sca-value">
-              {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
+              {if $orderPayPal.is3DSNotRequired}
+                <span class="badge rounded badge-warning">
+                  {l s='Not required' mod='ps_checkout'}
+                </span>
+              {elseif $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
                 <span class="badge rounded badge-success">
                   {l s='Success' mod='ps_checkout'}
                 </span>
@@ -112,6 +116,9 @@
         </dl>
         {if $psCheckoutCart->paypal_funding === 'card' && !$orderPayPal.isLiabilityShifted}
           <div class="liability-explanation">
+            {if $orderPayPal.is3DSNotRequired}
+              {l s='Your 3D Secure settings for this transaction were set to "Strong Customer Authentication (SCA) when required", but the current transaction does not require it as per the regulation.' mod='ps_checkout'}
+            {/if}
             {l s='The bank issuer declined the liability shift. We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
           </div>
         {/if}
@@ -184,7 +191,7 @@
                     {if !empty($orderPayPalTransaction.seller_protection)}
                       <dt>
                         {l s='Seller protection' mod='ps_checkout'}
-                        <i class="seller-protection-info-icon" title="{$orderPayPalTransaction.seller_protection.help|escape:'html':'UTF-8'}"></i>
+                        <i class="material-icons" title="{$orderPayPalTransaction.seller_protection.help|escape:'html':'UTF-8'}">info</i>
                       </dt>
                       <dd>
                       <span class="badge rounded badge-{$orderPayPalTransaction.seller_protection.class|escape:'html':'UTF-8'}">
