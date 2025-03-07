@@ -20,11 +20,16 @@
 
 namespace Tests\Unit\PayPal\Order\CommandHandler;
 
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Http\Client\Exception\HttpException;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
@@ -37,6 +42,9 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
@@ -88,6 +96,10 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $expectedEvents[] = [new PaymentTokenCreatedEvent($resource, $merchantId)];
         }
 
+        if (isset($order['payment_source']['card'])) {
+            $expectedEvents[] = [new PaymentTokenUpdatedEvent($order, $merchantId)];
+        }
+
         switch ($order['status']) {
             case 'COMPLETED':
                 $expectedEvents[] = [new PayPalOrderCompletedEvent($order['id'], $order)];
@@ -134,7 +146,7 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
         $commandHandler = new CapturePayPalOrderCommandHandler(
             $maaslandHttpClient,
@@ -144,9 +156,71 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
             $payPalCustomerRepository,
             $payPalOrderRepository,
             $payPalConfiguration,
-            $loggerMock
+            $logger
         );
         $commandHandler->handle(new CapturePayPalOrderCommand($order['id'], $fundingSource));
+    }
+
+    /**
+     * @dataProvider captureErrorProvider
+     */
+    public function testCapturePayPalOrderResponseDeletesPaymentToken(array $request, $errorCode, $response)
+    {
+        $merchantId = '12345';
+
+        $httpClient = $this->createMock(HttpClientInterface::class);
+
+        $maaslandHttpClient = new MaaslandHttpClient($httpClient);
+
+        $httpRequest = new Request('POST', '/payments/order/capture', [], json_encode($request));
+        $httpResponse = new Response($errorCode, [], $response);
+        $exception = new HttpException('', $httpRequest, $httpResponse);
+        $httpClient->method('sendRequest')->willThrowException($exception);
+
+        $orderPayPalCache = $this->createMock(CacheInterface::class);
+
+        $prestaShopContext = $this->createMock(PrestaShopContext::class);
+        $payPalCustomerRepository = $this->createMock(PayPalCustomerRepository::class);
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $payPalOrderRepository = $this->createMock(PayPalOrderRepository::class);
+
+        $payPalOrder = new PayPalOrder(
+            $request['id'], 1, 'CAPTURE', $request['funding_source'], 'APPROVED'
+        );
+
+        $paymentTokenId = new PaymentTokenId('XHAHASJNSSD21');
+        $payPalOrder->setPaymentTokenId($paymentTokenId);
+
+        $payPalOrderRepository->method('getPayPalOrderById')->willReturn($payPalOrder);
+
+        $payPalConfiguration = $this->createMock(PayPalConfiguration::class);
+        $payPalConfiguration->method('getMerchantId')->willReturn($merchantId);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $commandHandler = new CapturePayPalOrderCommandHandler(
+            $maaslandHttpClient,
+            $eventDispatcher,
+            $orderPayPalCache,
+            $prestaShopContext,
+            $payPalCustomerRepository,
+            $payPalOrderRepository,
+            $payPalConfiguration,
+            $logger
+        );
+
+        $expectedEvents = [new PaymentTokenDeletedEvent(['id' => $paymentTokenId->getValue()])];
+
+        $eventDispatcher->expects($this->exactly(count($expectedEvents)))
+            ->method('dispatch')
+            ->withConsecutive(...$expectedEvents);
+
+        $this->expectException(PayPalException::class);
+        $this->expectExceptionCode(PayPalException::CARD_CLOSED);
+
+        $commandHandler->handle(new CapturePayPalOrderCommand($request['id'], $request['funding_source']));
     }
 
     public function completedPayPalOrderProvider()
@@ -1838,6 +1912,212 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
                             ],
                     ],
             ]],
+            [[
+                'id' => '92163488YM718505A',
+                'intent' => 'CAPTURE',
+                'status' => 'COMPLETED',
+                'payment_source' => [
+                    'card' => [
+                        'name' => 'aaa vvv',
+                        'last_digits' => '4424',
+                        'expiry' => '2025-01',
+                        'brand' => 'VISA',
+                        'available_networks' => [
+                            0 => 'VISA',
+                        ],
+                        'type' => 'DEBIT',
+                        'authentication_result' => [
+                            'liability_shift' => 'POSSIBLE',
+                            'three_d_secure' => [
+                                'enrollment_status' => 'Y',
+                                'authentication_status' => 'Y',
+                            ],
+                        ],
+                        'bin_details' => [
+                            'bin' => '41470443',
+                            'bin_country_code' => 'FR',
+                        ],
+                    ],
+                ],
+                'purchase_units' => [
+                    0 => [
+                        'reference_id' => '1',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '43.20',
+                            'breakdown' => [
+                                'item_total' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '29.00',
+                                ],
+                                'shipping' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '8.40',
+                                ],
+                                'handling' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '0.00',
+                                ],
+                                'tax_total' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '5.80',
+                                ],
+                            ],
+                        ],
+                        'payee' => [
+                            'merchant_id' => 'U5XK34UWT2AFA',
+                            'display_data' => [
+                                'brand_name' => 'PrestaShop',
+                            ],
+                        ],
+                        'payment_instruction' => [
+                            'disbursement_mode' => 'INSTANT',
+                        ],
+                        'description' => 'Checking out with your cart #21 from PrestaShop',
+                        'custom_id' => '7b89b49a-fde3-4bdc-a5c2-5549f109a416@1737622652934',
+                        'invoice_id' => '',
+                        'soft_descriptor' => 'JOHNDOESTES',
+                        'items' => [
+                            0 => [
+                                'name' => 'Affiche encadrée The best is yet to come',
+                                'unit_amount' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '29.00',
+                                ],
+                                'tax' => [
+                                    'currency_code' => 'EUR',
+                                    'value' => '5.80',
+                                ],
+                                'quantity' => '1',
+                                'description' => 'Dimension : 40x60cm',
+                                'sku' => 'demo_6',
+                                'category' => 'PHYSICAL_GOODS',
+                            ],
+                        ],
+                        'shipping' => [
+                            'name' => '***',
+                            'address' => [
+                                'address_line_1' => '***',
+                                'address_line_2' => '***',
+                                'admin_area_2' => 'Paris ',
+                                'postal_code' => '75002',
+                                'country_code' => 'FR',
+                            ],
+                        ],
+                        'supplementary_data' => [
+                            'card' => [
+                                'level_2' => [
+                                    'tax_total' => [
+                                        'currency_code' => 'EUR',
+                                        'value' => '5.8',
+                                    ],
+                                ],
+                                'level_3' => [
+                                    'shipping_amount' => [
+                                        'currency_code' => 'EUR',
+                                        'value' => '8.4',
+                                    ],
+                                    'duty_amount' => [
+                                        'currency_code' => 'EUR',
+                                        'value' => '43.2',
+                                    ],
+                                    'discount_amount' => [
+                                        'currency_code' => 'EUR',
+                                        'value' => '0.0',
+                                    ],
+                                    'shipping_address' => [
+                                        'address_line_1' => '16, Main street',
+                                        'address_line_2' => '2nd floor',
+                                        'admin_area_2' => 'Paris ',
+                                        'postal_code' => '75002',
+                                        'country_code' => 'FR',
+                                    ],
+                                    'line_items' => [
+                                        0 => [
+                                            'name' => 'Affiche encadrée The best is yet to come',
+                                            'unit_amount' => [
+                                                'currency_code' => 'EUR',
+                                                'value' => '29.0',
+                                            ],
+                                            'tax' => [
+                                                'currency_code' => 'EUR',
+                                                'value' => '5.8',
+                                            ],
+                                            'quantity' => '1',
+                                            'description' => 'Dimension : 40x60cm',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'payments' => [
+                            'captures' => [
+                                0 => [
+                                    'id' => '36V319627Y4223722',
+                                    'status' => 'DECLINED',
+                                    'amount' => [
+                                        'currency_code' => 'EUR',
+                                        'value' => '43.20',
+                                    ],
+                                    'final_capture' => true,
+                                    'disbursement_mode' => 'INSTANT',
+                                    'seller_protection' => [
+                                        'status' => 'NOT_ELIGIBLE',
+                                    ],
+                                    'seller_receivable_breakdown' => [
+                                        'gross_amount' => [
+                                            'currency_code' => 'EUR',
+                                            'value' => '43.20',
+                                        ],
+                                        'net_amount' => [
+                                            'currency_code' => 'EUR',
+                                            'value' => '43.20',
+                                        ],
+                                    ],
+                                    'custom_id' => '7b89b49a-fde3-4bdc-a5c2-5549f109a416@1737622652934',
+                                    'links' => [
+                                        0 => [
+                                            'href' => 'https://api.sandbox.paypal.com/v2/payments/captures/36V319627Y4223722',
+                                            'rel' => 'self',
+                                            'method' => 'GET',
+                                        ],
+                                        1 => [
+                                            'href' => 'https://api.sandbox.paypal.com/v2/payments/captures/36V319627Y4223722/refund',
+                                            'rel' => 'refund',
+                                            'method' => 'POST',
+                                        ],
+                                        2 => [
+                                            'href' => 'https://api.sandbox.paypal.com/v2/checkout/orders/92163488YM718505A',
+                                            'rel' => 'up',
+                                            'method' => 'GET',
+                                        ],
+                                    ],
+                                    'create_time' => '2025-01-23T08:57:45Z',
+                                    'update_time' => '2025-01-23T08:57:45Z',
+                                    'network_transaction_reference' => [
+                                        'id' => '133455343573488',
+                                        'network' => 'VISA',
+                                    ],
+                                    'processor_response' => [
+                                        'avs_code' => 'Y',
+                                        'cvv_code' => 'S',
+                                        'response_code' => '0000',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'create_time' => '2025-01-23T08:57:33Z',
+                'update_time' => '2025-01-23T08:57:45Z',
+                'links' => [
+                    0 => [
+                        'href' => 'https://api.sandbox.paypal.com/v2/checkout/orders/92163488YM718505A',
+                        'rel' => 'self',
+                        'method' => 'GET',
+                    ],
+                ],
+            ]],
         ];
     }
 
@@ -2416,6 +2696,38 @@ class CapturePayPalOrderCommandHandlerTest extends TestCase
                             ],
                     ],
             ],
+        ];
+    }
+
+    public function captureErrorProvider()
+    {
+        return [
+            [
+                [
+                    'id' => '9Y936175RH7229522',
+                    'funding_source' => 'card',
+                ],
+                422,
+                '{
+                "name": "UNPROCESSABLE_ENTITY",
+                "details": [
+                    {
+                        "field": "payment_source/card",
+                        "location": "body",
+                        "issue": "CARD_CLOSED",
+                        "description": "The card is closed."
+                    }
+                ],
+                "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
+                "debug_id": "990b09d46b647",
+                "links": [
+                    {
+                        "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#CARD_CLOSED",
+                        "rel": "information_link",
+                        "method": "GET"
+                    }
+                ]
+            }', ],
         ];
     }
 }

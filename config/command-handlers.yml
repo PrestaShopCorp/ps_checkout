@@ -62,6 +62,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+      - '@ps_checkout.logger'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'

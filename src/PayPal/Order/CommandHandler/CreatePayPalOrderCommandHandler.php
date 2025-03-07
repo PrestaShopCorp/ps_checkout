@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
@@ -35,6 +36,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderC
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
@@ -98,8 +101,7 @@ class CreatePayPalOrderCommandHandler
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter);
+        $builder = $this->getPayloadBuilder();
 
         try {
             $customerId = $this->prestaShopContext->getCustomerId();
@@ -138,7 +140,17 @@ class CreatePayPalOrderCommandHandler
             $builder->buildMinimalPayload();
         }
 
-        $response = $this->maaslandHttpClient->createOrder($builder->presentPayload()->getArray());
+        try {
+            $response = $this->maaslandHttpClient->createOrder($builder->presentPayload()->getArray());
+        } catch (PayPalException $exception) {
+            if ($command->getPaymentTokenId() && $exception->getCode() === PayPalException::CARD_CLOSED) {
+                $this->eventDispatcher->dispatch(
+                    new PaymentTokenDeletedEvent(['id' => $command->getPaymentTokenId()->getValue()])
+                );
+            }
+            throw $exception;
+        }
+
         $order = json_decode($response->getBody(), true);
 
         if ($command->vault()) {
@@ -160,5 +172,16 @@ class CreatePayPalOrderCommandHandler
             $customerIntent,
             $command->getPaymentTokenId()
         ));
+
+        if ($command->getPaymentTokenId() && $command->getFundingSource() === 'card') {
+            $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($order));
+        }
+    }
+
+    protected function getPayloadBuilder()
+    {
+        $cartPresenter = (new CartPresenter())->present();
+
+        return new OrderPayloadBuilder($cartPresenter);
     }
 }
