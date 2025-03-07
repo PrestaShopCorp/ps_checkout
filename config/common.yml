@@ -148,6 +148,7 @@ services:
       - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+      - '@ps_checkout.logger'
 
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'

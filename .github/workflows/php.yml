@@ -22,13 +22,13 @@ jobs:
           php-version: "7.4"
 
       - name: Cache vendor folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: vendor
           key: php-${{ hashFiles('composer.lock') }}
 
       - name: Cache composer folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-composer-cache
@@ -75,13 +75,13 @@ jobs:
         uses: actions/checkout@v2.0.0
 
       - name: Cache vendor folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: vendor
           key: php-${{ hashFiles('composer.lock') }}
 
       - name: Cache composer folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-composer-cache
@@ -102,13 +102,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache vendor folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: vendor
           key: php-${{ hashFiles('composer.lock') }}
 
       - name: Cache composer folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-composer-cache

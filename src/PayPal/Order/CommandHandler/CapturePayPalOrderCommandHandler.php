@@ -41,12 +41,14 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -80,6 +82,10 @@ class CapturePayPalOrderCommandHandler
      * @var PayPalConfiguration
      */
     private $payPalConfiguration;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         MaaslandHttpClient $maaslandHttpClient,
@@ -88,7 +94,8 @@ class CapturePayPalOrderCommandHandler
         PrestaShopContext $prestaShopContext,
         PayPalCustomerRepository $payPalCustomerRepository,
         PayPalOrderRepository $payPalOrderRepository,
-        PayPalConfiguration $payPalConfiguration
+        PayPalConfiguration $payPalConfiguration,
+        LoggerInterface $logger
     ) {
         $this->maaslandHttpClient = $maaslandHttpClient;
         $this->eventDispatcher = $eventDispatcher;
@@ -97,6 +104,7 @@ class CapturePayPalOrderCommandHandler
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->payPalConfiguration = $payPalConfiguration;
+        $this->logger = $logger;
     }
 
     /**
@@ -105,7 +113,6 @@ class CapturePayPalOrderCommandHandler
      * @return void
      *
      * @throws CustomerException
-     * @throws InvalidArgumentException
      * @throws PayPalCaptureException
      * @throws PayPalException
      * @throws PayPalOrderException
@@ -117,7 +124,14 @@ class CapturePayPalOrderCommandHandler
 
         $capturePayload = $this->buildCapturePayload($capturePayPalOrderCommand);
 
-        $orderPayPal = $this->captureOrder($capturePayload);
+        try {
+            $orderPayPal = $this->captureOrder($capturePayload);
+        } catch (PayPalException $exception) {
+            if ($exception->getCode() === PayPalException::CARD_CLOSED) {
+                $this->deletePaymentTokenEvent($capturePayPalOrderCommand);
+            }
+            throw $exception;
+        }
 
         if (!empty($orderPayPal)) {
             if (isset($orderPayPal['payment_source'][$capturePayPalOrderCommand->getFundingSource()]['attributes']['vault'])) {
@@ -127,6 +141,10 @@ class CapturePayPalOrderCommandHandler
                 if (isset($vault['id'])) {
                     $this->createPaymentTokenEvent($capturePayPalOrderCommand, $orderPayPal, $vault, $merchantId);
                 }
+            }
+
+            if (isset($orderPayPal['payment_source']['card'])) {
+                $this->updatePaymentTokenEvent($orderPayPal);
             }
 
             $this->processCapture($orderPayPal);
@@ -162,7 +180,6 @@ class CapturePayPalOrderCommandHandler
      *
      * @return array
      *
-     * @throws InvalidArgumentException
      * @throws PayPalException
      * @throws HttpTimeoutException
      */
@@ -229,6 +246,26 @@ class CapturePayPalOrderCommandHandler
             $paymentToken,
             $merchantId
         ));
+    }
+
+    private function updatePaymentTokenEvent(array $orderPayPal)
+    {
+        $this->eventDispatcher->dispatch(new PaymentTokenUpdatedEvent($orderPayPal));
+    }
+
+    private function deletePaymentTokenEvent(CapturePayPalOrderCommand $command)
+    {
+        try {
+            $order = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderId());
+
+            if ($order->getPaymentTokenId()) {
+                $this->eventDispatcher->dispatch(
+                    new PaymentTokenDeletedEvent(['id' => $order->getPaymentTokenId()->getValue()])
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to delete payment token', ['exception' => $e]);
+        }
     }
 
     /**
