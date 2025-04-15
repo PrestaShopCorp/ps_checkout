@@ -60,7 +60,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_76f0ed934de85cc7131910b32ede7
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_78d64fa5c64612743a90f6234f9a4ade'] = 'Montant brut';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_79a3579a7d9b335009e6b7c1f70398ce'] = 'Montant net';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_8267152e6cc56811caa46a53ec88e961'] = 'Pour voir ces informations, veuillez reconnecter le compte PayPal concerné.';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_834a9c61e5830f00d1c3651bc1db9c2f'] = 'Vos paramètres 3D Secure pour cette transaction ont été définis sur « Exiger une authentification forte du client lorsque cela est nécessaire », mais la transaction actuelle n’en nécessite pas selon la réglementation.';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_834a9c61e5830f00d1c3651bc1db9c2f'] = 'Vos paramètres 3D Secure pour cette transaction ont été définis sur « Exiger une authentification forte du client lorsque cela est nécessaire », mais la transaction actuelle n’en nécessite pas selon la réglementation. La banque émettrice a décliné le transfert de responsabilité. Nous vous recommandons de ne pas honorer la commande immédiatement et de patientez quelques jours en cas de rétro-facturation. Prenez contact avec l\'acheteur pour vérifier l\'authenticité de la transaction. Pour ce type de cas, nous vous recommandons également de considérer la Protection contre les oppositions bancaires de PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_896890bfb700eac98300d639ca970f2b'] = 'Marchand';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_99a808d8d16122d70e44bd7f709d30fb'] = 'Solde';
@@ -70,7 +70,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_c845fcac2ea7b1c490dbe27652e31759'] = 'Aller à PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d59048f21fd887ad520398ce677be586'] = 'En savoir plus';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7366120e49ccb980dac7e7aefae85e3'] = 'Montant de la transaction';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (tax included)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Échec';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Montant (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_da43f78fa157af167b73a296622352f5'] = 'Transfert de responsabilité';
@@ -263,7 +263,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Tunnel de commande';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Vous avez choisi de payer par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Merci pour votre achat !';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_73f9b9812ae06d85ba2e015622a48ad5'] = 'Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre mode de paiement.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_73f9b9812ae06d85ba2e015622a48ad5'] = 'Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Authentification du titulaire de carte annulée, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_816565ccf105493c7b15166627f6fc16'] = 'Echec de l\'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_875e6e29b50c20a90d8c09435ab2c8b3'] = 'Veuillez patienter, nous traitons votre demande...';
@@ -319,7 +319,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_0dd48299c95102f75579da47ee1aceff
 $_MODULE['<{ps_checkout}prestashop>translations_0eb1f8746fd4f892627727adf4a1a35c'] = 'en transactions par carte tant que votre compte est en attente de validation';
 $_MODULE['<{ps_checkout}prestashop>translations_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Créée';
 $_MODULE['<{ps_checkout}prestashop>translations_0f0a354b869158cf738ca27bfee975a2'] = 'Lier un compte PayPal';
-$_MODULE['<{ps_checkout}prestashop>translations_104d9898c04874d0fbac36e125fa1369'] = 'Sous-total';
+$_MODULE['<{ps_checkout}prestashop>translations_104d9898c04874d0fbac36e125fa1369'] = 'Réduction';
 $_MODULE['<{ps_checkout}prestashop>translations_1059dea5e06197e365195741c631ea61'] = 'Configuration des boutons sauvegardée avec succès !';
 $_MODULE['<{ps_checkout}prestashop>translations_129b092b96a6c898e530c9d229730696'] = 'Les frais de port, si ils existent, seront estimé dans le panier. La méthode de livraison par défaut sera celle en première position sur la page transporteurs. ';
 $_MODULE['<{ps_checkout}prestashop>translations_12ef4cff3c64452547a8892a5104488f'] = 'Envoyer à nouveau';
