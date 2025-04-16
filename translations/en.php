@@ -52,6 +52,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_5234a153524f0fe334a04f0e6c399
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_59ccb043923e7d5bd6f7cbba625d2f4f'] = 'This PayPal Order has been reversed.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_611694c5010c9ded1f726c23da88870d'] = 'The PayPal account that was used to create this order is no longer linked to the PrestaShop Checkout module.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_63d5049791d9d79d86e9a108b0a999ca'] = 'Reference';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_6fd5e95dc0bce8329da87e1152677b48'] = 'Exempted';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_7240839004ba6f2bb6e3f8ac4a7348c2'] = 'See on PayPal';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_756d97bb256b8580d4d71ee0c547804e'] = 'Production';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_75d8df5e7f62795043a94ed5bdf6b7f4'] = 'Any change on the order?';
@@ -59,6 +60,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_76f0ed934de85cc7131910b32ede7
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_78d64fa5c64612743a90f6234f9a4ade'] = 'Gross amount';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_79a3579a7d9b335009e6b7c1f70398ce'] = 'Net amount';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_8267152e6cc56811caa46a53ec88e961'] = 'In order to see this information, please reconnect the correct PayPal account.';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_834a9c61e5830f00d1c3651bc1db9c2f'] = 'Your 3D Secure settings for this transaction was "Only use 3D Secure when required by the issuing bank" and the current transaction doesn’t require it. The bank issuer declined the liability shift. We advise waiting a few days before honoring the order in case of chargeback and contacting the buyer to verify transaction authenticity. Consider Chargeback protection for such cases.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_896890bfb700eac98300d639ca970f2b'] = 'Merchant';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_99a808d8d16122d70e44bd7f709d30fb'] = 'Balance';
@@ -68,6 +70,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_c845fcac2ea7b1c490dbe27652e31759'] = 'Go to PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d59048f21fd887ad520398ce677be586'] = 'Learn more';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7366120e49ccb980dac7e7aefae85e3'] = 'Transaction amounts';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (Tax incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Failed';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Amount (Tax Incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_da43f78fa157af167b73a296622352f5'] = 'Liability shift';
@@ -149,6 +152,12 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a
 $_MODULE['<{ps_checkout}prestashop>displaypayment_f92103c13c44bded222d124f5b9743f3'] = 'Cardholder Name (optional)';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'The security code is a';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Processing payment canceled, please choose another payment method or try again.';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Card';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Pay with a PayPal account';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_35895cff7df70dab18783453e2bd241f'] = 'Pay with %s';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Pay by card';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Pay with %s';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_fc9b4762660906602b63bcd99e5e9747'] = 'Pay in installments with PayPal Pay Later';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_05dabaa08b279e85b941a229ea150f01'] = 'The customer must resolve the contingency before the payment can be processed.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_1bf3a68908311fdacacf39cd2f05ce27'] = 'Order has previously been saved. Please contact customer service to check that your order has successfully been validated. ';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_28bdeeeb111a2556d5ddeb22c5143e91'] = 'You skipped 3D Secure validation, please try again or try another payment method.';
