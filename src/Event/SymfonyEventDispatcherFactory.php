@@ -44,13 +44,7 @@ class SymfonyEventDispatcherFactory
      */
     public function create(array $eventSubscribers)
     {
-        $eventDispatcher = LoggerConfiguration::LEVEL_DEBUG === $this->configuration->getLevel()
-            ? new SymfonyTraceableEventDispatcher(
-                new SymfonyEventDispatcher(),
-                new SymfonyStopwatch(),
-                $this->psCheckoutLogger
-            )
-            : new SymfonyEventDispatcher();
+        $eventDispatcher = new SymfonyEventDispatcher();
 
         foreach ($eventSubscribers as $eventSubscriber) {
             $eventDispatcher->addSubscriber($eventSubscriber);
