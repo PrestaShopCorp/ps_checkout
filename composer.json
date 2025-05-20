@@ -41,7 +41,8 @@
         "phpunit/phpunit": "~9.6.7",
         "prestashop/autoindex": "^2.1",
         "prestashop/header-stamp": "^2.3",
-        "prestashop/php-dev-tools": "~5.0"
+        "prestashop/php-dev-tools": "~5.0",
+        "symfony/stopwatch": "^6.4"
     },
     "autoload": {
         "psr-4": {
