@@ -26,6 +26,7 @@ PrestaShop modules are open source extensions to the PrestaShop e-commerce solut
 ### Requirements
 
 There 3 main branches on the repository:
+- `prestashop/9.x` is the branch for PrestaShop v9.x
 - `prestashop/8.x` is the branch for PrestaShop v8.x
 - `prestashop/1.7.x` is the branch for PrestaShop v1.7.x
 - `prestashop/1.6.1.x` is the branch for PrestaShop v1.6.1.x
@@ -57,7 +58,7 @@ This module is released under the [Academic Free License 3.0][AFL-3.0]
 
 [contact-us]: https://help-center.prestashop.com/contact?psx=ps_checkout
 [direct-download]: https://github.com/PrestaShopCorp/ps_checkout/releases
-[1]: https://devdocs.prestashop.com/1.7/development/coding-standards/
-[2]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/
+[1]: https://devdocs.prestashop-project.org/8/development/coding-standards/
+[2]: https://devdocs.prestashop-project.org/8/contribute/contribution-guidelines/
 [3]: https://help.github.com/articles/using-pull-requests
 [AFL-3.0]: https://opensource.org/licenses/AFL-3.0
