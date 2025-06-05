@@ -30,7 +30,6 @@
         "prestashop/module-lib-service-container": "^2.0",
         "prestashop/prestashop-accounts-installer": "^1.0",
         "ramsey/uuid": "^3.8",
-        "symfony/stopwatch": "^6.4",
         "webmozart/assert": "^1.0"
     },
     "require-dev": {
@@ -42,7 +41,8 @@
         "phpunit/phpunit": "~9.6.7",
         "prestashop/autoindex": "^2.1",
         "prestashop/header-stamp": "^2.3",
-        "prestashop/php-dev-tools": "~5.0"
+        "prestashop/php-dev-tools": "~5.0",
+        "symfony/stopwatch": "^6.4"
     },
     "autoload": {
         "psr-4": {
