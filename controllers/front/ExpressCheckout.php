@@ -99,22 +99,25 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
             $this->context->cookie->write();
 
-            $this->resetContextCartAddresses();
-            // Always 0 index because we are not using the paypal marketplace system
-            // This index is only used in a marketplace context
-            // @todo Extract factory in a Service.
-            $this->createAddress(
-                $this->payload['order']['payer']['name']['given_name'],
-                $this->payload['order']['payer']['name']['surname'],
-                $this->payload['order']['shipping']['address']['address_line_1'],
-                false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
-                $this->payload['order']['shipping']['address']['postal_code'],
-                false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
-                $this->payload['order']['shipping']['address']['admin_area_2'],
-                $this->payload['order']['shipping']['address']['country_code'],
-                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '',
-                $this->payload['orderID']
-            );
+            // The payload contains the shipping address only when the order is created with the shipping preference set as GET_FROM_FILE
+            if (isset($this->payload['order']['shipping'])) {
+                $this->resetContextCartAddresses();
+                // Always 0 index because we are not using the paypal marketplace system
+                // This index is only used in a marketplace context
+                // @todo Extract factory in a Service.
+                $this->createAddress(
+                    $this->payload['order']['payer']['name']['given_name'],
+                    $this->payload['order']['payer']['name']['surname'],
+                    $this->payload['order']['shipping']['address']['address_line_1'],
+                    false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
+                    $this->payload['order']['shipping']['address']['postal_code'],
+                    false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
+                    $this->payload['order']['shipping']['address']['admin_area_2'],
+                    $this->payload['order']['shipping']['address']['country_code'],
+                    false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '',
+                    $this->payload['orderID']
+                );
+            }
         } catch (Exception $exception) {
             $this->module->getLogger()->error(
                 sprintf(
