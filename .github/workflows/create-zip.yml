@@ -22,6 +22,20 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
+      - name: Auth GCP 🔑
+        uses: ./.github/actions/auth-gcp
+        with:
+          auth-mode: "workload-federation"
+          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', 'PRODUCTION')] }}
+          service-account: ${{ secrets[format('WI_SA_V2_{0}', 'PRODUCTION')] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write .env file 🌳
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-v5-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', 'PRODUCTION')] }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -68,7 +82,7 @@ jobs:
           cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
           cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
           cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
-          cp -r $MODULE_NAME/.env.dist tmp_package/$FINAL_NAME/.env || true
+          cp -r .env tmp_package/$FINAL_NAME/.env || true
 
           cd tmp_package
           zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
