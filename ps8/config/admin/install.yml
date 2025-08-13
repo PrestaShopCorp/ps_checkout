@@ -1,0 +1,49 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Bootstrap\Install\Installer:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\Installer
+    arguments:
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\ConfigurationInstaller'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\DatabaseTableInstaller'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\FundingSourceInstaller'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\OrderStateInstaller'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\CompatibilityRulesInstaller'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\ConfigurationInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\ConfigurationInstaller
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\ShopRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\DatabaseTableInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\DatabaseTableInstaller
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\FundingSourceInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\FundingSourceInstaller
+    arguments:
+        - '@PsCheckout\Infrastructure\Repository\ShopRepository'
+        - '@PsCheckout\Infrastructure\Repository\FundingSourceRepository'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\OrderStateInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\OrderStateInstaller
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Language'
+      - '@=service("ps_checkout.module").name'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\CompatibilityRulesInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\CompatibilityRulesInstaller
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\AppleInstaller:
+    class: 'PsCheckout\Infrastructure\Bootstrap\Install\AppleInstaller'
+    public: true
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\SystemConfiguration'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'

@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration:
+    class: PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
+      - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
+      - '@Psr\Log\LoggerInterface'

@@ -1,0 +1,34 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Logger\LoggerFileReader:
+    class: PsCheckout\Infrastructure\Logger\LoggerFileReader
+
+  PsCheckout\Infrastructure\Logger\LoggerFileFinder:
+    class: PsCheckout\Infrastructure\Logger\LoggerFileFinder
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+  
+  PsCheckout\Infrastructure\Logger\LoggerHandlerFactory:
+    class: 'PsCheckout\Infrastructure\Logger\LoggerHandlerFactory'
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@=service("ps_checkout.module").name'
+
+  Monolog\Handler\HandlerInterface:
+    class: 'Monolog\Handler\HandlerInterface'
+    factory: ['@PsCheckout\Infrastructure\Logger\LoggerHandlerFactory', "build"]
+
+  PsCheckout\Infrastructure\Logger\LoggerFactory:
+    class: 'PsCheckout\Infrastructure\Logger\LoggerFactory'
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@Monolog\Handler\HandlerInterface'
+
+  Psr\Log\LoggerInterface:
+    class: 'Psr\Log\LoggerInterface'
+    factory: ['@PsCheckout\Infrastructure\Logger\LoggerFactory', "build"]

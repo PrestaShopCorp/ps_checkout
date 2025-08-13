@@ -1,0 +1,18 @@
+imports:
+  - { resource: ../common.yml }
+  - { resource: handler.yml }
+  - { resource: validator.yml }
+  - { resource: presenter.yml }
+  - { resource: configuration.yml }
+  - { resource: process.yml }
+  - { resource: provider.yml }
+  - { resource: builder.yml }
+
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\OAuth\OAuthService:
+    class: PsCheckout\Core\PayPal\OAuth\OAuthService
+    arguments:
+      - '@PsCheckout\Api\Http\CheckoutHttpClient'

@@ -1,0 +1,103 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Repository\CountryRepository:
+    class: PsCheckout\Infrastructure\Repository\CountryRepository
+    arguments:
+      - '@=service("ps_checkout.module").name'
+
+  PsCheckout\Infrastructure\Repository\CurrencyRepository:
+    class: PsCheckout\Infrastructure\Repository\CurrencyRepository
+    arguments:
+      - '@=service("ps_checkout.module").name'
+
+  PsCheckout\Infrastructure\Repository\PsAccountRepository:
+    class: PsCheckout\Infrastructure\Repository\PsAccountRepository
+    arguments:
+      - '@PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+
+  PsCheckout\Infrastructure\Repository\FundingSourceRepository:
+    class: PsCheckout\Infrastructure\Repository\FundingSourceRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PaymentTokenRepository:
+    class: PsCheckout\Infrastructure\Repository\PaymentTokenRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\LanguageRepository:
+    class: PsCheckout\Infrastructure\Repository\LanguageRepository
+
+  PsCheckout\Infrastructure\Repository\CustomerRepository:
+    class: PsCheckout\Infrastructure\Repository\CustomerRepository
+
+  PsCheckout\Infrastructure\Repository\GenderRepository:
+    class: PsCheckout\Infrastructure\Repository\GenderRepository
+
+  PsCheckout\Infrastructure\Repository\StateRepository:
+    class: PsCheckout\Infrastructure\Repository\StateRepository
+
+  PsCheckout\Infrastructure\Repository\PayPalCustomerRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalCustomerRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\ConfigurationRepository:
+    class: PsCheckout\Infrastructure\Repository\ConfigurationRepository
+    arguments:
+      - '@ps_checkout.db'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Infrastructure\Repository\CartRepository:
+    class: PsCheckout\Infrastructure\Repository\CartRepository
+
+  PsCheckout\Infrastructure\Repository\PayPalOrderMatrixRepository:
+    class: PsCheckout\Infrastructure\Repository\PayPalOrderMatrixRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\OrderRepository:
+    class: PsCheckout\Infrastructure\Repository\OrderRepository
+
+  PsCheckout\Infrastructure\Repository\AddressRepository:
+    class: PsCheckout\Infrastructure\Repository\AddressRepository
+    arguments:
+      - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\OrderStateRepository:
+    class: PsCheckout\Infrastructure\Repository\OrderStateRepository
+
+  PsCheckout\Infrastructure\Repository\OrderHistoryRepository:
+    class: PsCheckout\Infrastructure\Repository\OrderHistoryRepository
+
+  PsCheckout\Infrastructure\Repository\ShippingTrackingRepository:
+    class: PsCheckout\Infrastructure\Repository\ShippingTrackingRepository
+    arguments:
+      - '@ps_checkout.db'

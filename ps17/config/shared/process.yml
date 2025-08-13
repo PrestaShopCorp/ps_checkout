@@ -1,0 +1,137 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction:
+    class: PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction
+
+  PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction:
+    class: PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Api\Http\CheckoutHttpClient'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\OrderState\Action\ChangeOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\ChangeOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderStateRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderHistoryRepository'
+
+  PsCheckout\Core\OrderState\Action\SetRefundedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetRefundedOrderStateAction
+    arguments:
+      - '@PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+
+  PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction:
+    class: PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Core\OrderState\Action\SetRefundedOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction:
+    class: PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingBaseNodeBuilder:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingBaseNodeBuilder
+
+  PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingItemsNodeBuilder:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingItemsNodeBuilder
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingCarrierModuleNodeBuilder:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingCarrierModuleNodeBuilder
+
+  PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilder:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilder
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingBaseNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingItemsNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingCarrierModuleNodeBuilder'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService
+    arguments:
+      - '@PsCheckout\Api\Http\OrderShipmentTrackingHttpClient'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\ShippingTrackingRepository'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessor'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessor:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessor
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilder'
+      - '@PsCheckout\Infrastructure\Repository\ShippingTrackingRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
+
+  # Shipping Tracking Processor
+  PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessorInterface:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessor
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilder'
+      - '@PsCheckout\Infrastructure\Repository\ShippingTrackingRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
+
+  # External Shipping Tracking Processor
+  PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilder'
+      - '@PsCheckout\Infrastructure\Repository\ShippingTrackingRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface'
+
+  # Shipping Tracking Action
+  PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessorInterface'
+      - '@Psr\Log\LoggerInterface'
+
+  # External Shipping Tracking Action
+  PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor'
+      - '@Psr\Log\LoggerInterface'
+

@@ -1,0 +1,27 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider:
+    class: PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider
+    arguments:
+      - '@PsCheckout\Module\Presentation\Translator'
+
+  PsCheckout\Module\Presentation\Translator:
+    class: PsCheckout\Module\Presentation\Translator
+    arguments:
+      - '@=service("ps_checkout.module").getTranslator()'
+
+  PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider:
+    class: PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+
+  PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider:
+    class: PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'

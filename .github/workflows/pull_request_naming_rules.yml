@@ -1,0 +1,12 @@
+name: Names rules
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  branch-name-check:
+    uses: Invertus/github-templates/.github/workflows/branch-name-check.yml@v1.0.2
+    secrets: inherit
+
+  pr-title-check:
+    uses: Invertus/github-templates/.github/workflows/pr-title-check.yml@v1.0.2
+    secrets: inherit

@@ -1,0 +1,80 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Presentation\Presenter\Settings\Front\FrontSettingsPresenter:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\FrontSettingsPresenter
+    arguments:
+      - [
+        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\PayPalModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\LinkModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule',
+      ]
+
+  PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+
+  PsCheckout\Presentation\Presenter\Settings\Front\Modules\PayPalModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\PayPalModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").version'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter'
+      - '@PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+
+  PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration'
+
+  PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").getPathUri()'
+
+  PsCheckout\Presentation\Presenter\Settings\Front\Modules\LinkModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\LinkModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+
+  PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@PsCheckout\Module\Presentation\Translator'
+
+
+  PsCheckout\Presentation\Presenter\Cart\CartPresenter:
+    class: PsCheckout\Presentation\Presenter\Cart\CartPresenter
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Address'
+      - '@PsCheckout\Infrastructure\Adapter\Currency'
+      - '@PsCheckout\Infrastructure\Repository\LanguageRepository'
+      - '@PsCheckout\Infrastructure\Repository\CustomerRepository'
+
+  PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter:
+    class: PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderTranslationProvider'
