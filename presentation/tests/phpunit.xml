@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         bootstrap="bootstrap.php"
+         colors="true"
+         executionOrder="random"
+         beStrictAboutChangesToGlobalState="true"
+         beStrictAboutResourceUsageDuringSmallTests="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnWarning="true"
+>
+    <php>
+        <env name="IS_CI" value="false"/>
+    </php>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>Unit</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../src</directory>
+            <exclude>
+                <directory suffix="index.php">../src</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
+

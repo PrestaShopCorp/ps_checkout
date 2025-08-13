@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Api\Http\CheckoutHttpClient:
+    class: PsCheckout\Api\Http\CheckoutHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder'
+
+  PsCheckout\Api\Http\OrderHttpClient:
+    class: PsCheckout\Api\Http\OrderHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\OrderHttpClientConfigurationBuilder'
+
+  PsCheckout\Api\Http\OrderShipmentTrackingHttpClient:
+    class: PsCheckout\Api\Http\OrderShipmentTrackingHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\OrderShipmentTrackingConfigurationBuilder'

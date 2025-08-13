@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  wiremock:
+    image: wiremock/wiremock
+    container_name: ${PROJECT_NAME}-wiremock-${PS_VERSION_TAG}
+    volumes:
+      - ./prestashop/${PS_VERSION_TAG}/modules/${PROJECT_NAME}/wiremock:/home/wiremock
+    ports:
+      - ${WIREMOCK_PORT}:8080
+    restart: "no"

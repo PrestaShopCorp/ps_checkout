@@ -1,0 +1,47 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Adapter\Context:
+    class: PsCheckout\Infrastructure\Adapter\Context
+
+  PsCheckout\Infrastructure\Adapter\Language:
+    class: PsCheckout\Infrastructure\Adapter\Language
+
+  PsCheckout\Infrastructure\Adapter\ShopContext:
+    class: PsCheckout\Infrastructure\Adapter\ShopContext
+
+  PsCheckout\Infrastructure\Adapter\Configuration:
+    class: PsCheckout\Infrastructure\Adapter\Configuration
+    arguments:
+    - '@PsCheckout\Infrastructure\Adapter\Context'
+
+  PsCheckout\Infrastructure\Adapter\Link:
+    class: PsCheckout\Infrastructure\Adapter\Link
+    arguments:
+    - '@PsCheckout\Infrastructure\Adapter\Context'
+    - '@=service("ps_checkout.module").name'
+
+  PsCheckout\Infrastructure\Adapter\Address:
+    class: PsCheckout\Infrastructure\Adapter\Address
+
+  PsCheckout\Infrastructure\Adapter\Currency:
+    class: PsCheckout\Infrastructure\Adapter\Currency
+
+  PsCheckout\Infrastructure\Adapter\Validate:
+    class: PsCheckout\Infrastructure\Adapter\Validate
+
+  PsCheckout\Infrastructure\Adapter\Tools:
+    class: PsCheckout\Infrastructure\Adapter\Tools
+
+  PsCheckout\Infrastructure\Adapter\Customer:
+    class: PsCheckout\Infrastructure\Adapter\Customer
+
+  PsCheckout\Infrastructure\Adapter\Cart:
+    class: PsCheckout\Infrastructure\Adapter\Cart
+
+  PsCheckout\Infrastructure\Adapter\Country:
+    class: PsCheckout\Infrastructure\Adapter\Country
+
+  PsCheckout\Infrastructure\Adapter\SystemConfiguration:
+    class: PsCheckout\Infrastructure\Adapter\SystemConfiguration

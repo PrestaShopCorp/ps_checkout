@@ -1,0 +1,250 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor:
+    class: PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository'
+
+  PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction:
+    class: PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
+      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
+
+  PsCheckout\Infrastructure\Action\AddProductToCartAction:
+    class: PsCheckout\Infrastructure\Action\AddProductToCartAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+
+  PsCheckout\Core\Order\Action\CreateValidateOrderDataAction:
+    class: PsCheckout\Core\Order\Action\CreateValidateOrderDataAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
+      - '@PsCheckout\Core\Order\Validator\OrderAmountValidator'
+
+  PsCheckout\Core\Order\Action\ValidateOrderAction:
+    class: PsCheckout\Core\Order\Action\ValidateOrderAction
+    arguments:
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@ps_checkout.module'
+
+  PsCheckout\Core\Order\Action\CreateOrderAction:
+    class: PsCheckout\Core\Order\Action\CreateOrderAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Core\Order\Action\CreateValidateOrderDataAction'
+      - '@PsCheckout\Core\Order\Action\ValidateOrderAction'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderMatrixRepository'
+
+  PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction:
+    class: PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+
+  PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction:
+    class: PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\Order\Action\CreateOrderPaymentAction:
+    class: PsCheckout\Core\Order\Action\CreateOrderPaymentAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Currency'
+
+  PsCheckout\Core\Order\Processor\CreateOrderProcessor:
+    class: PsCheckout\Core\Order\Processor\CreateOrderProcessor
+    arguments:
+      - '@PsCheckout\Core\Order\Validator\OrderAuthorizationValidator'
+      - '@PsCheckout\Core\Order\Action\CreateOrderAction'
+      - '@PsCheckout\Infrastructure\Repository\CartRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Core\Order\Validator\CheckoutValidator'
+      - '@PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction'
+      - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
+
+  PsCheckout\Infrastructure\Action\CustomerNotifyAction:
+    class: PsCheckout\Infrastructure\Action\CustomerNotifyAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@ps_checkout.db'
+
+  PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction:
+    class: PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+
+  PsCheckout\Infrastructure\Action\CustomerAuthenticationAction:
+    class: PsCheckout\Infrastructure\Action\CustomerAuthenticationAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Customer'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+
+  PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction:
+    class: PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Country'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
+
+  PsCheckout\Core\Customer\Action\ExpressCheckoutAction:
+    class: PsCheckout\Core\Customer\Action\ExpressCheckoutAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Action\CustomerAuthenticationAction'
+      - '@PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction'
+
+  PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor:
+    class: PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler
+    arguments:
+      - '@PsCheckout\Core\Order\Action\CreateOrderAction'
+      - '@PsCheckout\Core\Order\Action\CreateOrderPaymentAction'
+      - '@PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler
+    arguments:
+      - '@PsCheckout\Core\Order\Action\CreateOrderAction'
+      - '@PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler
+    arguments:
+      - '@PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler
+    arguments:
+      - '@PsCheckout\Core\OrderState\Action\SetRefundedOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentReversedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentReversedEventHandler
+    arguments:
+      - '@PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
+      - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
+      - '@PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction'
+      - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
+      - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
+
+  PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
+
+  PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Core\Order\Validator\OrderAmountValidator'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+
+  PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+
+  PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+
+  PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher:
+    class: PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentReversedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler'
+      - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler'

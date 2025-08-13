@@ -1,0 +1,624 @@
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+.payment__option.ps_checkout-payment-option input[type="radio"] {
+  margin-top: .7rem;
+}
+
+.payment-options > div.payment-option[id$="card-container"] > span.custom-radio {
+  margin-top: .25rem;
+}
+
+.payment-options > div.payment-option[id$="paypal-container"] > span.custom-radio {
+  margin-top: .5rem;
+}
+
+.product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
+  margin-top: .5rem;
+  width: 60%;
+}
+
+#checkout-personal-information-step #ps-checkout-express-button {
+  display: flex;
+  flex-flow: row wrap;
+
+  /*Fixes z-index problem on hummingbird*/
+  position: relative;
+  z-index: 1;
+}
+
+.product-add-to-cart #ps-checkout-express-button.disabled{
+  display: none!important;
+}
+
+@media screen and (min-width: 768px) {
+  #checkout-personal-information-step #ps-checkout-express-button div.paypal-buttons-context-iframe {
+    float: left;
+    width: 50%;
+    padding: 15px 0;
+    margin-left: 25%;
+    margin-top: 1%;
+  }
+}
+
+.buttons-approve {
+  margin-right: 10px;
+}
+
+.paypal-hide-default {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+#conditions-to-approve label,
+.payment-options label,
+.paypal-label {
+  cursor: pointer;
+}
+
+.paypal-tips {
+  color: #535252;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+#paypal-approve-error ul {
+  margin-bottom: 0;
+}
+
+#hostedFieldsErrors ul {
+  margin-bottom: 0;
+}
+
+.hide-paypal-error {
+  display: none;
+  visibility: hidden;
+}
+
+.spinner-hosted-fields {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 10px;
+  vertical-align: text-bottom;
+  border: .15em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border .75s linear infinite;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+#conditions-to-approve-paypal {
+  max-width: 300px;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+#paypal-button-container {
+  width: 250px;
+  margin: auto;
+}
+
+#card-number {
+  position: relative;
+  height: 45px;
+  margin-top: 6px;
+}
+
+#expiration-date {
+  height: 45px;
+  margin-top: 6px;
+}
+
+#cvv {
+  height: 45px;
+  margin-top: 6px;
+}
+
+.js-payment-option-form .form-control {
+  background-color: #F3F3F3;
+  border-radius: 5px;
+}
+
+#card-image {
+  position: absolute;
+  top: 7px;
+  right: 1em;
+  width: 44px;
+  height: 28px;
+  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/346994/card_sprite.png);
+  background-size: 86px 458px;
+  border-radius: 1px;
+  background-position: -100px 0;
+  background-repeat: no-repeat;
+  margin-bottom: 1em;
+}
+
+#card-image.visa {
+  background-position: 0 -398px;
+}
+
+#card-image.master-card {
+  background-position: 0 -281px;
+}
+
+#card-image.american-express {
+  background-position: 0 -370px;
+}
+
+#card-image.maestro {
+  background-position: 0 -251px;
+}
+
+#card-image.jcb {
+  background-position: 0 -221px;
+}
+
+#card-image.diners-club {
+  background-position: 0 -133px;
+}
+
+.js-payment-option-form .braintree-hosted-fields-focused {
+  border: .1875rem solid #2fb5d2;
+  background-color: #fff;
+  color: #232323;
+}
+
+.js-payment-option-form .braintree-hosted-fields-invalid {
+  border: .1875rem solid #e76d7a;
+  animation: shake 500ms cubic-bezier(.20, 1.3, .7, 1) both;
+  transform: translate3d(0, 0, 0);
+  background-color: #fff;
+  backface-visibility: hidden;
+}
+
+.js-payment-option-form .braintree-hosted-fields-valid {
+  border: .1875rem solid #6fcc80;
+  transform: translate3d(0, 0, 0);
+  background-color: #fff;
+  backface-visibility: hidden;
+}
+
+.default-credit-card {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(1px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-3px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(3px, 0, 0);
+  }
+}
+
+.express-checkout-block {
+  background-color: #f1f1f1;
+  padding: 15px;
+}
+
+.express-checkout-block-wrapper {
+  font-size: 0;
+}
+
+.express-checkout-img {
+  margin-bottom: 10px;
+  width: 80px;
+}
+
+.express-checkout-label {
+  color: inherit;
+}
+
+.express-checkout-spinner-text {
+  display: inline-block;
+  vertical-align: middle;
+
+  padding-left: 10px;
+  width: 80%;
+  margin: 0;
+}
+
+.express-checkout-spinner {
+  display: inline-block;
+  vertical-align: middle;
+
+  text-align: right;
+  padding-right: 10px;
+  width: 20%;
+}
+
+.ps-checkout.overlay {
+  visibility: hidden;
+  opacity: 0;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  transition: opacity 0.5s linear;
+
+  background-color: rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.ps-checkout.overlay.visible {
+  visibility: visible;
+  opacity: 100;
+}
+
+.ps-checkout.popup, .ps-checkout.ps-checkout-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  width: 800px;
+  height: 250px;
+
+  margin: auto;
+
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+.ps-checkout.ps-checkout-modal {
+  border-radius: 0;
+  height: fit-content;
+}
+
+@media (max-width: 992px) {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
+    width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
+    width: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
+    width: 350px;
+  }
+
+  .ps-checkout.text, .ps-checkout.header, .ps-checkout.content {
+    font-size: 20px;
+  }
+}
+
+.ps-checkout-modal .close-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ps-checkout.text, .ps-checkout.header, .ps-checkout.loader {
+  display: block;
+  margin: 0 auto;
+  margin-top: 45px;
+  text-align: center;
+}
+
+.ps-checkout.header {
+  text-align: left;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon{
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  vertical-align: middle;
+  border-radius: 34px;
+  margin-right: 20px;
+  padding: 5px;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-danger {
+  background-color: #FFE4E6;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-alert {
+  background-color: #FFF5E5;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-success {
+  background-color: #EAF8EF;
+}
+
+.ps-checkout-modal .ps-checkout.header .ps-checkout-modal-icon.icon-info {
+  background-color: #E8EDFD;
+}
+
+.ps-checkout.ps-checkout-modal .ps-checkout.header {
+  margin: 40px 15px;
+}
+
+.ps-checkout.content {
+  margin: 15px;
+}
+
+.ps-checkout.footer {
+  padding: 15px;
+  width: 100%;
+  text-align: right;
+}
+
+.ps-checkout.footer > button + button{
+  margin-left: 10px;
+}
+
+.ps-checkout.footer button.ps-checkout.btn.danger {
+  color: #fff;
+  background-color: #ff4c4c;
+  border-color: #ff4c4c;
+}
+
+.ps-checkout.subtext {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.ps-checkout-express-separator {
+  padding: 1rem 0;
+}
+
+.ps-checkout-funding-img {
+  margin: 0 0.25em;
+}
+
+#ps_checkout-hosted-fields-card-name {
+  position: relative;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-number {
+  position: relative;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-expiration-date {
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-cvv {
+  margin-top: 6px;
+}
+
+#ps_checkout-card-fields-form label[for="ps_checkout-card-fields-cvv"] {
+  white-space: nowrap;
+}
+
+.ps_checkout-payment-option span.custom-radio {
+  float: none !important;
+}
+
+.ps_checkout-payment-option label {
+  display: inline !important;
+  line-height: 2.5;
+}
+
+.ps_checkout-vault-fields .ps_checkout-vault-label {
+  text-align: left;
+  white-space: normal;
+}
+
+.ps_checkout-vault-fields, .ps_checkout-favorite-payment{
+  margin-bottom: 1rem;
+}
+
+.ps_checkout-vault-token-form .ps_checkout-token-explanation {
+  font-size: 0.75rem;
+}
+
+.ps_checkout-info-wrapper {
+  display: table-cell;
+  width: 100%;
+
+  text-align: right;
+}
+
+.ps_checkout-info-button {
+  display: inline-block;
+  user-select: none;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+
+  padding-left: 0.415rem;
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 50%;
+  text-align: left;
+
+  position: relative;
+
+  background-color: #adadad;
+  color: #fff;
+}
+
+.ps_checkout-info-button .popup-content {
+  visibility: hidden;
+  width: 300px;
+  background-color: #adadad;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 16px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -280px;
+  font-weight: normal;
+  font-size: 0.775rem;
+  line-height: 1.25rem;
+}
+
+/* Toggle this class - hide and show the popup */
+.ps_checkout-info-button .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 0.25s;
+  animation: fadeIn 0.25s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+#ps_checkout-notification-container .alert {
+  color: #fff;
+}
+
+#ps_checkout-notification-container .alert-warning-custom{
+  background-color: #a3a3a3;
+}
+
+#ps_checkout-notification-container .alert-danger-custom{
+  background-color: #ef808d;
+}
+
+#ps_checkout-canceled, #ps_checkout-error{
+  display: flex;
+  align-items: center;
+}
+#ps_checkout-canceled img, #ps_checkout-error img{
+  margin-right: 10px;
+}
+
+#ps_checkout-hosted-fields-form label{
+  display: table-cell;
+}
+
+#cart .ps-checkout-express-separator {
+  text-align: center;
+}
+
+.cart-detailed-totals + #ps-checkout-pp-message-container{
+  padding: 0 1rem 1rem;
+}
+
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+  display: none;
+}
+
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
+  text-align: center;
+}
+
+#product #ps_checkout-payment-method-logo-block-title {
+  padding: 0.5rem 0;
+  color: #666;
+  margin-left: 4px;
+}
+
+#cart #ps_checkout-payment-method-logo-block-title {
+  text-align: center;
+  padding: 0.5rem 0;
+  color: #666;
+}
+
+#ps_checkout-payment-method-logo-block-img {
+  margin: 0 2px 3px 2px;
+}
+
+#ps_checkout-payment-method-logos-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#cart #ps_checkout-payment-method-logo-block-container {
+  text-align: center;
+}
+
+form button.ps_checkout-vault-token-delete {
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
+  display: table;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
+  display: table-cell;
+}
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
+}
+
+.ps-checkout.icon-favorite {
+  width: 20px;
+  height: 20px;
+}

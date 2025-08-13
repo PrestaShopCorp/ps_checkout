@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: ${MODULE_VERSION}-ps-mysql-${PS_VERSION_TAG}
+    image: mariadb:10.9.4
+    ports:
+      - ${DATABASE_PORT}:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: prestashop
+      MYSQL_DATABASE: prestashop
+    restart: always
+    healthcheck:
+      test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
+      interval: 10s
+    volumes:
+      - ./mysql/${MODULE_VERSION}-mysql-backup-${PS_VERSION_TAG}:/var/lib/mysql
+
+  ps-prestashop:
+    container_name: ${MODULE_VERSION}-ps-prestashop-${PS_VERSION_TAG}
+    platform: ${DOCKER_PLATFORM}
+    deploy:
+      resources:
+        limits:
+          memory: 4096M
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PS_INSTANCE: ${PS_VERSION_TAG}
+        MODULE_VERSION: ${MODULE_VERSION}
+        INSTALL_XDEBUG: ${INSTALL_XDEBUG}
+    environment:
+      PS_INSTALL_AUTO: 1
+      DB_PASSWD: prestashop
+      DB_NAME: prestashop
+      DB_SERVER: mysql
+      PS_DOMAIN: ${PS_DOMAIN}
+      PS_FOLDER_INSTALL: install
+      PS_FOLDER_ADMIN: admin1
+      PS_ENABLE_SSL: ${SSL_ENABLED}
+    depends_on:
+      - mysql
+    ports:
+      - ${LOCALHOST_PORT}:80
+    volumes:
+      - ./prestashop/${PS_VERSION_TAG}:/var/www/html
+      - ./${MODULE_VERSION}:/var/www/html/modules/ps_checkout
+      - ./api:/var/www/html/modules/ps_checkout/vendor/invertus/api
+      - ./core:/var/www/html/modules/ps_checkout/vendor/invertus/core
+      - ./infrastructure:/var/www/html/modules/ps_checkout/vendor/invertus/infrastructure
+      - ./presentation:/var/www/html/modules/ps_checkout/vendor/invertus/presentation
+      - ./utility:/var/www/html/modules/ps_checkout/vendor/invertus/utility
+      # Note - restart the docker instance after any changes to xdebug configuration
+      - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini
+    healthcheck:
+      test: ['CMD', 'curl', '-f', "localhost:80"]
+      interval: 10s
+      start_period: 15s
+      timeout: 10s
+      retries: 5

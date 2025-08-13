@@ -1,0 +1,9 @@
+{
+  "deps": [
+    "api",
+    "core",
+    "infrastructure",
+    "presentation",
+    "utility"
+  ]
+}

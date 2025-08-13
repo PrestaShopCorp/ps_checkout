@@ -1,0 +1,59 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Presentation\Presenter\Settings\Admin\AdminSettingsPresenter:
+    class: PsCheckout\Presentation\Presenter\Settings\Admin\AdminSettingsPresenter
+    arguments:
+      - [
+        '@PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ContextModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ConfigurationModule',
+        '@PsCheckout\Presentation\Presenter\Settings\Admin\Modules\PaypalModule',
+      ]
+
+  PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ContextModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ContextModule
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").version'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ConfigurationModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ConfigurationModule
+    arguments:
+      - '@=service("ps_checkout.module").id'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@=service("PsCheckout\\Infrastructure\\Adapter\\Context").getShop().id'
+
+  PsCheckout\Presentation\Presenter\Settings\Admin\Modules\PaypalModule:
+    class: PsCheckout\Presentation\Presenter\Settings\Admin\Modules\PaypalModule
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTransactionPresenter:
+    class: PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTransactionPresenter
+    arguments:
+      - '@PsCheckout\Presentation\Presenter\Date\DatePresenter'
+      - '@PsCheckout\Module\Presentation\Translator'
+
+  PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTotalsPresenter:
+    class: PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTotalsPresenter
+
+  PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter:
+    class: PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter
+    arguments:
+      - '@PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTransactionPresenter'
+      - '@PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderTotalsPresenter'
+      - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+
+  PsCheckout\Presentation\Presenter\Date\DatePresenter:
+    class: PsCheckout\Presentation\Presenter\Date\DatePresenter
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'

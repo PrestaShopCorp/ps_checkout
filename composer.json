@@ -1,0 +1,16 @@
+{
+    "name": "ps_checkout/prestashop",
+    "license": "AFL-3.0",
+    "description": "PrestaShop module",
+    "require-dev": {
+        "beberlei/composer-monorepo-plugin": "dev-master@dev"
+    },
+    "config": {
+        "prepend-autoloader": false,
+        "allow-plugins": {
+            "beberlei/composer-monorepo-plugin": true
+        }
+    },
+    "type": "prestashop-module",
+    "author": "PrestaShop"
+}

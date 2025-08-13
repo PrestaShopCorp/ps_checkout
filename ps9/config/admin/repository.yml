@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Repository\ShopRepository:
+    class: PsCheckout\Infrastructure\Repository\ShopRepository
+
+  PsCheckout\Infrastructure\Repository\PaymentTokenRepository:
+    class: PsCheckout\Infrastructure\Repository\PaymentTokenRepository
+    arguments:
+      - '@ps_checkout.db'

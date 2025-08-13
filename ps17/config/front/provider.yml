@@ -1,0 +1,16 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\Order\Provider\PayPalOrderTranslationProvider:
+    class: PsCheckout\Core\PayPal\Order\Provider\PayPalOrderTranslationProvider
+    arguments:
+      - '@PsCheckout\Module\Presentation\Translator'
+
+  PsCheckout\Core\WebhookDispatcher\Provider\WebhookHeaderProvider:
+    class: PsCheckout\Core\WebhookDispatcher\Provider\WebhookHeaderProvider
+
+  PsCheckout\Core\WebhookDispatcher\Provider\WebhookBodyProvider:
+    class: PsCheckout\Core\WebhookDispatcher\Provider\WebhookBodyProvider
+    arguments:
+      - '@PsCheckout\Utility\Common\InputStreamUtility'

@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\GooglePay\Builder\GooglePayPaymentRequestDataBuilder:
+    class: 'PsCheckout\Core\PayPal\GooglePay\Builder\GooglePayPaymentRequestDataBuilder'
+    arguments:
+      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
+      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Module\Presentation\Translator'
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder:
+    class: 'PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder'
+    arguments:
+      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
+      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Module\Presentation\Translator'

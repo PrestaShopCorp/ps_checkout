@@ -1,0 +1,51 @@
+imports:
+  - { resource: shared/api.yml }
+  - { resource: shared/account.yml }
+  - { resource: shared/factory.yml }
+  - { resource: shared/adapter.yml }
+  - { resource: shared/repository.yml }
+  - { resource: shared/presenter.yml }
+  - { resource: shared/provider.yml }
+  - { resource: shared/logger.yml }
+  - { resource: shared/configuration.yml }
+  - { resource: shared/builder.yml }
+  - { resource: shared/validator.yml }
+  - { resource: shared/process.yml }
+  - { resource: shared/cache.yml }
+
+services:
+  _defaults:
+    public: true
+
+  ps_checkout.module:
+    class: 'ps_checkout'
+    factory: [ 'Module', 'getInstanceByName' ]
+    arguments:
+      - 'ps_checkout'
+
+  ps_checkout.db:
+    class: Db
+    factory: [ 'Db', 'getInstance' ]
+
+  # Env loader
+  PsCheckout\Infrastructure\Environment\EnvLoader:
+    class: PsCheckout\Infrastructure\Environment\EnvLoader
+
+  PsCheckout\Infrastructure\Environment\Env:
+    class: PsCheckout\Infrastructure\Environment\Env
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Webhook\Service\WebhookSecretToken:
+    class: PsCheckout\Core\Webhook\Service\WebhookSecretToken
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\OrderState\Service\OrderStateMapper:
+    class: PsCheckout\Core\OrderState\Service\OrderStateMapper
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Utility\Common\InputStreamUtility:
+    class: PsCheckout\Utility\Common\InputStreamUtility

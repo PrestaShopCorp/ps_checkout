@@ -1,0 +1,30 @@
+name: CI/CD pipeline
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  lint:
+    name: Php cs fixer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.1
+          tools: php-cs-fixer:2.18
+
+      - name: Run php cs fixer
+        run: php-cs-fixer fix . --config=.php-cs-fixer.php --no-interaction --using-cache=no
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply PHP-CS-Fixer changes
