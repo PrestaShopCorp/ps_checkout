@@ -4,6 +4,8 @@
 
 ## JIRA task link
 
+Resolves: [XXXX](https://forge.prestashop.com/browse/XXXX)
+
 ## Summary
 <!-- Briefly explain the purpose of this PR in 1-2 sentences -->
 
@@ -12,7 +14,6 @@
 - [ ] New feature? <!-- Maps to "feature" label -->
 - [ ] Improvement? <!-- Maps to "improvement" label -->
 - [ ] Technical debt? <!-- Maps to "debt" label -->
-- [ ] Reusable? <!-- Maps to "reuse" label -->
 - [ ] Covered by tests? <!-- Maps to "tested" label -->
 
 ## QA Checklist
