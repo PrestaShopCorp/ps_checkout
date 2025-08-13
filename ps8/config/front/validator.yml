@@ -1,0 +1,55 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Validator\FrontControllerValidator:
+    class: PsCheckout\Infrastructure\Validator\FrontControllerValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Order\Validator\OrderAuthorizationValidator:
+    class: PsCheckout\Core\Order\Validator\OrderAuthorizationValidator
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Customer'
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
+
+  PsCheckout\Core\Order\Validator\CheckoutValidator:
+    class: PsCheckout\Core\Order\Validator\CheckoutValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\CartRepository'
+
+  PsCheckout\Core\Order\Validator\OrderAmountValidator:
+    class: PsCheckout\Core\Order\Validator\OrderAmountValidator
+
+  PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator:
+    class: PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator
+    arguments:
+      - '@PsCheckout\Core\WebhookDispatcher\Provider\WebhookHeaderProvider'
+
+  PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator:
+    class: PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator
+    arguments:
+      - '@PsCheckout\Core\WebhookDispatcher\Provider\WebhookBodyProvider'
+
+  PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction:
+    class: PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction
+    arguments:
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+
+  PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator:
+    class: PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+
+  PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidator:
+    class: PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidator
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@=service("ps_checkout.module").id'

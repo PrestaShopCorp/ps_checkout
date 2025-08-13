@@ -1,0 +1,47 @@
+services:
+  _defaults:
+    public: true
+
+  PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider:
+    class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
+    public: true
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+      - !php/const _PS_MODE_DEV_
+
+  PsCheckout\Cache\Array\PayPalOrder:
+    class: Symfony\Component\Cache\Adapter\ArrayAdapter
+
+  PsCheckout\Cache\FileSystem\PayPalOrder:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      - "paypal-orders"
+      - 3600
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
+
+  PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache:
+    class: PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache
+    public: true
+    arguments:
+      - '@PsCheckout\Cache\Array\PayPalOrder'
+      - '@PsCheckout\Cache\FileSystem\PayPalOrder'
+      - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
+
+  # Shipping Tracking Cache Services
+  PsCheckout\Cache\Array\ShippingTracking:
+    class: Symfony\Component\Cache\Adapter\ArrayAdapter
+
+  PsCheckout\Cache\FileSystem\ShippingTracking:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      - "shipping-tracking"
+      - 3600
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
+
+  PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache:
+    class: PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache
+    public: true
+    arguments:
+      - '@PsCheckout\Cache\Array\ShippingTracking'
+      - '@PsCheckout\Cache\FileSystem\ShippingTracking'

@@ -1,0 +1,12 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Validator\MerchantValidator:
+    class: PsCheckout\Infrastructure\Validator\MerchantValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+
+  PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator:
+    class: PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator

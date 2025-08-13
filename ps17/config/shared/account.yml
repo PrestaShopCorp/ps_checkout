@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    public: true
+
+  PrestaShop\PsAccountsInstaller\Installer\Installer:
+    class: PrestaShop\PsAccountsInstaller\Installer\Installer
+    arguments:
+      - '4.0.0'
+
+  PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts:
+    class: PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts
+    arguments:
+      - '@PrestaShop\PsAccountsInstaller\Installer\Installer'

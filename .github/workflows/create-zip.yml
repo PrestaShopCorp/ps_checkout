@@ -1,0 +1,98 @@
+name: Create module ZIP
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  prepare-zip:
+    name: Prepare module ZIP artifacts
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        module:
+          - { dir: ps8, suffix: 8 }
+          - { dir: ps17, suffix: 17 }
+          - { dir: ps9, suffix: 9 }
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Install Composer Dev Dependencies (for monorepo)
+        run: |
+          echo "Installing root-level dev dependencies"
+          composer install --prefer-dist --optimize-autoloader
+
+      - name: Prepare and Package Module
+        run: |
+          MODULE_NAME=${{ matrix.module.dir }}
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+
+          echo "Preparing module: $MODULE_NAME (suffix: $VERSION_SUFFIX)"
+
+          cd $MODULE_NAME
+          composer install --no-dev --prefer-dist --optimize-autoloader
+          cd ..
+
+          mkdir -p $MODULE_NAME/vendor/invertus
+          cp -r api core infrastructure presentation utility $MODULE_NAME/vendor/invertus/
+          
+          rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
+                 $MODULE_NAME/tests \
+                 $MODULE_NAME/vendor/tests \
+                 $MODULE_NAME/.php-cs-fixer.cache
+
+          find $MODULE_NAME -type f -name "monorepo.json" -delete
+          for dir in api core infrastructure presentation utility; do
+            rm -rf $MODULE_NAME/vendor/invertus/$dir/tests
+          done
+
+          mkdir -p tmp_package/$FINAL_NAME
+          cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
+          cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
+          cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
+          cp -r $MODULE_NAME/.env.dist tmp_package/$FINAL_NAME/.env || true
+
+          cd tmp_package
+          zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
+          cd ..
+          rm -rf tmp_package
+
+      - name: Unpack ZIP and Upload Artifact
+        run: |
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+
+          mkdir -p $FINAL_NAME
+          unzip ${FINAL_NAME}.${VERSION_SUFFIX}.zip -d $FINAL_NAME
+
+      - name: Upload ${{ matrix.module.dir }} folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps_checkout-${{ matrix.module.suffix }}
+          path: ps_checkout
+          include-hidden-files: true
+
+      - name: Cleanup folder
+        run: rm -rf ps_checkout

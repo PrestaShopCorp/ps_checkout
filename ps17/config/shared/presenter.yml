@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter:
+    class: PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter
+    arguments:
+      - '@=service("ps_checkout.module").getPathUri()'
+      - '@PsCheckout\Infrastructure\Repository\FundingSourceRepository'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+
+  PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter:
+    class: PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\FundingSource\Factory\FundingSourceTokenFactory'
+
+  PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter:
+    class: PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter
+    arguments:
+      - '@=service("ps_checkout.module").getPathUri()'

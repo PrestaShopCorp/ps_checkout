@@ -1,0 +1,11 @@
+.env
+.idea
+.gitmodules
+prestashop
+mysql
+vendor
+*/vendor
+*/.phpunit.result.cache
+*/.php-cs-fixer.cache
+*/.php_cs.cache
+**/.phpunit.result.cache

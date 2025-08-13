@@ -1,0 +1,9 @@
+{
+  "deps": [
+  ],
+  "autoload": {
+    "psr-4": {
+      "PsCheckout\\Utility\\": "src/"
+    }
+  }
+}

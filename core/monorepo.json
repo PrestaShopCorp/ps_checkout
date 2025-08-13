@@ -1,0 +1,10 @@
+{
+  "deps": [
+  ],
+  "autoload": {
+    "psr-4": {
+      "PsCheckout\\Core\\": "src/",
+      "PsCheckout\\Tests\\Core\\Integration\\": "tests/"
+    }
+  }
+}

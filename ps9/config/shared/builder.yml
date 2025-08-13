@@ -1,0 +1,96 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode:
+    class: PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode
+
+  PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\GenderRepository'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+
+  PsCheckout\Core\Order\Builder\Node\PayerNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\PayerNodeBuilder
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Validate'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+
+  PsCheckout\Core\Order\Builder\Node\ApplicationContextNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\ApplicationContextNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+
+  PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder
+    arguments:
+      - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+
+  PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+
+  PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder
+
+  PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder
+    arguments:
+      - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+
+  PsCheckout\Core\Order\Builder\OrderPayloadBuilder:
+    class: PsCheckout\Core\Order\Builder\OrderPayloadBuilder
+    arguments:
+      - '@PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode'
+      - '@PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\PayerNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\ApplicationContextNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder'
+
+  PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder:
+    class: PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder
+    arguments:
+      - '@=service("ps_checkout.module").version'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Api\Http\Configuration\OrderHttpClientConfigurationBuilder:
+    class: 'PsCheckout\Api\Http\Configuration\OrderHttpClientConfigurationBuilder'
+    arguments:
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@=service("ps_checkout.module").version'
+
+  PsCheckout\Api\Http\Configuration\OrderShipmentTrackingConfigurationBuilder:
+    class: PsCheckout\Api\Http\Configuration\OrderShipmentTrackingConfigurationBuilder
+    arguments:
+      - '@=service("ps_checkout.module").version'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'

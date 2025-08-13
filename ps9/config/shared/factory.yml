@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\FundingSource\Factory\FundingSourceTokenFactory:
+    class: PsCheckout\Core\FundingSource\Factory\FundingSourceTokenFactory
+    arguments:
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter'

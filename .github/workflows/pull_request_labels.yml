@@ -1,0 +1,10 @@
+name: Apply Labels Based on PR Template
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  label-management:
+    uses: Invertus/github-templates/.github/workflows/label-management.yml@v1.0.2
+    secrets: inherit

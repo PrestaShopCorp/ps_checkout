@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\Webhook\Handler\WebhookEventConfigurationUpdatedHandler:
+    class: PsCheckout\Core\Webhook\Handler\WebhookEventConfigurationUpdatedHandler
+    public: true
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Webhook\Handler\WebhookHandler:
+    class: PsCheckout\Core\Webhook\Handler\WebhookHandler
+    arguments:
+      - '@PsCheckout\Core\Webhook\Service\WebhookSecretToken'
+      - [ '@PsCheckout\Core\Webhook\Handler\WebhookEventConfigurationUpdatedHandler' ]
+
+  PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler:
+    class: PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler
+    arguments:
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Action\CustomerNotifyAction'
