@@ -28,7 +28,6 @@ jobs:
       - name: Auth GCP 🔑
         uses: ./.github/actions/auth-gcp
         with:
-          auth-mode: "workload-federation"
           provider: ${{ secrets['WI_PROVIDER_V2_PRODUCTION'] }}
           service-account: ${{ secrets['WI_SA_V2_PRODUCTION'] }}
           registry-login: true

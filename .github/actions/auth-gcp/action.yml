@@ -1,31 +1,20 @@
 name: 'Auth GCP'
 description: 'Auth gcp, can login to docker artifact registry or install the sdk'
 inputs:
-  auth-mode:
-    description: 'Authentication mode (workload-federation or json-file)'
-    required: true
-    type: choice
-    options:
-      - workload-federation
-      - json-file
-    default: 'workload-federation'
   registry-login:
     required: false
     type: bool
     default: false
-  credentials-json:
-    required: false
-    type: string
   setup-gcloud:
     required: false
     type: bool
     default: false
   service-account:
-    required: false
+    required: true
     description: Service account email
     type: string
   provider:
-    required: false
+    required: true
     description: gcp workload identity provider
     type: string
   gcp-registry-region:
@@ -55,17 +44,10 @@ runs:
   using: 'composite'
   steps:
     - name: Authenticate to Google Cloud with Workload Federation 🔐
-      if: ${{ inputs.auth-mode == 'workload-federation' }}
       uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: ${{ inputs.provider }}
         service_account: ${{ inputs.service-account }}
-
-    - name: Authenticate to Google Cloud with a JSON file 🔐 (THIS IS DEPRECATED ❌)
-      if: ${{ inputs.auth-mode == 'json-file' }}
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ inputs.credentials-json }}
 
     - name: Setting up gcloud SDK 🛠
       if: ${{ inputs.setup-gcloud == 'true' }}
