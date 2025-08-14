@@ -1,0 +1,165 @@
+name: Create module ZIP
+
+on:
+  pull_request:
+    types: [edited, labeled]
+
+jobs:
+  prepare-zip:
+    name: Prepare module ZIP artifacts
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle7') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle8') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle9')
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+
+    strategy:
+      matrix:
+        module:
+          - { dir: ps8, suffix: 8 }
+          - { dir: ps17, suffix: 17 }
+          - { dir: ps9, suffix: 9 }
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine Environment
+        id: environment
+        run: |
+          # Check for integration labels (prestabulle1 through prestabulle9)
+          if [[ "${{ github.event.pull_request.labels.*.name }}" =~ prestabulle[1-9] ]]; then
+            echo "environment=integration" >> $GITHUB_OUTPUT
+            echo "provider_secret=WI_PROVIDER_V2_INTEGRATION" >> $GITHUB_OUTPUT
+            echo "sa_secret=WI_SA_V2_INTEGRATION" >> $GITHUB_OUTPUT
+            echo "gcp_project_secret=GCP_PROJECT_INTEGRATION" >> $GITHUB_OUTPUT
+            echo "secret_name=module-v5-${{ github.event.pull_request.labels.*.name }}-env" >> $GITHUB_OUTPUT
+            echo "Detected integration environment"
+          elif [[ "${{ github.event.pull_request.labels.*.name }}" =~ "preproduction deployment" ]]; then
+            echo "environment=preproduction" >> $GITHUB_OUTPUT
+            echo "provider_secret=WI_PROVIDER_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "sa_secret=WI_SA_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "gcp_project_secret=GCP_PROJECT_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "secret_name=module-v5-env" >> $GITHUB_OUTPUT
+            echo "Detected preproduction environment"
+          fi
+
+      - name: Auth GCP 🔑
+        uses: ./.github/actions/auth-gcp
+        with:
+          provider: ${{ secrets[steps.environment.outputs.provider_secret] }}
+          service-account: ${{ secrets[steps.environment.outputs.sa_secret] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write .env file 🌳
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="$SECRET_NAME" > .env
+        env:
+          GCP_PROJECT: ${{ secrets[steps.environment.outputs.gcp_project_secret] }}
+          SECRET_NAME: ${{ steps.environment.outputs.secret_name }}
+
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Install Composer Dev Dependencies (for monorepo)
+        run: |
+          echo "Installing root-level dev dependencies"
+          composer install --prefer-dist --optimize-autoloader
+
+      - name: Prepare and Package Module
+        run: |
+          MODULE_NAME=${{ matrix.module.dir }}
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+
+          echo "Preparing module: $MODULE_NAME (suffix: $VERSION_SUFFIX)"
+
+          cd $MODULE_NAME
+          composer install --no-dev --prefer-dist --optimize-autoloader
+          cd ..
+
+          mkdir -p $MODULE_NAME/vendor/invertus
+          cp -r api core infrastructure presentation utility $MODULE_NAME/vendor/invertus/
+          
+          rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
+                 $MODULE_NAME/tests \
+                 $MODULE_NAME/vendor/tests \
+                 $MODULE_NAME/.php-cs-fixer.cache
+
+          find $MODULE_NAME -type f -name "monorepo.json" -delete
+          for dir in api core infrastructure presentation utility; do
+            rm -rf $MODULE_NAME/vendor/invertus/$dir/tests
+          done
+
+          mkdir -p tmp_package/$FINAL_NAME
+          cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
+          cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
+          cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
+          cp -r .env tmp_package/$FINAL_NAME/.env || true
+
+          cd tmp_package
+          zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
+          cd ..
+          rm -rf tmp_package
+
+      - name: Unpack ZIP and Upload Artifact
+        run: |
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+
+          mkdir -p $FINAL_NAME
+          unzip ${FINAL_NAME}.${VERSION_SUFFIX}.zip -d $FINAL_NAME
+
+      - name: Upload ${{ matrix.module.dir }} folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps_checkout-${{ matrix.module.suffix }}
+          path: ps_checkout
+          include-hidden-files: true
+
+      - name: Cleanup folder
+        run: rm -rf ps_checkout
+
+  push-to-bucket-matrix:
+    name: ${{ matrix.env.upper }} - Push to GCP bucket storage
+    needs: [prepare-zip]
+    strategy:
+      fail-fast: false
+      matrix:
+        env:
+          - lower: integration
+            upper: INTEGRATION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'integration deployment') }}
+          - lower: preproduction
+            upper: PREPRODUCTION
+            triggered: ${{ contains(github.event.pull_request.labels.*.name, 'preproduction deployment') }}
+    uses: ./.github/workflows/push-to-bucket.yml
+    with:
+      env-upper: ${{ matrix.env.upper }}
+      env-lower: ${{ matrix.env.lower }}
+      triggered: ${{ matrix.env.triggered }}
+      zip-name: ${{ needs.zip-name-matrix.outputs[matrix.env.lower] }}
+      repository-name: ${{ github.event.repository.name }}
+      prestashop-version: ps8
+      pr-number: pr${{ github.event.number }}
+    secrets: inherit
