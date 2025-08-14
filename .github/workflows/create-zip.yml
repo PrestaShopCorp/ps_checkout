@@ -22,6 +22,10 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
       - name: Auth GCP 🔑
         uses: ./.github/actions/auth-gcp
         with:
@@ -35,11 +39,6 @@ jobs:
         run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-v5-env" > .env
         env:
           GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', 'PRODUCTION')] }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install Composer
         run: |

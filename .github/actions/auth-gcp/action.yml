@@ -34,7 +34,7 @@ inputs:
     default: "europe-west1-docker.pkg.dev"
     type: string
   sdk-version:
-    required: true
+    required: false
     description: which version of google dsl you want to suer
     default: '>=457.0.0'
     type: string
