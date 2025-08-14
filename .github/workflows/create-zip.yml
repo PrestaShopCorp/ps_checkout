@@ -25,20 +25,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
       - name: Auth GCP 🔑
         uses: ./.github/actions/auth-gcp
         with:
           auth-mode: "workload-federation"
-          provider: ${{ secrets[format('WI_PROVIDER_V2_{0}', 'PRODUCTION')] }}
-          service-account: ${{ secrets[format('WI_SA_V2_{0}', 'PRODUCTION')] }}
+          provider: ${{ secrets['WI_PROVIDER_V2_PRODUCTION'] }}
+          service-account: ${{ secrets['WI_SA_V2_PRODUCTION'] }}
           registry-login: true
           setup-gcloud: true
 
       - name: Write .env file 🌳
         run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-v5-env" > .env
         env:
-          GCP_PROJECT: ${{ secrets[format('GCP_PROJECT_{0}', 'PRODUCTION')] }}
+          GCP_PROJECT: ${{ secrets['GCP_PROJECT_PRODUCTION'] }}
 
       - name: Install Composer
         run: |
