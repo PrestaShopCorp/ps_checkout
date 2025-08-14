@@ -8,6 +8,10 @@ jobs:
   prepare-zip:
     name: Prepare module ZIP artifacts
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
 
     strategy:
       matrix:
