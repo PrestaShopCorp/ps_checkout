@@ -2,10 +2,23 @@ name: Create module ZIP
 
 on:
   pull_request:
-    types: [edited, labeled]
+    types: [edited, labeled, synchronize]
 
 jobs:
+  generate-shared-date:
+    name: Generate shared date for all matrix jobs
+    runs-on: ubuntu-latest
+    outputs:
+      shared_date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Generate shared date
+        id: date
+        run: |
+          date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
+          echo "date=$date" >> $GITHUB_OUTPUT
+
   prepare-zip:
+    needs: [generate-shared-date]
     name: Prepare module ZIP artifacts
     runs-on: ubuntu-latest
     if: |
@@ -43,21 +56,34 @@ jobs:
       - name: Determine Environment
         id: environment
         run: |
+          # Get all labels as a JSON array and extract names
+          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
+          echo "Labels JSON: $LABELS_JSON"
+          
+          # Extract label names using jq
+          LABEL_NAMES=$(echo "$LABELS_JSON" | jq -r '.[].name' | tr '\n' ' ')
+          
           # Check for integration labels (prestabulle1 through prestabulle9)
-          if [[ "${{ github.event.pull_request.labels.*.name }}" =~ prestabulle[1-9] ]]; then
+          if echo "$LABEL_NAMES" | grep -q "prestabulle[1-9]"; then
             echo "environment=integration" >> $GITHUB_OUTPUT
             echo "provider_secret=WI_PROVIDER_V2_INTEGRATION" >> $GITHUB_OUTPUT
             echo "sa_secret=WI_SA_V2_INTEGRATION" >> $GITHUB_OUTPUT
             echo "gcp_project_secret=GCP_PROJECT_INTEGRATION" >> $GITHUB_OUTPUT
-            echo "secret_name=module-v5-${{ github.event.pull_request.labels.*.name }}-env" >> $GITHUB_OUTPUT
-            echo "Detected integration environment"
-          elif [[ "${{ github.event.pull_request.labels.*.name }}" =~ "preproduction deployment" ]]; then
+            
+            # Extract the specific prestabulle number
+            PRESTABULLE_LABEL=$(echo "$LABEL_NAMES" | grep -o "prestabulle[1-9]" | head -1)
+            echo "secret_name=module-v5-$PRESTABULLE_LABEL-env" >> $GITHUB_OUTPUT
+            echo "Detected integration environment with label: $PRESTABULLE_LABEL"
+          elif echo "$LABEL_NAMES" | grep -q "preproduction deployment"; then
             echo "environment=preproduction" >> $GITHUB_OUTPUT
             echo "provider_secret=WI_PROVIDER_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
             echo "sa_secret=WI_SA_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
             echo "gcp_project_secret=GCP_PROJECT_PREPRODUCTION" >> $GITHUB_OUTPUT
             echo "secret_name=module-v5-env" >> $GITHUB_OUTPUT
             echo "Detected preproduction environment"
+          else
+            echo "No matching labels found. Available labels: $LABEL_NAMES"
+            exit 1
           fi
 
       - name: Auth GCP 🔑
@@ -121,22 +147,11 @@ jobs:
           zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
           cd ..
           rm -rf tmp_package
-          
-      - name: Prepare zip for push 👷
-        run: |
-          FINAL_NAME=ps_checkout
-          VERSION_SUFFIX=${{ matrix.module.suffix }}
-          
-          # Create a clean zip file excluding unnecessary files
-          cd $FINAL_NAME
-          zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip . -x '*.DS_Store*' '*.git*' '*/.php_cs.*' '*__MACOSX*' '*/.npmrc' '*/composer.*' '*/package.*' '*/.editorconfig' '*test*' '*/tests/*' '*/Test/*' '*/Tests/*' '*/gha-creds-*.json'
-          cd ..
 
       - name: Generate GCP bucket filename
         id: bucket-filename
         run: |
-          date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
-          echo "filename=pr${{ github.event.pull_request.number }}/$date/ps_checkout-${{ matrix.module.suffix }}-${{ steps.environment.outputs.environment }}-${{ github.event.pull_request.number }}-$date.zip" >> $GITHUB_OUTPUT
+          echo "filename=pr${{ github.event.pull_request.number }}/ps_checkout-${{ matrix.module.suffix }}-${{ steps.environment.outputs.environment }}-${{ github.event.pull_request.number }}-${{ needs.generate-shared-date.outputs.shared_date }}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload directly to GCP bucket storage
         run: |

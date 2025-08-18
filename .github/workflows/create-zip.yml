@@ -1,8 +1,9 @@
-name: Create module ZIP - PRODUCTION
+name: Create module ZIP
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'main'
 
 jobs:
   prepare-zip:
@@ -13,7 +14,7 @@ jobs:
       matrix:
         module:
           - { dir: ps8, suffix: 8 }
-          - { dir: ps17, suffix: 7 }
+          - { dir: ps17, suffix: 17 }
           - { dir: ps9, suffix: 9 }
 
     steps:
@@ -89,27 +90,20 @@ jobs:
           cd ..
           rm -rf tmp_package
 
-      - name: Generate release filename
-        id: release-filename
-        run: |
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
-          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
-          echo "filename=ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip" >> $GITHUB_OUTPUT
-          echo "Generated release filename: ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip"
-
-      - name: Rename zip for release
+      - name: Unpack ZIP and Upload Artifact
         run: |
           FINAL_NAME=ps_checkout
           VERSION_SUFFIX=${{ matrix.module.suffix }}
-          mv ${FINAL_NAME}.${VERSION_SUFFIX}.zip ${{ steps.release-filename.outputs.filename }}
 
-      - name: Upload to GitHub Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          mkdir -p $FINAL_NAME
+          unzip ${FINAL_NAME}.${VERSION_SUFFIX}.zip -d $FINAL_NAME
+
+      - name: Upload ${{ matrix.module.dir }} folder
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./${{ steps.release-filename.outputs.filename }}
-          asset_name: ${{ steps.release-filename.outputs.filename }}
-          asset_content_type: application/zip
+          name: ps_checkout-${{ matrix.module.suffix }}
+          path: ps_checkout
+          include-hidden-files: true
+
+      - name: Cleanup folder
+        run: rm -rf ps_checkout
