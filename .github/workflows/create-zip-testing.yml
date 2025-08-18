@@ -1,4 +1,4 @@
-name: Create module ZIP
+name: Create module ZIP (PREPRODUCTION/INTEGRATION)
 
 on:
   pull_request:
