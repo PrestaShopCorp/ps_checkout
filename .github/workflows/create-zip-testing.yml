@@ -73,6 +73,7 @@ jobs:
             # Extract the specific prestabulle number
             PRESTABULLE_LABEL=$(echo "$LABEL_NAMES" | grep -o "prestabulle[1-9]" | head -1)
             echo "secret_name=module-v5-$PRESTABULLE_LABEL-env" >> $GITHUB_OUTPUT
+            echo "prestabulle_label=$PRESTABULLE_LABEL" >> $GITHUB_OUTPUT
             echo "Detected integration environment with label: $PRESTABULLE_LABEL"
           elif echo "$LABEL_NAMES" | grep -q "preproduction deployment"; then
             echo "environment=preproduction" >> $GITHUB_OUTPUT
@@ -151,7 +152,14 @@ jobs:
       - name: Generate GCP bucket filename
         id: bucket-filename
         run: |
-          echo "filename=pr${{ github.event.pull_request.number }}/ps_checkout-${{ matrix.module.suffix }}-${{ steps.environment.outputs.environment }}-${{ github.event.pull_request.number }}-${{ needs.generate-shared-date.outputs.shared_date }}.zip" >> $GITHUB_OUTPUT
+          # Use prestabulle label for integration, environment name for preproduction
+          if [[ "${{ steps.environment.outputs.environment }}" == "integration" ]]; then
+            ENV_LABEL="${{ steps.environment.outputs.prestabulle_label }}"
+          else
+            ENV_LABEL="${{ steps.environment.outputs.environment }}"
+          fi
+          
+          echo "filename=pr${{ github.event.pull_request.number }}/ps_checkout-${{ matrix.module.suffix }}-$ENV_LABEL-${{ github.event.pull_request.number }}-${{ needs.generate-shared-date.outputs.shared_date }}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload directly to GCP bucket storage
         run: |
