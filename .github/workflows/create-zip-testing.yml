@@ -8,6 +8,17 @@ jobs:
   generate-shared-date:
     name: Generate shared date for all matrix jobs
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle7') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle8') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle9')
     outputs:
       shared_date: ${{ steps.date.outputs.date }}
     steps:
@@ -21,17 +32,6 @@ jobs:
     needs: [generate-shared-date]
     name: Prepare module ZIP artifacts
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle6') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle7') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle8') ||
-      contains(github.event.pull_request.labels.*.name, 'prestabulle9')
     permissions:
       id-token: write
       contents: write
