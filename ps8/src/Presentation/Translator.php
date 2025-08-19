@@ -44,7 +44,6 @@ class Translator implements TranslatorInterface
      */
     public function trans(string $key, array $parameters = []): string
     {
-
         $map = [
             'Checkout' => $this->translator->trans('Checkout', $parameters, 'Modules.Checkout.Pscheckout'),
             'Go back to the Checkout' => $this->translator->trans('Go back to the Checkout', $parameters, 'Modules.Checkout.Pscheckout'),
