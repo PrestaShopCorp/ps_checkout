@@ -7,22 +7,30 @@ on:
 jobs:
   publish_to_marketplace:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [7, 8, 9]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
+
+      - name: Generate clean tag name
+        id: clean-tag
+        run: |
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
+          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
+          echo "clean_tag=$RELEASE_TAG_CLEAN" >> $GITHUB_OUTPUT
 
       - name: Download release asset
         uses: dsaltares/fetch-gh-release-asset@0.0.4
         with:
           repo: ${{ github.event.repository.full_name }}
           version: ${{ github.event.release.id }}
-          file: ${{ github.event.repository.name }}.zip
+          file: ps_checkout-v${{ matrix.version }}.${{ steps.clean-tag.outputs.clean_tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Rename release asset
-        run: |
-          mv $PWD/${{ github.event.repository.name }}.zip $PWD/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
 
       - name: Prepare publishing tool
         run: |
@@ -30,6 +38,6 @@ jobs:
 
       - name: Release zip
         run: |
-          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
+          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/ps_checkout-v${{ matrix.version }}.${{ steps.clean-tag.outputs.clean_tag }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
         env:
           MARKETPLACE_API_KEY: ${{ secrets.MARKETPLACE_API_KEY }}
