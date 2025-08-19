@@ -41,7 +41,7 @@ jobs:
       matrix:
         module:
           - { dir: ps8, suffix: 8 }
-          - { dir: ps17, suffix: 17 }
+          - { dir: ps17, suffix: 7 }
           - { dir: ps9, suffix: 9 }
 
     steps:
