@@ -24,11 +24,11 @@
         {if isset($error)}
           {$error}
         {else}
-          {l s='3DS verification failed, please try again.' mod='ps_checkout'}
+          {l s='3DS verification failed, please try again.' d='Modules.Checkout.Pscheckout'}
         {/if}
       </div>
       <div class="ps-checkout order-link">
-        <a href="{$order_url}">{l s='Back to order page' mod='ps_checkout'}</a>
+        <a href="{$order_url}">{l s='Back to order page' d='Modules.Checkout.Pscheckout'}</a>
       </div>
     </div>
   </div>
