@@ -20,7 +20,7 @@
   <div>
     <label for="ps_checkout-vault-payment-{$paymentIdentifier}" class="ps_checkout-vault-label">
       <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$paymentIdentifier}" id="ps_checkout-vault-payment-{$paymentIdentifier}">
-      {l s='Securely store payment details for future purchases' mod='ps_checkout'}
+      {l s='Securely store payment details for future purchases' d='Modules.Checkout.Pscheckout'}
       <img src="{$modulePath}views/img/icons/lock_fill.svg" alt="lock" width="15" height="15">
     </label>
   </div>

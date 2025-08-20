@@ -19,7 +19,7 @@
 <div id="ps_checkout-notification-container">
   <div id="ps_checkout-canceled" class="alert alert-warning-custom" style="display:none;">
     <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
-    <strong>{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</strong>
+    <strong>{l s='Processing payment canceled, please choose another payment method or try again.' d='Modules.Checkout.Pscheckout'}</strong>
   </div>
   <div id="ps_checkout-error" class="alert alert-danger-custom" style="display:none;">
     <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
