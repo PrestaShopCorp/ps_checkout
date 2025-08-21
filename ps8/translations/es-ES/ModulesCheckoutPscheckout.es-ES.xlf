@@ -534,7 +534,7 @@
       </trans-unit>
       <trans-unit id="f990493af3321939ca512f8f2cace108">
         <source>Pay by %s</source>
-        <target>Pay by %s</target>
+        <target>Pagar con %s</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="fc9b4762660906602b63bcd99e5e9747">
@@ -549,7 +549,7 @@
       </trans-unit>
       <trans-unit id="983fe12e91079dcb00c74772b50747a3">
         <source>Pay by Card - 100% secure payments</source>
-        <target>Pay by Card - 100% secure payments</target>
+        <target>Pagar con tarjeta - pagos 100% seguros</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1d565b9e5303987bb1b1938d5d458bca">
@@ -808,7 +808,7 @@
         <target>Para ver esta información, vuelve a conectar la cuenta de PayPal correcta.</target>
       </trans-unit>
       <trans-unit id="f2fac46f956a95707301e00b21e29aa4">
-        <source>Your 3D Secure settings for this transaction was "Only use 3D Secure when required by the issuing bank" and the current transaction doesn’t require it. The bank issuer declined the liability shift. We advise waiting a few days before honoring the order in case of chargeback and contacting the buyer to verify transaction authenticity. Consider Chargeback protection for such cases.</source>
+        <source>Your 3D Secure settings for this transaction were set to “Strong Customer Authentication (SCA) when required”, but the current transaction does not require it as per the regulation.</source>
         <target>Tu configuración de 3D Secure para esta transacción se estableció como "Autenticación Reforzada de Cliente (SCA) cuando sea requerida", pero la transacción actual no lo requiere según la regulación.</target>
       </trans-unit>
       <trans-unit id="896890bfb700eac98300d639ca970f2b">

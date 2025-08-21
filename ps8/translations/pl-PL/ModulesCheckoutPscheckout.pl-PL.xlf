@@ -808,7 +808,7 @@
         <target>Aby zobaczyć szczegóły transakcji, połącz ponownie prawidłowe konto PayPal.</target>
       </trans-unit>
       <trans-unit id="f2fac46f956a95707301e00b21e29aa4">
-        <source>Your 3D Secure settings for this transaction was "Only use 3D Secure when required by the issuing bank" and the current transaction doesn’t require it. The bank issuer declined the liability shift. We advise waiting a few days before honoring the order in case of chargeback and contacting the buyer to verify transaction authenticity. Consider Chargeback protection for such cases.</source>
+        <source>Your 3D Secure settings for this transaction were set to “Strong Customer Authentication (SCA) when required”, but the current transaction does not require it as per the regulation.</source>
         <target>Ustawienia 3D Secure dla tej transakcji zostały ustawione na "Silne Uwierzytelnienie Klienta (SCA) w razie potrzeby", ale bieżąca transakcja nie wymaga tego zgodnie z przepisami.</target>
       </trans-unit>
       <trans-unit id="896890bfb700eac98300d639ca970f2b">
