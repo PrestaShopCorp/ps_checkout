@@ -808,8 +808,8 @@
         <target>In order to see this information, please reconnect the correct PayPal account.</target>
       </trans-unit>
       <trans-unit id="f2fac46f956a95707301e00b21e29aa4">
-        <source>Your 3D Secure settings for this transaction were set to “Strong Customer Authentication (SCA) when required”, but the current transaction does not require it as per the regulation.</source>
-        <target>Your 3D Secure settings for this transaction were set to “Strong Customer Authentication (SCA) when required”, but the current transaction does not require it as per the regulation.</target>
+        <source>Your 3D Secure settings for this transaction were set to "Strong Customer Authentication (SCA) when required", but the current transaction does not require it as per the regulation.</source>
+        <source>Your 3D Secure settings for this transaction were set to "Strong Customer Authentication (SCA) when required", but the current transaction does not require it as per the regulation.</source>
       </trans-unit>
       <trans-unit id="896890bfb700eac98300d639ca970f2b">
         <source>Merchant</source>
