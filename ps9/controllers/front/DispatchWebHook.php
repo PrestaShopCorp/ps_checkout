@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PsCheckout\Core\Webhook\WebhookException;
-use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
+use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 use PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor;
 use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
@@ -65,8 +65,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
 
-            /** @var CheckPSLSignatureAction $checkPSLSignatureAction */
-            $checkPSLSignatureAction = $this->module->getService(CheckPSLSignatureAction::class);
+            /** @var VerifyWebhookAction $checkPSLSignatureAction */
+            $checkPSLSignatureAction = $this->module->getService(VerifyWebhookAction::class);
             $checkPSLSignatureAction->execute($bodyValues);
             $logger->info('PSLS Signature validated', $bodyValues);
 

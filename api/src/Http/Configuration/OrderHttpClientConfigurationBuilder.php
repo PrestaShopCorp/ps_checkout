@@ -39,7 +39,7 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
     /**
      * @var EnvInterface
      */
-    private $paymentEnv;
+    private $orderEnv;
 
     /**
      * @var PsAccountRepository
@@ -67,14 +67,14 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
     private $moduleVersion;
 
     public function __construct(
-        EnvInterface $paymentEnv,
+        EnvInterface $orderEnv,
         PsAccountRepository $psAccountRepository,
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         LinkInterface $link,
         string $moduleVersion
     ) {
-        $this->paymentEnv = $paymentEnv;
+        $this->orderEnv = $orderEnv;
         $this->psAccountRepository = $psAccountRepository;
         $this->logger = $logger;
         $this->configuration = $configuration;
@@ -88,7 +88,7 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
     public function build(): array
     {
         $configuration = [
-            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
+            'base_url' => $this->orderEnv->getOrderApiUrl(),
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
@@ -97,7 +97,7 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
                 'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
                 'Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
-                'Bn-Code' => $this->paymentEnv->getBnCode(),
+                'Bn-Code' => $this->orderEnv->getBnCode(),
                 'Module-Version' => $this->moduleVersion, // version of the module
                 'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],

@@ -94,3 +94,23 @@ services:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
       - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Api\Http\Configuration\PaymentConfigurationBuilder:
+    class: 'PsCheckout\Api\Http\Configuration\PaymentConfigurationBuilder'
+    arguments:
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@=service("ps_checkout.module").version'
+
+  PsCheckout\Api\Http\Configuration\WebhookConfigurationBuilder:
+    class: 'PsCheckout\Api\Http\Configuration\WebhookConfigurationBuilder'
+    arguments:
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@=service("ps_checkout.module").version'

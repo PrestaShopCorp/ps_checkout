@@ -18,9 +18,23 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Api\Http\Configuration;
+namespace PsCheckout\Api\Http;
 
-interface OrderShipmentTrackingConfigurationBuilderInterface
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
+use PsCheckout\Api\Http\Exception\PayPalException;
+
+interface PaymentHttpClientInterface
 {
-    public function build(): array;
+    /**
+     * @param array $payload
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function refundOrder(array $payload): ResponseInterface;
 }

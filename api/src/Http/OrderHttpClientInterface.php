@@ -64,22 +64,4 @@ interface OrderHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function updateOrder(array $payload): ResponseInterface;
-
-    /**
-     * @param array $payload
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function refundOrder(array $payload): ResponseInterface;
-
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload): array;
 }

@@ -29,45 +29,57 @@ use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
-use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use Psr\Log\LoggerInterface;
 
-class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class WebhookConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
-    /** @var string */
-    private $moduleVersion;
+    /**
+     * @var EnvInterface
+     */
+    private $webhookEnv;
 
-    /** @var ConfigurationInterface */
-    private $configuration;
-
-    /** @var LinkInterface */
-    private $link;
-
-    /** @var EnvInterface */
-    private $env;
-
-    /** @var PsAccountRepositoryInterface */
+    /**
+     * @var PsAccountRepository
+     */
     private $psAccountRepository;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    /**
+     * @var string
+     */
+    private $moduleVersion;
+
     public function __construct(
-        string $moduleVersion,
+        EnvInterface $webhookEnv,
+        PsAccountRepository $psAccountRepository,
+        LoggerInterface $logger,
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        EnvInterface $env,
-        PsAccountRepositoryInterface $psAccountRepository,
-        LoggerInterface $logger
+        string $moduleVersion
     ) {
-        $this->moduleVersion = $moduleVersion;
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->env = $env;
+        $this->webhookEnv = $webhookEnv;
         $this->psAccountRepository = $psAccountRepository;
         $this->logger = $logger;
+        $this->configuration = $configuration;
+        $this->link = $link;
+        $this->moduleVersion = $moduleVersion;
     }
 
     /**
@@ -76,17 +88,18 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
     public function build(): array
     {
         $configuration = [
-            'base_uri' => $this->env->getShipmentTrackingApiUrl(),
-            'timeout' => self::TIMEOUT,
+            'base_url' => $this->webhookEnv->getWebhookApiUrl(),
+            'verify' => $this->getVerify(),
+            'timeout' => static::TIMEOUT,
             'headers' => [
-                'Content-Type' => 'application/json',
+                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),
-                'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),
-                'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
-                'Checkout-Bn-Code' => $this->env->getBnCode(),
-                'Checkout-Module-Version' => $this->moduleVersion,
-                'Checkout-Prestashop-Version' => _PS_VERSION_,
+                'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
+                'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
+                'Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
+                'Bn-Code' => $this->webhookEnv->getBnCode(),
+                'Module-Version' => $this->moduleVersion, // version of the module
+                'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];
 
@@ -116,5 +129,19 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
         }
 
         return $configuration;
+    }
+
+    /**
+     * @see https://docs.guzzlephp.org/en/5.3/clients.html#verify
+     *
+     * @return true|string
+     */
+    protected function getVerify()
+    {
+        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
+            return constant('_PS_CACHE_CA_CERT_FILE_');
+        }
+
+        return true;
     }
 }
