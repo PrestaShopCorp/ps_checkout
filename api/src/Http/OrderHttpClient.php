@@ -93,7 +93,6 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     private function extractMessage(array $body): string
     {
-
         if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
             return $body['details'][0]['issue'];
         }
