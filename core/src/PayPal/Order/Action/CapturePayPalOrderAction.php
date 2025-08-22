@@ -119,7 +119,7 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
             $payload['vault'] = true;
         }
 
-        $response = $this->orderHttpClient->captureOrder($payload);
+        $response = $this->orderHttpClient->captureOrder($payPalOrder->getId(), $payload);
 
         $orderPayPal = json_decode($response->getBody(), true);
         $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);

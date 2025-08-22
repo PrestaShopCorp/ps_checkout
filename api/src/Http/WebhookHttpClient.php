@@ -79,6 +79,10 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
             return $body['error'];
         }
 
+        if (isset($body['message']) && is_array($body['message'])) {
+            return implode("\n", $body['message']);
+        }
+
         if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
             return $body['message'];
         }

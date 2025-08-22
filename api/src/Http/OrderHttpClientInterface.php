@@ -49,12 +49,13 @@ interface OrderHttpClientInterface
 
     /**
      * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function captureOrder(array $payload): ResponseInterface;
+    public function captureOrder(string $orderId, array $payload): ResponseInterface;
 
     /**
      * @param array $payload

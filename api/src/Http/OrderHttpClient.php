@@ -59,7 +59,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function createOrder(array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', [], json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/orders', [], json_encode($payload)));
     }
 
     /**
@@ -67,15 +67,15 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function fetchOrder(array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', [], json_encode($payload)));
+        return $this->sendRequest(new Request('GET', '/orders', [], json_encode($payload)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function captureOrder(array $payload): ResponseInterface
+    public function captureOrder(string $orderId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', [], json_encode($payload)));
+        return $this->sendRequest(new Request('POST', "/orders/$orderId/capture", [], json_encode($payload)));
     }
 
     /**
@@ -83,7 +83,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function updateOrder(array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', [], json_encode($payload)));
+        return $this->sendRequest(new Request('PATCH', '/orders', [], json_encode($payload)));
     }
 
     /**
@@ -93,12 +93,17 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     private function extractMessage(array $body): string
     {
+
         if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
             return $body['details'][0]['issue'];
         }
 
         if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
+        }
+
+        if (isset($body['message']) && is_array($body['message'])) {
+            return implode("\n", $body['message']);
         }
 
         if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
