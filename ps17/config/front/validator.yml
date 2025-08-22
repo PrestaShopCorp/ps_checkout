@@ -36,10 +36,10 @@ services:
     arguments:
       - '@PsCheckout\Core\WebhookDispatcher\Provider\WebhookBodyProvider'
 
-  PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction:
-    class: PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction
+  PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction:
+    class: PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction
     arguments:
-      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Api\Http\WebhookHttpClient'
 
   PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator:
     class: PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator

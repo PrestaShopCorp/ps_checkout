@@ -46,7 +46,7 @@ class BodyValuesValidatorTest extends TestCase
     {
         // Arrange
         $bodyValues = [
-            'resource' => ['id' => '123', 'status' => 'completed'],
+            'resource' => json_encode(['id' => '123', 'status' => 'completed']),
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
             'category' => 'PAYMENT',
             'summary' => 'Payment completed',
@@ -74,7 +74,7 @@ class BodyValuesValidatorTest extends TestCase
     {
         // Arrange
         $bodyValues = [
-            'resource' => ['id' => '123'],
+            'resource' => json_encode(['id' => '123']),
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
             'category' => 'PAYMENT',
         ];

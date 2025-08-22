@@ -18,9 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Api\Http\Configuration;
+namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-interface OrderShipmentTrackingConfigurationBuilderInterface
+interface VerifyWebhookActionInterface
 {
-    public function build(): array;
+    /**
+     * @param string $rawBody
+     * @param array $webhookHeaders
+     *
+     * @return bool
+     */
+    public function execute(string $rawBody, array $webhookHeaders): bool;
 }

@@ -27,7 +27,7 @@ use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInterface
+class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClientInterface
 {
     public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
     {
@@ -57,33 +57,11 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function createOrder(array $payload): ResponseInterface
+    public function verifyWebhook(string $rawBody, array $headers): array
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', [], json_encode($payload)));
-    }
+        $response = $this->sendRequest(new Request('POST', 'webhooks/verify', $headers, json_encode($payload)));
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchOrder(array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', [], json_encode($payload)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function captureOrder(array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', [], json_encode($payload)));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function updateOrder(array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', [], json_encode($payload)));
+        return json_decode($response->getBody(), true);
     }
 
     /**
