@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="admin-dev" source-language="fr-FR" target-language="fr-FR" datatype="plaintext">
+  <file original="admin-dev" source-language="en-US" target-language="es-ES" datatype="plaintext">
     <body>
       <trans-unit id="d1a7ac6d45dcb4a782b441e29380056a">
         <source>Refund has been processed by PayPal.</source>
