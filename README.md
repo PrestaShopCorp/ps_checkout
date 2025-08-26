@@ -42,6 +42,10 @@ Contributors **must** follow the following rules:
 7. Website is accessible at `http://localhost:8991`
 8. `http://localhost:8991/admin1` - admin panel
 
+Use default PrestaShop credentials to login:
+- `demo@prestashop.com`
+- `prestashop_demo`
+
 ## Contributing
 
 PrestaShop modules are open source extensions to the PrestaShop e-commerce solution. Everyone is welcome and even encouraged to contribute with their own improvements.
@@ -66,8 +70,3 @@ This module is released under the [Academic Free License 3.0][AFL-3.0]
 [2]: https://devdocs.prestashop-project.org/8/contribute/contribution-guidelines/
 [3]: https://help.github.com/articles/using-pull-requests
 [AFL-3.0]: https://opensource.org/licenses/AFL-3.0
-
-
-Use default PrestaShop credentials to login:
-    `demo@prestashop.com`
-    `prestashop_demo`
