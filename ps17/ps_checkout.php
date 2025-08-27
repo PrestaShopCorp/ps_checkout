@@ -115,7 +115,8 @@ class Ps_Checkout extends PaymentModule
         $this->displayName = $this->l('PrestaShop Checkout');
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => '1.7.999.999'];
     }
 
     public function install(): bool
