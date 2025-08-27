@@ -59,15 +59,15 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function createOrder(array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/orders', [], json_encode($payload)));
+        return $this->sendRequest(new Request('POST', 'orders', [], json_encode($payload)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function fetchOrder(array $payload): ResponseInterface
+    public function fetchOrder(string $orderId): ResponseInterface
     {
-        return $this->sendRequest(new Request('GET', '/orders', [], json_encode($payload)));
+        return $this->sendRequest(new Request('GET', "orders/$orderId"));
     }
 
     /**
@@ -75,7 +75,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function captureOrder(string $orderId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', "/orders/$orderId/capture", [], json_encode($payload)));
+        return $this->sendRequest(new Request('POST', "orders/$orderId/capture", [], !empty($payload) ? json_encode($payload) : '{}'));
     }
 
     /**
@@ -83,7 +83,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
      */
     public function updateOrder(array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('PATCH', '/orders', [], json_encode($payload)));
+        return $this->sendRequest(new Request('PATCH', 'orders', [], json_encode($payload)));
     }
 
     /**

@@ -46,6 +46,9 @@ services:
 
   PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
 
   PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder

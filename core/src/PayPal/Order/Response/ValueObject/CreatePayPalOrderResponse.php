@@ -45,7 +45,7 @@ class CreatePayPalOrderResponse
         string $intent,
         string $status,
         array $purchaseUnits,
-        string $payer,
+        array $payer,
         string $createTime,
         array $links,
         string $clientToken,
@@ -74,7 +74,7 @@ class CreatePayPalOrderResponse
             $data['intent'] ?? '',
             $data['status'] ?? '',
             $data['purchase_units'] ?? [],
-            $data['payer'] ?? '',
+            $data['payer'] ?? [],
             $data['create_time'] ?? '',
             $data['links'] ?? [],
             $data['client_token'] ?? '',
@@ -102,7 +102,7 @@ class CreatePayPalOrderResponse
         return $this->purchaseUnits;
     }
 
-    public function getPayer(): string
+    public function getPayer(): array
     {
         return $this->payer;
     }

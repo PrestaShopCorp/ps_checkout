@@ -39,13 +39,13 @@ interface OrderHttpClientInterface
     public function createOrder(array $payload): ResponseInterface;
 
     /**
-     * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function fetchOrder(array $payload): ResponseInterface;
+    public function fetchOrder(string $orderId): ResponseInterface;
 
     /**
      * @param array $payload
