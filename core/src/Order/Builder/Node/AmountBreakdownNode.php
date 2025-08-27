@@ -50,7 +50,7 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
             $totalWithoutTax = $value['total'];
             $totalWithTax = $value['total_wt'];
             $totalTax = $totalWithTax - $totalWithoutTax;
-            $quantity = $value['quantity'];
+            $quantity = (string) $value['quantity'];
             $unitPriceWithoutTax = NumberUtility::formatAmount($totalWithoutTax / $quantity, $currencyIsoCode);
             $unitTax = NumberUtility::formatAmount($totalTax / $quantity, $currencyIsoCode);
             $breakdownItemTotal += $unitPriceWithoutTax * $quantity;

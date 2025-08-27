@@ -132,7 +132,10 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             $this->orderPayloadBuilder->setPaypalCustomerId($payPalCustomerId);
         }
 
-        $payload = $this->orderPayloadBuilder->build();
+        $payload = [
+            'paypalRequestId' => null,
+            'paypalPayload' => $this->orderPayloadBuilder->build(),
+        ];
 
         try {
             $orderResponse = $this->createPayPalOrder($payload);

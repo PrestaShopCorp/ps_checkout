@@ -128,7 +128,7 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
         }
 
         try {
-            $response = $this->orderHttpClient->fetchOrder($payload);
+            $response = $this->orderHttpClient->fetchOrder($id);
             $responseData = json_decode($response->getBody(), true);
 
             if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300 && !empty($responseData)) {

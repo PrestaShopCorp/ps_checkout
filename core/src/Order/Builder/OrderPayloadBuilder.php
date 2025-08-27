@@ -161,23 +161,26 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         if ($isFullPayload) {
             $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
             if (!empty($amountBreakdown)) {
-                $this->payload = array_replace_recursive($this->payload, $amountBreakdown);
+                $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $amountBreakdown);
+//                $this->payload = array_replace_recursive($this->payload, $amountBreakdown);
             }
         }
 
         if (!$this->expressCheckout) {
-            $optionalPayload[] = $this->shippingNodeBuilder->setCart($this->cart)->build();
+            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
 
             if (!$this->isUpdate) {
                 $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
             }
+        } else {
+            $this->payPalPaymentSourceNodeBuilder->setExpressCheckout(true);
         }
 
-        if (!$this->isUpdate) {
-            $optionalPayload[] = $this->applicationContextNodeBuilder
-                ->setIsExpressCheckout($this->expressCheckout)
-                ->build();
-        }
+//        if (!$this->isUpdate) {
+//            $optionalPayload[] = $this->applicationContextNodeBuilder
+//                ->setIsExpressCheckout($this->expressCheckout)
+//                ->build();
+//        }
 
         if ($this->isCard) {
             $optionalPayload[] = $this->buildCardPaymentSource();
@@ -255,6 +258,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         switch ($this->fundingSource) {
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
+            case 'paypal':
+                return $this->payPalPaymentSourceNodeBuilder->build();
         }
 
         return null;
