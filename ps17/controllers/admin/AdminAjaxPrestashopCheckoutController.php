@@ -700,7 +700,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->ajaxRender(json_encode([
                 'status' => false,
                 'errors' => [
-                    $this->module->l('No PrestaShop Order identifier received'),
+                    $this->l('No PrestaShop Order identifier received'),
                 ],
             ]));
         }
@@ -716,7 +716,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->ajaxRender(json_encode([
                 'status' => false,
                 'errors' => [
-                    $this->module->l('Unable to find PayPal Order associated to this PrestaShop Order %s', [$order->id]),
+                    $this->l('Unable to find PayPal Order associated to this PrestaShop Order %s', [$order->id]),
                 ],
             ]));
         }
@@ -729,7 +729,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->ajaxRender(json_encode([
                 'status' => false,
                 'errors' => [
-                    $this->module->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', [$payPalOrder->getId()]),
+                    $this->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', [$payPalOrder->getId()]),
                 ],
             ]));
         }
@@ -786,23 +786,23 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         } catch (PayPalRefundException $exception) {
             switch ($exception->getCode()) {
                 case PayPalRefundException::INVALID_ORDER_ID:
-                    $error = $this->module->l('PayPal Order is invalid.');
+                    $error = $this->l('PayPal Order is invalid.');
 
                     break;
                 case PayPalRefundException::INVALID_TRANSACTION_ID:
-                    $error = $this->module->l('PayPal Transaction is invalid.');
+                    $error = $this->l('PayPal Transaction is invalid.');
 
                     break;
                 case PayPalRefundException::INVALID_CURRENCY:
-                    $error = $this->module->l('PayPal refund currency is invalid.');
+                    $error = $this->l('PayPal refund currency is invalid.');
 
                     break;
                 case PayPalRefundException::INVALID_AMOUNT:
-                    $error = $this->module->l('PayPal refund amount is invalid.');
+                    $error = $this->l('PayPal refund amount is invalid.');
 
                     break;
                 case PayPalRefundException::REFUND_FAILED:
-                    $error = $this->module->l('PayPal refund failed.');
+                    $error = $this->l('PayPal refund failed.');
 
                     break;
                 default:
@@ -820,7 +820,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 $this->exitWithResponse([
                     'httpCode' => 200,
                     'status' => true,
-                    'content' => $this->module->l('Refund has been processed by PayPal, but order status change or email sending failed.'),
+                    'content' => $this->l('Refund has been processed by PayPal, but order status change or email sending failed.'),
                 ]);
             } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
                 $this->exitWithResponse([
@@ -837,7 +837,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'httpCode' => 500,
                 'status' => false,
                 'errors' => [
-                    $this->module->l('Refund cannot be processed by PayPal.'),
+                    $this->l('Refund cannot be processed by PayPal.'),
                 ],
                 'error' => $exception->getMessage(),
             ]);
@@ -846,7 +846,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $this->exitWithResponse([
             'httpCode' => 200,
             'status' => true,
-            'content' => $this->module->l('Refund has been processed by PayPal.'),
+            'content' => $this->l('Refund has been processed by PayPal.'),
         ]);
     }
 
