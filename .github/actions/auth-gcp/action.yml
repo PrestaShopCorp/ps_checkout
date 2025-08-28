@@ -1,0 +1,68 @@
+name: 'Auth GCP'
+description: 'Auth gcp, can login to docker artifact registry or install the sdk'
+inputs:
+  registry-login:
+    required: false
+    type: bool
+    default: false
+  setup-gcloud:
+    required: false
+    type: bool
+    default: false
+  service-account:
+    required: true
+    description: Service account email
+    type: string
+  provider:
+    required: true
+    description: gcp workload identity provider
+    type: string
+  gcp-registry-region:
+    required: false
+    description: docker registry gcp
+    default: "europe-west1-docker.pkg.dev"
+    type: string
+  sdk-version:
+    required: false
+    description: which version of google dsl you want to suer
+    default: '>=457.0.0'
+    type: string
+  gke-cluster-name:
+    required: false
+    description: 'If you put the cluster name in this variable it will activate auth to make kubectl'
+    default: ''
+    type: string
+  cluster-region:
+    required: false
+    description: 'Cluster region'
+    type: choice
+    options:
+      - europe-west1
+    default: 'europe-west1'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Authenticate to Google Cloud with Workload Federation 🔐
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ inputs.provider }}
+        service_account: ${{ inputs.service-account }}
+
+    - name: Setting up gcloud SDK 🛠
+      if: ${{ inputs.setup-gcloud == 'true' }}
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        version: ${{ inputs.sdk-version }}
+
+    - name: Login to Docker artifact registry 🐳
+      if: ${{ inputs.registry-login == 'true' }}
+      shell: bash
+      run: gcloud auth configure-docker ${{ inputs.gcp-registry-region }}
+
+    - name: Add cluster authentification 🧊
+      if: ${{ inputs.gke-cluster-name != '' }}
+      uses: 'google-github-actions/get-gke-credentials@v2'
+      with:
+        cluster_name: '${{ inputs.gke-cluster-name }}'
+        location: '${{ inputs.cluster-region }}'
