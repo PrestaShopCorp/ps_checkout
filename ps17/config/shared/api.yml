@@ -20,9 +20,9 @@ services:
   PsCheckout\Api\Http\PaymentHttpClient:
     class: PsCheckout\Api\Http\PaymentHttpClient
     arguments:
-      - '@PsCheckout\Api\Http\Configuration\PaymentConfigurationBuilder'
+      - '@PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder'
 
   PsCheckout\Api\Http\WebhookHttpClient:
     class: PsCheckout\Api\Http\WebhookHttpClient
     arguments:
-      - '@PsCheckout\Api\Http\Configuration\WebhookConfigurationBuilder'
+      - '@PsCheckout\Api\Http\Configuration\WebhookHttpClientConfigurationBuilder'

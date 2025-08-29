@@ -32,7 +32,7 @@ use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use Psr\Log\LoggerInterface;
 
-class PaymentConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class PaymentHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
