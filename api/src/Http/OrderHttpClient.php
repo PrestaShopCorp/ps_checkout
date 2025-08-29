@@ -87,24 +87,6 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function refundOrder(array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', [], json_encode($payload)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getShopSignature(array $payload): array
-    {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', [], json_encode($payload)));
-
-        return json_decode($response->getBody(), true);
-    }
-
-    /**
      * @param array $body
      *
      * @return string
@@ -117,6 +99,10 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
 
         if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
+        }
+
+        if (isset($body['message']) && is_array($body['message'])) {
+            return implode("\n", $body['message']);
         }
 
         if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {

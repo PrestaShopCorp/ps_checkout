@@ -49,7 +49,13 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
     {
         return [
             'vault ID provided' => [
-                'vault_123', null, null, [],
+                'vault_123', null, null, [
+                    'payment_source' => [
+                        'paypal' => [
+                            'vault_id' => 'vault_123',
+                        ],
+                    ],
+                ],
             ],
             'customer ID provided' => [
                 null, 'customer_123', null, [
@@ -101,7 +107,23 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                 null, null, null, [],
             ],
             'vault ID and customer ID' => [
-                'vault_123', 'customer_123', true, [],
+                'vault_123', 'customer_123', true, [
+                    'payment_source' => [
+                        'paypal' => [
+                            'attributes' => [
+                                'customer' => ['id' => 'customer_123'],
+                                'vault' => [
+                                    'store_in_vault' => 'ON_SUCCESS',
+                                    'usage_pattern' => 'IMMEDIATE',
+                                    'usage_type' => 'MERCHANT',
+                                    'customer_type' => 'CONSUMER',
+                                    'permit_multiple_payment_tokens' => false,
+                                ],
+                            ],
+                            'vault_id' => 'vault_123',
+                        ],
+                    ],
+                ],
             ],
         ];
     }

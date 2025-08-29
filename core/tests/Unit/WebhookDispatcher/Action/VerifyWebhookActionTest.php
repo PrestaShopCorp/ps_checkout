@@ -22,31 +22,31 @@ namespace PsCheckout\Tests\Unit\WebhookDispatcher\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PsCheckout\Api\Http\OrderHttpClientInterface;
+use PsCheckout\Api\Http\WebhookHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
-use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
+use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 
-class CheckPSLSignatureActionTest extends TestCase
+class VerifyWebhookActionTest extends TestCase
 {
-    /** @var CheckPSLSignatureAction */
+    /** @var VerifyWebhookAction */
     private $action;
 
-    /** @var OrderHttpClientInterface|MockObject */
-    private $orderHttpClient;
+    /** @var WebhookHttpClientInterface|MockObject */
+    private $webhookHttpClient;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
-        $this->action = new CheckPSLSignatureAction($this->orderHttpClient);
+        $this->webhookHttpClient = $this->createMock(WebhookHttpClientInterface::class);
+        $this->action = new VerifyWebhookAction($this->webhookHttpClient);
     }
 
     public function testItSuccessfullyValidatesPSLSignature(): void
     {
         // Arrange
         $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
+        $this->webhookHttpClient->expects($this->once())
             ->method('getShopSignature')
             ->with($bodyValues)
             ->willReturn([
@@ -65,7 +65,7 @@ class CheckPSLSignatureActionTest extends TestCase
     {
         // Arrange
         $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
+        $this->webhookHttpClient->expects($this->once())
             ->method('getShopSignature')
             ->with($bodyValues)
             ->willReturn([
@@ -86,7 +86,7 @@ class CheckPSLSignatureActionTest extends TestCase
     {
         // Arrange
         $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
+        $this->webhookHttpClient->expects($this->once())
             ->method('getShopSignature')
             ->with($bodyValues)
             ->willReturn([
@@ -107,7 +107,7 @@ class CheckPSLSignatureActionTest extends TestCase
     {
         // Arrange
         $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
+        $this->webhookHttpClient->expects($this->once())
             ->method('getShopSignature')
             ->with($bodyValues)
             ->willReturn([

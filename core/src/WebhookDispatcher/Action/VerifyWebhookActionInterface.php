@@ -20,33 +20,13 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-use PsCheckout\Api\Http\OrderHttpClientInterface;
-use PsCheckout\Core\Webhook\WebhookException;
-
-class CheckPSLSignatureAction implements CheckPSLSignatureActionInterface
+interface VerifyWebhookActionInterface
 {
     /**
-     * @var OrderHttpClientInterface
+     * @param string $rawBody
+     * @param array $webhookHeaders
+     *
+     * @return bool
      */
-    private $orderHttpClient;
-
-    public function __construct(
-        OrderHttpClientInterface $orderHttpClient
-    ) {
-        $this->orderHttpClient = $orderHttpClient;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function execute(array $bodyValues): bool
-    {
-        $response = $this->orderHttpClient->getShopSignature($bodyValues);
-
-        if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
-            return true;
-        }
-
-        throw new WebhookException('Invalid PSL signature', 401);
-    }
+    public function execute(string $rawBody, array $webhookHeaders): bool;
 }

@@ -27,7 +27,7 @@ use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements OrderShipmentTrackingHttpClientInterface
+class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClientInterface
 {
     public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
     {
@@ -44,7 +44,7 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body ?? []);
+            $message = $this->extractMessage($body);
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
@@ -57,17 +57,11 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
     /**
      * {@inheritdoc}
      */
-    public function addTracking(array $payload): ResponseInterface
+    public function getShopSignature(array $payload): array
     {
-        return $this->sendRequest(new Request('POST', "trackers", [], json_encode($payload)));
-    }
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', [], json_encode($payload)));
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateTracking(string $trackerId, array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('PATCH', "trackers/{$trackerId}", [], json_encode($payload)));
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -85,12 +79,12 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
             return $body['error'];
         }
 
-        if (isset($body['message'])) {
-            $message = is_array($body['message']) ? reset($body['message']) : $body['message'];
+        if (isset($body['message']) && is_array($body['message'])) {
+            return implode("\n", $body['message']);
+        }
 
-            if (is_string($message) && preg_match('/^[a-zA-Z0-9_-]+$/', $message) === 1) {
-                return $message;
-            }
+        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
+            return $body['message'];
         }
 
         if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {

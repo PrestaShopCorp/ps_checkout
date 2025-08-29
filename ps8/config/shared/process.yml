@@ -32,7 +32,7 @@ services:
     class: PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Core\OrderState\Action\SetRefundedOrderStateAction'
 
   PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction:
