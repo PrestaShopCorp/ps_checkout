@@ -154,7 +154,7 @@ class OrderSummaryPresenter implements OrderSummaryPresenterInterface
             return '';
         }
 
-        if (method_exists('Tools', 'getContextLocale')) {
+        if (is_callable(['Tools', 'getContextLocale'])) {
             $locale = Tools::getContextLocale(Context::getContext());
 
             return $locale->formatPrice((float) $payPalOrderResponse->getTotalAmount(), $payPalOrderResponse->getCurrencyCode());
