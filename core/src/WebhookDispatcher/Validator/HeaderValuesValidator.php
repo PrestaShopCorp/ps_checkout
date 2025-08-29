@@ -73,13 +73,25 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
             throw new \InvalidArgumentException('Shop-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
         }
 
-        if (empty($headers['Merchant-Id'])) {
-            throw new \InvalidArgumentException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
+        if (empty($headers['svix-id'])) {
+            throw new \InvalidArgumentException('svix-id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY);
         }
 
-        if (empty($headers['Psx-Id'])) {
-            throw new \InvalidArgumentException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+        if (empty($headers['svix-timestamp'])) {
+            throw new \InvalidArgumentException('svix-timestamp can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY);
         }
+
+        if (empty($headers['svix-signature'])) {
+            throw new \InvalidArgumentException('svix-signature can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY);
+        }
+
+//        if (empty($headers['Merchant-Id'])) {
+//            throw new \InvalidArgumentException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
+//        }
+//
+//        if (empty($headers['Psx-Id'])) {
+//            throw new \InvalidArgumentException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+//        }
     }
 
     /**
@@ -93,8 +105,11 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
     {
         return [
             'shopId' => $headers['Shop-Id'],
-            'merchantId' => $headers['Merchant-Id'],
-            'firebaseId' => $headers['Psx-Id'],
+            'svix-id' => $headers['svix-id'],
+            'svix-timestamp' => $headers['svix-timestamp'],
+            'svix-signature' => $headers['svix-signature'],
+//            'merchantId' => $headers['Merchant-Id'],
+//            'firebaseId' => $headers['Psx-Id'],
         ];
     }
 }

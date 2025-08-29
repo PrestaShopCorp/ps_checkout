@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PsCheckout\Core\Webhook\WebhookException;
-use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
+use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 use PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor;
 use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
@@ -63,12 +63,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $bodyValues = $bodyValuesValidator->validate();
             $logger->info('Body validated', $bodyValues);
 
-            $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
+            /** @var VerifyWebhookAction $verifyWebhookAction */
+            $verifyWebhookAction = $this->module->getService(VerifyWebhookAction::class);
+            $verifyWebhookAction->execute(file_get_contents('php://input'), $headerValues);
+            $logger->info('Webhook Signature validated', $bodyValues);
 
-            /** @var CheckPSLSignatureAction $checkPSLSignatureAction */
-            $checkPSLSignatureAction = $this->module->getService(CheckPSLSignatureAction::class);
-            $checkPSLSignatureAction->execute($bodyValues);
-            $logger->info('PSLS Signature validated', $bodyValues);
+            $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
 
             /** @var WebhookShopIdValidator $webhookShopIdValidator */
             $webhookShopIdValidator = $this->module->getService(WebhookShopIdValidator::class);

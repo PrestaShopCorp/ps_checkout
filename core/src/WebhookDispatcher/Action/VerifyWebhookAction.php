@@ -20,28 +20,28 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-use PsCheckout\Api\Http\OrderHttpClientInterface;
+use PsCheckout\Api\Http\WebhookHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
 
-class CheckPSLSignatureAction implements CheckPSLSignatureActionInterface
+class VerifyWebhookAction implements VerifyWebhookActionInterface
 {
     /**
-     * @var OrderHttpClientInterface
+     * @var WebhookHttpClientInterface
      */
-    private $orderHttpClient;
+    private $webhookHttpClient;
 
     public function __construct(
-        OrderHttpClientInterface $orderHttpClient
+        WebhookHttpClientInterface $webhookHttpClient
     ) {
-        $this->orderHttpClient = $orderHttpClient;
+        $this->webhookHttpClient = $webhookHttpClient;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function execute(array $bodyValues): bool
+    public function execute(string $rawBody, array $webhookHeaders): bool
     {
-        $response = $this->orderHttpClient->getShopSignature($bodyValues);
+        $response = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
 
         if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
             return true;

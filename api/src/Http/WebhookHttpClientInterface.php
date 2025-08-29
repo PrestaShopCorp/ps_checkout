@@ -18,14 +18,24 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\WebhookDispatcher\Action;
+namespace PsCheckout\Api\Http;
 
-interface CheckPSLSignatureActionInterface
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
+use PsCheckout\Api\Http\Exception\PayPalException;
+
+interface WebhookHttpClientInterface
 {
     /**
-     * @param array $bodyValues
+     * Verifies webhook authenticity
      *
-     * @return bool
+     * @param string $rawBody
+     * @param array $headers
+     *
+     * @return array
      */
-    public function execute(array $bodyValues): bool;
+    public function verifyWebhook(string $rawBody, array $headers): array;
 }

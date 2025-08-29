@@ -47,10 +47,11 @@ class HeaderValuesValidatorTest extends TestCase
     {
         // Arrange
         $headers = [
-            'Shop-Id' => 'shop-123',
-            'Merchant-Id' => 'merchant-456',
-            'Psx-Id' => 'firebase-789',
-        ];
+        'Shop-Id' => '123',
+        'svix-id' => 'webhookId',
+        'svix-timestamp' => 'timestamp',
+        'svix-signature' => 'signature'
+    ];
 
         $this->webhookHeaderProvider->expects($this->once())
             ->method('getHeaders')
@@ -61,9 +62,10 @@ class HeaderValuesValidatorTest extends TestCase
 
         // Assert
         $this->assertEquals([
-            'shopId' => 'shop-123',
-            'merchantId' => 'merchant-456',
-            'firebaseId' => 'firebase-789',
+            'shopId' => '123',
+            'svix-id' => 'webhookId',
+            'svix-timestamp' => 'timestamp',
+            'svix-signature' => 'signature'
         ], $result);
     }
 
@@ -91,33 +93,50 @@ class HeaderValuesValidatorTest extends TestCase
         return [
             'missing_shop_id' => [
                 'headers' => [
-                    'Merchant-Id' => 'merchant-456',
-                    'Psx-Id' => 'firebase-789',
+                    'svix-id' => 'webhookId',
+                    'svix-timestamp' => 'timestamp',
+                    'svix-signature' => 'signature'
                 ],
                 'expectedMessage' => 'Shop-Id can\'t be empty',
                 'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY,
             ],
-            'missing_merchant_id' => [
+            'missing_svix_id' => [
                 'headers' => [
                     'Shop-Id' => 'shop-123',
-                    'Psx-Id' => 'firebase-789',
+                    'svix-timestamp' => 'timestamp',
+                    'svix-signature' => 'signature'
                 ],
-                'expectedMessage' => 'Merchant-Id can\'t be empty',
-                'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY,
+                'expectedMessage' => 'svix-id can\'t be empty',
+                'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY,
             ],
-            'missing_psx_id' => [
+            'missing_svix_timestamp' => [
                 'headers' => [
                     'Shop-Id' => 'shop-123',
-                    'Merchant-Id' => 'merchant-456',
+                    'svix-id' => 'webhookId',
+                    'svix-signature' => 'signature'
+//                    'Merchant-Id' => 'merchant-456',
                 ],
-                'expectedMessage' => 'Psx-Id can\'t be empty',
-                'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY,
+                'expectedMessage' => 'svix-timestamp can\'t be empty',
+                'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY,
+            ],
+            'missing_svix_signature' => [
+                'headers' => [
+                    'Shop-Id' => 'shop-123',
+                    'svix-id' => 'webhookId',
+                    'svix-timestamp' => 'timestamp',
+//                    'Merchant-Id' => 'merchant-456',
+                ],
+                'expectedMessage' => 'svix-signature can\'t be empty',
+                'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY,
             ],
             'empty_shop_id' => [
                 'headers' => [
                     'Shop-Id' => '',
-                    'Merchant-Id' => 'merchant-456',
-                    'Psx-Id' => 'firebase-789',
+                    'svix-id' => 'webhookId',
+                    'svix-timestamp' => 'timestamp',
+                    'svix-signature' => 'signature'
+//                    'Merchant-Id' => 'merchant-456',
+//                    'Psx-Id' => 'firebase-789',
                 ],
                 'expectedMessage' => 'Shop-Id can\'t be empty',
                 'expectedCode' => PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY,

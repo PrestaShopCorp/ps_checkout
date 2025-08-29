@@ -68,29 +68,32 @@ class BaseNodeBuilder implements BaseNodeBuilderInterface
 
         $node = [
             'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT),
-            'custom_id' => (string) $this->cart['cart']['id'],
-            'invoice_id' => '',
-            'description' => StringUtility::truncate(
-                'Checking out with your cart #' . $this->cart['cart']['id'] . ' from ' . $shopName,
-                127
-            ),
-            'amount' => [
-                'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => NumberUtility::formatAmount($this->cart['cart']['totals']['total_including_tax']['amount'], $this->cart['currency']['iso_code']),
-            ],
-            'payee' => [
-                'merchant_id' => $merchantId,
-            ],
-            'vault' => $this->isVault,
+            'purchase_units' => [[
+                'custom_id' => (string) $this->cart['cart']['id'],
+                'invoice_id' => '',
+                'description' => StringUtility::truncate(
+                    'Checking out with your cart #' . $this->cart['cart']['id'] . ' from ' . $shopName,
+                    127
+                ),
+                'amount' => [
+                    'currency_code' => $this->cart['currency']['iso_code'],
+                    'value' => NumberUtility::formatAmount($this->cart['cart']['totals']['total_including_tax']['amount'], $this->cart['currency']['iso_code']),
+                ],
+                'payee' => [
+                    'merchant_id' => $merchantId,
+                ],
+            ]],
+//            'vault' => $this->isVault,
         ];
 
         if ($this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
-        } else {
-            $roundType = $this->configuration->get(PayPalConfiguration::PS_ROUND_TYPE);
-            $roundMode = $this->configuration->get(PayPalConfiguration::PS_PRICE_ROUND_MODE);
-            $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
+//        else {
+//            $roundType = $this->configuration->get(PayPalConfiguration::PS_ROUND_TYPE);
+//            $roundMode = $this->configuration->get(PayPalConfiguration::PS_PRICE_ROUND_MODE);
+//            $node['roundingConfig'] = $roundType . '-' . $roundMode;
+//        }
 
         return $node;
     }

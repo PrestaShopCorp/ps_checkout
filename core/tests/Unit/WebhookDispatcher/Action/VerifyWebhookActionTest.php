@@ -22,32 +22,38 @@ namespace PsCheckout\Tests\Unit\WebhookDispatcher\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PsCheckout\Api\Http\OrderHttpClientInterface;
+use PsCheckout\Api\Http\WebhookHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
-use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
+use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 
-class CheckPSLSignatureActionTest extends TestCase
+class VerifyWebhookActionTest extends TestCase
 {
-    /** @var CheckPSLSignatureAction */
+    /** @var VerifyWebhookAction */
     private $action;
 
-    /** @var OrderHttpClientInterface|MockObject */
-    private $orderHttpClient;
+    /** @var WebhookHttpClientInterface|MockObject */
+    private $webhookHttpClient;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
-        $this->action = new CheckPSLSignatureAction($this->orderHttpClient);
+        $this->webhookHttpClient = $this->createMock(WebhookHttpClientInterface::class);
+        $this->action = new VerifyWebhookAction($this->webhookHttpClient);
     }
 
-    public function testItSuccessfullyValidatesPSLSignature(): void
+    public function testItSuccessfullyVerifiesWebhookSignature(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
-            ->method('getShopSignature')
+        $bodyValues = '{test:"value"}';
+        $webhookHeaders = [
+            'Shop-Id' => '123',
+            'svix-id' => 'webhookId',
+            'svix-timestamp' => 'timestamp',
+            'svix-signature' => 'signature'
+        ];
+        $this->webhookHttpClient->expects($this->once())
+            ->method('verifyWebhook')
             ->with($bodyValues)
             ->willReturn([
                 'statusCode' => 200,
@@ -55,7 +61,7 @@ class CheckPSLSignatureActionTest extends TestCase
             ]);
 
         // Act
-        $result = $this->action->execute($bodyValues);
+        $result = $this->action->execute($bodyValues, $webhookHeaders);
 
         // Assert
         $this->assertTrue($result);
@@ -64,9 +70,15 @@ class CheckPSLSignatureActionTest extends TestCase
     public function testItThrowsExceptionWhenSignatureIsInvalid(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
-            ->method('getShopSignature')
+        $bodyValues = '{test:"value"}';
+        $webhookHeaders = [
+            'Shop-Id' => '123',
+            'svix-id' => 'webhookId',
+            'svix-timestamp' => 'timestamp',
+            'svix-signature' => 'signature'
+        ];
+        $this->webhookHttpClient->expects($this->once())
+            ->method('verifyWebhook')
             ->with($bodyValues)
             ->willReturn([
                 'statusCode' => 401,
@@ -79,15 +91,21 @@ class CheckPSLSignatureActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($bodyValues, $webhookHeaders);
     }
 
     public function testItThrowsExceptionWhenResponseIsInvalid(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
-            ->method('getShopSignature')
+        $bodyValues = '{test:"value"}';
+        $webhookHeaders = [
+            'Shop-Id' => '123',
+            'svix-id' => 'webhookId',
+            'svix-timestamp' => 'timestamp',
+            'svix-signature' => 'signature'
+        ];
+        $this->webhookHttpClient->expects($this->once())
+            ->method('verifyWebhook')
             ->with($bodyValues)
             ->willReturn([
                 'statusCode' => 200,
@@ -100,15 +118,21 @@ class CheckPSLSignatureActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($bodyValues, $webhookHeaders);
     }
 
     public function testItThrowsExceptionWhenResponseIsMissingRequiredFields(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
-        $this->orderHttpClient->expects($this->once())
-            ->method('getShopSignature')
+        $bodyValues = '{test:"value"}';
+        $webhookHeaders = [
+            'Shop-Id' => '123',
+            'svix-id' => 'webhookId',
+            'svix-timestamp' => 'timestamp',
+            'svix-signature' => 'signature'
+        ];
+        $this->webhookHttpClient->expects($this->once())
+            ->method('verifyWebhook')
             ->with($bodyValues)
             ->willReturn([
                 'statusCode' => 200,
@@ -120,6 +144,6 @@ class CheckPSLSignatureActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($bodyValues, $webhookHeaders);
     }
 }

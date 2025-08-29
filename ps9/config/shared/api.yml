@@ -16,3 +16,13 @@ services:
     class: PsCheckout\Api\Http\OrderShipmentTrackingHttpClient
     arguments:
       - '@PsCheckout\Api\Http\Configuration\OrderShipmentTrackingConfigurationBuilder'
+
+  PsCheckout\Api\Http\PaymentHttpClient:
+    class: PsCheckout\Api\Http\PaymentHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\PaymentConfigurationBuilder'
+
+  PsCheckout\Api\Http\WebhookHttpClient:
+    class: PsCheckout\Api\Http\WebhookHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\WebhookConfigurationBuilder'
