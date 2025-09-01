@@ -39,9 +39,9 @@ class VerifyWebhookAction implements VerifyWebhookActionInterface
     /**
      * {@inheritDoc}
      */
-    public function execute(array $bodyValues): bool
+    public function execute(string $rawBody, array $webhookHeaders): bool
     {
-        $response = $this->webhookHttpClient->getShopSignature($bodyValues);
+        $response = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
 
         if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
             return true;

@@ -63,12 +63,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $bodyValues = $bodyValuesValidator->validate();
             $logger->info('Body validated', $bodyValues);
 
-            $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
+            /** @var VerifyWebhookAction $verifyWebhookAction */
+            $verifyWebhookAction = $this->module->getService(VerifyWebhookAction::class);
+            $verifyWebhookAction->execute(file_get_contents('php://input'), $headerValues);
+            $logger->info('Webhook Signature validated', $bodyValues);
 
-            /** @var VerifyWebhookAction $checkPSLSignatureAction */
-            $checkPSLSignatureAction = $this->module->getService(VerifyWebhookAction::class);
-            $checkPSLSignatureAction->execute($bodyValues);
-            $logger->info('PSLS Signature validated', $bodyValues);
+            $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
 
             /** @var WebhookShopIdValidator $webhookShopIdValidator */
             $webhookShopIdValidator = $this->module->getService(WebhookShopIdValidator::class);
