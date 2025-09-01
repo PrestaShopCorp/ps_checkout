@@ -31,10 +31,11 @@ interface PaymentHttpClientInterface
 {
     /**
      * @param array $payload
+     * @param string $captureId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function refundOrder(array $payload): ResponseInterface;
+    public function refundOrder(string $captureId, array $payload): ResponseInterface;
 }

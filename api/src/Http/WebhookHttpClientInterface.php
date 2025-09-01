@@ -30,11 +30,12 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 interface WebhookHttpClientInterface
 {
     /**
-     * Tells if the webhook came from the PSL
+     * Verifies webhook authenticity
      *
-     * @param array $payload
+     * @param string $rawBody
+     * @param array $headers
      *
      * @return array
      */
-    public function getShopSignature(array $payload): array;
+    public function verifyWebhook(string $rawBody, array $headers): array;
 }

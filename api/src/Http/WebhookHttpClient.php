@@ -57,9 +57,9 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
     /**
      * {@inheritdoc}
      */
-    public function getShopSignature(array $payload): array
+    public function verifyWebhook(string $rawBody, array $headers): array
     {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', [], json_encode($payload)));
+        $response = $this->sendRequest(new Request('POST', 'webhooks/verify', $headers, json_encode($payload)));
 
         return json_decode($response->getBody(), true);
     }

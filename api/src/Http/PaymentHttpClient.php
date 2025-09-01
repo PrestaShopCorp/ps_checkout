@@ -57,9 +57,9 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     /**
      * {@inheritdoc}
      */
-    public function refundOrder(array $payload): ResponseInterface
+    public function refundOrder(string $captureId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', [], json_encode($payload)));
+        return $this->sendRequest(new Request('POST', "/payments/capture/$captureId/refund", [], json_encode($payload)));
     }
 
     /**

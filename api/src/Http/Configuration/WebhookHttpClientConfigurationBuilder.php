@@ -92,14 +92,13 @@ class WebhookHttpClientConfigurationBuilder implements HttpClientConfigurationBu
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
-                'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
-                'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
-                'Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
-                'Bn-Code' => $this->webhookEnv->getBnCode(),
-                'Module-Version' => $this->moduleVersion, // version of the module
-                'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
+                'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
+                'Checkout-Module-Version' => $this->moduleVersion, // version of the module
+                'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];
 
