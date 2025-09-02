@@ -59,10 +59,11 @@ interface OrderHttpClientInterface
 
     /**
      * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function updateOrder(array $payload): ResponseInterface;
+    public function updateOrder(string $orderId, array $payload): ResponseInterface;
 }

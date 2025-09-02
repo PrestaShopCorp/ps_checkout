@@ -81,9 +81,9 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * @inheritDoc
      */
-    public function updateOrder(array $payload): ResponseInterface
+    public function updateOrder(string $orderId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('PATCH', 'orders', [], json_encode($payload)));
+        return $this->sendRequest(new Request('PATCH', "orders/$orderId", [], json_encode($payload)));
     }
 
     /**

@@ -26,6 +26,7 @@ use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
@@ -99,6 +100,7 @@ class PaymentHttpClientConfigurationBuilder implements HttpClientConfigurationBu
                 'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
                 'Checkout-Module-Version' => $this->moduleVersion, // version of the module
                 'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
+                'PayPal-Merchant-Id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
             ],
         ];
 
