@@ -93,6 +93,7 @@ class Ps_Checkout extends PaymentModule
         'displayInvoiceLegalFreeText',
         'displayAdminAfterHeader',
         'displayAdminOrderMainBottom',
+        'displayAdminOrderLeft',
         'moduleRoutes',
     ];
 
