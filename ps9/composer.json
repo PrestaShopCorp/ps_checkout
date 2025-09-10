@@ -6,7 +6,8 @@
         "sort-packages": true,
         "preferred-install": "dist",
         "optimize-autoloader": true,
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "platform-check": false,
     },
     "require": {
         "gmponos/guzzle_logger": "^2.2",
