@@ -1,8 +1,11 @@
 {
     "config": {
         "platform": {
-            "php": "7.2.5"
+            "php": "5.6.0"
         },
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
         "prepend-autoloader": false
     },
     "require": {

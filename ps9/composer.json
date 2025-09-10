@@ -3,6 +3,9 @@
         "platform": {
             "php": "8.1"
         },
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
         "prepend-autoloader": false
     },
     "require": {
