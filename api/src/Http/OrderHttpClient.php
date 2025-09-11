@@ -57,9 +57,19 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function createOrder(array $payload): ResponseInterface
+    public function createOrder(array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', 'orders', [], json_encode($payload)));
+        $headers = [];
+
+        if ($requestId) {
+            $headers['PayPal-Request-Id'] = $requestId;
+        }
+
+        if ($clientMetadataId) {
+            $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
+        }
+
+        return $this->sendRequest(new Request('POST', 'orders', $headers, json_encode($payload)));
     }
 
     /**
@@ -73,9 +83,19 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function captureOrder(string $orderId, array $payload): ResponseInterface
+    public function captureOrder(string $orderId, array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', "orders/$orderId/capture", [], !empty($payload) ? json_encode($payload) : '{}'));
+        $headers = [];
+
+        if ($requestId) {
+            $headers['PayPal-Request-Id'] = $requestId;
+        }
+
+        if ($clientMetadataId) {
+            $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
+        }
+
+        return $this->sendRequest(new Request('POST', "orders/$orderId/capture", $headers, !empty($payload) ? json_encode($payload) : '{}'));
     }
 
     /**

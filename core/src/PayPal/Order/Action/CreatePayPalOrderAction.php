@@ -132,10 +132,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             $this->orderPayloadBuilder->setPaypalCustomerId($payPalCustomerId);
         }
 
-        $payload = [
-            'paypalRequestId' => null,
-            'paypalPayload' => $this->orderPayloadBuilder->build(),
-        ];
+        $payload = $this->orderPayloadBuilder->build();
 
         try {
             $orderResponse = $this->createPayPalOrder($payload);
@@ -171,15 +168,17 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
     /**
      * @param array $payload
+     * @param string|null $paypalRequestId
+     * @param string|null $clientMetadataId
      *
      * @return CreatePayPalOrderResponse
      *
      * @throws PsCheckoutException
      */
-    private function createPayPalOrder(array $payload): CreatePayPalOrderResponse
+    private function createPayPalOrder(array $payload, string $paypalRequestId = null, string $clientMetadataId = null): CreatePayPalOrderResponse
     {
         try {
-            $response = $this->orderHttpClient->createOrder($payload);
+            $response = $this->orderHttpClient->createOrder($payload, $paypalRequestId, $clientMetadataId);
 
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {
