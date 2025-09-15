@@ -1,9 +1,13 @@
 {
     "config": {
         "platform": {
-            "php": "7.2.5"
+            "php": "5.6.0"
         },
-        "prepend-autoloader": false
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
+        "prepend-autoloader": false,
+        "platform-check": false
     },
     "require": {
         "gmponos/guzzle_logger": "^2.2",
