@@ -761,14 +761,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         /** @var Translator $translator **/
         $translator = $this->module->getService(Translator::class);
 
-        if (!$this->ensureHasPermissions([PermissionType::EDIT])) {
-            $this->exitWithResponse([
-                'httpCode' => 403,
-                'status' => false,
-                'errors' => [$translator->trans('You are not authorized to refund this order.')],
-            ]);
-        }
-
         $payPalOrderId = Tools::getValue('orderPayPalRefundOrder');
         $captureId = Tools::getValue('orderPayPalRefundTransaction');
         $amount = Tools::getValue('orderPayPalRefundAmount');
