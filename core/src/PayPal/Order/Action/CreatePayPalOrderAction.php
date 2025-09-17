@@ -180,7 +180,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {
-            throw new PsCheckoutException('Failed to create order');
+            throw new PsCheckoutException('Failed to create order', PsCheckoutException::UNKNOWN, $exception);
         }
     }
 
