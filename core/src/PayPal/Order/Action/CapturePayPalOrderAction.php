@@ -106,20 +106,7 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
      */
     public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderResponse
     {
-        $payload = [
-            'mode' => $payPalOrder->getFundingSource() ?:
-                $this->payPalOrderRepository->getOneBy(['id' => $payPalOrder->getId()])->getFundingSource(),
-            'orderId' => $payPalOrder->getId(),
-            'payee' => ['merchant_id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)],
-        ];
-
-        $order = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrder->getId()]);
-
-        if (in_array(PayPalConfiguration::PS_CHECKOUT_CUSTOMER_INTENT_USES_VAULTING, $order->getCustomerIntent())) {
-            $payload['vault'] = true;
-        }
-
-        $response = $this->orderHttpClient->captureOrder($payload);
+        $response = $this->orderHttpClient->captureOrder($payPalOrder->getId(), []);
 
         $orderPayPal = json_decode($response->getBody(), true);
         $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);
