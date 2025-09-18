@@ -176,12 +176,6 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             $this->payPalPaymentSourceNodeBuilder->setExpressCheckout(true);
         }
 
-//        if (!$this->isUpdate) {
-//            $optionalPayload[] = $this->applicationContextNodeBuilder
-//                ->setIsExpressCheckout($this->expressCheckout)
-//                ->build();
-//        }
-
         if ($this->isCard) {
             $optionalPayload[] = $this->buildCardPaymentSource();
             $optionalPayload[] = $this->buildSupplementaryData();

@@ -83,17 +83,11 @@ class BaseNodeBuilder implements BaseNodeBuilderInterface
                     'merchant_id' => $merchantId,
                 ],
             ]],
-//            'vault' => $this->isVault,
         ];
 
         if ($this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         }
-//        else {
-//            $roundType = $this->configuration->get(PayPalConfiguration::PS_ROUND_TYPE);
-//            $roundMode = $this->configuration->get(PayPalConfiguration::PS_PRICE_ROUND_MODE);
-//            $node['roundingConfig'] = $roundType . '-' . $roundMode;
-//        }
 
         return $node;
     }
