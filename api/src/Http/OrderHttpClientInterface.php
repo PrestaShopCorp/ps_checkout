@@ -39,47 +39,31 @@ interface OrderHttpClientInterface
     public function createOrder(array $payload): ResponseInterface;
 
     /**
-     * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function fetchOrder(array $payload): ResponseInterface;
+    public function fetchOrder(string $orderId): ResponseInterface;
 
     /**
      * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function captureOrder(array $payload): ResponseInterface;
+    public function captureOrder(string $orderId, array $payload): ResponseInterface;
 
     /**
      * @param array $payload
+     * @param string $orderId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function updateOrder(array $payload): ResponseInterface;
-
-    /**
-     * @param array $payload
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function refundOrder(array $payload): ResponseInterface;
-
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload): array;
+    public function updateOrder(string $orderId, array $payload): ResponseInterface;
 }

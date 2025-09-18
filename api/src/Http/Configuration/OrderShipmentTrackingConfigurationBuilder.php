@@ -32,7 +32,7 @@ use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
-class OrderShipmentTrackingConfigurationBuilder implements OrderShipmentTrackingConfigurationBuilderInterface
+class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 

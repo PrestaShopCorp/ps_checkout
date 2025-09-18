@@ -17,15 +17,26 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-namespace PsCheckout\Core\WebhookDispatcher\Action;
-
-interface CheckPSLSignatureActionInterface
+/**
+ * Update main function for module version 7.5.0.3
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_7_5_0_3(Ps_checkout $module)
 {
-    /**
-     * @param array $bodyValues
-     *
-     * @return bool
-     */
-    public function execute(array $bodyValues): bool;
+    try {
+        $module->registerHook('displayAdminOrderLeft');
+    } catch (Exception $exception) {
+        PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
+
+        return false;
+    }
+
+    return true;
 }

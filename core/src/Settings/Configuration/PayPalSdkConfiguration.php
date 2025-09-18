@@ -146,7 +146,7 @@ class PayPalSdkConfiguration
             'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
             'currency' => $this->context->getCurrencyIsoCode(),
-            'intent' => strtolower($this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT)),
+            'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ? strtolower($this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT)) : 'capture',
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
             'integrationDate' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTEGRATION_DATE) ?: '2024-04-01',
