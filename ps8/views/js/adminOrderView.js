@@ -245,15 +245,6 @@ let {$} = window;
               }));
             }
 
-            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.errors) {
-              for (const error of jqXHR.responseJSON.errors) {
-                $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: error,
-                  class: 'danger',
-                }));
-              }
-            }
-
             $(refundModalLoaderContainer).hide();
             refundModalSubmitButton.prop('disabled', false);
           });

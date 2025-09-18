@@ -67,7 +67,7 @@ class BaseNodeBuilder implements BaseNodeBuilderInterface
         $merchantId = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
 
         $node = [
-            'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT),
+            'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?? 'CAPTURE',
             'custom_id' => (string) $this->cart['cart']['id'],
             'invoice_id' => '',
             'description' => StringUtility::truncate(
