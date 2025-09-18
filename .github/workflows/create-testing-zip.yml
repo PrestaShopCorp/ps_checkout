@@ -168,4 +168,3 @@ jobs:
           
           # Upload the zip file directly to GCP bucket
           gsutil cp ${FINAL_NAME}.${VERSION_SUFFIX}.zip gs://ps-eu-w1-checkout-assets-${{ steps.environment.outputs.environment }}/${{ steps.bucket-filename.outputs.filename }}
-        
