@@ -54,6 +54,7 @@ interface OrderHttpClientInterface
      * @param string $orderId
      * @param string|null $requestId
      * @param string|null $clientMetadataId
+
      *
      * @return ResponseInterface
      *
