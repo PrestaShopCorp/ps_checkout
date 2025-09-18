@@ -1,0 +1,170 @@
+name: Create module ZIP (INT/PREPROD)
+
+on:
+  pull_request:
+    types: [edited, labeled, synchronize]
+
+jobs:
+  generate-shared-date:
+    name: Generate shared date for all matrix jobs
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preproduction deployment') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle7') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle8') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle9')
+    outputs:
+      shared_date: ${{ steps.date.outputs.date }}
+    steps:
+      - name: Generate shared date
+        id: date
+        run: |
+          date=$(date -d '+2 hours' +'%Y-%m-%d_%H-%M-%S')
+          echo "date=$date" >> $GITHUB_OUTPUT
+
+  prepare-zip:
+    needs: [generate-shared-date]
+    name: Prepare module ZIP artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+
+    strategy:
+      matrix:
+        module:
+          - { dir: ps8, suffix: 8 }
+          - { dir: ps17, suffix: 7 }
+          - { dir: ps9, suffix: 9 }
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine Environment
+        id: environment
+        run: |
+          # Get all labels as a JSON array and extract names
+          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
+          echo "Labels JSON: $LABELS_JSON"
+          
+          # Extract label names using jq
+          LABEL_NAMES=$(echo "$LABELS_JSON" | jq -r '.[].name' | tr '\n' ' ')
+          
+          # Check for integration labels (prestabulle1 through prestabulle9)
+          if echo "$LABEL_NAMES" | grep -q "prestabulle[1-9]"; then
+            echo "environment=integration" >> $GITHUB_OUTPUT
+            echo "provider_secret=WI_PROVIDER_V2_INTEGRATION" >> $GITHUB_OUTPUT
+            echo "sa_secret=WI_SA_V2_INTEGRATION" >> $GITHUB_OUTPUT
+            echo "gcp_project_secret=GCP_PROJECT_INTEGRATION" >> $GITHUB_OUTPUT
+            
+            # Extract the specific prestabulle number
+            PRESTABULLE_LABEL=$(echo "$LABEL_NAMES" | grep -o "prestabulle[1-9]" | head -1)
+            echo "secret_name=module-v5-$PRESTABULLE_LABEL-env" >> $GITHUB_OUTPUT
+            echo "prestabulle_label=$PRESTABULLE_LABEL" >> $GITHUB_OUTPUT
+            echo "Detected integration environment with label: $PRESTABULLE_LABEL"
+          elif echo "$LABEL_NAMES" | grep -q "preproduction deployment"; then
+            echo "environment=preproduction" >> $GITHUB_OUTPUT
+            echo "provider_secret=WI_PROVIDER_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "sa_secret=WI_SA_V2_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "gcp_project_secret=GCP_PROJECT_PREPRODUCTION" >> $GITHUB_OUTPUT
+            echo "secret_name=module-v5-env" >> $GITHUB_OUTPUT
+            echo "Detected preproduction environment"
+          else
+            echo "No matching labels found. Available labels: $LABEL_NAMES"
+            exit 1
+          fi
+
+      - name: Auth GCP 🔑
+        uses: ./.github/actions/auth-gcp
+        with:
+          provider: ${{ secrets[steps.environment.outputs.provider_secret] }}
+          service-account: ${{ secrets[steps.environment.outputs.sa_secret] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write .env file 🌳
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="$SECRET_NAME" > .env
+        env:
+          GCP_PROJECT: ${{ secrets[steps.environment.outputs.gcp_project_secret] }}
+          SECRET_NAME: ${{ steps.environment.outputs.secret_name }}
+
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Install Composer Dev Dependencies (for monorepo)
+        run: |
+          echo "Installing root-level dev dependencies"
+          composer install --prefer-dist --optimize-autoloader
+
+      - name: Prepare and Package Module
+        run: |
+          MODULE_NAME=${{ matrix.module.dir }}
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+
+          echo "Preparing module: $MODULE_NAME (suffix: $VERSION_SUFFIX)"
+
+          cd $MODULE_NAME
+          composer install --no-dev --prefer-dist --optimize-autoloader
+          cd ..
+
+          mkdir -p $MODULE_NAME/vendor/invertus
+          cp -r api core infrastructure presentation utility $MODULE_NAME/vendor/invertus/
+          
+          rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
+                 $MODULE_NAME/tests \
+                 $MODULE_NAME/vendor/tests \
+                 $MODULE_NAME/.php-cs-fixer.cache
+
+          find $MODULE_NAME -type f -name "monorepo.json" -delete
+          for dir in api core infrastructure presentation utility; do
+            rm -rf $MODULE_NAME/vendor/invertus/$dir/tests
+          done
+
+          mkdir -p tmp_package/$FINAL_NAME
+          cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
+          cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
+          cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
+          cp -r .env tmp_package/$FINAL_NAME/.env || true
+
+          cd tmp_package
+          zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
+          cd ..
+          rm -rf tmp_package
+
+      - name: Generate GCP bucket filename
+        id: bucket-filename
+        run: |
+          # Use prestabulle label for integration, environment name for preproduction
+          if [[ "${{ steps.environment.outputs.environment }}" == "integration" ]]; then
+            ENV_LABEL="${{ steps.environment.outputs.prestabulle_label }}"
+          else
+            ENV_LABEL="${{ steps.environment.outputs.environment }}"
+          fi
+          
+          echo "filename=pr${{ github.event.pull_request.number }}/ps_checkout-${{ matrix.module.suffix }}-$ENV_LABEL-${{ github.event.pull_request.number }}-${{ needs.generate-shared-date.outputs.shared_date }}.zip" >> $GITHUB_OUTPUT
+
+      - name: Upload directly to GCP bucket storage
+        run: |
+          FINAL_NAME=ps_checkout
+          VERSION_SUFFIX=${{ matrix.module.suffix }}
+          
+          # Upload the zip file directly to GCP bucket
+          gsutil cp ${FINAL_NAME}.${VERSION_SUFFIX}.zip gs://ps-eu-w1-checkout-assets-${{ steps.environment.outputs.environment }}/${{ steps.bucket-filename.outputs.filename }}
