@@ -281,9 +281,8 @@ class TrackingPayloadBuilder implements TrackingPayloadBuilderInterface
         if ($carrierModuleName) {
             // External module case
             try {
-                $moduleId = \Module::getModuleIdByName($carrierModuleName);
-                if ($moduleId) {
-                    $module = new \Module($moduleId);
+                $module = \Module::getInstanceByName($carrierModuleName);
+                if ($module) {
                     $version = $module->version;
                 }
 
