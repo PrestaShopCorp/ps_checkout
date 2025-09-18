@@ -1,4 +1,4 @@
-name: Generate and release module ZIP - PRODUCTION
+name: Generate module ZIP for prerelease - PRODUCTION
 
 on:
   release:
