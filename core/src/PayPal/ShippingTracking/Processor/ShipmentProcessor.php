@@ -166,8 +166,8 @@ class ShipmentProcessor implements ShipmentProcessorInterface
                 $payPalOrder->getId(),
                 $capture->getId(),
                 $orderCarrier->tracking_number,
-                $carrier->id,
-                $carrier->name,
+                $carrier->id ?? 0,
+                $carrier->name ?? '',
                 $products,
                 $payloadChecksum
             );
@@ -255,8 +255,8 @@ class ShipmentProcessor implements ShipmentProcessorInterface
                 $payPalOrderId,
                 $captureId,
                 $orderCarrier->tracking_number,
-                $carrier->id,
-                $carrier->name,
+                $carrier->id ?? 0,
+                $carrier->name ?? '',
                 [],
                 md5($errorMessage),
                 $status
