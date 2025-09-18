@@ -17,23 +17,25 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-$rootDirectory = __DIR__ . '/../../../../../../';
-$projectDir = __DIR__ . '/../../../../';
 
-if (!getenv('IS_CI')) {
-    define('_PS_IN_TEST_', true);
-}
+namespace PsCheckout\Api\Http;
 
-require_once $projectDir . 'vendor/autoload.php';
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
+use PsCheckout\Api\Http\Exception\PayPalException;
 
-if (file_exists($rootDirectory . 'vendor/autoload.php')) {
-    require_once $rootDirectory . 'vendor/autoload.php';
-}
-
-if (file_exists($rootDirectory . 'autoload.php')) {
-    require_once $rootDirectory . 'autoload.php';
-}
-
-if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+interface PaymentHttpClientInterface
+{
+    /**
+     * @param array $payload
+     * @param string $captureId
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function refundOrder(string $captureId, array $payload): ResponseInterface;
 }

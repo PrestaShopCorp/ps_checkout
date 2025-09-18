@@ -38,8 +38,9 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
         if (empty($headers)) {
             $headers = [
                 'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-                'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-                'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
+                'svix-id' => $_SERVER['HTTP_SVIX_ID'] ?? null,
+                'svix-timestamp' => $_SERVER['HTTP_SVIX_TIMESTAMP'] ?? null,
+                'svix-signature' => $_SERVER['HTTP_SVIX_SIGNATURE'] ?? null,
             ];
         }
 

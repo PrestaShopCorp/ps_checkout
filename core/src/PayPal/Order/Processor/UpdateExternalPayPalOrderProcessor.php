@@ -147,7 +147,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
             return;
         }
 
-        $response = $this->httpClient->updateOrder($payload);
+        $response = $this->httpClient->updateOrder($request->getOrderId(), $payload);
 
         if ($response->getStatusCode() !== 204) {
             throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);
