@@ -21,7 +21,7 @@
         <div class="col">
             <div class="card" data-test="ps-checkout-card">
                 <h3 class="card-header">
-                    <i class="material-icons">extension</i> {l s='One module, all payments methods.' mod='ps_checkout'}
+                    <i class="material-icons">extension</i> {l s='One module, all payments methods.' d='Modules.Checkout.Pscheckout'}
                 </h3>
                 <div class="card-block">
                     <div class="module-item-list">
@@ -33,14 +33,14 @@
                             <div class="row col-12 col-sm-6 col-md-7 col-lg-7 pl-0">
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-8 pl-0">
                                     <ul class="text-muted">
-                                        <li class="mb-1">{l s='Offer the widest range of payment methods: cards, PayPal, etc.' mod='ps_checkout'}</li>
-                                        <li class="mb-1">{l s='Benefit from all PayPal expertise and advantages' mod='ps_checkout'}</li>
-                                        <li>{l s='Give access to relevant local payment methods for customers around the globe' mod='ps_checkout'}</li>
+                                        <li class="mb-1">{l s='Offer the widest range of payment methods: cards, PayPal, etc.' d='Modules.Checkout.Pscheckout'}</li>
+                                        <li class="mb-1">{l s='Benefit from all PayPal expertise and advantages' d='Modules.Checkout.Pscheckout'}</li>
+                                        <li>{l s='Give access to relevant local payment methods for customers around the globe' d='Modules.Checkout.Pscheckout'}</li>
                                     </ul>
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-4 pl-0">
                                     <label class="text-muted">
-                                        {l s='Including:' mod='ps_checkout'}
+                                        {l s='Including:' d='Modules.Checkout.Pscheckout'}
                                     </label>
                                     <div>
                                         <img class="payment-icon" src="{$modulePath|escape:'htmlall':'UTF-8'}views/img/paypal.jpg" alt="">
@@ -52,7 +52,7 @@
                             <div class="col-12 col-sm-4 col-md-3 col-lg-2 mb-3 m-auto">
                                 <div class="text-xs-center">
                                     <a href="{$configureLink|escape:'htmlall':'UTF-8'}" class="btn btn-primary-reverse btn-outline-primary light-button">
-                                        {l s='Configure' mod='ps_checkout'}
+                                        {l s='Configure' d='Modules.Checkout.Pscheckout'}
                                     </a>
                                 </div>
                             </div>
