@@ -259,6 +259,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId);
+
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
 
