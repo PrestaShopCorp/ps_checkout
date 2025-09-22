@@ -23,36 +23,36 @@
     <img src="{$modulePath}views/img/tail-spin.svg" alt="spin">
   </div>
   <div>
-    <label class="form-control-label" for="ps_checkout-card-fields-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
+    <label class="form-control-label" for="ps_checkout-card-fields-name">{l s='Cardholder Name (optional)' d='Modules.Checkout.Pscheckout'}</label>
     <div id="ps_checkout-card-fields-name"></div>
-    <div id="ps_checkout-card-fields-name-error" class="alert alert-danger hidden">{l s='Card holder name is invalid' mod='ps_checkout'}</div>
+    <div id="ps_checkout-card-fields-name-error" class="alert alert-danger hidden">{l s='Card holder name is invalid' d='Modules.Checkout.Pscheckout'}</div>
   </div>
   <div>
-    <label class="form-control-label" for="ps_checkout-card-fields-number">{l s='Card number' mod='ps_checkout'}</label>
+    <label class="form-control-label" for="ps_checkout-card-fields-number">{l s='Card number' d='Modules.Checkout.Pscheckout'}</label>
     <div id="ps_checkout-card-fields-number" ></div>
-    <div id="ps_checkout-card-fields-number-error" class="alert alert-danger hidden">{l s='Card number is invalid' mod='ps_checkout'}</div>
-    <div id="ps_checkout-card-fields-vendor-error" class="alert alert-danger hidden">{l s='Card vendor is invalid' mod='ps_checkout'}</div>
+    <div id="ps_checkout-card-fields-number-error" class="alert alert-danger hidden">{l s='Card number is invalid' d='Modules.Checkout.Pscheckout'}</div>
+    <div id="ps_checkout-card-fields-vendor-error" class="alert alert-danger hidden">{l s='Card vendor is invalid' d='Modules.Checkout.Pscheckout'}</div>
   </div>
   <div class="row">
     <div class="col-xs-6 col-6">
-      <label class="form-control-label" for="ps_checkout-card-fields-expiry">{l s='Card expiration date' mod='ps_checkout'}</label>
+      <label class="form-control-label" for="ps_checkout-card-fields-expiry">{l s='Card expiration date' d='Modules.Checkout.Pscheckout'}</label>
       <div id="ps_checkout-card-fields-expiry" ></div>
-      <div id="ps_checkout-card-fields-expiry-error" class="alert alert-danger hidden">{l s='Card expiration date is invalid' mod='ps_checkout'}</div>
+      <div id="ps_checkout-card-fields-expiry-error" class="alert alert-danger hidden">{l s='Card expiration date is invalid' d='Modules.Checkout.Pscheckout'}</div>
     </div>
     <div class="col-xs-6 col-6">
       <div class="ps_checkout-card-fields-cvv-label-wrapper">
-        <label class="form-control-label" for="ps_checkout-card-fields-cvv">{l s='CVC' mod='ps_checkout'}</label>
+        <label class="form-control-label" for="ps_checkout-card-fields-cvv">{l s='CVC' d='Modules.Checkout.Pscheckout'}</label>
         <div class="ps_checkout-info-wrapper">
           <div class="ps_checkout-info-button" onmouseenter="cvvEnter()" onmouseleave="cvvLeave()">i
             <div class="popup-content" id="cvv-popup">
               <img src="{$modulePath}views/img/cvv.svg" alt="cvv">
-              {l s='The security code is a' mod='ps_checkout'} <b>{l s='3-digits' mod='ps_checkout'}</b> {l s='code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.' mod='ps_checkout'}
+              {l s='The security code is a' d='Modules.Checkout.Pscheckout'} <b>{l s='3-digits' d='Modules.Checkout.Pscheckout'}</b> {l s='code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.' d='Modules.Checkout.Pscheckout'}
             </div>
           </div>
         </div>
       </div>
       <div id="ps_checkout-card-fields-cvv" ></div>
-      <div id="ps_checkout-card-fields-cvv-error" class="alert alert-danger hidden">{l s='CVV code is invalid' mod='ps_checkout'}</div>
+      <div id="ps_checkout-card-fields-cvv-error" class="alert alert-danger hidden">{l s='CVV code is invalid' d='Modules.Checkout.Pscheckout'}</div>
     </div>
   </div>
   {if $vaultingEnabled}

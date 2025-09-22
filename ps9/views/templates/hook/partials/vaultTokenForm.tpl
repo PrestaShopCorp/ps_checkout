@@ -20,14 +20,14 @@
   <div>
     <span class="ps_checkout-token-explanation">
       {if $isFavorite}
-        {l s='This payment method has been saved to your account and defined as favorite for future purchases.' mod='ps_checkout'}
+        {l s='This payment method has been saved to your account and defined as favorite for future purchases.' d='Modules.Checkout.Pscheckout'}
       {else}
-        {l s='This payment method has been saved to your account.' mod='ps_checkout'}
+        {l s='This payment method has been saved to your account.' d='Modules.Checkout.Pscheckout'}
       {/if}
     </span>
   </div>
   <div>
-    <button type="button" id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</button>
+    <button type="button" id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' d='Modules.Checkout.Pscheckout'}</button>
   </div>
   <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
   <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">

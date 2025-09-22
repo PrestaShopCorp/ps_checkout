@@ -1,0 +1,2468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="admin-dev" source-language="en-US" target-language="fr-FR" datatype="plaintext">
+    <body>
+      <trans-unit id="d1a7ac6d45dcb4a782b441e29380056a">
+        <source>Refund has been processed by PayPal.</source>
+        <target>Le remboursement a été effectué par PayPal.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ee6403a0a4d60590a6b6634df2fdce3f">
+        <source>Refund cannot be processed by PayPal.</source>
+        <target>Le remboursement n'a pas pu être effectué par PayPal.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="785e1b8c2c57d4ad6ed603778b4f6ba9">
+        <source>Refund has been processed by PayPal, but order status change or email sending failed.</source>
+        <target>Le remboursement a été traité par PayPal, mais le changement de statut de la commande ou l'envoi de l'e-mail a échoué.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
+        <source>PayPal refund failed.</source>
+        <target>PayPal refund failed.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5825dada06af7bef8ae4db80c2c5aeba">
+        <source>PayPal refund amount is invalid.</source>
+        <target>Montant de remboursement PayPal invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="da74acca9d5669367fa982b7694f5303">
+        <source>PayPal refund currency is invalid.</source>
+        <target>Devise de remboursement PayPal invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bc06e3a40808fc7351ff8f57b3bad7cf">
+        <source>PayPal Transaction is invalid.</source>
+        <target>Transaction PayPal invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ccf338e772778287ddef6911855e5ba3">
+        <source>PayPal Order is invalid.</source>
+        <target>Commande PayPal invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
+        <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
+        <target>PayPal Order %s is not in the same environment as PrestaShop Checkout</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
+        <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
+        <target>Unable to find PayPal Order associated to this PrestaShop Order %s</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1b43db46cf115ecaf2b2e79c780b5266">
+        <source>No PrestaShop Order identifier received</source>
+        <target>Aucune référence de commande PrestaShop reçue</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b6aa9dd84faacf7932dfa15fefad521a">
+        <source>Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.</source>
+        <target>Fournissez les moyens de paiement les plus couramment utilisés à vos clients dans ce module tout-en-un, et gérez toutes vos ventes dans une interface centralisée.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="94e99b8ebfc769e4d94736e575bfbe0b">
+        <source>PrestaShop Checkout</source>
+        <target>PrestaShop Checkout</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0c27df1feb8791f6c99a775a03b3293b">
+        <source>The payer did not authorize the payment.</source>
+        <target>Le payeur n'a pas autorisé le paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a973592aec4f4e71998a112ec707c8ee">
+        <source>The payer paid for an item that they did not receive.</source>
+        <target>Le payeur a payé un article qu'il n'a pas reçu.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a995e3f4789afc5c69be0f2c4a283fe3">
+        <source>For more information, please go to the official PayPal website.</source>
+        <target>Pour plus d'informations, veuillez vous rendre sur le site officiel de PayPal.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f1359dd5749dd996e2506e60bfeb9d05">
+        <source>Dispute categories covered:</source>
+        <target>Catégories de litiges couvertes :</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="15805eef4bee179ec21a972edb19ff6e">
+        <source>Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.</source>
+        <target>Votre solde PayPal n'est pas protégé, la transaction n'est pas éligible au programme de protection des marchands.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2220755c23a6ff95d291702c3bf015ad">
+        <source>Your PayPal balance remains intact if the customer claims that they did not receive an item.</source>
+        <target>Votre solde PayPal reste intact si le client prétend qu'il n'a pas reçu d'article.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8e9156d75ea324a5566ec884811b5299">
+        <source>Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.</source>
+        <target>Votre solde PayPal reste intact si le client prétend qu'il n'a pas reçu un article ou si le titulaire du compte prétend qu'il n'a pas autorisé le paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c1d0ec5e47fd458f25ae5a89bfe74489">
+        <source>Not eligible</source>
+        <target>Non éligible</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="452b2caa4d3425293734c7cc9206a4b3">
+        <source>Partially eligible</source>
+        <target>Partiellement éligible</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4358876405775b10c44268aeeeec5f50">
+        <source>Eligible</source>
+        <target>Éligible</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
+        <source>You are not authorized to refund this order.</source>
+        <target>You are not authorized to refund this order.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="76f0ed934de85cc7131910b32ede7714">
+        <source>Refund</source>
+        <target>Remboursement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c453a4b8e8d98e82f35b67f433e3b4da">
+        <source>Payment</source>
+        <target>Paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="96b0141273eabab320119c467cdcaf17">
+        <source>Total</source>
+        <target>Total</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1917b07d3afbf9408a6e91ede37479d3">
+        <source>was not saved for future purchases</source>
+        <target>n'a pas été enregistré pour vos achats futurs</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="df7acad4a0ddd7ea87e21d06f4564041">
+        <source>was saved for future purchases</source>
+        <target>a été enregistré pour vos achats futurs</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="20cb69d4c9adf02e582769f6b5e43353">
+        <source>Payment method status</source>
+        <target>Statut méthode de paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8fe57282806d2b6da782d1da9ab5d46c">
+        <source>If you have any question, please contact us.</source>
+        <target>Si vous avez une question, veuillez nous contacter.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="45a110be54ff9533824fc03578b06371">
+        <source>You will be redirected to an external secured page of our payment gateway.</source>
+        <target>Vous serez redirigé vers une page externe sécurisé.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="eb1743bc59614f3c44905d13c697c296">
+        <source>Your payment needs to be authenticated, please click the button below.</source>
+        <target>La transaction nécessite une authentification de votre part, veuillez cliquez sur le lien ci-dessous.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8084caa7dd0843b51843d94f8cdce3ce">
+        <source>Your payment needs to be approved, please click the button below.</source>
+        <target>La transaction nécessite une approbation de votre part, veuillez cliquez sur le lien ci-dessous.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="048ffbca11eb287560a887d379f056f8">
+        <source>Your payment has been declined by our payment gateway, please contact us via the link below.</source>
+        <target>La transaction a été refusée par la plateforme de paiement, veuillez nous contacter en utilisant le lien ci-dessous.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b147f642538c69e4fbd7ae6609fd62fe">
+        <source>Authenticate payment</source>
+        <target>Authentifier le paiemennt</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7d316b2dd91387c8a8bfd045643b3182">
+        <source>Approve payment</source>
+        <target>Approuver le paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8ec41b16dc7d53ad2c4bfd4d6cc9b6d7">
+        <source>Amount paid</source>
+        <target>Montant payé</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6e09eba3c9ca4b5406abba8cdaa6a665">
+        <source>Funding source</source>
+        <target>Méthode de paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="266fa888c1276cad22b2212dd62471af">
+        <source>Transaction status</source>
+        <target>Etat de la transaction</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7245d0010cc199629d976fdc77423102">
+        <source>Transaction identifier</source>
+        <target>Identifiant de la transaction</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="57297718fdb439175177cf6b196172d1">
+        <source>Order status</source>
+        <target>Etat de la commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2d25c7835f05b7b670b855933fb1240e">
+        <source>Order identifier</source>
+        <target>Identifiant de la commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="63833fbcf5965b635f6355007fd1b541">
+        <source>Payment gateway information</source>
+        <target>Information de la plateforme de paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ad882fed0995d9be1922fff253202368">
+        <source>If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.</source>
+        <target>Si vous avez besoin d'aide, contacter l'équipe support du module PrestaShop Checkout depuis la page de configuration du module via l'onglet Aide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b0245f6ceb905dcd9d2cda968eca9290">
+        <source>Exception detail:</source>
+        <target>Identifiant exception :</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c4dde5b1549f1efa1692d8873acb62db">
+        <source>Exception identifier:</source>
+        <target>Identifiant d'exception</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="937a6208751c6044e846b7e70cf5305c">
+        <source>PayPal order identifier:</source>
+        <target>Identifiant de commande PayPal :</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1889f1b9cd95ba96c924904b633e6802">
+        <source>Cart identifier:</source>
+        <target>Identifiant panier : </target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="162c9109e4428997906e50651ef16b33">
+        <source>Customer identifier:</source>
+        <target>Identifiant client : </target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ee02bd0a1dffdbc6ee993d07fa3997b7">
+        <source>A customer encountered a processing payment error :</source>
+        <target>Un client a rencontré une erreur en payant</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="fdef7819688bef617b84868f7713f883">
+        <source>This message is sent automatically by module PrestaShop Checkout</source>
+        <target>Ce message est automatiquement envoyé par le module PrestaShop Checkout</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="71c5a2eb62ee779761c12147312be25a">
+        <source>This payment method has been refused by the payment platform, please use another payment method.</source>
+        <target>Ce moyen de paiement a été refusé par la plateforme de paiement, veuillez utiliser un autre moyen de paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e6d9c372ee547c93d0211c9fbcb55036">
+        <source>Order is already captured.</source>
+        <target>La commande PayPal a déjà été capturée.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="de2c847ec9d07b4b32c2294db50dd5c7">
+        <source>Transaction expired, please try again.</source>
+        <target>La transaction a expiré, veuillez réessayer.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="33f135b2e2505108827096bf260e723c">
+        <source>The transaction failed. Please try a different payment method.</source>
+        <target>La transaction a échoué. Veuillez utiliser un autre moyen de paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ccce995f84eb842ff057dcf7c93828db">
+        <source>Your country is not supported by this payment method, please try to select another.</source>
+        <target>Votre pays n'est pas supporté pour ce moyen de paiement, veuillez en utiliser un autre.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="aaf5593b992a74786b8a7d942efa40ec">
+        <source>Your card cannot be used to pay in this currency, please try another payment method.</source>
+        <target>Votre carte ne peut pas être utilisée pour payer dans cette devise, veuillez essayer un autre moyen de paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2fa665589c499e8dead3daa2ee8cc0a4">
+        <source>The CVC code length is invalid for the specified card type.</source>
+        <target>La longueur du code CVV est incorrect pour ce type de carte.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="dd9e544a1e050b62561061f3229d5def">
+        <source>Processing of this card type is not supported. Use another card type.</source>
+        <target>Ce type de carte n'est pas supporté. Veuillez essayer un autre type de carte.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0accf134d783b1c6ea3af8315ef88bd8">
+        <source>Cart delivery option is unavailable.</source>
+        <target>L'option de livraison sélectionnée est indisponible.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6ec2a92b00f0f58e3ac27f53f85696ca">
+        <source>Cart delivery address is invalid.</source>
+        <target>L'adresse de livraison est invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6129acadd46d6cc27fb3f4c96b8f25a9">
+        <source>Cart invoice address is invalid.</source>
+        <target>L'adresse de facturation est invalide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3648e46392f5f5af3338fa562040b34e">
+        <source>Cart contains product unavailable.</source>
+        <target>Le panier contient des produits indisponibles.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="92c86270afa1b0360bbdabb8bce2791b">
+        <source>Cart doesn't contains product.</source>
+        <target>Le panier est vide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="12d0c482f95fec23fba59b877e65ce27">
+        <source>The transaction amount doesn't match with the cart amount.</source>
+        <target>Le montant de transaction ne correspond pas au montant de la commande.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4f5530320206f1f3bfe93bd30730c80e">
+        <source>OrderPayment cannot be saved</source>
+        <target>Le paiement ne peut être enregistré.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="134d89d7f8e62de6dbbfec465e52ae26">
+        <source>OrderState cannot be saved</source>
+        <target>Le statut de la commande ne peut être mis à jour.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3c79e9f67771d5e278886a2d54f18c29">
+        <source>Order cannot be saved</source>
+        <target>La commande ne peut pas être enregistrée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2cf1090c7f589e820c7379dd616aa927">
+        <source>Cart is invalid</source>
+        <target>La panier en cours est invalide, veuillez réessayer.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="74669be39f71a0c86319cba711d40bb6">
+        <source>PayPal payment method is missing</source>
+        <target>Le moyen de paiement par PayPal est manquant</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2be21e54f13c38cffa6982e6745e6f88">
+        <source>PayPal order identifier is missing</source>
+        <target>L'identifiant de commande PayPal est manquant</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7a10859a43abaade1a012eee5c336004">
+        <source>Unable to call API</source>
+        <target>Impossible d'appeler l'API</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ff74fb308795919496b905a116ae1da6">
+        <source>This payment method is unavailable</source>
+        <target>Ce moyen de paiement n'est pas disponible</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="10fe6db261f79ac6848dd8109d5e73b3">
+        <source>The transaction was refused.</source>
+        <target>La transaction été refusée.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="fb970bdd962fa85ffc3459b4d5312b10">
+        <source>The transaction failed. Please try a different card.</source>
+        <target>La transaction a échoué. Veuillez essayer une carte différente.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e1c709bbd92871a57367a9f923874278">
+        <source>Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.</source>
+        <target>Erreur lors du processus de paiement, vous avez peut être été débité. Veuillez vérifier votre historique de commande dans votre compte client. Contactez le service client pour en savoir plus.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3aa23f90376bc10782584d22a91aae97">
+        <source>We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.</source>
+        <target>Un problème est survenu lors du traitement de votre paiement Apple Pay. Veuillez vérifier les détails de votre commande et réessayer, ou utilisez un autre mode de paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
+        <source>We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+        <target>Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="52afb370f87a4acfe4f1aaee204835eb">
+        <source>Card holder authentication cannot be checked, please choose another payment method or try again.</source>
+        <target>L'identité du titulaire de la carte n'a pas pu être vérifiée, veuillez choisir un autre moyen de paiement ou essayez de nouveau.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="816565ccf105493c7b15166627f6fc16">
+        <source>Card holder authentication failed, please choose another payment method or try again.</source>
+        <target>Echec de l'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="39dc86ebdd6c930447215d738bc4d15f">
+        <source>An error occurred on card holder authentication, please choose another payment method or try again.</source>
+        <target>Une erreur est survenue lors de l'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="78432b718ec482b7211e1a45785087f1">
+        <source>Card holder authentication canceled, please choose another payment method or try again.</source>
+        <target>Authentification du titulaire de carte annulée, veuillez choisir un autre moyen de paiement ou essayez de nouveau.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1a38a8f865e730b0e8b1e9c82083e085">
+        <source>An error occurred fetching Apple Pay payment request</source>
+        <target>Une erreur est survenue lors de la récupération des informations sur la transaction Apple Pay</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4564455e87003ee6c9b95d5c5b0432b4">
+        <source>An error occurred fetching Google Pay transaction info</source>
+        <target>Une erreur est survenue lors de la récupération des informations sur la transaction Google Pay</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c66d1a5346033e168c05d5878eb4ed61">
+        <source>No Apple Pay Javascript SDK Instance</source>
+        <target>L'instance du Apple Pay Javascript SDK est manquante</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8d61bbbbac6841c29c1db9ca8851a2f0">
+        <source>No Google Pay Javascript SDK Instance</source>
+        <target>L'instance du Google Pay Javascript SDK est manquante</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f2e984154b51f09b97cd60a1b8396059">
+        <source>No PayPal Javascript SDK Instance</source>
+        <target>L'instance du PayPal JavaScript SDK est manquante</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="100e10b5e05d4b3abd2cd52fd12e8789">
+        <source>There was an error during the payment. Please try again or contact the support.</source>
+        <target>Une erreur s'est produite lors du paiement. Veuillez réessayer ou contacter le support.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d7c8c85bf79bbe1b7188497c32c3b0ca">
+        <source>Failed</source>
+        <target>Échec</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="cc61945cbbf46721a053467c395c666f">
+        <source>Refunded</source>
+        <target>Remboursée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9f004157e4c148dac71da3ae5906351f">
+        <source>Partially refunded</source>
+        <target>Remboursée partiellement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2d13df6f8b5e4c5af9f87e0dc39df69d">
+        <source>Pending</source>
+        <target>En attente</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="616b5940be86c327aaa5090f50c061f5">
+        <source>Declined</source>
+        <target>Refusée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="07ca5050e697392c9ed47e6453f1453f">
+        <source>Completed</source>
+        <target>Terminée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="fbd8a56b7556bf3a2fd8c1905a5c0f9c">
+        <source>Voided</source>
+        <target>Annulée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6f8063417ab31f38d864c28302f3de2f">
+        <source>Approved</source>
+        <target>Approuvée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="248336101b461380a4b2391a7625493d">
+        <source>Saved</source>
+        <target>Enregistrée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0eceeb45861f9585dd7a97a3e36f85c6">
+        <source>Created</source>
+        <target>Créée</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bc9189406be84ec297464a514221406d">
+        <source>XXX</source>
+        <target>XXX</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5ea7f231296949070013bc43715aae01">
+        <source>CVC</source>
+        <target>Code de sécurité</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="16aefbf48d8803216285343472025aed">
+        <source>MM/YY</source>
+        <target>MM/YY</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="95b16127e70e8a90220404fb48343182">
+        <source>Expiry date</source>
+        <target>Date d'expiration</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a44217022190f5734b2f72ba1e4f8a79">
+        <source>Card number</source>
+        <target>Numéro de carte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d8b29a7336b0052f6074c881be4ae24f">
+        <source>Card holder name</source>
+        <target>Nom du titulaire de la carte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="35895cff7df70dab18783453e2bd241f">
+        <source>Pay with %s</source>
+        <target>Payer avec %s</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f990493af3321939ca512f8f2cace108">
+        <source>Pay by %s</source>
+        <target>Payer avec %s</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="fc9b4762660906602b63bcd99e5e9747">
+        <source>Pay in installments with PayPal Pay Later</source>
+        <target>Payer en plusieurs fois avec PayPal Pay Later</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="34ace703adbf14df140d3c02234f67bd">
+        <source>Pay with a PayPal account</source>
+        <target>Payer avec un compte PayPal</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="983fe12e91079dcb00c74772b50747a3">
+        <source>Pay by Card - 100% secure payments</source>
+        <target>Payer par Carte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1d565b9e5303987bb1b1938d5d458bca">
+        <source>Card</source>
+        <target>Carte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="644818852b4dd8cf9da73543e30f045a">
+        <source>Go back to the Checkout</source>
+        <target>Retourner au tunnel de commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6ff063fbc860a79759a7369ac32cee22">
+        <source>Checkout</source>
+        <target>Tunnel de commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="21ff087f1520a70163128cae982de67a">
+        <source>Card payment</source>
+        <target>Paiement par carte</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f1d3b424cd68795ecaa552883759aceb">
+        <source>Order summary</source>
+        <target>Résumé de commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="879f6b8877752685a966564d072f498f">
+        <source>Your shopping cart is empty.</source>
+        <target>Votre panier d'achat est vide.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ad69e733ebae8d264bccaa38d68830e8">
+        <source>PayPal</source>
+        <target>PayPal</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="18356e0e1a570420945a00fac60fae68">
+        <source>You have chosen to pay by Card.</source>
+        <target>Vous avez choisi de payer par carte.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7253e56eef5057e5763f535498a4abe2">
+        <source>You have chosen to pay by PayPal.</source>
+        <target>Vous avez choisi de payer par PayPal.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c884ed19483d45970c5bf23a681e2dd2">
+        <source>Here is a short summary of your order:</source>
+        <target>Voici un résumé de votre commande :</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="32231b6aa7f7da0da19a691bd78c5680">
+        <source>The total amount of your order comes to</source>
+        <target>Le montant total de votre panier est de</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1f87346a16cf80c372065de3c54c86d9">
+        <source>(tax incl.)</source>
+        <target>(TTC)</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="edd87c9059d88fea45c0bd6384ce92b9">
+        <source>Please confirm your order by clicking "I confirm my order".</source>
+        <target>Veuillez finaliser votre commande en cliquant sur "Je valide ma commande"</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5e1c8c70c8b2948157cbcafaef3dd7b9">
+        <source>Delete this payment method?</source>
+        <target>Voulez-vous supprimer cette méthode de paiement ?</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b54040e4e1fd364112517e8ce7b531fd">
+        <source>The following payment method will be deleted from your account:</source>
+        <target>Cette méthode de paiement sera supprimée de votre compte :</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1203190e2c25d0377afab032ddd9b608">
+        <source>Delete payment method</source>
+        <target>Supprimer cette méthode de paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="875e6e29b50c20a90d8c09435ab2c8b3">
+        <source>Please wait, we are processing your request</source>
+        <target>Veuillez patienter, nous traitons votre demande...</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="569fd05bdafa1712c4f6be5b153b8418">
+        <source>Other payment methods</source>
+        <target>Autres moyens de paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="46b9e3665f187c739c55983f757ccda0">
+        <source>I confirm my order</source>
+        <target>Je valide ma commande</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="72e506c5e5a9308bb3836d539dc4e39e">
+        <source>Thanks for your purchase!</source>
+        <target>Merci pour votre achat !</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b4a89c5a9a46cf77f29e1c2d42af9083">
+        <source>Please wait, we are processing your payment</source>
+        <target>Veuillez patienter, nous traitons votre paiement</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e8780ac6730b52a2ebe7d18f308ff411">
+        <source>This is taking longer than expected. Please wait...</source>
+        <target>Veuillez patienter, cela prend un peu plus de temps...</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a60852f204ed8028c1c58808b746d115">
+        <source>Ok</source>
+        <target>Ok</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ea4788705e6873b424c65e91c2846b19">
+        <source>Cancel</source>
+        <target>Annuler</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2f2401d57093e7d31bf2689fb87f72f6">
+        <source>100% secure payments</source>
+        <target>Paiement 100% sécurisé</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e81c4e4f2b7b93b481e13a8553c2ae1b">
+        <source>or</source>
+        <target>ou</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2e3e721e530a957f81d5b5dcff0bf0e1">
+        <source>Express Checkout</source>
+        <target>Achat rapide</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0f1c930c145fe9e076b18148be8d2860">
+        <source>Unable to find PayPal Order associated to this PrestaShop Order [PRESTASHOP_ORDER_ID]</source>
+        <target>Impossible de trouver la commande PayPal associée à cette commande PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="8aeb76260f5c8706d7e4e723f4417424">
+        <source>This PrestaShop Order [PRESTASHOP_ORDER_ID] is not paid with PrestaShop Checkout</source>
+        <target>Cette commande PrestaShop [PRESTASHOP_ORDER_ID] n'a pas été payée avec PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="ff9f743a10f09793d2c03d5bbfa18e2f">
+        <source>PayPal Order [PAYPAL_ORDER_ID] is not in the same environment as PrestaShop Checkout</source>
+        <target>La commande PayPal [PAYPAL_ORDER_ID] n'est pas disponible sur cet environnement (production ou test sandbox).</target>
+      </trans-unit>
+      <trans-unit id="3f3813d918b5a7fa072490daba788485">
+        <source>It seems your employee token is invalid.</source>
+        <target>Votre token d'authentification employé est expiré.</target>
+      </trans-unit>
+      <trans-unit id="696306162008efe5a5db815d5014b611">
+        <source>It seems you are logged out.</source>
+        <target>Vous n'êtes plus connecté.</target>
+      </trans-unit>
+      <trans-unit id="dc2e69fd425dc6984d9bc8671c475350">
+        <source>Your PayPal Merchant identifier seems invalid.</source>
+        <target>Votre identifiant marchand PayPal est invalide.</target>
+      </trans-unit>
+      <trans-unit id="6682430ee993415890dc29f7bbcde67f">
+        <source>We didn't receive your PayPal Merchant identifier.</source>
+        <target>Nous n'avons pas reçu votre identifiant marchand PayPal.</target>
+      </trans-unit>
+      <trans-unit id="0ba29c6a1afacf586b03a26162c72274">
+        <source>Environment</source>
+        <target>Environnement</target>
+      </trans-unit>
+      <trans-unit id="0cbc6611f5540bd0809a388dc95a615b">
+        <source>Test</source>
+        <target>Test</target>
+      </trans-unit>
+      <trans-unit id="1d4810149577d19aa44fb295bf33ff0e">
+        <source>Transaction details are not available</source>
+        <target>Les détails de la transaction ne sont pas disponibles</target>
+      </trans-unit>
+      <trans-unit id="21fe2ae19e1a656d794fe0340d55b40c">
+        <source>Seller protection</source>
+        <target>Protection des marchands</target>
+      </trans-unit>
+      <trans-unit id="26886a51582e9b1f41e5c7281630c546">
+        <source>Refund transaction totally or partially</source>
+        <target>Rembourser partiellement ou totalement la transaction</target>
+      </trans-unit>
+      <trans-unit id="2cacd34854aed29bd7d0959ace917806">
+        <source>The environment in which the transaction was made: Test or Production</source>
+        <target>L'environnement utilisé pour cette transaction: Test ou Production</target>
+      </trans-unit>
+      <trans-unit id="3213005d4bbea3bb8a7e75c1de54b9e1">
+        <source>The bank issuer accepted the liability shift. You can safely honor the order.</source>
+        <target>La banque émettrice a accepté le transfert de responsabilité. Vous pouvez honorer la commande en toute sécurité.</target>
+      </trans-unit>
+      <trans-unit id="3ac7a7a0fe486f65e677b4c383094222">
+        <source>Transaction details</source>
+        <target>Détails de la transaction</target>
+      </trans-unit>
+      <trans-unit id="4b245695f7aed6ecbb8563c43746e720">
+        <source>Your transaction refund request will be sent to PayPal. After that, you’ll need to manually process the refund action in the PrestaShop order: choose the type of refund (standard or partial) in order to generate credit slip.</source>
+        <target>Votre demande de remboursement va être transmise à PayPal. Ensuite, vous devrez enregistrer le remboursement dans la commande PrestaShop : choisir le type de remboursement (standard ou partiel) pour générer un avoir.</target>
+      </trans-unit>
+      <trans-unit id="505a83f220c02df2f85c3810cd9ceb38">
+        <source>Success</source>
+        <target>Succès</target>
+      </trans-unit>
+      <trans-unit id="51841de481092be47b22c42c75e110d0">
+        <source>Fees (Tax Incl.)</source>
+        <target>Commission (TTC)</target>
+      </trans-unit>
+      <trans-unit id="5228305beb073dba693ba82c5388659a">
+        <source>PayPal Order</source>
+        <target>Commande PayPal</target>
+      </trans-unit>
+      <trans-unit id="5234a153524f0fe334a04f0e6c399e78">
+        <source>The bank issuer declined the liability shift. We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.</source>
+        <target>La banque émettrice a décliné le transfert de responsabilité. Nous vous recommandons de ne pas honorer la commande immédiatement et de patientez quelques jours en cas de rétro-facturation. Prenez contact avec l'acheteur pour vérifier l'authenticité de la transaction. Pour ce type de cas, nous vous recommandons également de considérer la Protection contre les oppositions bancaires de PayPal.</target>
+      </trans-unit>
+      <trans-unit id="59ccb043923e7d5bd6f7cbba625d2f4f">
+        <source>This PayPal Order has been reversed.</source>
+        <target>La commande PayPal a été reversée.</target>
+      </trans-unit>
+      <trans-unit id="611694c5010c9ded1f726c23da88870d">
+        <source>The PayPal account that was used to create this order is no longer linked to the PrestaShop Checkout module.</source>
+        <target>Le compte PayPal qui a été utilisé pour créer cette commande n'est plus lié au module PrestaShop Checkout.</target>
+      </trans-unit>
+      <trans-unit id="63d5049791d9d79d86e9a108b0a999ca">
+        <source>Reference</source>
+        <target>Référence</target>
+      </trans-unit>
+      <trans-unit id="a19b7ca0907346aefe2d995b7ca9f4c7">
+        <source>Exempted</source>
+        <target>Exempté</target>
+      </trans-unit>
+      <trans-unit id="7240839004ba6f2bb6e3f8ac4a7348c2">
+        <source>See on PayPal</source>
+        <target>Aller sur Paypal</target>
+      </trans-unit>
+      <trans-unit id="756d97bb256b8580d4d71ee0c547804e">
+        <source>Production</source>
+        <target>Production</target>
+      </trans-unit>
+      <trans-unit id="75d8df5e7f62795043a94ed5bdf6b7f4">
+        <source>Any change on the order?</source>
+        <target>Une modification de commande ?</target>
+      </trans-unit>
+      <trans-unit id="78d64fa5c64612743a90f6234f9a4ade">
+        <source>Gross amount</source>
+        <target>Montant brut</target>
+      </trans-unit>
+      <trans-unit id="79a3579a7d9b335009e6b7c1f70398ce">
+        <source>Net amount</source>
+        <target>Montant net</target>
+      </trans-unit>
+      <trans-unit id="8267152e6cc56811caa46a53ec88e961">
+        <source>In order to see this information, please reconnect the correct PayPal account.</source>
+        <target>Pour voir ces informations, veuillez reconnecter le compte PayPal concerné.</target>
+      </trans-unit>
+      <trans-unit id="f2fac46f956a95707301e00b21e29aa4">
+        <source>Your 3D Secure settings for this transaction were set to "Strong Customer Authentication (SCA) when required", but the current transaction does not require it as per the regulation.</source>
+        <target>Vos paramètres 3D Secure pour cette transaction ont été définis sur "Exiger une authentification forte du client lorsque cela est nécessaire", mais la transaction actuelle n’en nécessite pas selon la réglementation.</target>
+      </trans-unit>
+      <trans-unit id="896890bfb700eac98300d639ca970f2b">
+        <source>Merchant</source>
+        <target>Marchand</target>
+      </trans-unit>
+      <trans-unit id="99a808d8d16122d70e44bd7f709d30fb">
+        <source>Balance</source>
+        <target>Solde</target>
+      </trans-unit>
+      <trans-unit id="a36eb66311c58cace9ff0f091814635a">
+        <source>This PayPal Order has been canceled.</source>
+        <target>La commande PayPal a été annulée.</target>
+      </trans-unit>
+      <trans-unit id="a3b5cc0972c85b9c5b05d6c0f8ff2af4">
+        <source>Amount (Tax incl.)</source>
+        <target>Montant (TTC)</target>
+      </trans-unit>
+      <trans-unit id="a6f74fff2223803369009919e94f2f96">
+        <source>Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds</source>
+        <target>Montant à recevoir sur votre compte bancaire : total de la commande moins la commission et les remboursements éventuels</target>
+      </trans-unit>
+      <trans-unit id="c845fcac2ea7b1c490dbe27652e31759">
+        <source>Go to PrestaShop Checkout</source>
+        <target>Aller à PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="d59048f21fd887ad520398ce677be586">
+        <source>Learn more</source>
+        <target>En savoir plus</target>
+      </trans-unit>
+      <trans-unit id="d7366120e49ccb980dac7e7aefae85e3">
+        <source>Transaction amounts</source>
+        <target>Montant de la transaction</target>
+      </trans-unit>
+      <trans-unit id="f56c51f608b37f1ab8a7fde0e86ef174">
+        <source>Maximum [AMOUNT_MAX] [CURRENCY] (Tax incl.)</source>
+        <target>Maximum [AMOUNT_MAX] [CURRENCY] (TTC)</target>
+      </trans-unit>
+      <trans-unit id="d8f8973f9878eb09f5f5a6f2afbf00ef">
+        <source>Amount (Tax Incl.)</source>
+        <target>Montant (TTC)</target>
+      </trans-unit>
+      <trans-unit id="da43f78fa157af167b73a296622352f5">
+        <source>Liability shift</source>
+        <target>Transfert de responsabilité</target>
+      </trans-unit>
+      <trans-unit id="ea620d61461a00502599f2e6a064b931">
+        <source>Payment mode</source>
+        <target>Moyen de paiement</target>
+      </trans-unit>
+      <trans-unit id="eb45bd2725cb8ac50d0795432a918f86">
+        <source>Bank</source>
+        <target>Banque</target>
+      </trans-unit>
+      <trans-unit id="ec53a8c4f07baed5d8825072c89799be">
+        <source>Status</source>
+        <target>Statut</target>
+      </trans-unit>
+      <trans-unit id="ecfa6e92f6b49a55e336afde4c64aa14">
+        <source>3D Secure</source>
+        <target>3D Secure</target>
+      </trans-unit>
+      <trans-unit id="ef93d2efbc5c9bdb02f807dd2c9337fb">
+        <source>Net amount to refund</source>
+        <target>Montant net à rembourser</target>
+      </trans-unit>
+      <trans-unit id="f3d521c7a768f6125b60040e47be2b08">
+        <source>Card does not support 3D Secure</source>
+        <target>3D Secure non prit en charge par la carte</target>
+      </trans-unit>
+      <trans-unit id="f5d74ea75357b5e139854c14f8e24fe3">
+        <source>Order details</source>
+        <target>Détails de la commande</target>
+      </trans-unit>
+      <trans-unit id="fc9aab144255fe59fc53dea649cff88b">
+        <source>Confirm refund</source>
+        <target>Confirmer le remboursement</target>
+      </trans-unit>
+      <trans-unit id="d7a33669a0339e4ddf767d4ce80488eb">
+        <source>Maximum [AMOUNT_MAX] [CURRENCY] (tax included)</source>
+        <target>Maximum [AMOUNT_MAX] [CURRENCY] (TTC)</target>
+      </trans-unit>
+      <trans-unit id="01cd32f89f9f5807e07d58a002b09dee">
+        <source>Card holder name is invalid</source>
+        <target>Nom du titulaire de la carte invalide.</target>
+      </trans-unit>
+      <trans-unit id="1e9307ff80da8e2e7053566f1613cf90">
+        <source>3-digits</source>
+        <target>3 chiffres</target>
+      </trans-unit>
+      <trans-unit id="2c2aaf0b855bf6d000b350c69acd2e78">
+        <source>Card vendor is invalid</source>
+        <target>Marque de la carte non prise en charge.</target>
+      </trans-unit>
+      <trans-unit id="36883c97eb73307ac86b5ad32abbb49b">
+        <source>code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.</source>
+        <target>présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l'avant de la carte.</target>
+      </trans-unit>
+      <trans-unit id="43da12b692a051ce433c2877b61d4c67">
+        <source>CVV code is invalid</source>
+        <target>Code de sécurité invalide.</target>
+      </trans-unit>
+      <trans-unit id="462256f533f152fa6b05baabb7919473">
+        <source>Card expiration date</source>
+        <target>Date d'expiration</target>
+      </trans-unit>
+      <trans-unit id="5284be11230ea808cbcb2bfa117eef0e">
+        <source>Card expiration date is invalid</source>
+        <target>Date d'expiration de la carte invalide.</target>
+      </trans-unit>
+      <trans-unit id="7ffcc5a0361404f32b19ac52c12f226a">
+        <source>Card number is invalid</source>
+        <target>Numéro de carte invalide.</target>
+      </trans-unit>
+      <trans-unit id="f92103c13c44bded222d124f5b9743f3">
+        <source>Cardholder Name (optional)</source>
+        <target>Nom du titulaire de la carte</target>
+      </trans-unit>
+      <trans-unit id="fa29fdc19f1d3ac45b09645c15c5312b">
+        <source>The security code is a</source>
+        <target>Le code de sécurité est un code à</target>
+      </trans-unit>
+      <trans-unit id="960567c486a23f5e75891b735928c8ba">
+        <source>Go back to module configuration</source>
+        <target>Retourner à la configuration du module</target>
+      </trans-unit>
+      <trans-unit id="df2183ab7d5bfd58187077969f08c7f8">
+        <source>An error occurred on PayPal Onboarding, please try again.</source>
+        <target>La connexion a votre compte PayPal a échoué.</target>
+      </trans-unit>
+      <trans-unit id="034347c8ea2ce26879ee1fee0b5e58ca">
+        <source>Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.</source>
+        <target>Votre commande est en attente de confirmation de paiement. Vous recevrez un email lorsque votre paiement aura été validé. Vous pouvez également vérifier le statut de votre commande dans votre historique de commandes dans votre compte.</target>
+      </trans-unit>
+      <trans-unit id="32187a5bef114c112c1ef96ca2e3da1a">
+        <source>Your order is confirmed.</source>
+        <target>Votre commande est confirmée.</target>
+      </trans-unit>
+      <trans-unit id="733ea3e302b9c48da7777481ed50e59a">
+        <source>Processing payment canceled, please choose another payment method or try again.</source>
+        <target>Traitement du paiement annulé, veuillez choisir une autre méthode de paiement ou essayez de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="cc21116ce900f38c0691823ab193b9a3">
+        <source>Pay by card</source>
+        <target>Payer par Carte</target>
+      </trans-unit>
+      <trans-unit id="05dabaa08b279e85b941a229ea150f01">
+        <source>The customer must resolve the contingency before the payment can be processed.</source>
+        <target>Le client doit résoudre la contingence avant de pouvoir traiter ce paiement.</target>
+      </trans-unit>
+      <trans-unit id="1bf3a68908311fdacacf39cd2f05ce27">
+        <source>Order has previously been saved. Please contact customer service to check that your order has successfully been validated. </source>
+        <target>Commande déjà validée. Veuillez contacter le service client pour vérifier que votre commande a été validée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="28bdeeeb111a2556d5ddeb22c5143e91">
+        <source>You skipped 3D Secure validation, please try again or try another payment method.</source>
+        <target>Vous avez passer la vérification 3D Secure, veuillez essayer de nouveau ou essayer un autre moyen de paiement.</target>
+      </trans-unit>
+      <trans-unit id="34ae339b1449b040a78b15a06d066f3f">
+        <source>The merchant account is restricted. Please try later or contact customer service to process your order.</source>
+        <target>Le compte du marchand est limité. Veuillez essayer plus tard ou contacter le service client pour traiter votre commande.</target>
+      </trans-unit>
+      <trans-unit id="70540005363fdf9d4594b5da4d37305e">
+        <source>Please save the order by calling v2/orders/{order_id}/save or alternately, If you don't intend to save the order, PATCH the order to update the value of `processing_instruction` to NO_INSTRUCTION.</source>
+        <target>Veuillez enregistrer la commande en appelant v2/orders/{order_id}/save ou, si vous ne souhaitez pas l'enregistrer, faites un PATCH de la commande pour mettre à jour la valeur de `processing_instruction` à NO_INSTRUCTION.</target>
+      </trans-unit>
+      <trans-unit id="3fc8fdb42042ca1eac3651689881f2f9">
+        <source>The requested agreement is already canceled. This error occurs when the agreement for an authorized payment or captured payment is already canceled.</source>
+        <target>L'accord demandée est déjà annulée. Cette erreur arrive lorsque l'accord pour un paiement autorisé ou paiement capturé est déjà annulé.</target>
+      </trans-unit>
+      <trans-unit id="445a4d847d99a7cb28a7409f30f6d888">
+        <source>Authorization amount exceeds allowable limit. Please provide the authorization amount within allowable limit and try again.</source>
+        <target>Le montant d'autorisation dépasse la limite autorisée. Fournir un montant d'autorisation dans les limites autorisées et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="46e011161d645e2ead41341eff72bcc4">
+        <source>This order has been previously voided and cannot be voided again. Verify the order id and try again.</source>
+        <target>Cette commande a déjà été annulée et ne peut pas être annulée de nouveau. Vérifier la référence de commande et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="4aeac3b5e47dfe0a59d0c7992ed091ad">
+        <source>Card processing payment error, please try again or try another payment method.</source>
+        <target>Erreur en traitant le paiement par carte, veuillez essayer de nouveau ou essayer un autre moyen de paiement.</target>
+      </trans-unit>
+      <trans-unit id="588db83bc5f0db77d73f37b06760c9c4">
+        <source>Payee account is not setup to be able to process card payments. Please contact PayPal customer support.</source>
+        <target>Le compte marchand n'est pas configuré pour accepter les paiements par carte. Veuillez contacter le service client PayPal.</target>
+      </trans-unit>
+      <trans-unit id="5ff62d9ee2fadb425910904929dfad79">
+        <source>The value of a field is invalid.</source>
+        <target>La valeur d'un des champs est invalide.</target>
+      </trans-unit>
+      <trans-unit id="60f36bd938597c9e38b669bc6ee7ddb2">
+        <source>The card number, the expiry date or the CVV is invalid. Please verify all three and try again.</source>
+        <target>Le numéro de carte, la date d'expiration ou le code de sécurité est invalide. Vérifiez les et essayez de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="66ee09a7e80eb7b54cf0a676b0a15ead">
+        <source>The amount cannot be updated as the `payer` has chosen and approved a specific financing offer for a given amount. Please Create a new Order with the updated Order amount and have the `payer` approve the new payment terms. </source>
+        <target>The amount cannot be updated as the `payer` has chosen and approved a specific financing offer for a given amount. Please Create a new Order with the updated Order amount and have the `payer` approve the new payment terms. </target>
+      </trans-unit>
+      <trans-unit id="6a5ff55a65a1abc268f70656bec2c3fd">
+        <source>That transaction has been blocked by Fraud Protection rules. Please try another card or contact customer service to process your order or change their Fraud Protection rules.</source>
+        <target>Cette transaction a été bloquée par les règles de protection anti-fraude. Veuillez utiliser une autre carte ou contacter le service client pour traiter votre commande ou pour changer les règles anti-fraude du compte bancaire.</target>
+      </trans-unit>
+      <trans-unit id="6b7891d243754e565fc91d307afba03c">
+        <source>This transaction is currently not supported. Please contact customer service or your account manager for more information.</source>
+        <target>Cette transaction n'est pas possible. Merci de contacter le service client ou votre gestionnaire de compte pour plus d'informations.</target>
+      </trans-unit>
+      <trans-unit id="6ed540ca1704c2b0cd24f90276de9de9">
+        <source>The number of items in an array parameter is too small.</source>
+        <target>Le nombre de caractères d'un des paramètres est trop faible.</target>
+      </trans-unit>
+      <trans-unit id="740381b50feb938633ad0092ec1f70a4">
+        <source>That currency is not supported with that payment option. Please try with another currency or contact customer support.</source>
+        <target>Cette devise n'est pas pris en charge par cette méthode de paiement. Veuillez essayer avec une autre devise ou contacter le service client.</target>
+      </trans-unit>
+      <trans-unit id="882f4e002f44f8caf3c8749c2781bb40">
+        <source>3D Secure validation failed, please try again or try another payment method.</source>
+        <target>La vérification 3D Secure a échoué, veuillez essayer de nouveau ou essayer un autre moyen de paiement.</target>
+      </trans-unit>
+      <trans-unit id="8bfaf839a536710165a699aedac2c598">
+        <source>The option to save an order is only available if the order has a single purchase unit.  Please create an order with a single purchase unit and try again.</source>
+        <target>L'option d'enregistrement d'une commande est disponible seulement si la commande ne contient qu'une seule unité d'achat. Veuillez créer une commande avec une unique unité d'achat et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="8d293c3255242ebc7cd7573d7f85d341">
+        <source>Order does not have a corresponding matching reference_id. Please provide a valid reference_id and try again.</source>
+        <target>La commande ne détient pas un reference_id correspondant. Veuillez fournir a reference_id valide et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="8ed07718eb6855adc71cbe4b728d1ecf">
+        <source>The parameter value does not conform to the expected `YYYY-MM` format.</source>
+        <target>The parameter value does not conform to the expected `YYYY-MM` format.</target>
+      </trans-unit>
+      <trans-unit id="8fda8956e53ffe823578bbda98463743">
+        <source>Specified resource ID does not exist. Please check the resource ID and try again.</source>
+        <target>La référence de ressource spécifiée n'existe pas. Vérifier la référence de ressource et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="933135183cee2209616a4c59daa5a043">
+        <source>Order already authorized. Only one authorization per order is allowed. Please contact customer service to check that your order has successfully been validated.</source>
+        <target>Commande déjà autorisée. Seulement une autorisation par commande est possible. Contacter le service client pour vérifier que votre commande a bien été validée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="9ad86067ac993ba83c58dd98951564b2">
+        <source>This payment instruction is supported only when `intent=CAPTURE`. If intent is `AUTHORIZE`, you must provide the payment instruction when the authorization is captured. For details, see Capture authorization.</source>
+        <target>This payment instruction is supported only when `intent=CAPTURE`. If intent is `AUTHORIZE`, you must provide the payment instruction when the authorization is captured. For details, see Capture authorization.</target>
+      </trans-unit>
+      <trans-unit id="9d30ce7114a0cf491695a5f01d78927d">
+        <source>A required parameter is missing. Please check that every personnal and delivery details are filled and try again.</source>
+        <target>Un paramètre requis est manquant. Veuillez vérifier que tous les champs d'informations personnelles et de livraison sont remplis et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="a2da02690493da18fb075957600e736f">
+        <source>Invalid order intent.</source>
+        <target>Intention de commande invalide.</target>
+      </trans-unit>
+      <trans-unit id="a430a3a040f590b229dd6d5b001b1148">
+        <source>The card is expired. Please use another card.</source>
+        <target>La carte de crédit est expirée. Veuillez utiliser une autre carte.</target>
+      </trans-unit>
+      <trans-unit id="a8928101ae3a4f4d809a0b275bfcf105">
+        <source>Processing of this card brand is not supported. Use another type of card.</source>
+        <target>Le traitement de ce type de carte n'est pas pris en charge. Utiliser un autre type de carte.</target>
+      </trans-unit>
+      <trans-unit id="ab1d627fef1887867cc20cb003bc85a4">
+        <source>Threeds Secure Parameters are empty.</source>
+        <target>Threeds Secure Parameters are empty.</target>
+      </trans-unit>
+      <trans-unit id="bb13604185380c5e2aee9423146f3380">
+        <source>Currency code not supported for direct card payments using this card type. Please refer https://developer.paypal.com/docs/integration/direct/rest/currency-codes/ for list of supported currency codes.</source>
+        <target>Devise non prise en charge pour les paiements par carte pour ce type de carte. Se référer à https://developer.paypal.com/docs/integration/direct/rest/currency-codes/ pour la liste des devises supportées.</target>
+      </trans-unit>
+      <trans-unit id="bc7d9b98753e35574b1762f3b45724e2">
+        <source>Order already captured. Only one capture per order is allowed. Please contact customer service to check that your order has successfully been validated.</source>
+        <target>Commande déjà validée. Une seule capture peut être effectuée par commande. Veuillez contacter le service client pour vérifier que votre commande a été validée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="bd21ee92851e4cd9efac7d8c72fb5224">
+        <source>Expiration year must be between now and 2099</source>
+        <target>La date d'expiration doit être comprise entre maintenant et 2099</target>
+      </trans-unit>
+      <trans-unit id="bd972c54e30277bb235fa34b5df46593">
+        <source>3D Secure processing validation error, please try again or try another payment method.</source>
+        <target>Erreur en traitant la vérification 3D Secure, veuillez essayer de nouveau ou essayer un autre moyen de paiement.</target>
+      </trans-unit>
+      <trans-unit id="c180c7c7be6f58fde50feae89c97c0a0">
+        <source>The API Caller account is not setup to be able to process card payments. Please contact PayPal customer support.</source>
+        <target>Le API Caller account n'est pas configuré pour accepter les paiements par carte. Veuillez contacter le service client PayPal.</target>
+      </trans-unit>
+      <trans-unit id="c4cdc3c3b50c0a7aa017266797228972">
+        <source>Processing of this card type is not supported. Use another type of card.</source>
+        <target>Le traitement de ce type de carte n'est pas pris en charge. Veuillez utiliser un autre type de carte.</target>
+      </trans-unit>
+      <trans-unit id="cba316dfd19bdaf1c654cd84d82688fe">
+        <source>The transaction is declined due to a compliance violation.</source>
+        <target>Cette transaction est refusée pour des raisons de violation de conformité.</target>
+      </trans-unit>
+      <trans-unit id="d00df53f04b51b8bba7060021a13250a">
+        <source>The client is not allowed to use `payment_instruction` object.</source>
+        <target>Ce client n'est pas autorisé à utiliser  l'objet "payment_instriction".</target>
+      </trans-unit>
+      <trans-unit id="dddf233eaa8da4b85ebc33661ca4fe94">
+        <source>The currency of the authorization should be same as that in which the Order was created and approved by the Payer. Please check the `currency_code` and try again.</source>
+        <target>La devise de l'autorisation de paiement doit être la même que la devise utilisée pour créer la commande et autorisée par le client. Vérifier le "currency_code" et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="df5bf45d0c1e09ae5e724072d361410f">
+        <source>The customer has not approved payment.</source>
+        <target>Le client n'a pas approuvé le paiement.</target>
+      </trans-unit>
+      <trans-unit id="e229686c76660524e7c83d4fda4a2b48">
+        <source>Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.</source>
+        <target>Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.</target>
+      </trans-unit>
+      <trans-unit id="e39b765a3de4545e91f889374c84535c">
+        <source>The option to save an order is only available if the `intent` is AUTHORIZE and `processing_instruction` is ORDER_SAVED_EXPLICITLY. Please change the `intent` to AUTHORIZE, `processing_instruction` to ORDER_SAVED_EXPLICITLY and try again.</source>
+        <target>L'option pour enregistrer la commande est seulement disponible si le 'intent' est AUTHORIZE et le "processing_instruction" est ORDER_SAVED_EXPLICITY. Veuillez changer le "intent" en AUTHORIZE, "processing_instruction" en "ORDER_SAVED_EXPLICITY" et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="e447d4a6087d64d98201ba94eacc6696">
+        <source>Invalid card number. Please verify the card number and try again.</source>
+        <target>Numéro de carte invalide. Vérifiez le numéro de carte et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="e765f8d5cab9d172c3522849bdd37334">
+        <source>The shipping address is required. Please check that shipping address fields are completed and try again.</source>
+        <target>L'adresse de livraison est requis. Veuillez vérifier les champs d'adresse de livraison et essayer de nouveau.</target>
+      </trans-unit>
+      <trans-unit id="ecb1bec859ca59e1f4cf6935743ddad4">
+        <source>An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.</source>
+        <target>An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.</target>
+      </trans-unit>
+      <trans-unit id="fd62bf85c1f7c9f7bb4257cafcb0e944">
+        <source>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</source>
+        <target>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</target>
+      </trans-unit>
+      <trans-unit id="a3f312477f380a6715ff7610ff290529">
+        <source>PrestaShop Checkout transactions won't work in some of your configured countries, but there is a solution !</source>
+        <target>PrestaShop Checkout ne fonctionnera pas dans certains de vos pays configurés, mais il y a une solution !</target>
+      </trans-unit>
+      <trans-unit id="487a4ced3865f176965c1571a9f3c0fe">
+        <source>Change currencies activation for this payment module</source>
+        <target>Changer les devises activées pour ce module de paiement</target>
+      </trans-unit>
+      <trans-unit id="5041c9dced8f0d0a4d319be95b229ea5">
+        <source>Change countries activation for this payment module</source>
+        <target>Changer les pays activés pour ce module de paiement</target>
+      </trans-unit>
+      <trans-unit id="a4e8c4aedf01bae8876d415df3925f65">
+        <source>Please upgrade your settings for :</source>
+        <target>Veuillez modifier votre configuration pour :</target>
+      </trans-unit>
+      <trans-unit id="cb2afa98a49d1ac44da748a5ee556a8a">
+        <source>Know more about compliant ISO Codes</source>
+        <target>En savoir plus sur les ISO Codes conformes</target>
+      </trans-unit>
+      <trans-unit id="d64f2c2414a0c7bab398139d066af91e">
+        <source>PrestaShop Checkout transactions won't work in some of your configured currencies, but there is a solution !</source>
+        <target>PrestaShop Checkout ne fonctionnera pas avec certaines de vos devises configurées, mais il y a une solution !</target>
+      </trans-unit>
+      <trans-unit id="94a3acb3f16f07d0a2e3bfae65cfdb58">
+        <source>3DS verification failed, please try again.</source>
+        <target>L'authentification 3D secure a échoué, veuillez réessayer.</target>
+      </trans-unit>
+      <trans-unit id="fd6237b65b7bb37075277bba7d1aca08">
+        <source>Back to order page</source>
+        <target>Retour à la page de commande</target>
+      </trans-unit>
+      <trans-unit id="565c23511bb8643ac5552fbd5e4ba358">
+        <source>One module, all payments methods.</source>
+        <target>Un module, tous les moyens de paiement.</target>
+      </trans-unit>
+      <trans-unit id="83c6cac8e2ac2ca242a4c1b7e3062bf8">
+        <source>Offer the widest range of payment methods: cards, PayPal, etc.</source>
+        <target>Offrez le plus grand nombre de moyens de paiement : carte, PayPal, etc.</target>
+      </trans-unit>
+      <trans-unit id="88bccdecc2c4b9dcc8afbbc94483293c">
+        <source>Benefit from all PayPal expertise and advantages</source>
+        <target>Bénéficiez de l'expertise et de tous les avantages de PayPal</target>
+      </trans-unit>
+      <trans-unit id="91ac9ff2b524dada18330e5104c5e708">
+        <source>Give access to relevant local payment methods for customers around the globe</source>
+        <target>Donnez accès à tous les moyens de paiement locaux préférés de vos clients à travers le monde</target>
+      </trans-unit>
+      <trans-unit id="ee2bcefdfd245cabad582bbaa6b38ff5">
+        <source>Including:</source>
+        <target>Inclus : </target>
+      </trans-unit>
+      <trans-unit id="f1206f9fadc5ce41694f69129aecac26">
+        <source>Configure</source>
+        <target>Configurer</target>
+      </trans-unit>
+      <trans-unit id="0eaadb4fcb48a0a0ed7bc9868be9fbaa">
+        <source>Warning</source>
+        <target>Attention</target>
+      </trans-unit>
+      <trans-unit id="2347172eb56070e194a4a9367d2b0b2f">
+        <source>You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.</source>
+        <target>Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.</target>
+      </trans-unit>
+      <trans-unit id="aec47b33255dfc9e90e269930c428c40">
+        <source>Please wait, loading additional payment methods.</source>
+        <target>Veuillez patienter, chargement de modes de paiement supplémentaires.</target>
+      </trans-unit>
+      <trans-unit id="bb8956c67b82c7444a80c6b2433dd8b4">
+        <source>Are you sure you want to uninstall this module?</source>
+        <target>Etes-vous sûr de vouloir désinstaller ce module ? Attention vous aller perdre les données associées à vos précédentes commandes !</target>
+      </trans-unit>
+      <trans-unit id="eb18dd00e86aff4b5b5d15e938382b49">
+        <source>Choose another payment method</source>
+        <target>Choisir un autre moyen de paiement</target>
+      </trans-unit>
+      <trans-unit id="0010d7e47c9ef468ccad1dde3b4536c5">
+        <source>Accept payments through PayPal buttons on your checkout page.</source>
+        <target>Acceptez les paiements via le bouton PayPal sur votre page de finalisation de commande</target>
+      </trans-unit>
+      <trans-unit id="005b798ad83c6496b7a1a29cb9edad5c">
+        <source>Gold version shows better results on conversion rate</source>
+        <target>La version Or a démontré un meilleur taux de conversion.</target>
+      </trans-unit>
+      <trans-unit id="0084da4633913f4fef24e40cec0e38e5">
+        <source>Express Checkout Shortcut allows merging account creation and payment, to make your customers purchases effortless.</source>
+        <target>Le raccourci Express Checkout permet de fusionner création de compte et paiement pour faciliter les achats de vos clients.</target>
+      </trans-unit>
+      <trans-unit id="00a3f9babdff220441fb397492e2adf4">
+        <source>Link to PrestaShop Checkout first</source>
+        <target>Commencez par lier un compte PrestaShop Checkout </target>
+      </trans-unit>
+      <trans-unit id="00d23a76e43b46dae9ec7aa9dcbebb32">
+        <source>Enabled</source>
+        <target>Activé</target>
+      </trans-unit>
+      <trans-unit id="0138bb3d537f91354c2e69ea8fe04921">
+        <source>Manage conversion rules</source>
+        <target>Gérer les règles de conversions</target>
+      </trans-unit>
+      <trans-unit id="019d235906cab8dd39702ff1ed63b0ce">
+        <source>Local payment methods</source>
+        <target>Moyens de paiement locaux</target>
+      </trans-unit>
+      <trans-unit id="026a5d3352c03f2a4161b6378c4cf74c">
+        <source>Higher conversions</source>
+        <target>Un meilleur taux de conversion</target>
+      </trans-unit>
+      <trans-unit id="02d4482d332e1aef3437cd61c9bcc624">
+        <source>Contact us</source>
+        <target>Nous contacter</target>
+      </trans-unit>
+      <trans-unit id="03146ba7e70c9ea593096c7ab4831512">
+        <source>Define the currency conversion rules</source>
+        <target>Définir les règles de conversion de devises</target>
+      </trans-unit>
+      <trans-unit id="03b2e60183759732ca220f3c42c90a4a">
+        <source>Pending transaction</source>
+        <target>Transaction(s) en attente</target>
+      </trans-unit>
+      <trans-unit id="0495fce7da4eaf5a10243de38e8376c3">
+        <source>Help for PrestaShop Checkout</source>
+        <target>Aide pour PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="04d5933ab56d1bbac4c85471614d3bd2">
+        <source>Displaying this message has shown a better conversion rate and a raise of Average Order Value.</source>
+        <target>Afficher ces messages a montré un meilleur taux de conversion et un panier moyen plus élevé.</target>
+      </trans-unit>
+      <trans-unit id="0557fa923dcee4d0f86b1409f5c2167f">
+        <source>Back</source>
+        <target>Retour</target>
+      </trans-unit>
+      <trans-unit id="05a75ed73f5cbb95cd94d4aa1a4d4a2f">
+        <source>Business information</source>
+        <target>Informations d'entreprise</target>
+      </trans-unit>
+      <trans-unit id="06df33001c1d7187fdd81ea1f5b277aa">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="075be76b45904588f54c99aa5860bbb1">
+        <source>Email already exist.</source>
+        <target>L'email existe déjà.</target>
+      </trans-unit>
+      <trans-unit id="081d8c5739e6266fddfb202afd722324">
+        <source>One more thing : send documents to be fully approved by PayPal</source>
+        <target>Une dernière chose : envoyez vos documents pour que votre compte PayPal soit totalement validé par PayPal.</target>
+      </trans-unit>
+      <trans-unit id="0955255f71799451e116070471313b5b">
+        <source>The email is missing.</source>
+        <target>L'email est manquant.</target>
+      </trans-unit>
+      <trans-unit id="0bb40ba3edbedc8c2775215d4d4aa5ee">
+        <source>in the meantime, you can sell now up to 500$ in card transactions.</source>
+        <target>Entre temps, vous pouvez dès à présent accepter les paiements par carte jusqu'à un total de 500€</target>
+      </trans-unit>
+      <trans-unit id="0c6755da915b75e43e9cfdf1f0382e82">
+        <source>Credit and Debit Cards</source>
+        <target>Cartes de crédit</target>
+      </trans-unit>
+      <trans-unit id="0daf2583d30c61242d1b36d66909e8d2">
+        <source>Unfortunately, credit card payments cannot be processed for you at the moment. In the meantime, you can still receive payments via PayPal. Please proceed to some actions from your PayPal account, where you should have received a notification. If not, please contact PayPal help center.</source>
+        <target>Malheureusement, les cartes de crédit ne peuvent pas être acceptées pour le moment. Entre temps, vous pouvez accepter les paiements par PayPal. Veuillez effectuer certaines actions sur votre compte PayPal, où vous avez certainement reçu une notification. Si ce n'est pas le cas, veuillez contacter le service client PayPal.</target>
+      </trans-unit>
+      <trans-unit id="0dd48299c95102f75579da47ee1aceff">
+        <source>Your PrestaShop account is linked to your PayPal account</source>
+        <target>Votre compte PrestaShop est maintenant connecté à votre compte PayPal</target>
+      </trans-unit>
+      <trans-unit id="0eb1f8746fd4f892627727adf4a1a35c">
+        <source>in card transactions until your account is fully approved</source>
+        <target>en transactions par carte tant que votre compte est en attente de validation</target>
+      </trans-unit>
+      <trans-unit id="0f0a354b869158cf738ca27bfee975a2">
+        <source>Link to PayPal account</source>
+        <target>Lier un compte PayPal</target>
+      </trans-unit>
+      <trans-unit id="104d9898c04874d0fbac36e125fa1369">
+        <source>Discount</source>
+        <target>Réduction</target>
+      </trans-unit>
+      <trans-unit id="1059dea5e06197e365195741c631ea61">
+        <source>Button configuration saved with success !</source>
+        <target>Configuration des boutons sauvegardée avec succès !</target>
+      </trans-unit>
+      <trans-unit id="129b092b96a6c898e530c9d229730696">
+        <source>Shipping costs, if any, will be estimated in basket total. Delivery method selected by default will be the one set in first position on Carriers page.</source>
+        <target>Les frais de port, si ils existent, seront estimé dans le panier. La méthode de livraison par défaut sera celle en première position sur la page transporteurs. </target>
+      </trans-unit>
+      <trans-unit id="12ef4cff3c64452547a8892a5104488f">
+        <source>Send it again</source>
+        <target>Envoyer à nouveau</target>
+      </trans-unit>
+      <trans-unit id="1441b24706d1d541f7312b64a89fec06">
+        <source>Production mode enables you to collect your payments.</source>
+        <target>Le mode production vous permet d'encaisser de l'argent</target>
+      </trans-unit>
+      <trans-unit id="14ddf50d9509ff68585dcfe2380d098a">
+        <source>The password is invalid.</source>
+        <target>Le mot de passe n'est pas valide.</target>
+      </trans-unit>
+      <trans-unit id="14e5629d13fb3983cc6b6880a6b5058a">
+        <source>except opposition here</source>
+        <target>sauf opposition ici</target>
+      </trans-unit>
+      <trans-unit id="15bbb9d0bbf25e8d2978de1168c749dc">
+        <source>Website</source>
+        <target>Site</target>
+      </trans-unit>
+      <trans-unit id="15c52cd080705793a4aef0f321a0f592">
+        <source>If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.</source>
+        <target>Si la validation de votre compte PayPal tarde, ou que vous rencontrez des problèmes de paiement avec les Champs de Carte Intégrés, vous pouvez activer ces champs alternatifs, comme solution temporaire, seulement si les Champs de Carte Intégrés sont indisponibles ou désactivés. Les comissions appliquées sont les mêmes que pour le paiement par PayPal.</target>
+      </trans-unit>
+      <trans-unit id="16bfbf9c462762cf1cba4134ec53c504">
+        <source>Loading</source>
+        <target>Chargement</target>
+      </trans-unit>
+      <trans-unit id="725a6311f6494da0c4c5f268ec19e2fc">
+        <source>There are no payment methods available. You can't receive payments from PayPal right now and your customers can't proceed to payments (anymore) via the payment methods provided by PrestaShop Checkout.</source>
+        <target>Aucun moyen de paiement n'est disponible. Vous ne pouvez pas recevoir de paiements de PayPal pour le moment et vos clients ne peuvent pas (plus) procéder à des paiements via les moyens de paiement fournis par PrestaShop Checkout.</target>
+      </trans-unit>
+      <trans-unit id="190fcd96a9ebae0593cd777c8797b43b">
+        <source>Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed</source>
+        <target>Connecter votre compte PrestaShop Checkout et lier votre compte PayPal ou créez en un si besoin</target>
+      </trans-unit>
+      <trans-unit id="19146f30e246bba7235f1f052711fe74">
+        <source>What is the difference between Integrated Credit Card fields and PayPal branded Credit Card Fields ?</source>
+        <target>Quelle est la différence entre entre les Champs de Carte Intégrés et les Champs de Carte Alternatifs de Paypal ?</target>
+      </trans-unit>
+      <trans-unit id="1b4c17532f2e6390cadc07e662079870">
+        <source>Conversion rules</source>
+        <target>Règles de conversion</target>
+      </trans-unit>
+      <trans-unit id="1bfec4b29ea54ba7f9334d7f7deddc4a">
+        <source>Process unlimited card payments. You can accept either credit or debit card.</source>
+        <target>Recevez des paiements par carte sans limite. Vous pouvez accepter les paiements par carte de crédit et de débit.</target>
+      </trans-unit>
+      <trans-unit id="1c00ee2b952cd6707b90767c2177f313">
+        <source>The capability can no longer be used, but there are remediation steps to regain access to the corresponding functionality.</source>
+        <target>Les fonctionnalités ne peuvent plus être utilisées, mais il existe des étapes pour récupérer les accès aux fonctionnalités correspondantes</target>
+      </trans-unit>
+      <trans-unit id="1c63ebf82ce8b0e472c0d3a4b38ff78d">
+        <source>Manage currencies</source>
+        <target>Gérer les devises</target>
+      </trans-unit>
+      <trans-unit id="1d5d8cab58801226ceed46a3f53fc07d">
+        <source>Create your PrestaShop Checkout account</source>
+        <target>Créer votre compte PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="1d8881f50fe101293c99242fbaab59fe">
+        <source>Your account needs to be validated to accept PayPal payments. Please check your inbox for any email confirmation.</source>
+        <target>Votre compte doit être validé pour accepter les paiements via PayPal. Veuillez jeter un œil à votre boite de réception pour confirmer votre adresse email.</target>
+      </trans-unit>
+      <trans-unit id="1ea2d7969cb7f07cff0433fcd96c8763">
+        <source>Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods</source>
+        <target>Optimisez votre taux de conversion en positionnant PayPal comme première option</target>
+      </trans-unit>
+      <trans-unit id="1f6f681876c65177b4cfbb7c583d9619">
+        <source>You’ve got an email.</source>
+        <target>Vous avez un email.</target>
+      </trans-unit>
+      <trans-unit id="1fbc7e5f1b92c7ec072397b59a0bb5da">
+        <source>Billing address</source>
+        <target>Adresse de facturation</target>
+      </trans-unit>
+      <trans-unit id="1fe500f831a0d0e2b7fda563b0c28b6d">
+        <source>PayPal button</source>
+        <target>Bouton PayPal</target>
+      </trans-unit>
+      <trans-unit id="1fe917b01f9a3f87fa2d7d3b7643fac1">
+        <source>FAQ</source>
+        <target>FAQ sur les comptes déclinés</target>
+      </trans-unit>
+      <trans-unit id="1ffc4d4c8714b66db4296d2c9c25ef81">
+        <source>Account declined FAQs</source>
+        <target>FAQ sur les comptes déclinés</target>
+      </trans-unit>
+      <trans-unit id="20db0bfeecd8fe60533206a2b5e9891a">
+        <source>First name</source>
+        <target>Prénom</target>
+      </trans-unit>
+      <trans-unit id="2194aaec8cc7086ab0e93f74547e5f53">
+        <source>Subtotal</source>
+        <target>Sous-total</target>
+      </trans-unit>
+      <trans-unit id="21aa8b7762ee37c1c516f8c0a7805c1c">
+        <source>Credit Card availability revoked</source>
+        <target>Disponibilité de la carte de crédit révoquée.</target>
+      </trans-unit>
+      <trans-unit id="230a08d54d32844a29f3b5e11cd67946">
+        <source>Alternative Credit Card Fields activation</source>
+        <target>Activation des champs de carte de crédit alternatifs</target>
+      </trans-unit>
+      <trans-unit id="2433db5a329ea473271a3cd8c013362e">
+        <source>Personal information</source>
+        <target>Informations personnelles</target>
+      </trans-unit>
+      <trans-unit id="243e4f2f3bd512ca8a6cc83e7a19e103">
+        <source>Company estimated monthly turnover</source>
+        <target>Chiffre d'affaires mensuel estimé de l'entreprise</target>
+      </trans-unit>
+      <trans-unit id="25a81701fbfa4a1efdf660a950c1d006">
+        <source>White</source>
+        <target>Blanc</target>
+      </trans-unit>
+      <trans-unit id="25d76826f85d2bb976027066e6fcc522">
+        <source>Roundings settings to change</source>
+        <target>Paramètres d'arrondis à mettre à jour</target>
+      </trans-unit>
+      <trans-unit id="2605fbb693837be42d0cd0e701cb5aa3">
+        <source>Handling</source>
+        <target>Frais de manutention</target>
+      </trans-unit>
+      <trans-unit id="2607298669ace2fc910321afeb9f8a84">
+        <source>Download PDF</source>
+        <target>Télécharger le Guide utilisateur</target>
+      </trans-unit>
+      <trans-unit id="26609a4edfbef95f4695a1474d316a2c">
+        <source>Choose page location for messages</source>
+        <target>Choisissez l'emplacement des messages sur la page</target>
+      </trans-unit>
+      <trans-unit id="26a180e6da68731b08a94399789ff518">
+        <source>Congrats ! You can start selling online now.</source>
+        <target>Félicitations ! Vous pouvez désormais recevoir des paiements.</target>
+      </trans-unit>
+      <trans-unit id="26d56092353c630f9ad92df134d3708d">
+        <source>Set up description</source>
+        <target>Choisir la description</target>
+      </trans-unit>
+      <trans-unit id="26ec71edbfce31656c47a66bf830ed1c">
+        <source>Be careful, your roundings settings are not fully compatible with PrestaShop Checkout transaction processing. Some of the transactions could fail. But it is easy, your setting Round mode and Round type should be set on « Round up away from zero, when it is half way there » and « Round on each item » or click on the button bellow to make it automatically !</source>
+        <target>Attention, vos paramètres d'arrondi ne sont pas totalement compatibles avec le traitement des transactions PrestaShop Checkout. Certaines des transactions pourraient échouer. Mais c’est facile, vos réglages «Règle d'arrondi» et «Type d'arrondi» doivent être réglés sur «Arrondir vers l'infini quand valeur à mi-chemin» et «Arrondir pour chaque article» ou cliquer sur le bouton ci-dessous pour le faire automatiquement!</target>
+      </trans-unit>
+      <trans-unit id="29ac026d29c538244f7b8a7505213750">
+        <source>TIPS</source>
+        <target>CONSEIL</target>
+      </trans-unit>
+      <trans-unit id="2bd63f8a40a2830f6e7c4043bb534137">
+        <source>Multistore detected</source>
+        <target>Mode Multiboutique detecté</target>
+      </trans-unit>
+      <trans-unit id="2c3d0d52cd44ea478c6e2a6586632239">
+        <source>Customize PayPal button</source>
+        <target>Personnaliser le bouton PayPal</target>
+      </trans-unit>
+      <trans-unit id="2c9b5b15a6d3cc951ca57c65e4966fd3">
+        <source>Mr</source>
+        <target>M</target>
+      </trans-unit>
+      <trans-unit id="2cf3cc18e1609157b38384dbea6a77d0">
+        <source>per transaction depending on your country. </source>
+        <target>par transaction, selon votre pays.</target>
+      </trans-unit>
+      <trans-unit id="2d25c72c1b18e562f6654fff8e11711e">
+        <source>Not available</source>
+        <target>Non Disponible</target>
+      </trans-unit>
+      <trans-unit id="2d5b22ec484b27c39d09b643bc86756b">
+        <source>Adjust your bank account</source>
+        <target>Ajouter votre compte bancaire</target>
+      </trans-unit>
+      <trans-unit id="2dddad3a82e8e68edd68fe1776c1c13b">
+        <source>Connect your PrestaShop account</source>
+        <target>Connecter votre compte PrestaShop</target>
+      </trans-unit>
+      <trans-unit id="30aa465f0263c86b865c01a7f590e805">
+        <source>available in :</source>
+        <target>Disponibilité :</target>
+      </trans-unit>
+      <trans-unit id="30dbd3dffa9dbd08b062436ba8dcbad7">
+        <source>Production mode</source>
+        <target>Mode Production</target>
+      </trans-unit>
+      <trans-unit id="3131503f02d3c484982dd6752109ad1c">
+        <source>Customize checkout experience</source>
+        <target>Personnaliser l'experience d'achat</target>
+      </trans-unit>
+      <trans-unit id="31fde7b05ac8952dacf4af8a704074ec">
+        <source>Preview</source>
+        <target>Prévisualisation</target>
+      </trans-unit>
+      <trans-unit id="339f7a2e087a159e6a31501649027a77">
+        <source>Homepage</source>
+        <target>Page d'accueil</target>
+      </trans-unit>
+      <trans-unit id="34577fc0116aa3a2db0d3bbe55b4638e">
+        <source>This module allows you to:</source>
+        <target>Ce module vous permet de :</target>
+      </trans-unit>
+      <trans-unit id="36d83ae2c209f6fb8e8865584d108d8b">
+        <source>PayPal algorithms automatically limit your fraud rate. There is a complete tool on PayPal to set specific rules and drive your performance concerning fraud and chargeback costs.</source>
+        <target>Les algorithmes de PayPal limite automatiquement le nombre de fraudes. Il existe un outil complet sur l'interface PayPal pour configurer des règles spécifiques et piloter votre performance concernant la fraude et les surcoûts de recouvrement.</target>
+      </trans-unit>
+      <trans-unit id="37c3e853135c8286d58849ec93874750">
+        <source>Manage Activity</source>
+        <target>Gérer l'activité</target>
+      </trans-unit>
+      <trans-unit id="384036f8b0067ec3bb710a92f8734b3b">
+        <source>Transaction type</source>
+        <target>Type de transaction</target>
+      </trans-unit>
+      <trans-unit id="396df27a404efda7df64c37895a845a9">
+        <source>Change payment methods order</source>
+        <target>Changer l'ordre des moyens de paiement</target>
+      </trans-unit>
+      <trans-unit id="3a8d21886ccb1e466803db375c15aae9">
+        <source>Offer the widest range of payment methods: cards, PayPal, etc...</source>
+        <target>Offrir le plus large choix de moyens de paiement : cartes, PayPal, etc …</target>
+      </trans-unit>
+      <trans-unit id="3a8e02212752fecc2b5eb72111cdc40d">
+        <source> ) : we highly recommend to use these ones, by default. But you need PayPal full approval for accepting Credit Cards payment with the fields. You can see the status of this approval in the </source>
+        <target>) : nous vous recommandons de les privilégier. Votre compte PayPal doit avoir été totalement approuvé afin d'en bénéficier. Vous pouvez voir le statut d'approbation de votre compte PayPal dans le</target>
+      </trans-unit>
+      <trans-unit id="3ac5bf8a648deff04ff5e08ade3ada40">
+        <source>Please select the first shop to configure from the list below :</source>
+        <target>Veuillez sélectionner une boutique dans la liste ci-dessous.</target>
+      </trans-unit>
+      <trans-unit id="3b1278d88b9db123d87a2e644afbda97">
+        <source>Test mode is turned on</source>
+        <target>Le mode test est activé</target>
+      </trans-unit>
+      <trans-unit id="3b5b0f1e26d98a827ef82af202c2e85b">
+        <source>Reset password</source>
+        <target>Réinitialiser le mot de passe</target>
+      </trans-unit>
+      <trans-unit id="3b947d34f60e85b82c15f85ac2000337">
+        <source>A confirmation email has been sent. Check your inbox and click on the link to activate your account.</source>
+        <target>Un email de confirmation a été envoyé. Vérifiez votre boite de réception et cliquez sur le lien pour activer votre compte.</target>
+      </trans-unit>
+      <trans-unit id="3c6411b86383a104dbab0759d80ad85b">
+        <source>Use production mode</source>
+        <target>Activer le mode production</target>
+      </trans-unit>
+      <trans-unit id="3d808624c7b26cfee0b74ee3b4afc38b">
+        <source>up to $500</source>
+        <target>jusqu'à 500$</target>
+      </trans-unit>
+      <trans-unit id="3e335cc9a3b59223da56df9434994954">
+        <source>Integrated Credit Card Fields</source>
+        <target>Champs de Carte Intégrés</target>
+      </trans-unit>
+      <trans-unit id="3f371818d262886c99af519da0cc9548">
+        <source>Change countries ISO Codes</source>
+        <target>Changer les ISO codes pays</target>
+      </trans-unit>
+      <trans-unit id="3fa24bedca614725dc240832a0c0ac94">
+        <source>Payment methods acceptance</source>
+        <target>Moyens de paiements acceptés</target>
+      </trans-unit>
+      <trans-unit id="42369faa6a6b243aac58683f3874bf99">
+        <source>Create account</source>
+        <target>Créer un compte</target>
+      </trans-unit>
+      <trans-unit id="4245499695408b974322be6f01b0d17a">
+        <source>Test mode</source>
+        <target>Mode test</target>
+      </trans-unit>
+      <trans-unit id="42885463cee2cd63b1cabc1be6785db0">
+        <source>An error during configuration was detected. Please reset the PrestaShop Checkout module and configure it again.</source>
+        <target>Erreur de configuration détectée, veuillez réinitialiser le module et le configurer à nouveau.</target>
+      </trans-unit>
+      <trans-unit id="43340e6cc4e88197d57f8d6d5ea50a46">
+        <source>Read more</source>
+        <target>En savoir plus</target>
+      </trans-unit>
+      <trans-unit id="4394c8d8e63c470de62ced3ae85de5ae">
+        <source>Log out</source>
+        <target>Se déconnecter</target>
+      </trans-unit>
+      <trans-unit id="44106d67db6b915eab67e4293f70a926">
+        <source>pending dispute(s)</source>
+        <target>litige(s) en attente</target>
+      </trans-unit>
+      <trans-unit id="447473b7d8c733b008a87b7abb3ac354">
+        <source>Terms and Conditions of Use of PrestaShop Checkout</source>
+        <target> Conditions générales d'utilisation de PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="44749712dbec183e983dcd78a7736c41">
+        <source>Date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="461af1b437e5d9684f1e3df305d2bc7d">
+        <source>Each shop must be configured separately, even if you configure the same account on all of them.</source>
+        <target>Chaque boutique doit être configurée séparemment, même si vous utiliser le même compte pour chacune d'entres elles.</target>
+      </trans-unit>
+      <trans-unit id="46a2a41cc6e552044816a2d04634545d">
+        <source>State</source>
+        <target>Etat</target>
+      </trans-unit>
+      <trans-unit id="4826f26ca366291a89abd1f29680202d">
+        <source>PrestaShop Checkout account</source>
+        <target>Compte PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="48d7a08b6950878e840a3009ef9ec6e4">
+        <source>Authorize process holds all payments on customers’ account. Mark the order as « Shipped » or « Payment accepted » to capture payments. Local Payment Methods are not compatible with Authorize process.</source>
+        <target>Le mode Prélever à l'expédition conserve l'argent sur le compte du client. Marquez la commande comme Expediée ou Paiement accepté pour prélever l'argent. Les moyens de paiement locaux ne sont pas compatibles avec le mode Prélever à l'expédition</target>
+      </trans-unit>
+      <trans-unit id="49409b9de3fc13f7835c406653c1bcf8">
+        <source>You need to connect to both PrestaShop and PayPal accounts to activate all payment methods</source>
+        <target>Vous devez connecter des comptes PrestaShop et PayPal pour activer tous les moyens de paiement</target>
+      </trans-unit>
+      <trans-unit id="4994a8ffeba4ac3140beb89e8d41f174">
+        <source>Language</source>
+        <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="4b78ac8eb158840e9638a3aeb26c4a9d">
+        <source>Tax</source>
+        <target>Taxe</target>
+      </trans-unit>
+      <trans-unit id="4cb668c4f89af857decf3d6ce310cd77">
+        <source>Integrated Credit Card fields provide the best payment experience you can find in PrestaShop. Well integrated in your checkout process, not branded, with the fewest number of fields, and lowest fee rates (see them on </source>
+        <target>Les Champs de Carte Intégrés proposent la meilleure expérience d'achat sur PrestaShop. Bien intégrés dans le parcours d'achat, sans marque, avec un nombre réduits de champs, et les frais de comissions les plus bas, (voir sur </target>
+      </trans-unit>
+      <trans-unit id="4ed439fd8ada46dc68dc84e0b57a3046">
+        <source>See below the transactions processed with PrestaShop Checkout, limited to the last 1000 to load them faster.</source>
+        <target>Vous trouverez ci-dessous toutes les transactions effectuées à travers PrestaShop Checkout, dans la limite de 1000, pour des raisons de rapidité de chargement.</target>
+      </trans-unit>
+      <trans-unit id="526d688f37a86d3c3f27d0c5016eb71d">
+        <source>Reset</source>
+        <target>Réinitialiser</target>
+      </trans-unit>
+      <trans-unit id="54c1127bed31e947d0951af3263522cf">
+        <source>Configure your bank statements description</source>
+        <target>Configurer votre description de relevé bancaire</target>
+      </trans-unit>
+      <trans-unit id="5579726f3f99842c8bd6aa672b0ba1df">
+        <source>Pill</source>
+        <target>Pilule</target>
+      </trans-unit>
+      <trans-unit id="55926e741046f094a5597085b9a329bb">
+        <source>Note that you cannot collect payments with test mode</source>
+        <target>Notez que vous ne pouvez pas encaisser d'argent en mode test</target>
+      </trans-unit>
+      <trans-unit id="55c93629a14e52832a2a4b1c989140f4">
+        <source>please check our list of customizable settings</source>
+        <target>veuillez consulter notre liste de paramètres personnalisables</target>
+      </trans-unit>
+      <trans-unit id="56396cec5c858be914156d159a387592">
+        <source>Business type</source>
+        <target>Type d'entreprise</target>
+      </trans-unit>
+      <trans-unit id="57e46658fd7e21e0377d342fd9743dd4">
+        <source>No confirmation email?</source>
+        <target>Pas d'email de confirmation ?</target>
+      </trans-unit>
+      <trans-unit id="59716c97497eb9694541f7c3d37b1a4d">
+        <source>Country</source>
+        <target>Pays</target>
+      </trans-unit>
+      <trans-unit id="5d4023dba17f36ce69357d25cbe4fbad">
+        <source>PayPal account</source>
+        <target>Compte PayPal</target>
+      </trans-unit>
+      <trans-unit id="5d5c6682ffcf6b3a46c564762e3b9ff4">
+        <source>We recommend « Capture at shipping » if you are a lean manufacturer or a craft products seller</source>
+        <target>Nous recommandons Prélever à l'expédition si vous vendez des produits artisanaux ou produits à l'achat.  </target>
+      </trans-unit>
+      <trans-unit id="5edab47a4928d49ab1d6742796462020">
+        <source>To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees.</source>
+        <target>Pour tester vos méthodes de paiement, procéder à un paiement en privilégiant les petits montants, dès la commande est effectuée, procéder à un remboursement sur la page commande. Attention, vous ne pourrez pas récupérer les frais de commissions.</target>
+      </trans-unit>
+      <trans-unit id="5ef0c737746fae2ca90e66c39333f8f6">
+        <source>Errors</source>
+        <target>Erreurs</target>
+      </trans-unit>
+      <trans-unit id="5f139553939ca29bced958cb5f86ecad">
+        <source>Starting from</source>
+        <target>A partir de</target>
+      </trans-unit>
+      <trans-unit id="600cfb552b7349e76153e10b4604a651">
+        <source>Account declined</source>
+        <target>Compte décliné</target>
+      </trans-unit>
+      <trans-unit id="6199f21944b1e84b08db3c63957fc64c">
+        <source>Adjust shape for all buttons</source>
+        <target>Ajuster la forme pour tous les boutons</target>
+      </trans-unit>
+      <trans-unit id="62766f3f20aab2ef673dec109230b0b6">
+        <source>Your account needs further checks to accept Credit and Debit Cards payment.</source>
+        <target>Votre compte nécessite plus de vérifications pour accepter les paiements par carte.</target>
+      </trans-unit>
+      <trans-unit id="654866693fd91ce8e9764a218f569918">
+        <source>Recommended</source>
+        <target>Recommandé</target>
+      </trans-unit>
+      <trans-unit id="692b12b3cb0afac724a28d59ec2e7786">
+        <source>Competitive and transparent fees</source>
+        <target>Des frais compétitifs et transparents</target>
+      </trans-unit>
+      <trans-unit id="6999b47a8b8c28ab55182b0461663b09">
+        <source>Additional information is required to complete background check. Please go on your www.paypal.com account and check the notification bell on the top right to know which documents are needed. It could be:</source>
+        <target>Des informations complémentaires sont requises pour effectuer des vérifications. Veuillez vous rendre sur votre compte www.paypal.com et jetez un œil aux notifications sur la cloche en haut à droite pour savoir quels documents supplémentaires sont nécessaires. Cela peut être : </target>
+      </trans-unit>
+      <trans-unit id="6a26f548831e6a8c26bfbbd9f6ec61e0">
+        <source>Help</source>
+        <target>Aide</target>
+      </trans-unit>
+      <trans-unit id="6ae989b9e8b0a96a2d8c3e61f10252db">
+        <source>Submit idea</source>
+        <target>Soumettre une idée</target>
+      </trans-unit>
+      <trans-unit id="6bde19fb9d1c68cdb5a8efa405370887">
+        <source>Fraud tool</source>
+        <target>Outil de gestion des fraudes</target>
+      </trans-unit>
+      <trans-unit id="6c5f414021afc703cc9f10eeb8616e06">
+        <source>Change rounding settings</source>
+        <target>Changer les configurations d'arrondis</target>
+      </trans-unit>
+      <trans-unit id="6c9d89898d5e09cfe845875ec10b51f5">
+        <source>Define PayPal express checkout flow</source>
+        <target>Définir l'expérience de l'express checkout PayPal</target>
+      </trans-unit>
+      <trans-unit id="6d0c6339a1c8d8d11ce935b7de1d0a35">
+        <source>Choose page location</source>
+        <target>Choisir le positionnement sur les pages</target>
+      </trans-unit>
+      <trans-unit id="6f266e3508d20d99c079e0130c679208">
+        <source>PayPal Branded Credit Card Fields</source>
+        <target>Champs de carte de crédit de PayPal</target>
+      </trans-unit>
+      <trans-unit id="70bdce46b416665976a87b1a13fb20c5">
+        <source>Log in with your PrestaShop Checkout account</source>
+        <target>Connectez-vous avec votre compte PrestaShop Checkout</target>
+      </trans-unit>
+      <trans-unit id="731f2472e5c3d9f8e81b70b17a7c354c">
+        <source>Please contact PayPal Customer Service</source>
+        <target>Veuillez contacter le service clientèle de PayPal</target>
+      </trans-unit>
+      <trans-unit id="735a9fd0d8c04893638d407721ec4601">
+        <source>Know more about my account approval</source>
+        <target>En savoir plus sur l'approbation de mon compte</target>
+      </trans-unit>
+      <trans-unit id="74cd3a6cbf54c04a5634352d476f2b2f">
+        <source>Error, try later.</source>
+        <target>Une erreur est survenue, veuillez réessayer plus tard.</target>
+      </trans-unit>
+      <trans-unit id="78945de8de090e90045d299651a68a9b">
+        <source>Available</source>
+        <target>Disponible</target>
+      </trans-unit>
+      <trans-unit id="79d0c6669f615687e6a265f73e989d5d">
+        <source>I agree to the </source>
+        <target>J'accepte les </target>
+      </trans-unit>
+      <trans-unit id="79f10e23fabf1720054a5fe16a62f760">
+        <source>Details for Bank statements</source>
+        <target>Details pour relevés bancaires</target>
+      </trans-unit>
+      <trans-unit id="7a4711bc25b9893e1092c166e726b084">
+        <source>(merchant ID {0})</source>
+        <target>(merchant ID {0})</target>
+      </trans-unit>
+      <trans-unit id="7c6c2e5d48ab37a007cbf70d3ea25fa4">
+        <source>pending</source>
+        <target>En attente</target>
+      </trans-unit>
+      <trans-unit id="7d6395b374d009ee9cae645ecf8556d0">
+        <source>Additional Details</source>
+        <target>Informations additionnelles</target>
+      </trans-unit>
+      <trans-unit id="7e87484272c2e328136e9d2bba0d8b27">
+        <source>Limit your fraud rate</source>
+        <target>Limitez votre taux de fraude</target>
+      </trans-unit>
+      <trans-unit id="7ec35321dd6ed2f0c30fccee83d15a2a">
+        <source>Bank account</source>
+        <target>Compte en banque</target>
+      </trans-unit>
+      <trans-unit id="7f2a1b59ac1ab6d2d892dbbf4f132c40">
+        <source>Mrs</source>
+        <target>Mme</target>
+      </trans-unit>
+      <trans-unit id="7f79b3c1755a6eaf27e27a183a675477">
+        <source>Credit Card availability suspended</source>
+        <target>Disponibilité de la carte de crédit mise en suspens</target>
+      </trans-unit>
+      <trans-unit id="577e776ad558f5eff5535a641f53c1d3">
+        <source>As soon as PayPal gets all your documents, you'll have to wait 48h for final approval.</source>
+        <target>Patientez environ 48h pour la validation de vos documents par PayPal.</target>
+      </trans-unit>
+      <trans-unit id="8102d556eface36002bd4e3aef4f4acd">
+        <source>All transactions</source>
+        <target>Toutes les transactions</target>
+      </trans-unit>
+      <trans-unit id="8215900bbe4e4ddcac7968eefb28256d">
+        <source>You can process</source>
+        <target>Vous pouvez opérer</target>
+      </trans-unit>
+      <trans-unit id="829cfbd41011647bf986de5c30a808d3">
+        <source>Sign in or login to provide every payment method to your customer.</source>
+        <target>Connectez-vous ou créez un compte pour fournir tous les moyens de paiement à vos clients.  </target>
+      </trans-unit>
+      <trans-unit id="8321d1c08ab8dba3b38901799df90e14">
+        <source>Activation status</source>
+        <target>Statut d'activation</target>
+      </trans-unit>
+      <trans-unit id="8458bad978f4fd6d6c7f8ec2ec0824b4">
+        <source>Forgot password?</source>
+        <target>Mot de passe oublié ?</target>
+      </trans-unit>
+      <trans-unit id="84cc580b771c1b8f9c2e739ffbea97de">
+        <source>Settings updated !</source>
+        <target>Configurations mis à jour !</target>
+      </trans-unit>
+      <trans-unit id="b9ef5c18d851bb3da0694f5c181967b1">
+        <source>An error occured, the PayPal sign up or login window can't be opened. Please wait a bit and click again.</source>
+        <target>Une erreur s'est produite, la popup de PayPal pour se connecter ne peut pas être ouverte. Merci d'attendre un peu et de cliquer à nouveau.</target>
+      </trans-unit>
+      <trans-unit id="85ede935fa20f1d16c0f022074f7a358">
+        <source>The email address is badly formatted.</source>
+        <target>L'email n'a pas le bon format.</target>
+      </trans-unit>
+      <trans-unit id="85f1c40411c583bd7f540802570e7567">
+        <source>Credit Card information, bank account information and ID card</source>
+        <target>Information de carte de crédit, information de compte en banque, pièce d'identité, ...</target>
+      </trans-unit>
+      <trans-unit id="8634bddac0c61abde83ce1debdc1892c">
+        <source>By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to create your PrestaShop Checkout account. By creating your account, you will receive commercial prospecting from PrestaShop</source>
+        <target>En soumettant ce formulaire, vous acceptez que votre adresse mail soit utilisée par PrestaShop S.A pour créer un compte Checkout. En créant votre compte, vous recevrez de la prospection commerciale de la part de PrestaShop</target>
+      </trans-unit>
+      <trans-unit id="8a9f98e889a0de9caf2feb4b9b382284">
+        <source>Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.</source>
+        <target>La déconnexion désactivera tous les modes de paiement. Vous ne pourrez plus recevoir de paiements avec PrestaShop Checkout.</target>
+      </trans-unit>
+      <trans-unit id="8ac88d38d8b578d5b10bf4cf0cf50076">
+        <source>Choose page location for buttons</source>
+        <target>Choisissez l'emplacement des boutons sur la page</target>
+      </trans-unit>
+      <trans-unit id="8acc0bc61a5f75b13cea7e27bbcd51af">
+        <source>You can choose the type of credit card fields only if Credit card is activated in « Customize checkout experience » tab.</source>
+        <target>Vous pouvez activer les champs de carte de crédit alternatifs uniquement si le mode de paiement Carte Bancaire est activé dans l'onglet Personnaliser l'expérience d'achat.</target>
+      </trans-unit>
+      <trans-unit id="8bcdc441379cbf584638b0589a3f9adb">
+        <source>Postcode</source>
+        <target>Code postal</target>
+      </trans-unit>
+      <trans-unit id="8bf906833cc7aea8084f552217ed9c1d">
+        <source>Suspended</source>
+        <target>Suspendu</target>
+      </trans-unit>
+      <trans-unit id="8d3d326e52dae2640dc2e2143062e078">
+        <source>Background check is currently undergoing</source>
+        <target>Des vérifications supplémentaires sont en train d'être réalisées</target>
+      </trans-unit>
+      <trans-unit id="8d3f5eff9c40ee315d452392bed5309b">
+        <source>Last name</source>
+        <target>Nom de famille</target>
+      </trans-unit>
+      <trans-unit id="8dba7aac659de6fa805458de3861c36f">
+        <source>Sign up on order page</source>
+        <target>Etape de connexion du tunnel de commande</target>
+      </trans-unit>
+      <trans-unit id="8dd3857cf665ec993675dfa427008164">
+        <source>Order Id</source>
+        <target>Référence de commande</target>
+      </trans-unit>
+      <trans-unit id="906c903762f7ff4fb10d428be297a729">
+        <source>Fill out the form to complete registration:</source>
+        <target>Remplissez le formulaire pour compléter l'inscription:</target>
+      </trans-unit>
+      <trans-unit id="9180f9a5a138e11f11e569e1e1680d4e">
+        <source>Commission</source>
+        <target>Commission</target>
+      </trans-unit>
+      <trans-unit id="92562ee48b9002afceb07f5b3defd7e6">
+        <source>We will send you a link to reset your password.</source>
+        <target>Nous allons vous envoyer un lien pour réinitialiser votre mot de passe.</target>
+      </trans-unit>
+      <trans-unit id="9345d00abe16aac0416b99818a56aabc">
+        <source>PrestaShop Checkout 2.0</source>
+        <target>PrestaShop Checkout 2.0</target>
+      </trans-unit>
+      <trans-unit id="934c4326dcfdd3a2f62aaef1c13cb464">
+        <source>Setup fraud tool</source>
+        <target>Configurer l'outil de fraude</target>
+      </trans-unit>
+      <trans-unit id="955ad3298db330b5ee880c2c9e6f23a0">
+        <source>Live</source>
+        <target>Actif</target>
+      </trans-unit>
+      <trans-unit id="9594eec95be70e7b1710f730fdda33d9">
+        <source>Blue</source>
+        <target>Bleu</target>
+      </trans-unit>
+      <trans-unit id="973264e36926ecc4ec496403c3425d93">
+        <source>Business phone</source>
+        <target>Téléphone d'entreprise</target>
+      </trans-unit>
+      <trans-unit id="9768feb3fdb1f267b06093bc572952dd">
+        <source>Gold</source>
+        <target>Or</target>
+      </trans-unit>
+      <trans-unit id="977b9a69632398e1d00aaf9fabedfd95">
+        <source>Use another account</source>
+        <target>Utiliser un autre compte</target>
+      </trans-unit>
+      <trans-unit id="9a2e255d065b9445b1a6f56ab54b5ae5">
+        <source>You are now logged in with your</source>
+        <target>Vous êtes maintenant connecté avec votre compte </target>
+      </trans-unit>
+      <trans-unit id="9c9f75fecc9e80c7bf8f139d84f47cd3">
+        <source>An agency</source>
+        <target>Une agence</target>
+      </trans-unit>
+      <trans-unit id="fc6f8b45841cad71cce91199f4d6e6a5">
+        <source>You're all set !</source>
+        <target>Vous êtes prêt !</target>
+      </trans-unit>
+      <trans-unit id="9d5a474aaa552210ff0298949aeb6c0a">
+        <source>Information needed</source>
+        <target>Informations requises</target>
+      </trans-unit>
+      <trans-unit id="9e67f7c55ebde9258ce8526e702f2337">
+        <source>Your rounding settings are now fully compatible</source>
+        <target>Vos configurations d'arrondis sont maintenant compatibles</target>
+      </trans-unit>
+      <trans-unit id="9f46701a1510e8b2cfa09cc5c3fa7bcb">
+        <source>This feature availability is based on eligibility criteria.</source>
+        <target>La disponibilité de cette fonctionnalité est soumise à des critères d'éligibilité.</target>
+      </trans-unit>
+      <trans-unit id="a08ce63bd16ad2f81f57385b53686960">
+        <source>Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.</source>
+        <target>Une fois que vous aurez configuré la première boutique, vous pourrez configurer les autres : sélectionnez les une par une avec le sélecteur de boutique, dans le menu horizontal.</target>
+      </trans-unit>
+      <trans-unit id="a0bfb8e59e6c13fc8d990781f77694fe">
+        <source>Continue</source>
+        <target>Continuer</target>
+      </trans-unit>
+      <trans-unit id="a0d4cc0f54602c3f247c72f15a7d2dbf">
+        <source>Tips</source>
+        <target>Conseil</target>
+      </trans-unit>
+      <trans-unit id="a0fc2c9aa33a67d83ee99e0aeb474883">
+        <source>The capability can no longer be used and there are no remediation steps available to regain the functionality.</source>
+        <target>Les fonctionnalités ne peuvent plus être utilisées, et il n'existe pas de solution pour récupérer ces permissions.</target>
+      </trans-unit>
+      <trans-unit id="a1fa27779242b4902f7ae3bdd5c6d508">
+        <source>Type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="a390cb45733734e47c45d8ba62f2b0e9">
+        <source>Before commission</source>
+        <target>Avant commission</target>
+      </trans-unit>
+      <trans-unit id="a3aded1cd454ea681a722b1d803e9c3f">
+        <source>It can take several days. If further information is needed, you will be notified. Please check your emails or your notification bell on the top right of your www.paypal.com account and follow the instructions.</source>
+        <target>Cela peut prendre plusieurs jours. Si de plus amples informations sont requises, vous serez notifié. Veuillez suivre vos emails ou la cloche de notification sur votre compte www.paypal.com en haut à droite, et suivez les instructions.</target>
+      </trans-unit>
+      <trans-unit id="a3f4f3661e7a8a7e5b1a221f4aecbb5a">
+        <source>Change currencies ISO Codes</source>
+        <target>Changer les ISO codes devises</target>
+      </trans-unit>
+      <trans-unit id="a427950fee816e9fc83db48c8c02c1d0">
+        <source>Are you sure you want to logout ?</source>
+        <target>Vous êtes certain de vouloir vous déconnecter ?</target>
+      </trans-unit>
+      <trans-unit id="a554f9c8bbc30f4e2bdc6eabea0963f3">
+        <source>The password is missing.</source>
+        <target>Le mot de passe est manquant.</target>
+      </trans-unit>
+      <trans-unit id="a60e65f4e09379d60910e84d5a272c8e">
+        <source>You can manage the currencies of your PayPal account. Ideally, make them match with the available currencies of your store.</source>
+        <target>Vous pouvez gérer les devises de votre Compte PayPal. Idéallement, faites les coïncider avec les devises disponibles de votre boutique.</target>
+      </trans-unit>
+      <trans-unit id="a6192b5f0d39b96622f52bceba16da10">
+        <source>You can process a limited amount in card transactions.</source>
+        <target>Vous ne pouvez recevoir qu'un montant limité en paiements par carte.</target>
+      </trans-unit>
+      <trans-unit id="a6613b067cf99cf85bec0c26aacf70b9">
+        <source>Activate payment methods</source>
+        <target>Activer les moyens de paiement</target>
+      </trans-unit>
+      <trans-unit id="a7a48b2d653ed42e240d13a1be99385c">
+        <source>We sent you an email with instructions to reset your password. Please check your inbox.</source>
+        <target>Nous vous avons envoyé un courrier électronique avec les instructions pour réinitialiser votre mot de passe. Veuillez vérifier votre boîte de réception.</target>
+      </trans-unit>
+      <trans-unit id="a8195c10cb81ee371d316c0a47fdec57">
+        <source>Unfortunately, you have revoked PrestaShop Checkout permissions. Credit card payments cannot be processed for you. You can still receive payments via PayPal. Please, log out your PayPal account just below and link your account giving permission again. You can contact PayPal help center to have more information about your account.</source>
+        <target>Malheureusement, vous avez révoqué les permissions de PrestaShop Checkout. Le paiement par carte de crédit est indisponible pour le moment. Vous pouvez recevoir des paiements via PayPal. Veuillez deconnecter votre compte PayPal et le lier de nouveau pour donner les permissions une nouvelle fois. vous pouvez contacter le service client PayPal pour avoir plus de détails sur votre compte PayPal.</target>
+      </trans-unit>
+      <trans-unit id="a9a01945b27f95d1912a6d17af9429ef">
+        <source>No faq available. Try later.</source>
+        <target>Pas de FAQ disponible. Veuillez essayer plus tard</target>
+      </trans-unit>
+      <trans-unit id="a9fc995a7fb8a7a650532c799e84dde5">
+        <source>Design smart payment buttons</source>
+        <target>Personnaliser les boutons de paiement intelligents</target>
+      </trans-unit>
+      <trans-unit id="c8e01196a869bffe9453b4df1e6b3f88">
+        <source>You can choose the short or long description that appears on your customer's bank statements. Let's make them sure to understand their transaction!</source>
+        <target>Vous pouvez choisir la description courte ou longue qui apparaît sur les relevés bancaires de vos clients. Faites en sorte qu'il comprenne leur ligne de dépense.</target>
+      </trans-unit>
+      <trans-unit id="adf6671e843f2afa12ff0da097e2cdbf">
+        <source>Email validation needed</source>
+        <target>Validation de mail nécessaire</target>
+      </trans-unit>
+      <trans-unit id="ae7bd6527c89645a15c3b5e5f1f22dbd">
+        <source>No redirection when paying by credit card</source>
+        <target>Aucune redirection lors du paiement par carte de crédit</target>
+      </trans-unit>
+      <trans-unit id="af37d2248a1fa9c60e8df22938255f05">
+        <source>We cannot process credit card payments for you at the moment.</source>
+        <target>Nous ne pouvons pas accepter les paiements par carte pour vous pour le moment.</target>
+      </trans-unit>
+      <trans-unit id="b03623c3f090d1119f44d3191397acb1">
+        <source>All custom themes might not be fully compatible. To avoid potential integration issues on payment page,</source>
+        <target>Tous les thèmes personnalisés peuvent ne pas être entièrement compatibles. Pour éviter tout problème d'intégration sur la page de paiement,</target>
+      </trans-unit>
+      <trans-unit id="b235ad7b91fbeda6f87ac3d7e6f0ff6d">
+        <source>We have received the confirmation from PayPal. You can now process all card transactions with no limits.</source>
+        <target>Nous avons reçu la confirmation de PayPal. Vous pouvez maintenant accepter tous les paiements par cartes sans aucune limite.</target>
+      </trans-unit>
+      <trans-unit id="b3a3bef1143977b9be6f9058641b1035">
+        <source>The email is not found.</source>
+        <target>L'email n'a pas été trouvé.</target>
+      </trans-unit>
+      <trans-unit id="b52a626dee6ab468117342c9292a45b6">
+        <source>Payment preferences</source>
+        <target>Préférences Paiement</target>
+      </trans-unit>
+      <trans-unit id="b6d4223e60986fa4c9af77ee5f7149c5">
+        <source>Sign in</source>
+        <target>Se connecter</target>
+      </trans-unit>
+      <trans-unit id="b79585fa23346ba2a5a030c65d79d4c0">
+        <source>Manage bank account</source>
+        <target>Gérer votre compte en banque</target>
+      </trans-unit>
+      <trans-unit id="b7f41477baf42a89b6c905148b2e9f9a">
+        <source>Log in or sign up to PayPal</source>
+        <target>Connectez ou créez un compte PayPal</target>
+      </trans-unit>
+      <trans-unit id="b886438c0d85fb1a3d1869d926326716">
+        <source>Go to PayPal</source>
+        <target>Aller sur PayPal</target>
+      </trans-unit>
+      <trans-unit id="b8e2c23a15e49a10d6f0562a3dce2538">
+        <source>Pending approval</source>
+        <target>Approbation requise</target>
+      </trans-unit>
+      <trans-unit id="61f14e57e6680aeee1d1ff9157bab230">
+        <source>Couldn't find any answer to your question?</source>
+        <target>Vous n'avez pas trouvé de réponse à vos questions ? </target>
+      </trans-unit>
+      <trans-unit id="b9f5c797ebbf55adccdd8539a65a0241">
+        <source>Disabled</source>
+        <target>Désactivé</target>
+      </trans-unit>
+      <trans-unit id="ba07a121575a058f0cabb01369110731">
+        <source>I accept the terms of use</source>
+        <target>J'accepte les conditions générales</target>
+      </trans-unit>
+      <trans-unit id="baac076f6be8697a69d8dbb5cce5b2e8">
+        <source>Limited to $500</source>
+        <target>Limité à 500$</target>
+      </trans-unit>
+      <trans-unit id="bab524633bed97cf170bef989e1ae491">
+        <source>Within your PayPal account, you can add a bank account to be beneficiary of your money transfer.</source>
+        <target>Dans votre compte PayPal, ajoutez votre compte bancaire comme bénéficiaire pour transférer votre argent.</target>
+      </trans-unit>
+      <trans-unit id="bb382e0ee3028e14015c573a5f248583">
+        <source>Choose label</source>
+        <target>Choisir le texte</target>
+      </trans-unit>
+      <trans-unit id="bba6519ffd7fb775c8bb15dc78c34296">
+        <source>Approval pending</source>
+        <target>Validation en attente</target>
+      </trans-unit>
+      <trans-unit id="bc294136fea992290d8b3b12a36fddfa">
+        <source>Direct Sale</source>
+        <target>Vente direct</target>
+      </trans-unit>
+      <trans-unit id="bc34c158b938eec639230b7133b92ea3">
+        <source>in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields</source>
+        <target>Entre temps, vous ne pouvez accepter les paiements par cartes uniquement grâce aux champs de carte bancaires générés par PayPal.</target>
+      </trans-unit>
+      <trans-unit id="bc4327368b4abb06c1ea90fe0ddd36d6">
+        <source>Category page</source>
+        <target>Page catégorie</target>
+      </trans-unit>
+      <trans-unit id="bccbffbcbc3942d59b232727c1ae32cb">
+        <source>See the full list of transactions on your PayPal account</source>
+        <target>Voir toutes les transactions sur votre compte PayPal.</target>
+      </trans-unit>
+      <trans-unit id="bd9be8329aa7e6f55266c06298e18e39">
+        <source>Select the shape</source>
+        <target>Choisir la forme</target>
+      </trans-unit>
+      <trans-unit id="bffe9a3c9a7e00ba00a11749e022d911">
+        <source>Log in</source>
+        <target>Se connecter</target>
+      </trans-unit>
+      <trans-unit id="c1053fd298c615d9bb6e45a1d9d763d6">
+        <source>PayPal branded Credit Card Fields</source>
+        <target>Champs de Carte Alternatifs de Paypal</target>
+      </trans-unit>
+      <trans-unit id="c16dac173aa8377a1c07aed8e0472f7c">
+        <source>Town</source>
+        <target>Ville</target>
+      </trans-unit>
+      <trans-unit id="c1f52fba179ff982b10e3881670b61ef">
+        <source>Buy Now</source>
+        <target>Acheter</target>
+      </trans-unit>
+      <trans-unit id="c3987e4cac14a8456515f0d200da04ee">
+        <source>All countries</source>
+        <target>Tous les pays</target>
+      </trans-unit>
+      <trans-unit id="c496b9718a821f176a0087143d926468">
+        <source>Learn more about managing your data and rights.</source>
+        <target>Pour en savoir plus, consultez notre Politique de protection des données. </target>
+      </trans-unit>
+      <trans-unit id="c68602e0447844f23896ab6904f8fd06">
+        <source>Pay in 4x, save credit cards, authorize mode, send payments direct link... and more to come! Let us know what you would love to be added to this module: any new feature or behavior improvement!</source>
+        <target>Paiement en 4 fois, enregistrer les cartes de crédit, mode autorisation, envoyer des liens de paiement direct… et encore plus à venir ! Faites-nous savoir ce que vous adoreriez voir apparaître dans le module : n'importe quelle fonctionnalité ou amélioration de comportement ! </target>
+      </trans-unit>
+      <trans-unit id="c75f7811d70d17dbcd88e9d03752cbed">
+        <source>Authentication</source>
+        <target>Authentification</target>
+      </trans-unit>
+      <trans-unit id="c7ab53436bfc19fb87789b804d3c608e">
+        <source>A freelancer</source>
+        <target>Un freelance</target>
+      </trans-unit>
+      <trans-unit id="c7b5d73ffc406b56966f030ac1b1da10">
+        <source>Go to the dispute management platform</source>
+        <target>Aller à la plateforme de gestion des litiges</target>
+      </trans-unit>
+      <trans-unit id="c84a973ad6bd1079ae08b4f3d3584e0b">
+        <source>Send my legal documents now</source>
+        <target>Envoyer mes documents légaux maintenant.</target>
+      </trans-unit>
+      <trans-unit id="c9cc8cce247e49bae79f15173ce97354">
+        <source>Save</source>
+        <target>Enregistrer</target>
+      </trans-unit>
+      <trans-unit id="cbc437a341a40d87fbf327d42e71eef8">
+        <source>Send your legal documents to PayPal : </source>
+        <target>Envoyer vos documents légaux à PayPal</target>
+      </trans-unit>
+      <trans-unit id="ccc27b4bd74dc2a1ee9c217fda208d83">
+        <source>Payer action required</source>
+        <target>Action requise</target>
+      </trans-unit>
+      <trans-unit id="cce676d37389a592457002f1e8a0c6c0">
+        <source>10 payment methods included all-in-one</source>
+        <target>10 moyens de paiement inclus tout-en-un</target>
+      </trans-unit>
+      <trans-unit id="ce26601dac0dea138b7295f02b7620a7">
+        <source>Customer</source>
+        <target>Client</target>
+      </trans-unit>
+      <trans-unit id="ce8ae9da5b7cd6c3df2929543a9af92d">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="ce9291906a4c3b042650b70d7f3b152e">
+        <source>Rectangle</source>
+        <target>Rectangle</target>
+      </trans-unit>
+      <trans-unit id="cfd338be25e344b232995cae39398540">
+        <source>Unfortunately, credit card payments cannot be processed for you at the moment. You will be able to reapply after 90 days. In the meantime, you can still receive payments via PayPal</source>
+        <target>Malheureusement, les cartes de crédit ne peuvent pas être acceptées pour le moment. Vous pourrez postuler à nouveau dans 90 jours. Entre temps, vous pouvez accepter les paiements par PayPal.</target>
+      </trans-unit>
+      <trans-unit id="06f2f0d7d35b4340a4c7145145d262e3">
+        <source>Let's choose the conversion rules for any transaction in a currency other than those activated on your account, should they be automatically converted or request your validation.</source>
+        <target>Choisissez les règles de conversions pour les transactions dans une monnaie autre que celles configurées sur votre compte, pour qu'elles soient automatiquement converties ou qu'elles nécessitent une approbation de votre part.</target>
+      </trans-unit>
+      <trans-unit id="d2947ae0e864eb5c9c00080602c9b45e">
+        <source>Select background color</source>
+        <target>Choisir une couleur de fond</target>
+      </trans-unit>
+      <trans-unit id="d3bb22b8ecf650edf66d76dd939a3412">
+        <source>Partially completed</source>
+        <target>Paiement partiel</target>
+      </trans-unit>
+      <trans-unit id="d4222f5cc5b8395e93fa678bc7215381">
+        <source>pending transaction(s)</source>
+        <target>transaction(s) en attente</target>
+      </trans-unit>
+      <trans-unit id="d434eccb7674d461f562616696955b7d">
+        <source>Local payment buttons</source>
+        <target>Méthodes de paiement locales</target>
+      </trans-unit>
+      <trans-unit id="d6ca53a668b116991b7aa68ed33a29a7">
+        <source>Business category</source>
+        <target>Catégorie de l'entreprise</target>
+      </trans-unit>
+      <trans-unit id="d78c6d3fb359d61a40ceea54f41d5f06">
+        <source>Thank you, close this message</source>
+        <target>Merci, fermer ce message.</target>
+      </trans-unit>
+      <trans-unit id="d9742516aee7b1910462f954d69a26d8">
+        <source>Are you</source>
+        <target>Vous êtes</target>
+      </trans-unit>
+      <trans-unit id="d9776f0775997b2e698c6975420b5c5d">
+        <source>Sign up</source>
+        <target>Créer un compte</target>
+      </trans-unit>
+      <trans-unit id="da9c72b9e543135f3f59e3c8ac68ef35">
+        <source>Pay with</source>
+        <target>Payer avec</target>
+      </trans-unit>
+      <trans-unit id="dbb2cf5e0c92b5bf2d47cd421ac60ae7">
+        <source>Business subcategory</source>
+        <target>Sous-catégorie de l'entreprise</target>
+      </trans-unit>
+      <trans-unit id="dc43994c00f8f208f0c649524a9bcd46">
+        <source>https://www.prestashop.com/en/prestashop-checkout</source>
+        <target>https://www.prestashop.com/fr/prestashop-checkout</target>
+      </trans-unit>
+      <trans-unit id="dc647eb65e6711e155375218212b3964">
+        <source>Password</source>
+        <target>Mot de passe</target>
+      </trans-unit>
+      <trans-unit id="dd7bf230fde8d4836917806aff6a6b27">
+        <source>Address</source>
+        <target>Adresse</target>
+      </trans-unit>
+      <trans-unit id="dfcfc43722eef1eab1e4a12e50a068b1">
+        <source>Currencies</source>
+        <target>Devises</target>
+      </trans-unit>
+      <trans-unit id="e138ea82bff561b002c7916e696f7bd2">
+        <source>Choose page location for banners</source>
+        <target>Choisissez l'emplacement des bannières sur la page</target>
+      </trans-unit>
+      <trans-unit id="e1b74123fdda2fd3b4a98308ef5dd782">
+        <source>Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your</source>
+        <target>Attention : les monnaies que vous avez activées :{0} ne sont pas actuellement supportées par PrestaShop Checkout. Veuillez désactiver {0} pour PrestaShop Checkout dans vos</target>
+      </trans-unit>
+      <trans-unit id="e1e1ce67de4906765f104f24a4280a1d">
+        <source>Need help? Find here the documentation of this module</source>
+        <target>Besoin d'aide ? Trouvez ici la documentation du module</target>
+      </trans-unit>
+      <trans-unit id="e268443e43d93dab7ebef303bbe9642f">
+        <source>account</source>
+        <target>  </target>
+      </trans-unit>
+      <trans-unit id="e2e372415a8b8d36f4d86d9fc86bc608">
+        <source>For more informations about your fees please visit this page:</source>
+        <target>Pour plus d'informations sur les frais, visitez la page : </target>
+      </trans-unit>
+      <trans-unit id="e471fe202375d77ce89a253425326f53">
+        <source>Synchronization between your store and your PayPal account is in progress. Please wait.</source>
+        <target>La synchronisation entre votre boutique et votre compte PayPal en cours. Veuillez patienter.</target>
+      </trans-unit>
+      <trans-unit id="e5d229ba5ad9b53ebf6831f4e09d9cfd">
+        <source>Match currencies</source>
+        <target>Ajuster les devises</target>
+      </trans-unit>
+      <trans-unit id="e72dca5d5a8a4706a206f3225324bf44">
+        <source>Store name</source>
+        <target>Nom du magasin</target>
+      </trans-unit>
+      <trans-unit id="e7f9e382dc50889098cbe56f2554c77b">
+        <source>Credit card</source>
+        <target>Carte de crédit</target>
+      </trans-unit>
+      <trans-unit id="e855fd9a0be49f3327b15784aad7d771">
+        <source>As for local payment methods, buttons will be displayed according to the purchase context: country, amount, device, etc.</source>
+        <target>Pour les méthodes de paiement locales, les boutons seront affichées dans certains contextes : pays, montant, appareil, …</target>
+      </trans-unit>
+      <trans-unit id="e90dfb84e30edf611e326eeb04d680de">
+        <source>Black</source>
+        <target>Noir</target>
+      </trans-unit>
+      <trans-unit id="ea9cf7e47ff33b2be14e6dd07cbcefc6">
+        <source>Shipping</source>
+        <target>Livraison</target>
+      </trans-unit>
+      <trans-unit id="eb763a2e313718f33f55e1f0d84df6ee">
+        <source>Product page</source>
+        <target>Page Produit</target>
+      </trans-unit>
+      <trans-unit id="ebb061953c0454b2c8ee7b0ac615ebcd">
+        <source>Optional</source>
+        <target>Optionnel</target>
+      </trans-unit>
+      <trans-unit id="ebd26e1ca213ade4c8035f546411b6a5">
+        <source>Go back to login</source>
+        <target>Retourner vers la connexion</target>
+      </trans-unit>
+      <trans-unit id="ecdee5de15af6876cfab0801bb36f445">
+        <source>Restricted</source>
+        <target>Limité</target>
+      </trans-unit>
+      <trans-unit id="efb216eb79453b9aab85cee34f38c055">
+        <source>Revoked</source>
+        <target>Revoqué</target>
+      </trans-unit>
+      <trans-unit id="f0411ca83e625da2c18b5f0c0682bd93">
+        <source>Know more</source>
+        <target>En savoir plus</target>
+      </trans-unit>
+      <trans-unit id="f09c0f26e20972759eb40c75eb089b10">
+        <source>Order summary page</source>
+        <target>Page de résumé de panier</target>
+      </trans-unit>
+      <trans-unit id="f0aaaae189e9c7711931a65ffcd22543">
+        <source>Payment method</source>
+        <target>Moyens de paiement</target>
+      </trans-unit>
+      <trans-unit id="f1b8245d77b318bc4a0916f66155b9e4">
+        <source>A merchant</source>
+        <target>Un marchand</target>
+      </trans-unit>
+      <trans-unit id="f20e69549fc23f9df431f9511f177e5e">
+        <source>Manage your account</source>
+        <target>Gérer votre compte</target>
+      </trans-unit>
+      <trans-unit id="f32ab23beaebcf43250a00685e0593e3">
+        <source>Switch to test mode?</source>
+        <target>Activer le mode test ?</target>
+      </trans-unit>
+      <trans-unit id="f367b9c00a9870296e60afbd3bd2a52a">
+        <source>Onboarding almost done!</source>
+        <target>Intégration presque terminée !</target>
+      </trans-unit>
+      <trans-unit id="f40be703dee22a1ce61f7b75190687b3">
+        <source>By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to permit (i) the use of our services (ii) to improve your customer experience. Your data can be transmitted to our partner Paypal if you do not already have an account.</source>
+        <target>En soumettant ce formulaire, vous acceptez que votre adresse mail soit utilisée par PrestaShop S.A pour créer un compte Checkout. En créant votre compte, vous recevrez de la prospection commerciale de la part de PrestaShop</target>
+      </trans-unit>
+      <trans-unit id="f55d7f720fdc5e3ff693e4b82d4b6a72">
+        <source>transaction(s)</source>
+        <target>transaction(s)</target>
+      </trans-unit>
+      <trans-unit id="f74f3e145bac6c4950fc843725e4ced6">
+        <source>Payment methods activation</source>
+        <target>Activation des moyens de paiement</target>
+      </trans-unit>
+      <trans-unit id="f792caf3a7d71e20c9b8c64a40e8807e">
+        <source>Capture at shipping</source>
+        <target>Prélever à l'expédition</target>
+      </trans-unit>
+      <trans-unit id="f7b94d969ddb6d79bdf2d70668ae43fa">
+        <source>Account Linking in progress</source>
+        <target>Liaison de boutique en cours</target>
+      </trans-unit>
+      <trans-unit id="f8373fe451b71e04d3b3b4551785f6a7">
+        <source>Link your PayPal account</source>
+        <target>Lier votre compte PayPal</target>
+      </trans-unit>
+      <trans-unit id="f96e345fdc19cbd4cf15256c251a39a0">
+        <source>Silver</source>
+        <target>Argent</target>
+      </trans-unit>
+      <trans-unit id="faeaec9eda6bc4c8cb6e1a9156a858be">
+        <source>Availability</source>
+        <target>Disponibilité</target>
+      </trans-unit>
+      <trans-unit id="fe4c6a5e7bd6793b37370e4e46daf998">
+        <source>Advanced settings</source>
+        <target>Options avancées</target>
+      </trans-unit>
+      <trans-unit id="ff8313e7d0a38ececa23e28fd77421de">
+        <source>When to use PayPal branded Credit Card fields ?</source>
+        <target>Quand faut-il utiliser les Champs de Carte Alternatifs de PayPal ?</target>
+      </trans-unit>
+      <trans-unit id="33da114589573cc39176bfaa3ad32023">
+        <source>You have exceeded the maximum number of payment attempts.</source>
+        <target>Vous avez atteint le nombre maximal de tentatives de paiement.</target>
+      </trans-unit>
+      <trans-unit id="355b1fcf1c9c3940759af7e0171ddc47">
+        <source>The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.</source>
+        <target>La méthode de paiement sélectionnée ne prend pas en charge ce type de paiement, veuillez sélectionner une autre méthode.</target>
+      </trans-unit>
+      <trans-unit id="45c4bc7eeb5fa739bf86b16413d601db">
+        <source>This payment method seems not working currently, please try another.</source>
+        <target>Cette méthode de paiement semble indisponible, veuillez utiliser un autre moyen de paiement</target>
+      </trans-unit>
+      <trans-unit id="4d8364340cc96b2df8772cdec3e1f64c">
+        <source>This payment method declined transaction, please try another.</source>
+        <target>Le moyen de paiement a refusé la transaction, veuillez en utilisant un autre.</target>
+      </trans-unit>
+      <trans-unit id="55b4c1f5d07923f828fae74d6c52a498">
+        <source>Your PayPal account is locked or closed, please try another.</source>
+        <target>Votre compte PayPal est verrouillé ou fermé, veuillez en utiliser un autre.</target>
+      </trans-unit>
+      <trans-unit id="58c08d0c7b972b96c8eed1acf2482996">
+        <source>The transaction was blocked by Fraud Protection settings.</source>
+        <target>La transaction a été bloquée par le service de protection contre la fraude.</target>
+      </trans-unit>
+      <trans-unit id="77c9fca2821a98712dab74c2c8148402">
+        <source>Your card cannot be used to pay in our country, please try another payment method.</source>
+        <target>Votre carte ne peut pas être utilisée pour payer dans ce pays, veuillez essayer un autre moyen de paiement.</target>
+      </trans-unit>
+      <trans-unit id="7f77b6e4e1e8f9ee6de4986f23375597">
+        <source>You are not allowed to pay with this PayPal account, please try another.</source>
+        <target>Vous n'êtes pas autorisé à payer avec ce compte PayPal, veuillez en utiliser un autre.</target>
+      </trans-unit>
+      <trans-unit id="a922c1da0dc78c78fdf7f6782256bb4d">
+        <source>Card payment cannot be processed at the moment, please use another payment method.</source>
+        <target>Le paiement par carte est actuellement indisponible, veuillez choisir une autre méthode de paiement.</target>
+      </trans-unit>
+      <trans-unit id="c94066f8412e90dc79e01086fc7efd72">
+        <source>You are not allowed to pay with this payment method, please try another.</source>
+        <target>Vous n'êtes pas autorisé à payer avec ce moyen de paiement, veuillez en utiliser un autre.</target>
+      </trans-unit>
+      <trans-unit id="2c391a491914670af81c0522a9091d7c">
+        <source>Make this card favorite / default </source>
+        <target>Définir comme méthode de paiement préférée</target>
+      </trans-unit>
+      <trans-unit id="8878480cb609084dbf1573e8cc53ff02">
+        <source>Securely store payment details for future purchases</source>
+        <target>Sauvegardez en toute sécurité vos informations de paiement</target>
+      </trans-unit>
+      <trans-unit id="e6e2a83a209d8c2ca1793dfcda1eca49">
+        <source>Make this account favorite / default </source>
+        <target>Définir ce compte comme méthode de paiement préférée</target>
+      </trans-unit>
+      <trans-unit id="0db443e338b016aae2b24ce0be40beda">
+        <source>Make this my preferred payment method</source>
+        <target>Définir comme méthode de paiement préférée</target>
+      </trans-unit>
+      <trans-unit id="6c493105989f12b2da5d1f770ac779f9">
+        <source>This payment method has been saved to your account.</source>
+        <target>Cette méthode de paiement a été enregistrée sur votre compte.</target>
+      </trans-unit>
+      <trans-unit id="ca3e15a8a9c7a796a1893277bf48b8ef">
+        <source>This payment method has been saved to your account and defined as favorite for future purchases.</source>
+        <target>Cette méthode de paiement est enregistrée sur votre compte et définie comme méthode de paiement préférée pour vos futurs achats.</target>
+      </trans-unit>
+      <trans-unit id="f2a6c498fb90ee345d997f888fce3b18">
+        <source>Delete</source>
+        <target>Supprimer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
