@@ -177,7 +177,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($this->isCard) {
             $optionalPayload[] = $this->buildCardPaymentSource();
-            $optionalPayload[] = $this->buildSupplementaryData();
+            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
         }
 
         if ($isFullPayload) {
