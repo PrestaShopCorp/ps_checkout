@@ -183,4 +183,34 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
 
         return $payPalOrder;
     }
+
+    public function attemptToMigratePsCheckoutCart(int $cartId): bool
+    {
+        $query = new \DbQuery();
+
+        $query->select('*');
+        $query->from('pscheckout_cart');
+        $query->where('id_cart=' . $cartId);
+
+        $psCheckoutCart = $this->db->getRow($query);
+
+        if (!$psCheckoutCart) {
+            return false;
+        }
+
+        $psCheckoutOrder = new PayPalOrder(
+            $psCheckoutCart['paypal_order'],
+            $cartId,
+            $psCheckoutCart['paypal_intent'],
+            $psCheckoutCart['paypal_funding'],
+            $psCheckoutCart['paypal_status'],
+            [],
+            $psCheckoutCart['environment'],
+            (bool) $psCheckoutCart['isHostedFields'],
+            (bool) $psCheckoutCart['isExpressCheckout'],
+            []
+        );
+
+        return $this->savePayPalOrder($psCheckoutOrder);
+    }
 }

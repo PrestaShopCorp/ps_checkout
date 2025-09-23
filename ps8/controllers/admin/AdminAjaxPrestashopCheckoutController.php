@@ -49,6 +49,7 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use PsCheckout\Module\Presentation\Translator;
 use PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter;
+use Psr\Log\LoggerInterface;
 
 class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 {
@@ -710,6 +711,25 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         /** @var PayPalOrderRepository $payPalOrderRepository */
         $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
         $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+
+        if (!$payPalOrder) {
+            try {
+                $migrationSuccessful = $payPalOrderRepository->attemptToMigratePsCheckoutCart($order->id_cart);
+                if ($migrationSuccessful) {
+                    $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+                }
+            } catch (\Exception $e) {
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->error(
+                    'Attempted to migrate order to V5 database structure. Encoutered error: ' . $e->getMessage(),
+                    [
+                        'exception' => $e,
+                        'cart_id' => $order->id_cart,
+                    ]
+                );
+
+            }
+        }
 
         if (!$payPalOrder) {
             http_response_code(500);
