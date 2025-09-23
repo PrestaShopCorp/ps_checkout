@@ -729,7 +729,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                         'cart_id' => $order->id_cart,
                     ]
                 );
-
             }
         }
 
