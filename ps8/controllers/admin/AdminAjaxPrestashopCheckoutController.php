@@ -755,7 +755,16 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-        $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+        } catch (Exception $exception) {
+            http_response_code(500);
+            $this->ajaxRender(json_encode([
+                'status' => false,
+                'errors' => [$exception->getMessage()],
+            ]));
+        }
 
         /** @var PayPalOrderPresenter $payPalOrderPresenter */
         $payPalOrderPresenter = $this->module->getService(PayPalOrderPresenter::class);
