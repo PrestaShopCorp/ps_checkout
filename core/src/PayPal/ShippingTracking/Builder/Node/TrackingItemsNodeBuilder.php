@@ -101,7 +101,6 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 'name' => $name,
                 'quantity' => $quantity,
                 'sku' => $sku,
-//                'description' => $this->getProductDescription($productData),
                 'url' => $this->getProductUrl($productData['product'], $productAttributeId),
                 'image_url' => $this->getProductImageUrl($productData['product'], $productAttributeId),
             ];
@@ -138,11 +137,11 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
      */
     private function validateSku(array $product, array $productData): string
     {
-        $sku = $product['reference'] ?? '';
+        $sku = $productData['sku'] ?? '';
         
         // If no SKU from order data, try to get from product data
         if (empty($sku)) {
-            $sku = $productData['reference'] ?? '';
+            $sku = $product['reference'] ?? '';
         }
         
         // SKU is required and must not be empty
@@ -226,11 +225,48 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 return [];
             }
 
+            $sku = '';
+
+            if ($productAttributeId) {
+                $combination = new \Combination($productAttributeId);
+                if (!empty($combination->reference)) {
+                    $sku = $combination->reference;
+                }
+
+                if (!empty($combination->ean13)) {
+                    $sku = $combination->ean13;
+                }
+
+                if (!empty($combination->isbn)) {
+                    $sku = $combination->isbn;
+                }
+
+                if (!empty($combination->upc)) {
+                    $sku = $combination->upc;
+                }
+            } else {
+                if (!empty($product->reference)) {
+                    $sku = $product->reference;
+                }
+
+                if (!empty($product->ean13)) {
+                    $sku = $product->ean13;
+                }
+
+                if (!empty($product->isbn)) {
+                    $sku = $product->isbn;
+                }
+
+                if (!empty($product->upc)) {
+                    $sku = $product->upc;
+                }
+            }
+
             $productData = [
                 'product' => $product, // Pass product object for URL generation
                 'reference' => $product->reference,
+                'sku' => $sku,
                 'name' => $product->name,
-                'description' => $product->description_short,
             ];
 
             // Simple UPC type detection - just recognize basic types
