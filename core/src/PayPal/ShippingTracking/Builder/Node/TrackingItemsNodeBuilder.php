@@ -98,16 +98,22 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             $name = $this->validateName($product, $productData);
 
             $item = [
-                'sku' => $sku,
-                'quantity' => $quantity,
                 'name' => $name,
-                'description' => $this->getProductDescription($productData),
+                'quantity' => $quantity,
+                'sku' => $sku,
+//                'description' => $this->getProductDescription($productData),
                 'url' => $this->getProductUrl($productData['product'], $productAttributeId),
                 'image_url' => $this->getProductImageUrl($productData['product'], $productAttributeId),
             ];
 
+            $allowedUpcTypes = ['UPC-A', 'UPC-B', 'UPC-C', 'UPC-D', 'UPC-E', 'UPC-2', 'UPC-5'];
+
             // Conditionally add UPC only if both parts are present
-            if (!empty($productData['upc_type']) && !empty($productData['upc_code'])) {
+            if (
+                !empty($productData['upc_type'])
+                && in_array($productData['upc_type'], $allowedUpcTypes)
+                && !empty($productData['upc_code'])
+            ) {
                 $item['upc'] = [
                     'type' => $productData['upc_type'],
                     'code' => $productData['upc_code'],
