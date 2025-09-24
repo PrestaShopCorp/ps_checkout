@@ -235,7 +235,6 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 } else {
                     $sku = $product->reference;
                 }
-
             }
 
             if (empty($sku)) {
