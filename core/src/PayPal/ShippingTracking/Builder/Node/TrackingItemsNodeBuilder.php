@@ -229,37 +229,17 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
 
             if ($productAttributeId) {
                 $combination = new \Combination($productAttributeId);
+
                 if (!empty($combination->reference)) {
                     $sku = $combination->reference;
-                }
-
-                if (!empty($combination->ean13)) {
-                    $sku = $combination->ean13;
-                }
-
-                if (!empty($combination->isbn)) {
-                    $sku = $combination->isbn;
-                }
-
-                if (!empty($combination->upc)) {
-                    $sku = $combination->upc;
-                }
-            } else {
-                if (!empty($product->reference)) {
+                } else {
                     $sku = $product->reference;
                 }
 
-                if (!empty($product->ean13)) {
-                    $sku = $product->ean13;
-                }
+            }
 
-                if (!empty($product->isbn)) {
-                    $sku = $product->isbn;
-                }
-
-                if (!empty($product->upc)) {
-                    $sku = $product->upc;
-                }
+            if (empty($sku)) {
+                $sku = $productId . '-' . $productAttributeId;
             }
 
             $productData = [
