@@ -45,7 +45,6 @@ class ApplicationContextNodeBuilder implements ApplicationContextNodeBuilderInte
      */
     private $link;
 
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link
