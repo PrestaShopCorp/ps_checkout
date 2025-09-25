@@ -97,6 +97,7 @@ class CreateOrderPaymentAction implements CreateOrderPaymentActionInterface
             ) {
                 $orderPayment->transaction_id = $capture['id'];
                 $orderPayment->save();
+
                 return;
             }
             if ($orderPayment->transaction_id === $capture['id']) {
