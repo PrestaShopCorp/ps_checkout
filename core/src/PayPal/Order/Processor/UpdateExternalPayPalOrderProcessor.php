@@ -122,22 +122,22 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
 
         $needToUpdate = false;
 
-        if ($paypalOrderResponse->getOrderAmount() && isset($payload['amount'])) {
-            $amountDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getOrderAmount(), $payload['amount']);
+        if ($paypalOrderResponse->getOrderAmount() && isset($payload['purchase_units'][0]['amount'])) {
+            $amountDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getOrderAmount(), $payload['purchase_units'][0]['amount']);
             if (!empty($amountDiff)) {
                 $needToUpdate = true;
             }
         }
 
-        if ($paypalOrderResponse->getItems() && isset($payload['items'])) {
-            $itemsDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getItems(), $payload['items']);
+        if ($paypalOrderResponse->getItems() && isset($payload['purchase_units'][0]['items'])) {
+            $itemsDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getItems(), $payload['purchase_units'][0]['items']);
             if (!empty($itemsDiff)) {
                 $needToUpdate = true;
             }
         }
 
-        if (isset($paypalOrderResponse->getPurchaseUnits()['shipping'], $payload['shipping'])) {
-            $shippingDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getPurchaseUnits()['shipping'], $payload['shipping']);
+        if (isset($paypalOrderResponse->getPurchaseUnits()['shipping'], $payload['purchase_units'][0]['shipping'])) {
+            $shippingDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getPurchaseUnits()['shipping'], $payload['purchase_units'][0]['shipping']);
             if (!empty($shippingDiff)) {
                 $needToUpdate = true;
             }
