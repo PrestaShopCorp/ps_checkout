@@ -163,8 +163,7 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
             $data['payer'] ?? null,
             $data['payment_source'] ?? null,
             $data['purchase_units'],
-            $data['links'],
-            $data['create_time']
+            $data['links']
         );
     }
 }
