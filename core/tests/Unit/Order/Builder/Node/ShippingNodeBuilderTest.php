@@ -99,6 +99,9 @@ class ShippingNodeBuilderTest extends TestCase
                     'language' => (object) [
                         'id' => 1,
                     ],
+                    'cart' => [
+                        'is_virtual' => false,
+                    ],
                     'gender_prefix' => 'Mr.',
                     'country_iso' => 'US',
                     'state_name' => 'California',
@@ -154,6 +157,9 @@ class ShippingNodeBuilderTest extends TestCase
                             'postcode' => '75001',
                         ]),
                     ],
+                    'cart' => [
+                        'is_virtual' => false,
+                    ]
                 ],
                 'expectedResult' => [
                     'shipping' => [

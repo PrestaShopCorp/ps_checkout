@@ -88,7 +88,8 @@ class OrderAuthorizationValidatorTest extends TestCase
     public function testIt3DSecureValidation(
         string $paymentSource,
         int $secureDecision,
-        bool $liabilityShiftRequired,
+        string $contingencies,
+        bool $productsInStock,
         $expectedExceptionMessage,
         $expectedExceptionCode
     ) {
@@ -105,8 +106,11 @@ class OrderAuthorizationValidatorTest extends TestCase
             ->willReturn(true);
 
         $this->configuration->method('get')
-            ->with('PS_CHECKOUT_LIABILITY_SHIFT_REQ')
-            ->willReturn($liabilityShiftRequired);
+            ->withConsecutive(
+                ['PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES'],
+                ['PS_STOCK_MANAGEMENT']
+            )
+            ->willReturnOnConsecutiveCalls($contingencies, $productsInStock);
 
         $this->card3DSecureValidator->method('getAuthorizationDecision')
             ->willReturn($secureDecision);
@@ -172,28 +176,40 @@ class OrderAuthorizationValidatorTest extends TestCase
             'card_payment_success' => [
                 'paymentSource' => 'card',
                 'secureDecision' => Card3DSecureConfiguration::DECISION_PROCEED,
-                'liabilityShiftRequired' => true,
+                'contingencies' => 'SCA_ALWAYS',
+                'productsInStock' => false,
                 'expectedExceptionMessage' => null,
                 'expectedExceptionCode' => null,
             ],
             'card_payment_reject' => [
                 'paymentSource' => 'card',
                 'secureDecision' => Card3DSecureConfiguration::DECISION_REJECT,
-                'liabilityShiftRequired' => true,
+                'contingencies' => 'SCA_ALWAYS',
+                'productsInStock' => false,
                 'expectedExceptionMessage' => 'Card Strong Customer Authentication failure',
                 'expectedExceptionCode' => PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE,
             ],
             'card_payment_retry' => [
                 'paymentSource' => 'card',
                 'secureDecision' => Card3DSecureConfiguration::DECISION_RETRY,
-                'liabilityShiftRequired' => true,
+                'contingencies' => 'SCA_ALWAYS',
+                'productsInStock' => false,
                 'expectedExceptionMessage' => 'Card Strong Customer Authentication must be retried.',
                 'expectedExceptionCode' => PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN,
             ],
-            'card_payment_no_decision_with_liability' => [
+            'card_payment_no_decision_with_sca_always' => [
                 'paymentSource' => 'card',
                 'secureDecision' => Card3DSecureConfiguration::DECISION_NO_DECISION,
-                'liabilityShiftRequired' => true,
+                'contingencies' => 'SCA_ALWAYS',
+                'productsInStock' => false,
+                'expectedExceptionMessage' => 'No liability shift to card issuer',
+                'expectedExceptionCode' => PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN,
+            ],
+            'card_payment_no_decision_with_sca_when_required' => [
+                'paymentSource' => 'card',
+                'secureDecision' => Card3DSecureConfiguration::DECISION_NO_DECISION,
+                'contingencies' => 'SCA_ALWAYS',
+                'productsInStock' => false,
                 'expectedExceptionMessage' => 'No liability shift to card issuer',
                 'expectedExceptionCode' => PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN,
             ],
