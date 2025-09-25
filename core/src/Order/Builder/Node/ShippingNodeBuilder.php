@@ -67,6 +67,10 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
             throw new PsCheckoutException('Cart data must be set before building order payload');
         }
 
+        if ($this->cart['cart']['is_virtual']) {
+            return [];
+        }
+
         $address = $this->cart['addresses']['shipping'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);

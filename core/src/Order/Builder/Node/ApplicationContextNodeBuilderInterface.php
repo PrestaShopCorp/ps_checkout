@@ -33,4 +33,11 @@ interface ApplicationContextNodeBuilderInterface
      * @return $this
      */
     public function setIsExpressCheckout(bool $isExpressCheckout): ApplicationContextNodeBuilder;
+
+    /**
+     * @param bool $isVirtualCart
+     *
+     * @return $this
+     */
+    public function setIsVirtualCart(bool $isVirtualCart): ApplicationContextNodeBuilder;
 }
