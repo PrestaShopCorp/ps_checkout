@@ -67,4 +67,11 @@ interface PayPalOrderRepositoryInterface
      * @return bool
      */
     public function savePayPalOrder(PayPalOrder $payPalOrder): bool;
+
+    /**
+     * @param int $cartId
+     *
+     * @return bool
+     */
+    public function attemptToMigratePsCheckoutCart(int $cartId): bool;
 }

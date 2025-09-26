@@ -49,6 +49,7 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use PsCheckout\Module\Presentation\Translator;
 use PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter;
+use Psr\Log\LoggerInterface;
 
 class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 {
@@ -712,6 +713,24 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
 
         if (!$payPalOrder) {
+            try {
+                $migrationSuccessful = $payPalOrderRepository->attemptToMigratePsCheckoutCart($order->id_cart);
+                if ($migrationSuccessful) {
+                    $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+                }
+            } catch (\Exception $e) {
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->error(
+                    'Attempted to migrate order to V5 database structure. Encoutered error: ' . $e->getMessage(),
+                    [
+                        'exception' => $e,
+                        'cart_id' => $order->id_cart,
+                    ]
+                );
+            }
+        }
+
+        if (!$payPalOrder) {
             http_response_code(500);
             $this->ajaxRender(json_encode([
                 'status' => false,
@@ -736,7 +755,16 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-        $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+        } catch (Exception $exception) {
+            http_response_code(500);
+            $this->ajaxRender(json_encode([
+                'status' => false,
+                'errors' => [$exception->getMessage()],
+            ]));
+        }
 
         /** @var PayPalOrderPresenter $payPalOrderPresenter */
         $payPalOrderPresenter = $this->module->getService(PayPalOrderPresenter::class);
