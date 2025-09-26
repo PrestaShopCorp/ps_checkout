@@ -62,6 +62,8 @@ class AmountBreakdownNodeTest extends TestCase
                     ],
                     'products' => [
                         [
+                            'id_product' => 1,
+                            'id_product_attribute' => 5,
                             'name' => 'Product 1',
                             'total' => 50.00,
                             'total_wt' => 60.00,
@@ -71,6 +73,8 @@ class AmountBreakdownNodeTest extends TestCase
                             'attributes' => 'Color: Red',
                         ],
                         [
+                            'id_product' => 2,
+                            'id_product_attribute' => null,
                             'name' => 'Product 2',
                             'total' => 30.00,
                             'total_wt' => 35.00,
@@ -101,7 +105,7 @@ class AmountBreakdownNodeTest extends TestCase
                         [
                             'name' => StringUtility::truncate('Product 2', 127),
                             'description' => '',
-                            'sku' => StringUtility::truncate('EAN123', 127),
+                            'sku' => StringUtility::truncate('2-0', 127),
                             'unit_amount' => [
                                 'currency_code' => 'USD',
                                 'value' => '30.00', // 30.00 / 1

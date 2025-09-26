@@ -56,7 +56,7 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
             $breakdownItemTotal += $unitPriceWithoutTax * $quantity;
             $breakdownTaxTotal += $unitTax * $quantity;
 
-            $sku = !empty($value['reference']) ? $value['reference'] : $value['id_product'] . '-' . $value['id_product_attribute'];
+            $sku = !empty($value['reference']) ? $value['reference'] : (int) $value['id_product'] . '-' . (int) $value['id_product_attribute'];
 
             $paypalItem = [];
             $paypalItem['name'] = StringUtility::truncate($value['name'], 127);
