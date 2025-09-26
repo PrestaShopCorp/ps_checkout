@@ -98,16 +98,21 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             $name = $this->validateName($product, $productData);
 
             $item = [
-                'sku' => $sku,
-                'quantity' => $quantity,
                 'name' => $name,
-                'description' => $this->getProductDescription($productData),
+                'quantity' => $quantity,
+                'sku' => $sku,
                 'url' => $this->getProductUrl($productData['product'], $productAttributeId),
                 'image_url' => $this->getProductImageUrl($productData['product'], $productAttributeId),
             ];
 
+            $allowedUpcTypes = ['UPC-A', 'UPC-B', 'UPC-C', 'UPC-D', 'UPC-E', 'UPC-2', 'UPC-5'];
+
             // Conditionally add UPC only if both parts are present
-            if (!empty($productData['upc_type']) && !empty($productData['upc_code'])) {
+            if (
+                !empty($productData['upc_type'])
+                && in_array($productData['upc_type'], $allowedUpcTypes)
+                && !empty($productData['upc_code'])
+            ) {
                 $item['upc'] = [
                     'type' => $productData['upc_type'],
                     'code' => $productData['upc_code'],
@@ -132,11 +137,11 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
      */
     private function validateSku(array $product, array $productData): string
     {
-        $sku = $product['reference'] ?? '';
+        $sku = $productData['sku'] ?? '';
         
         // If no SKU from order data, try to get from product data
         if (empty($sku)) {
-            $sku = $productData['reference'] ?? '';
+            $sku = $product['reference'] ?? '';
         }
         
         // SKU is required and must not be empty
@@ -220,11 +225,27 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 return [];
             }
 
+            $sku = '';
+
+            if ($productAttributeId) {
+                $combination = new \Combination($productAttributeId);
+
+                if (!empty($combination->reference)) {
+                    $sku = $combination->reference;
+                } else {
+                    $sku = $product->reference;
+                }
+            }
+
+            if (empty($sku)) {
+                $sku = $productId . '-' . $productAttributeId;
+            }
+
             $productData = [
                 'product' => $product, // Pass product object for URL generation
                 'reference' => $product->reference,
+                'sku' => $sku,
                 'name' => $product->name,
-                'description' => $product->description_short,
             ];
 
             // Simple UPC type detection - just recognize basic types
