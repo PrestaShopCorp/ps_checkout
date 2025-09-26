@@ -71,18 +71,22 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
                         'tax_total' => $this->payload['amount']['breakdown']['tax_total'],
                     ],
                     'level_3' => [
-                        'shipping_amount' => $this->payload['amount']['breakdown']['shipping'],
                         'duty_amount' => [
                             'currency_code' => $this->payload['amount']['currency_code'],
                             'value' => $this->payload['amount']['value'],
                         ],
                         'discount_amount' => $this->payload['amount']['breakdown']['discount'],
-                        'shipping_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
                         'line_items' => $this->payload['items'],
                     ],
                 ],
             ],
         ];
+
+
+        if (!$this->cart['cart']['is_virtual']) {
+            $node['supplementary_data']['card']['level_3']['shipping_address'] = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
+            $node['supplementary_data']['card']['level_3']['shipping_amount'] = $this->payload['amount']['breakdown']['shipping'];
+        }
 
         return $node;
     }

@@ -165,17 +165,18 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             }
         }
 
-        if (!$this->expressCheckout) {
+        if (!$this->expressCheckout || $this->isUpdate) {
             $optionalPayload[] = $this->shippingNodeBuilder->setCart($this->cart)->build();
+        }
 
-            if (!$this->isUpdate) {
-                $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
-            }
+        if (!$this->expressCheckout && !$this->isUpdate) {
+            $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
         }
 
         if (!$this->isUpdate) {
             $optionalPayload[] = $this->applicationContextNodeBuilder
                 ->setIsExpressCheckout($this->expressCheckout)
+                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
                 ->build();
         }
 

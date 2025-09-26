@@ -31,6 +31,11 @@ class ApplicationContextNodeBuilder implements ApplicationContextNodeBuilderInte
     private $isExpressCheckout;
 
     /**
+     * @var bool
+     */
+    private $isVirtualCart;
+
+    /**
      * @var ConfigurationInterface
      */
     private $configuration;
@@ -55,7 +60,9 @@ class ApplicationContextNodeBuilder implements ApplicationContextNodeBuilderInte
     {
         $node['application_context'] = [
             'brand_name' => $this->configuration->get('PS_SHOP_NAME'),
-            'shipping_preference' => $this->isExpressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
+            'shipping_preference' => $this->isVirtualCart ?
+                'NO_SHIPPING'
+                : ($this->isExpressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS'),
             'return_url' => $this->link->getModuleLink('validate'),
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
@@ -69,6 +76,16 @@ class ApplicationContextNodeBuilder implements ApplicationContextNodeBuilderInte
     public function setIsExpressCheckout(bool $isExpressCheckout): ApplicationContextNodeBuilder
     {
         $this->isExpressCheckout = $isExpressCheckout;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setIsVirtualCart(bool $isVirtualCart): ApplicationContextNodeBuilder
+    {
+        $this->isVirtualCart = $isVirtualCart;
 
         return $this;
     }

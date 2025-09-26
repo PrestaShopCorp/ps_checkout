@@ -80,17 +80,17 @@ class SupplementaryDataNodeBuilderTest extends TestCase
 
         return [
             'valid data' => [
-                'cart' => ['addresses' => ['invoice' => $address1]],
+                'cart' => ['addresses' => ['invoice' => $address1], 'cart' => ['is_virtual' => false]],
                 'payload' => $this->getSamplePayload(),
                 'expectedOutput' => $this->getExpectedOutput(true),
             ],
             'empty address fields' => [
-                'cart' => ['addresses' => ['invoice' => $address2]],
+                'cart' => ['addresses' => ['invoice' => $address2], 'cart' => ['is_virtual' => false]],
                 'payload' => $this->getSamplePayload(),
                 'expectedOutput' => $this->getExpectedOutput(false),
             ],
             'missing address fields' => [
-                'cart' => ['addresses' => ['invoice' => $address3]],
+                'cart' => ['addresses' => ['invoice' => $address3], 'cart' => ['is_virtual' => false]],
                 'payload' => $this->getSamplePayload(),
                 'expectedOutput' => $this->getExpectedOutput(false),
             ],

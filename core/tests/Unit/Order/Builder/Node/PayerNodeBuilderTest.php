@@ -177,7 +177,7 @@ class PayerNodeBuilderTest extends TestCase
                             'phone' => '+1234567890',
                         ]),
                     ],
-                    'cart' => ['id' => 123],
+                    'cart' => ['id' => 123, 'is_virtual' => false],
                 ],
                 'expectedResult' => [
                     'payer' => [
@@ -227,6 +227,7 @@ class PayerNodeBuilderTest extends TestCase
                             'postcode' => '75001',
                         ]),
                     ],
+                    'cart' => ['id' => 123, 'is_virtual' => false],
                 ],
                 'expectedResult' => [
                     'payer' => [

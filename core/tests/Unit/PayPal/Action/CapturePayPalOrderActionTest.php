@@ -105,7 +105,7 @@ class CapturePayPalOrderActionTest extends TestCase
 
         // Setup cache expectations
         $this->payPalOrderCache->expects($this->once())
-            ->method('get')
+            ->method('getValue')
             ->willReturn([]);
         
         $this->payPalOrderCache->expects($this->once())
@@ -152,7 +152,7 @@ class CapturePayPalOrderActionTest extends TestCase
         
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
         
-        $this->payPalOrderCache->method('get')->willReturn([]);
+        $this->payPalOrderCache->method('getValue')->willReturn([]);
 
         // Create a declined response instead of returning null
         $declinedResponse = PayPalOrderResponseFactory::create([
@@ -207,8 +207,8 @@ class CapturePayPalOrderActionTest extends TestCase
         
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
 
-        // Fix: Return empty array instead of null for cache->get()
-        $this->payPalOrderCache->method('get')->willReturn([]);
+        // Fix: Return empty array instead of null for cache->getValue()
+        $this->payPalOrderCache->method('getValue')->willReturn([]);
         
         $this->payPalOrderProvider->method('getById')->willReturn($capturedResponse);
 
