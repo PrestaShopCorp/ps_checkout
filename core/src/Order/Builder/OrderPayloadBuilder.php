@@ -255,6 +255,12 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         switch ($this->fundingSource) {
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
+            case 'paypal':
+                $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
+                    ->setPaypalCustomerId($this->paypalCustomerId)
+                    ->setPaypalVaultId($this->paypalVaultId);
+
+                return $this->payPalPaymentSourceNodeBuilder->build();
         }
 
         return null;
