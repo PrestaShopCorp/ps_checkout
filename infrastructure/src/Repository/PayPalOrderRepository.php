@@ -106,7 +106,7 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
 
         // Check if record exists using primary key
         $exists = $this->getOneBy(['id' => $payPalOrder->getId()]);
-        
+
         if ($exists) {
             return $this->db->update(
                 self::TABLE_NAME,

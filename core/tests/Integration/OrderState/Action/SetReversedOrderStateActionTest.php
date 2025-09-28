@@ -71,54 +71,54 @@ class SetReversedOrderStateActionTest extends BaseTestCase
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING
-                ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING,
+                ],
             ],
             'non-existent order should throw exception' => [
                 [
                     'expectException' => PsCheckoutException::class,
                     'expectExceptionCode' => PsCheckoutException::ORDER_NOT_FOUND,
-                    'payPalOrderId' => 'NON-EXISTENT-ORDER'
-                ]
+                    'payPalOrderId' => 'NON-EXISTENT-ORDER',
+                ],
             ],
             'already paid order should not change state' => [
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED,
+                ],
             ],
             'refunded order should not change state' => [
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED
-                ]
-            ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED,
+                ],
+            ],
         ];
     }
 }

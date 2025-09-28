@@ -20,7 +20,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->payPalRepository = $this->getService(PayPalOrderRepository::class);
         $this->cancelPayPalOrderAction = $this->getService(CancelPayPalOrderAction::class);
     }
@@ -31,7 +31,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
         $payPalOrder = PayPalOrderFactory::create([
             'id' => 'PAY-123',
             'id_cart' => 1,
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
         $this->payPalRepository->savePayPalOrder($payPalOrder);
 
@@ -41,7 +41,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'orderStatus' => 'CANCELED',
             'fundingSource' => 'paypal',
             'isHostedFields' => false,
-            'isExpressCheckout' => false
+            'isExpressCheckout' => false,
         ], 1);
 
         // Execute action
@@ -64,7 +64,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'orderStatus' => 'CANCELED',
             'fundingSource' => 'paypal',
             'isHostedFields' => false,
-            'isExpressCheckout' => false
+            'isExpressCheckout' => false,
         ], 1);
 
         $this->expectException(PsCheckoutException::class);
@@ -80,7 +80,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'id_cart' => 1,
             'funding_source' => 'card',
             'is_card_fields' => true,
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
         $this->payPalRepository->savePayPalOrder($payPalOrder);
 
@@ -89,7 +89,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'orderStatus' => 'CANCELED',
             'fundingSource' => 'card',
             'isHostedFields' => true,
-            'isExpressCheckout' => false
+            'isExpressCheckout' => false,
         ], 1);
 
         $this->cancelPayPalOrderAction->execute($request);
@@ -105,7 +105,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'id' => 'PAY-123',
             'id_cart' => 1,
             'is_express_checkout' => true,
-            'status' => 'PENDING'
+            'status' => 'PENDING',
         ]);
         $this->payPalRepository->savePayPalOrder($payPalOrder);
 
@@ -114,7 +114,7 @@ class CancelPayPalOrderActionTest extends BaseTestCase
             'orderStatus' => 'CANCELED',
             'fundingSource' => 'paypal',
             'isHostedFields' => false,
-            'isExpressCheckout' => true
+            'isExpressCheckout' => true,
         ], 1);
 
         $this->cancelPayPalOrderAction->execute($request);

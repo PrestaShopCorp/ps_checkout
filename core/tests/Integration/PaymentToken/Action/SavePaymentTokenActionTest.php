@@ -75,9 +75,9 @@ class SavePaymentTokenActionTest extends BaseTestCase
                                 'vault' => [
                                     'id' => 'TEST-VAULT-123',
                                     'customer' => ['id' => 'TEST-CUSTOMER-123'],
-                                    'status' => 'VERIFIED'
-                                ]
-                            ]
+                                    'status' => 'VERIFIED',
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -85,8 +85,8 @@ class SavePaymentTokenActionTest extends BaseTestCase
                     'id_token' => 'TEST-VAULT-123',
                     'paypal_customer_id' => 'TEST-CUSTOMER-123',
                     'payment_source' => 'card',
-                    'status' => 'VERIFIED'
-                ]
+                    'status' => 'VERIFIED',
+                ],
             ],
             'paypal payment source with status ACTIVE' => [
                 'vaultData' => [
@@ -98,9 +98,9 @@ class SavePaymentTokenActionTest extends BaseTestCase
                                 'vault' => [
                                     'id' => 'TEST-VAULT-456',
                                     'customer' => ['id' => 'TEST-CUSTOMER-456'],
-                                    'status' => 'ACTIVE'
-                                ]
-                            ]
+                                    'status' => 'ACTIVE',
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -108,8 +108,8 @@ class SavePaymentTokenActionTest extends BaseTestCase
                     'id_token' => 'TEST-VAULT-456',
                     'paypal_customer_id' => 'TEST-CUSTOMER-456',
                     'payment_source' => 'paypal',
-                    'status' => 'ACTIVE'
-                ]
+                    'status' => 'ACTIVE',
+                ],
             ],
         ];
     }
@@ -118,4 +118,4 @@ class SavePaymentTokenActionTest extends BaseTestCase
     {
         parent::tearDown();
     }
-} 
+}

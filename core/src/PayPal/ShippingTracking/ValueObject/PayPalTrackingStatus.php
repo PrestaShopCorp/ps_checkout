@@ -48,16 +48,15 @@ class PayPalTrackingStatus
 
     /**
      * @param string $status
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(string $status)
     {
         if (!$this->isValid($status)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid tracking status "%s". Valid statuses are: %s', $status, implode(', ', self::getValidStatuses()))
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid tracking status "%s". Valid statuses are: %s', $status, implode(', ', self::getValidStatuses())));
         }
-        
+
         $this->status = $status;
     }
 
@@ -75,6 +74,7 @@ class PayPalTrackingStatus
      * Create from string with fallback to default
      *
      * @param string|null $status
+     *
      * @return PayPalTrackingStatus
      */
     public static function createWithFallback($status): PayPalTrackingStatus
@@ -82,7 +82,7 @@ class PayPalTrackingStatus
         if (empty($status) || !self::isValid($status)) {
             return new self(self::DEFAULT_STATUS);
         }
-        
+
         return new self($status);
     }
 
@@ -90,6 +90,7 @@ class PayPalTrackingStatus
      * Check if status is valid
      *
      * @param string $status
+     *
      * @return bool
      */
     public static function isValid(string $status): bool

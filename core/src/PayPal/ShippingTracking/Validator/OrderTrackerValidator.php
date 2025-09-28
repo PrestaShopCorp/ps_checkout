@@ -18,15 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-
 namespace PsCheckout\Core\PayPal\ShippingTracking\Validator;
 
-use Order;
 use Carrier;
-use Validate;
+use Order;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderCaptureRepositoryInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
+use Validate;
 
 class OrderTrackerValidator implements OrderTrackerValidatorInterface
 {
@@ -77,7 +76,7 @@ class OrderTrackerValidator implements OrderTrackerValidatorInterface
 
         return [
             'paypal_order' => $payPalOrder,
-            'capture' => $capture
+            'capture' => $capture,
         ];
     }
 
@@ -112,11 +111,11 @@ class OrderTrackerValidator implements OrderTrackerValidatorInterface
     {
         try {
             $captures = $this->payPalOrderCaptureRepository->getByOrderId($payPalOrderId);
-            
+
             if (empty($captures)) {
                 return null;
             }
-            
+
             foreach ($captures as $capture) {
                 if (in_array($capture->getStatus(), self::ALLOWED_CAPTURE_STATUSES, true)) {
                     return $capture;

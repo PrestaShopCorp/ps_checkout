@@ -44,11 +44,11 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
                     'refunds' => [[
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '29.00'
+                            'value' => '29.00',
                         ],
-                    ]]
-                ]
-            ]]
+                    ]],
+                ],
+            ]],
         ];
 
         $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '29.00']);
@@ -83,11 +83,11 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
                     'refunds' => [[
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '15.00'
+                            'value' => '15.00',
                         ],
-                    ]]
-                ]
-            ]]
+                    ]],
+                ],
+            ]],
         ];
 
         $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '30.00']);
@@ -123,18 +123,18 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
                     'refunds' => [[
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '15.00'
+                            'value' => '15.00',
                         ],
                     ],
                     [
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '14.00'
+                            'value' => '14.00',
                         ],
                     ],
-                    ]
-                ]
-            ]]
+                    ],
+                ],
+            ]],
         ];
 
         $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '30.00']);

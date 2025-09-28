@@ -1,4 +1,5 @@
 <?php
+
 $rootDirectory = __DIR__ . '/../../../../../../';
 $projectDir = __DIR__ . '/../../../../';
 

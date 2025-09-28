@@ -76,18 +76,18 @@ class PayPalOrderCaptureRepository implements PayPalOrderCaptureRepositoryInterf
             $query->select('*');
             $query->from(self::TABLE_NAME);
             $query->where('id_order = "' . pSQL($payPalOrderId) . '"');
-            
+
             $capturesData = $this->db->executeS($query);
-            
+
             if (empty($capturesData)) {
                 return [];
             }
-            
+
             $captures = [];
             foreach ($capturesData as $captureData) {
                 $captures[] = $this->buildPayPalOrderCapture($captureData);
             }
-            
+
             return $captures;
         } catch (Exception $exception) {
             throw new PsCheckoutException('Error while getting PayPal Order Captures', 0, $exception);

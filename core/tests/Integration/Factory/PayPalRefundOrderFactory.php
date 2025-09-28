@@ -15,7 +15,7 @@ class PayPalRefundOrderFactory
             'hasBeenPartiallyRefunded' => false,
             'hasBeenRefunded' => false,
             'totalPaid' => (float) '29.00',
-            'currencyId' => 0
+            'currencyId' => 0,
         ];
 
         $data = array_merge($defaultData, $data);

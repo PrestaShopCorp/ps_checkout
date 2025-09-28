@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\Order\Validator;
 
+use Cart as PrestaShopCart;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
@@ -30,7 +31,6 @@ use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\CustomerInterface;
 use Psr\Log\LoggerInterface;
-use Cart as PrestaShopCart;
 
 class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterface
 {

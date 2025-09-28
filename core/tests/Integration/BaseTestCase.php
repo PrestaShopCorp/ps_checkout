@@ -121,7 +121,7 @@ class BaseTestCase extends TestCase
             'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => 1,
             'PS_CHECKOUT_DISPLAY_LOGO_CART' => 1,
             'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
-            'PS_CHECKOUT_PAYPAL_BUTTON' => json_encode(["shape" => "pill", "label" => "pay", "color" => "gold"]),
+            'PS_CHECKOUT_PAYPAL_BUTTON' => json_encode(['shape' => 'pill', 'label' => 'pay', 'color' => 'gold']),
             'PS_CHECKOUT_STATE_COMPLETED' => 2,
             'PS_CHECKOUT_STATE_CANCELED' => 6,
             'PS_CHECKOUT_STATE_ERROR' => 8,
@@ -138,7 +138,7 @@ class BaseTestCase extends TestCase
             'PS_CHECKOUT_CUSTOM_CARD' => 1,
             'PS_CHECKOUT_GOOGLE_PAY' => 1,
             'PS_CHECKOUT_APPLE_PAY' => 1,
-            'PS_CHECKOUT_test' => 1
+            'PS_CHECKOUT_test' => 1,
         ];
 
         foreach ($configurations as $key => $value) {

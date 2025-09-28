@@ -21,19 +21,18 @@
 namespace PsCheckout\Core\PayPal\ShippingTracking\Processor;
 
 use Carrier;
+use Http\Client\Exception\HttpException;
 use Order;
+use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface;
 use PsCheckout\Core\PayPal\ShippingTracking\Builder\TrackingPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCacheInterface;
 use PsCheckout\Core\PayPal\ShippingTracking\Repository\ShippingTrackingRepositoryInterface;
+use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiResult;
 use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService;
 use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler;
 use PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidatorInterface;
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingStatus;
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingApiRequest;
-use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface;
-use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiResult;
-use Http\Client\Exception\HttpException;
+use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
 use Psr\Log\LoggerInterface;
 
 class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
@@ -162,20 +161,20 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
                 $order->id,
                 true // throwOnError = true for external shipments
             );
-            
+
             try {
                 $apiResult = $this->trackingApiService->processTracking($apiRequest);
             } catch (HttpException $e) {
                 // Check if this is a 400 status code and implement fallback
                 if ($e->getResponse()->getStatusCode() === 400) {
                     $this->logger->warning('External tracking API call failed with 400 status code for order ' . $order->id . ', falling back to AddTrackingAction');
-                    
+
                     try {
                         // Use the fallback action
                         $this->addTrackingAction->execute($order, $carrier);
-                        
+
                         $this->logger->info('Fallback AddTrackingAction executed successfully for order ' . $order->id);
-                        
+
                         // Create a success result for database handling
                         $apiResult = new TrackingApiResult(
                             false,
@@ -204,7 +203,7 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
                 'cache_key' => $cacheKey,
             ];
             $this->cache->set($cacheKey, $cacheData);
-            
+
             // Save to database using service (only on success for external shipments)
             if ($apiResult->isSuccess() && $apiResult->getTrackerId()) {
                 $trackingData = new TrackingData(
@@ -217,7 +216,7 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
                     $products,
                     $payloadChecksum
                 );
-                
+
                 $this->trackingDatabaseHandler->saveTrackingResult(
                     $apiResult,
                     $existingTracking,
@@ -228,13 +227,13 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
         } catch (\InvalidArgumentException $e) {
             // Handle validation errors for required fields (SKU, quantity, name)
             $this->logger->error('External tracking validation failed for order ' . $order->id . ': ' . $e->getMessage());
-            
+
             // Re-throw to ensure tracking fails
             throw $e;
         } catch (\Exception $e) {
             // Handle other errors (API failures, etc.)
             $this->logger->error('External tracking processing failed for order ' . $order->id . ': ' . $e->getMessage());
-            
+
             // Re-throw to stop execution as requested
             throw $e;
         }
@@ -250,14 +249,14 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
     private function getProductsFromExternalData(array $externalShipmentData): array
     {
         $products = [];
-        
+
         if (!empty($externalShipmentData['products'])) {
             foreach ($externalShipmentData['products'] as $externalProduct) {
                 // External data is source of truth, but we need to ensure we have correct data
                 // Get product object to fill missing data if needed
                 $productId = (int) ($externalProduct['id_product'] ?? 0);
                 $productAttributeId = (int) ($externalProduct['id_product_attribute'] ?? 0);
-                
+
                 if ($productId > 0) {
                     $product = new \Product($productId);
                     if (\Validate::isLoadedObject($product)) {
@@ -296,7 +295,7 @@ class ExternalShipmentProcessor implements ExternalShipmentProcessorInterface
         if (\Validate::isLoadedObject($deliveryAddress)) {
             $country = new \Country($deliveryAddress->id_country);
             $state = new \State($deliveryAddress->id_state);
-            
+
             return [
                 'address_line_1' => $deliveryAddress->address1,
                 'address_line_2' => $deliveryAddress->address2 ?: '',

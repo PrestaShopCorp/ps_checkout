@@ -39,15 +39,15 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $payPalOrder = PayPalOrderFactory::create(['id_cart' => $order->id_cart]);
         $this->payPalOrderRepository->save($payPalOrder);
 
         try {
             $this->setDeclinedOrderStateAction->execute($payPalOrder->getId());
-        }  catch (OrderException $exception) {
+        } catch (OrderException $exception) {
             if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
                 //NOTE: Error due mail sending which does not work with tests
                 self::assertEquals(
@@ -65,8 +65,8 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $history = new OrderHistory();
         $history->id_order = $order->id;
@@ -91,8 +91,8 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $history = new OrderHistory();
         $history->id_order = $order->id;

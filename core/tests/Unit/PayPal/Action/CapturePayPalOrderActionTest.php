@@ -95,10 +95,10 @@ class CapturePayPalOrderActionTest extends TestCase
         // Setup HTTP client response
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->expects($this->once())
             ->method('captureOrder')
             ->willReturn($httpResponse);
@@ -107,15 +107,15 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->payPalOrderCache->expects($this->once())
             ->method('getValue')
             ->willReturn([]);
-        
+
         $this->payPalOrderCache->expects($this->once())
             ->method('set');
 
         // Setup provider response
         $capturedResponse = PayPalOrderResponseFactory::create([
-            'status' => PayPalCaptureStatus::COMPLETED
+            'status' => PayPalCaptureStatus::COMPLETED,
         ]);
-        
+
         $this->payPalOrderProvider->expects($this->once())
             ->method('getById')
             ->willReturn($capturedResponse);
@@ -124,14 +124,14 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->orderCompletedEventHandler->expects($this->once())
             ->method('handle')
             ->with($capturedResponse);
-        
+
         $this->paymentCompletedEventHandler->expects($this->once())
             ->method('handle')
             ->with($capturedResponse);
 
         // Execute and verify
         $result = $this->action->execute($initialResponse);
-        
+
         $this->assertInstanceOf(PayPalOrderResponse::class, $result);
         $this->assertEquals(PayPalCaptureStatus::COMPLETED, $result->getStatus());
     }
@@ -146,12 +146,12 @@ class CapturePayPalOrderActionTest extends TestCase
 
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
-        
+
         $this->payPalOrderCache->method('getValue')->willReturn([]);
 
         // Create a declined response instead of returning null
@@ -161,15 +161,15 @@ class CapturePayPalOrderActionTest extends TestCase
                 [
                     'payments' => [
                         'captures' => [
-                            ['status' => PayPalCaptureStatus::DECLINED]
-                        ]
-                    ]
-                ]
-            ]
+                            ['status' => PayPalCaptureStatus::DECLINED],
+                        ],
+                    ],
+                ],
+            ],
         ]);
-        
+
         $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
-        
+
         $this->paymentDeniedEventHandler->expects($this->once())
             ->method('handle')
             ->with($declinedResponse);
@@ -186,30 +186,30 @@ class CapturePayPalOrderActionTest extends TestCase
         $payPalOrder = PayPalOrderFactory::create();
 
         $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
-        
+
         $capturedResponse = PayPalOrderResponseFactory::create([
             'purchase_units' => [
                 [
                     'payments' => [
                         'captures' => [
-                            ['status' => PayPalCaptureStatus::PENDING]
-                        ]
-                    ]
-                ]
-            ]
+                            ['status' => PayPalCaptureStatus::PENDING],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
 
         // Fix: Return empty array instead of null for cache->getValue()
         $this->payPalOrderCache->method('getValue')->willReturn([]);
-        
+
         $this->payPalOrderProvider->method('getById')->willReturn($capturedResponse);
 
         $this->paymentPendingEventHandler->expects($this->once())

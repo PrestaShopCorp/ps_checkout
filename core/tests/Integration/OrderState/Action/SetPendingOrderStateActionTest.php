@@ -34,7 +34,7 @@ class SetPendingOrderStateActionTest extends BaseTestCase
         //NOTE: Any state id except pending
         $order = OrderFactory::create([
             'current_state' => $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_ERROR),
-            'id_cart' => $cart->id
+            'id_cart' => $cart->id,
         ]);
         $payPalOrder = PayPalOrderFactory::create(['id_cart' => $order->id_cart]);
         $this->payPalOrderRepository->save($payPalOrder);
@@ -54,7 +54,7 @@ class SetPendingOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
+            'id_cart' => $cart->id,
         ]);
 
         $history = new OrderHistory();
