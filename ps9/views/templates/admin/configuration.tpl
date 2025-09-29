@@ -51,8 +51,8 @@
 
 <script>
   // Enhance page title with subtitle and module version
-  const pageTitle = document.querySelector('#content.nobootstrap .page-head h2.page-title');
-  const pageSubtitle = document.querySelector('#content.nobootstrap .page-head h4.page-subtitle');
+  const pageTitle = document.querySelector('#content .page-head .page-title');
+  const pageSubtitle = document.querySelector('#content .page-head .page-subtitle');
 
   if (pageTitle) {
     pageTitle.textContent = pageTitle.textContent
