@@ -52,6 +52,11 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
+            if ($this->paypalCustomerId) {
+                $data['attributes']['customer'] = [
+                    'id' => $this->paypalCustomerId,
+                ];
+            }
         }
 
         if (empty($data)) {
