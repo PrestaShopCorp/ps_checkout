@@ -132,6 +132,9 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayHasKey('vault_id', $node['payment_source']['card']);
         $this->assertEquals('vault123', $node['payment_source']['card']['vault_id']);
         $this->assertArrayNotHasKey('billing_address', $node['payment_source']['card']);
+        $this->assertEquals('CUSTOMER', $node['payment_source']['card']['stored_credential']['payment_initiator']);
+        $this->assertEquals('ONE_TIME', $node['payment_source']['card']['stored_credential']['payment_type']);
+        $this->assertEquals('SUBSEQUENT', $node['payment_source']['card']['stored_credential']['usage']);
     }
 
     /**
@@ -209,5 +212,8 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
         $this->assertArrayHasKey('vault', $node['payment_source']['card']['attributes']);
         $this->assertEquals('ON_SUCCESS', $node['payment_source']['card']['attributes']['vault']['store_in_vault']);
+        $this->assertEquals('CUSTOMER', $node['payment_source']['card']['stored_credential']['payment_initiator']);
+        $this->assertEquals('ONE_TIME', $node['payment_source']['card']['stored_credential']['payment_type']);
+        $this->assertEquals('FIRST', $node['payment_source']['card']['stored_credential']['usage']);
     }
 }
