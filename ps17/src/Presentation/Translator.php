@@ -178,8 +178,8 @@ class Translator implements TranslatorInterface
             'Refund cannot be processed by PayPal.' => $this->module->l('Refund cannot be processed by PayPal.', 'Translator'),
             'Refund has been processed by PayPal.' => $this->module->l('Refund has been processed by PayPal.', 'Translator'),
             'No PrestaShop Order identifier received' => $this->module->l('No PrestaShop Order identifier received', 'Translator'),
-            'Unable to find PayPal Order associated to this PrestaShop Order %s' => vsprintf($this->module->l('Unable to find PayPal Order associated to this PrestaShop Order %s', 'Translator'), $parameters),
-            'PayPal Order %s is not in the same environment as PrestaShop Checkout' => vsprintf($this->module->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', 'Translator'), $parameters),
+            'Unable to find PayPal Order associated to this PrestaShop Order %s' => $this->module->l('Unable to find PayPal Order associated to this PrestaShop Order %s', 'Translator'),
+            'PayPal Order %s is not in the same environment as PrestaShop Checkout' => $this->module->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', 'Translator'),
 
             'Eligible' => $this->module->l('Eligible', 'Translator'),
             'Partially eligible' => $this->module->l('Partially eligible', 'Translator'),
