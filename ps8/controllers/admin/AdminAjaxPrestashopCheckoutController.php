@@ -721,7 +721,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             } catch (\Exception $e) {
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(
-                    'Attempted to migrate order to V5 database structure. Encoutered error: ' . $e->getMessage(),
+                    'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
                     [
                         'exception' => $e,
                         'cart_id' => $order->id_cart,
