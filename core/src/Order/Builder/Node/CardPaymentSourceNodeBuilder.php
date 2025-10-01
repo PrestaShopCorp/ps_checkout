@@ -98,6 +98,11 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         if ($this->paypalVaultId) {
             unset($node['payment_source']['card']['billing_address']);
             $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
+            $node['payment_source']['card']['stored_credential'] = [
+                'payment_initiator' => 'CUSTOMER',
+                'payment_type' => 'ONE_TIME',
+                'usage' => 'SUBSEQUENT',
+            ];
         }
 
         if ($this->paypalCustomerId) {
@@ -109,6 +114,11 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         if ($this->savePaymentMethod) {
             $node['payment_source']['card']['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
+            ];
+            $node['payment_source']['card']['stored_credential'] = [
+                'payment_initiator' => 'CUSTOMER',
+                'payment_type' => 'ONE_TIME',
+                'usage' => 'FIRST',
             ];
         }
 
