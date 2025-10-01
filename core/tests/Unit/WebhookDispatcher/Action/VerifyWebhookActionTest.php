@@ -45,17 +45,17 @@ class VerifyWebhookActionTest extends TestCase
     public function testItSuccessfullyValidatesPSLSignature(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
+        $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
-            ->method('getShopSignature')
-            ->with($bodyValues)
+            ->method('verifyWebhook')
+            ->with($rawBody, [])
             ->willReturn([
                 'statusCode' => 200,
                 'message' => 'VERIFIED',
             ]);
 
         // Act
-        $result = $this->action->execute($bodyValues);
+        $result = $this->action->execute($rawBody, []);
 
         // Assert
         $this->assertTrue($result);
@@ -64,10 +64,10 @@ class VerifyWebhookActionTest extends TestCase
     public function testItThrowsExceptionWhenSignatureIsInvalid(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
+        $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
-            ->method('getShopSignature')
-            ->with($bodyValues)
+            ->method('verifyWebhook')
+            ->with($rawBody, [])
             ->willReturn([
                 'statusCode' => 401,
                 'message' => 'INVALID',
@@ -79,16 +79,16 @@ class VerifyWebhookActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($rawBody, []);
     }
 
     public function testItThrowsExceptionWhenResponseIsInvalid(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
+        $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
-            ->method('getShopSignature')
-            ->with($bodyValues)
+            ->method('verifyWebhook')
+            ->with($rawBody, [])
             ->willReturn([
                 'statusCode' => 200,
                 'message' => 'INVALID',
@@ -100,16 +100,16 @@ class VerifyWebhookActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($rawBody, []);
     }
 
     public function testItThrowsExceptionWhenResponseIsMissingRequiredFields(): void
     {
         // Arrange
-        $bodyValues = ['test' => 'value'];
+        $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
-            ->method('getShopSignature')
-            ->with($bodyValues)
+            ->method('verifyWebhook')
+            ->with($rawBody, [])
             ->willReturn([
                 'statusCode' => 200,
             ]);
@@ -120,6 +120,6 @@ class VerifyWebhookActionTest extends TestCase
         $this->expectExceptionCode(401);
 
         // Act
-        $this->action->execute($bodyValues);
+        $this->action->execute($rawBody, []);
     }
 }

@@ -145,8 +145,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
                     'shipping' => ['old_data'],
                 ],
             ],
-            [],
-            '2024-01-01T00:00:00Z'
+            []
         );
 
         $this->paypalOrderProvider->expects($this->once())
@@ -176,9 +175,13 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $this->orderPayloadBuilder->expects($this->once())
             ->method('build')
             ->willReturn([
-                'amount' => ['value' => '11.00'],
-                'items' => [['id' => '2']],
-                'shipping' => ['new_data'],
+                'purchase_units' => [
+                    [
+                        'amount' => ['value' => '11.00'],
+                        'items' => [['id' => '2']],
+                        'shipping' => ['new_data'],
+                    ],
+                ],
             ]);
 
         $response = $this->createMock(ResponseInterface::class);
@@ -227,8 +230,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
                     'shipping' => ['old_data'],
                 ],
             ],
-            [],
-            '2024-01-01T00:00:00Z'
+            []
         );
 
         $this->paypalOrderProvider->method('getById')->willReturn($paypalOrderResponse);
@@ -259,7 +261,11 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $this->orderPayloadBuilder->expects($this->once())
             ->method('build')
             ->willReturn([
-                'amount' => ['value' => '11.00'],
+                'purchase_units' => [
+                    [
+                        'amount' => ['value' => '11.00'],
+                    ],
+                ],
             ]);
 
         $response = $this->createMock(ResponseInterface::class);

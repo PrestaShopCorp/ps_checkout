@@ -152,11 +152,6 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
         $payloadToSend = [
             [
                 'op' => 'replace',
-                'path' => "/intent",
-                'value' => $payload['intent'],
-            ],
-            [
-                'op' => 'replace',
                 'path' => "/purchase_units/@reference_id=='$purchaseUnitReferenceId'",
                 'value' => $payload['purchase_units'],
             ]

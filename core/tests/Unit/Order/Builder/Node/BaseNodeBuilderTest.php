@@ -77,18 +77,20 @@ class BaseNodeBuilderTest extends TestCase
                 'paypalOrderId' => null,
                 'expected' => [
                     'intent' => 'CAPTURE',
-                    'custom_id' => '123',
-                    'invoice_id' => '',
-                    'description' => StringUtility::truncate('Checking out with your cart #123 from Test Shop', 127),
-                    'amount' => [
-                        'currency_code' => 'USD',
-                        'value' => NumberUtility::formatAmount(100.50, 'USD'),
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '123',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #123 from Test Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'USD',
+                                'value' => NumberUtility::formatAmount(100.50, 'USD'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT123',
+                            ],
+                        ],
                     ],
-                    'payee' => [
-                        'merchant_id' => 'MERCHANT123',
-                    ],
-                    'vault' => false,
-                    'roundingConfig' => 'round-up',
                 ],
             ],
             'update_order_with_vault' => [
@@ -115,17 +117,20 @@ class BaseNodeBuilderTest extends TestCase
                 'paypalOrderId' => 'PAYPAL123',
                 'expected' => [
                     'intent' => 'AUTHORIZE',
-                    'custom_id' => '456',
-                    'invoice_id' => '',
-                    'description' => StringUtility::truncate('Checking out with your cart #456 from Test Shop', 127),
-                    'amount' => [
-                        'currency_code' => 'EUR',
-                        'value' => NumberUtility::formatAmount(200.75, 'EUR'),
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '456',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #456 from Test Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => NumberUtility::formatAmount(200.75, 'EUR'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT123',
+                            ],
+                        ],
                     ],
-                    'payee' => [
-                        'merchant_id' => 'MERCHANT123',
-                    ],
-                    'vault' => true,
                     'id' => 'PAYPAL123',
                 ],
             ],
@@ -155,18 +160,20 @@ class BaseNodeBuilderTest extends TestCase
                 'paypalOrderId' => null,
                 'expected' => [
                     'intent' => 'CAPTURE',
-                    'custom_id' => '789',
-                    'invoice_id' => '',
-                    'description' => StringUtility::truncate('Checking out with your cart #789 from Another Shop', 127),
-                    'amount' => [
-                        'currency_code' => 'GBP',
-                        'value' => NumberUtility::formatAmount(150.25, 'GBP'),
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '789',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #789 from Another Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'GBP',
+                                'value' => NumberUtility::formatAmount(150.25, 'GBP'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT456',
+                            ],
+                        ],
                     ],
-                    'payee' => [
-                        'merchant_id' => 'MERCHANT456',
-                    ],
-                    'vault' => true,
-                    'roundingConfig' => 'round-down',
                 ],
             ],
         ];

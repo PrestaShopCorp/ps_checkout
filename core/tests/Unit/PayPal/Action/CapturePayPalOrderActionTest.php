@@ -80,18 +80,6 @@ class CapturePayPalOrderActionTest extends TestCase
         // Create initial PayPalOrderResponse
         $initialResponse = PayPalOrderResponseFactory::create();
 
-        // Setup repository expectations
-        $this->payPalOrderRepository->expects($this->once())
-            ->method('getOneBy')
-            ->with(['id' => 'TEST-ORDER-123'])
-            ->willReturn($payPalOrder);
-
-        // Setup configuration expectation
-        $this->configuration->expects($this->once())
-            ->method('get')
-            ->with(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
-            ->willReturn('TEST_MERCHANT_ID');
-
         // Setup HTTP client response
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));

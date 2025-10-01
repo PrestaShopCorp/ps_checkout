@@ -114,7 +114,7 @@ class PayPalOrderProviderTest extends TestCase
 
         $this->orderHttpClient->expects($this->once())
             ->method('fetchOrder')
-            ->with(['orderId' => $orderId])
+            ->with($orderId)
             ->willReturn($response);
 
         $this->orderPayPalCache->expects($this->once())
@@ -164,11 +164,7 @@ class PayPalOrderProviderTest extends TestCase
 
         $this->orderHttpClient->expects($this->once())
             ->method('fetchOrder')
-            ->with([
-                'orderId' => $orderId,
-                'vault' => true,
-                'payee' => ['merchant_id' => $merchantId],
-            ])
+            ->with($orderId)
             ->willReturn($response);
 
         $result = $this->provider->getById($orderId);

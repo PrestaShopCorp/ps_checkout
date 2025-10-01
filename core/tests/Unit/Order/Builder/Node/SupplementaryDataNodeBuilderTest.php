@@ -100,17 +100,21 @@ class SupplementaryDataNodeBuilderTest extends TestCase
     private function getSamplePayload(): array
     {
         return [
-            'amount' => [
-                'breakdown' => [
-                    'tax_total' => 10.00,
-                    'shipping' => 5.00,
-                    'discount' => 2.00,
+            'purchase_units' => [
+                [
+                    'amount' => [
+                        'breakdown' => [
+                            'tax_total' => 10.00,
+                            'shipping' => 5.00,
+                            'discount' => 2.00,
+                        ],
+                        'currency_code' => 'USD',
+                        'value' => 100.00,
+                    ],
+                    'items' => [
+                        ['item_id' => 1, 'name' => 'Product 1', 'quantity' => 2, 'price' => 50.00],
+                    ],
                 ],
-                'currency_code' => 'USD',
-                'value' => 100.00,
-            ],
-            'items' => [
-                ['item_id' => 1, 'name' => 'Product 1', 'quantity' => 2, 'price' => 50.00],
             ],
         ];
     }
