@@ -187,6 +187,11 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($isFullPayload) {
             $optionalPayload[] = $this->buildPaymentSource();
+            if (empty($optionalPayload['payment_source'][$this->fundingSource]['experience_context'])) {
+                $optionalPayload[] = $this->applicationContextNodeBuilder
+                    ->setIsExpressCheckout($this->expressCheckout)
+                    ->build();
+            }
         }
 
         return $optionalPayload;
