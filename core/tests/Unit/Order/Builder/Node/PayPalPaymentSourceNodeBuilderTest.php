@@ -22,6 +22,8 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
 class PayPalPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -30,7 +32,14 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
      */
     public function testBuild($vaultId, $customerId, $savePaymentMethod, $expected): void
     {
-        $builder = new PayPalPaymentSourceNodeBuilder();
+        $configuration = $this->createMock(ConfigurationInterface::class);
+        $configuration->expects($this->once())->method('get')->with('PS_SHOP_NAME')->willReturn('Test Shop');
+        $link = $this->createMock(LinkInterface::class);
+        $link->expects($this->exactly(2))->method('getModuleLink')
+            ->willReturnCallback(function ($action) {
+                return 'https://example.com/' . $action;
+            });
+        $builder = new PayPalPaymentSourceNodeBuilder($configuration, $link);
 
         if ($vaultId) {
             $builder->setPaypalVaultId($vaultId);
@@ -61,6 +70,12 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                                     'permit_multiple_payment_tokens' => false,
                                 ],
                             ],
+                            'experience_context' => [
+                                'brand_name' => 'Test Shop',
+                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'return_url' => 'https://example.com/validate',
+                                'cancel_url' => 'https://example.com/cancel',
+                            ],
                         ],
                     ],
                 ],
@@ -79,12 +94,29 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                                     'permit_multiple_payment_tokens' => false,
                                 ],
                             ],
+                            'experience_context' => [
+                                'brand_name' => 'Test Shop',
+                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'return_url' => 'https://example.com/validate',
+                                'cancel_url' => 'https://example.com/cancel',
+                            ],
                         ],
                     ],
                 ],
             ],
             'no data provided' => [
-                null, null, null, [],
+                null, null, null, [
+                    'payment_source' => [
+                        'paypal' => [
+                            'experience_context' => [
+                                'brand_name' => 'Test Shop',
+                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'return_url' => 'https://example.com/validate',
+                                'cancel_url' => 'https://example.com/cancel',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ];
     }
