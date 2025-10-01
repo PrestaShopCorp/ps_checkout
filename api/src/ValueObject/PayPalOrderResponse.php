@@ -58,11 +58,6 @@ class PayPalOrderResponse
     private $links;
 
     /**
-     * @var string
-     */
-    private $createTime;
-
-    /**
      * Constructor to initialize PayPalOrderResponse properties
      */
     public function __construct(
@@ -72,8 +67,7 @@ class PayPalOrderResponse
         $payer,
         $paymentSource,
         array $purchaseUnits,
-        array $links,
-        string $createTime
+        array $links
     ) {
         $this->id = $id;
         $this->status = $status;
@@ -82,7 +76,6 @@ class PayPalOrderResponse
         $this->paymentSource = $paymentSource;
         $this->purchaseUnits = $purchaseUnits;
         $this->links = $links;
-        $this->createTime = $createTime;
     }
 
     /**
@@ -139,14 +132,6 @@ class PayPalOrderResponse
     public function getLinks(): array
     {
         return $this->links;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateTime(): string
-    {
-        return $this->createTime;
     }
 
     /**

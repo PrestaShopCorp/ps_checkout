@@ -79,23 +79,30 @@ class CreateOrderPaymentAction implements CreateOrderPaymentActionInterface
     {
         $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrderResponse->getId()]);
 
+        /** @var \Order $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
         if (!$order) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
+        /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
-        $orderPaymentId = null;
+        $capture = $payPalOrderResponse->getCapture();
 
         foreach ($orderPayments as $orderPayment) {
-            if ($orderPayment->transaction_id === $payPalOrderResponse->getCapture()['id']) {
-                $orderPaymentId = (int) $orderPayment->id;
-            }
-        }
+            if (
+                sprintf('%01.2f', $orderPayment->amount) === sprintf('%01.2f', $capture['amount']['value'])
+                && empty($orderPayment->transaction_id)
+            ) {
+                $orderPayment->transaction_id = $capture['id'];
+                $orderPayment->save();
 
-        if ($orderPaymentId) {
-            return;
+                return;
+            }
+            if ($orderPayment->transaction_id === $capture['id']) {
+                return;
+            }
         }
 
         $currency = $this->currency->getCurrencyInstance($order->id_currency);
@@ -107,16 +114,16 @@ class CreateOrderPaymentAction implements CreateOrderPaymentActionInterface
             $orderInvoice = null;
         }
 
-        $date = new DateTimeImmutable($payPalOrderResponse->getCreateTime());
+        $date = new DateTimeImmutable($capture['create_time']);
         $date->setTimezone(
             new DateTimeZone($this->configuration->get('PS_TIMEZONE') ?? date_default_timezone_get())
         )
             ->format('Y-m-d H:i:s');
 
         $paymentAdded = $order->addOrderPayment(
-            $payPalOrderResponse->getCapture(),
+            $capture['amount']['value'],
             $this->fundingSourceTranslationProvider->getFundingSourceName($payPalOrderResponse->getFundingSource()),
-            $orderPaymentId,
+            $capture['id'],
             $currency,
             $date,
             $orderInvoice

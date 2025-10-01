@@ -83,6 +83,7 @@ class CartPresenter implements PresenterInterface
             'cart' => [
                 'id' => $this->context->getCart()->id,
                 'shipping_cost' => $this->context->getCart()->getTotalShippingCost(null, true),
+                'is_virtual' => $this->context->getCart()->isVirtualCart(),
                 'totals' => [
                     'total_including_tax' => [
                         'amount' => $this->context->getCart()->getOrderTotal(true),

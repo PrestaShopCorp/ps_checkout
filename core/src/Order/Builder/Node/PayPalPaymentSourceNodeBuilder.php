@@ -70,16 +70,6 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     {
         $data = [];
 
-        if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
-        }
-
-        if ($this->paypalCustomerId) {
-            $data['attributes']['customer'] = [
-                'id' => $this->paypalCustomerId,
-            ];
-        }
-
         if ($this->savePaymentMethod) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
@@ -88,6 +78,11 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
+            if ($this->paypalCustomerId) {
+                $data['attributes']['customer'] = [
+                    'id' => $this->paypalCustomerId,
+                ];
+            }
         }
 
         $data['experience_context'] = [

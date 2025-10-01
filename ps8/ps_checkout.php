@@ -107,6 +107,7 @@ class Ps_Checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
+        $this->version = '8.5.0.4';
         $this->version = '8.5.1.0';
         $this->author = 'PrestaShop';
 
@@ -639,15 +640,15 @@ class Ps_Checkout extends PaymentModule
         $this->context->smarty->assign([
             'isExpressCheckout' => $isExpressCheckout,
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-            'loaderTranslatedText' => $this->trans('Please wait, loading additional payment methods.', [], 'Modules.Checkout.Pscheckout.checkout'),
+            'loaderTranslatedText' => $this->trans('Please wait, loading additional payment methods.', [], 'Modules.Checkout.Pscheckout'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
             'translatedText' => $this->trans(
                 'You have selected your %s PayPal account to proceed to the payment.',
                 [$this->context->cookie->__get('paypalEmail') ?: ''],
-                'Modules.Checkout.Pscheckout.checkout'
+                'Modules.Checkout.Pscheckout'
             ),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/icons/shopping-cart-warning.svg',
-            'warningTranslatedText' => $this->trans('Warning', [], 'Modules.Checkout.Pscheckout.checkout'),
+            'warningTranslatedText' => $this->trans('Warning', [], 'Modules.Checkout.Pscheckout'),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayPaymentTop.tpl');
