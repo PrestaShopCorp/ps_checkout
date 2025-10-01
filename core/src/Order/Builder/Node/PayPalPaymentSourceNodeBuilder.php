@@ -20,6 +20,9 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
+
 class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderInterface
 {
     /**
@@ -36,6 +39,29 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
      * @var bool
      */
     private $savePaymentMethod;
+
+    /**
+     * @var bool
+     */
+    private $isExpressCheckout;
+
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    public function __construct(
+        ConfigurationInterface $configuration,
+        LinkInterface $link
+    ) {
+        $this->configuration = $configuration;
+        $this->link = $link;
+    }
 
     /**
      * {@inheritDoc}
@@ -58,6 +84,14 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 ];
             }
         }
+
+        $data['experience_context'] = [
+            'brand_name' => $this->configuration->get('PS_SHOP_NAME'),
+            'shipping_preference' => $this->isExpressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
+        ];
+
 
         if (empty($data)) {
             return [];
@@ -90,6 +124,14 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     public function setSavePaymentMethod(bool $savePaymentMethod): self
     {
         $this->savePaymentMethod = $savePaymentMethod;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setExpressCheckout(bool $expressCheckout): self
+    {
+        $this->isExpressCheckout = $expressCheckout;
 
         return $this;
     }

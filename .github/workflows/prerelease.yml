@@ -1,13 +1,17 @@
-name: Create module ZIP - PRODUCTION
+name: Generate module ZIP for prerelease - PRODUCTION
 
 on:
   release:
-    types: [published]
+    types: [prereleased]
 
 jobs:
   prepare-zip:
     name: Prepare module ZIP artifacts
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
 
     strategy:
       matrix:
@@ -21,11 +25,56 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ github.token }}
+      
+      - name: Generate release filename
+        id: release-filename
+        run: |
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
+          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
+          echo "filename=ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip" >> $GITHUB_OUTPUT
+          echo "Generated release filename: ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip"
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check if artifact already exists
+        id: check-artifact
+        run: |
+          ARTIFACT_NAME="${{ steps.release-filename.outputs.filename }}"
+          echo "Checking for artifact: $ARTIFACT_NAME"
+          
+          # Check if artifact exists in the specific release
+          if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}/assets" | \
+             jq -r '.[].name' | grep -q "$ARTIFACT_NAME"; then
+            echo "artifact_exists=true" >> $GITHUB_OUTPUT
+            echo "Artifact $ARTIFACT_NAME already exists in release"
+          else
+            echo "artifact_exists=false" >> $GITHUB_OUTPUT
+            echo "Artifact $ARTIFACT_NAME does not exist, proceeding with build"
+          fi
+      
+      - name: Cancel workflow if artifact already exists
+        run: |
+          if [[ "${{ steps.check-artifact.outputs.artifact_exists }}" == "true" ]]; then
+            exit 1
+          fi
+
+      - name: Auth GCP 🔑
+        uses: ./.github/actions/auth-gcp
+        with:
+          provider: ${{ secrets['WI_PROVIDER_V2_PRODUCTION'] }}
+          service-account: ${{ secrets['WI_SA_V2_PRODUCTION'] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write .env file 🌳
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-v5-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets['GCP_PROJECT_PRODUCTION'] }}
 
       - name: Install Composer
         run: |
@@ -68,21 +117,12 @@ jobs:
           cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
           cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
           cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
-          cp -r $MODULE_NAME/.env.dist tmp_package/$FINAL_NAME/.env || true
+          cp -r .env tmp_package/$FINAL_NAME/.env || true
 
           cd tmp_package
           zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
           cd ..
           rm -rf tmp_package
-
-      - name: Generate release filename
-        id: release-filename
-        run: |
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
-          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
-          echo "filename=ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip" >> $GITHUB_OUTPUT
-          echo "Generated release filename: ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip"
 
       - name: Rename zip for release
         run: |

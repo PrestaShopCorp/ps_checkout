@@ -27,48 +27,15 @@ use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PsCheckout\Api\Http\Exception\PayPalException;
 
-interface OrderHttpClientInterface
+interface PaymentHttpClientInterface
 {
     /**
      * @param array $payload
-     * @param string|null $requestId
-     * @param string|null $clientMetadataId
+     * @param string $captureId
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function createOrder(array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface;
-
-    /**
-     * @param string $orderId
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function fetchOrder(string $orderId): ResponseInterface;
-
-    /**
-     * @param array $payload
-     * @param string $orderId
-     * @param string|null $requestId
-     * @param string|null $clientMetadataId
-
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function captureOrder(string $orderId, array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface;
-
-    /**
-     * @param array $payload
-     * @param string $orderId
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function updateOrder(string $orderId, array $payload): ResponseInterface;
+    public function refundOrder(string $captureId, array $payload): ResponseInterface;
 }

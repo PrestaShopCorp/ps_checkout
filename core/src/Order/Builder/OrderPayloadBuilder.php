@@ -161,7 +161,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         if ($isFullPayload) {
             $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
             if (!empty($amountBreakdown)) {
-                $this->payload = array_replace_recursive($this->payload, $amountBreakdown);
+                $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $amountBreakdown);
             }
         }
 
@@ -182,7 +182,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($this->isCard) {
             $optionalPayload[] = $this->buildCardPaymentSource();
-            $optionalPayload[] = $this->buildSupplementaryData();
+            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
         }
 
         if ($isFullPayload) {
@@ -257,6 +257,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
+
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId);

@@ -127,6 +127,18 @@ class Env implements EnvInterface
     /**
      * {@inheritdoc}
      */
+    public function getOrderApiUrl(): string
+    {
+        if (PayPalConfiguration::MODE_SANDBOX === $this->mode) {
+            return $this->getEnv('ORDER_API_URL_SANDBOX');
+        }
+
+        return $this->getEnv('ORDER_API_URL_LIVE');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPaypalClientId(): string
     {
         if (PayPalConfiguration::MODE_SANDBOX === $this->mode) {
@@ -142,5 +154,17 @@ class Env implements EnvInterface
     public function getBnCode(): string
     {
         return $this->getEnv('PAYPAL_BN_CODE');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWebhookApiUrl(): string
+    {
+        if (PayPalConfiguration::MODE_SANDBOX === $this->mode) {
+            return $this->getEnv('WEBHOOK_API_URL_SANDBOX');
+        }
+
+        return $this->getEnv('WEBHOOK_API_URL_LIVE');
     }
 }

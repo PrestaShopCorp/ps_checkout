@@ -108,6 +108,7 @@ class Ps_Checkout extends PaymentModule
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
         $this->version = '8.5.0.4';
+        $this->version = '8.5.1.0';
         $this->author = 'PrestaShop';
 
         parent::__construct();

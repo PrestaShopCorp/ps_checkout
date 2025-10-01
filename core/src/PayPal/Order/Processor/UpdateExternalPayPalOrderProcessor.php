@@ -147,7 +147,22 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
             return;
         }
 
-        $response = $this->httpClient->updateOrder($payload);
+        $purchaseUnitReferenceId = $paypalOrderResponse->getPurchaseUnits()['purchase_units'][0]['reference_id'] ?? 'default';
+
+        $payloadToSend = [
+            [
+                'op' => 'replace',
+                'path' => "/intent",
+                'value' => $payload['intent'],
+            ],
+            [
+                'op' => 'replace',
+                'path' => "/purchase_units/@reference_id=='$purchaseUnitReferenceId'",
+                'value' => $payload['purchase_units'],
+            ]
+        ];
+
+        $response = $this->httpClient->updateOrder($request->getOrderId(), $payloadToSend);
 
         if ($response->getStatusCode() !== 204) {
             throw new PayPalOrderException('Failed to update PayPal Order', PayPalOrderException::PAYPAL_ORDER_UPDATE_FAILED);

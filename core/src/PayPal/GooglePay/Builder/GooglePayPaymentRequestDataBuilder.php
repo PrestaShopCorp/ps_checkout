@@ -63,8 +63,8 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
         $payload = $this->orderPayloadBuilder->build();
 
         return new GooglePayPaymentRequestData(
-            $payload['amount']['currency_code'],
-            $payload['amount']['value'],
+            $payload['purchase_units'][0]['amount']['currency_code'],
+            $payload['purchase_units'][0]['amount']['value'],
             $this->translator->trans('Total GooglePay'),
             $payload['application_context']['brand_name']
         );

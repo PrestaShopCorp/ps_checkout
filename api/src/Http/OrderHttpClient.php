@@ -57,51 +57,53 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function createOrder(array $payload): ResponseInterface
+    public function createOrder(array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', [], json_encode($payload)));
+        $headers = [];
+
+        if ($requestId) {
+            $headers['PayPal-Request-Id'] = $requestId;
+        }
+
+        if ($clientMetadataId) {
+            $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
+        }
+
+        return $this->sendRequest(new Request('POST', 'orders', $headers, json_encode($payload)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function fetchOrder(array $payload): ResponseInterface
+    public function fetchOrder(string $orderId): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', [], json_encode($payload)));
+        return $this->sendRequest(new Request('GET', "orders/$orderId"));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function captureOrder(array $payload): ResponseInterface
+    public function captureOrder(string $orderId, array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', [], json_encode($payload)));
+        $headers = [];
+
+        if ($requestId) {
+            $headers['PayPal-Request-Id'] = $requestId;
+        }
+
+        if ($clientMetadataId) {
+            $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
+        }
+
+        return $this->sendRequest(new Request('POST', "orders/$orderId/capture", $headers, !empty($payload) ? json_encode($payload) : '{}'));
     }
 
     /**
      * @inheritDoc
      */
-    public function updateOrder(array $payload): ResponseInterface
+    public function updateOrder(string $orderId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', [], json_encode($payload)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function refundOrder(array $payload): ResponseInterface
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', [], json_encode($payload)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getShopSignature(array $payload): array
-    {
-        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', [], json_encode($payload)));
-
-        return json_decode($response->getBody(), true);
+        return $this->sendRequest(new Request('PATCH', "orders/$orderId", [], json_encode($payload)));
     }
 
     /**
@@ -117,6 +119,10 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
 
         if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
+        }
+
+        if (isset($body['message']) && is_array($body['message'])) {
+            return implode("\n", $body['message']);
         }
 
         if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {

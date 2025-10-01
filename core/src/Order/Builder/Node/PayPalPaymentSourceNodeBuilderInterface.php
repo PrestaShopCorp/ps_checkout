@@ -47,4 +47,11 @@ interface PayPalPaymentSourceNodeBuilderInterface
      * @return PayPalPaymentSourceNodeBuilder
      */
     public function setSavePaymentMethod(bool $savePaymentMethod): PayPalPaymentSourceNodeBuilder;
+
+    /**
+     * @param bool $expressCheckout
+     *
+     * @return PayPalPaymentSourceNodeBuilder
+     */
+    public function setExpressCheckout(bool $expressCheckout): PayPalPaymentSourceNodeBuilder;
 }

@@ -26,48 +26,61 @@ use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
-use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use Psr\Log\LoggerInterface;
 
-class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class PaymentHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
-    /** @var string */
-    private $moduleVersion;
+    /**
+     * @var EnvInterface
+     */
+    private $paymentEnv;
 
-    /** @var ConfigurationInterface */
-    private $configuration;
-
-    /** @var LinkInterface */
-    private $link;
-
-    /** @var EnvInterface */
-    private $env;
-
-    /** @var PsAccountRepositoryInterface */
+    /**
+     * @var PsAccountRepository
+     */
     private $psAccountRepository;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    /**
+     * @var string
+     */
+    private $moduleVersion;
+
     public function __construct(
-        string $moduleVersion,
+        EnvInterface $paymentEnv,
+        PsAccountRepository $psAccountRepository,
+        LoggerInterface $logger,
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        EnvInterface $env,
-        PsAccountRepositoryInterface $psAccountRepository,
-        LoggerInterface $logger
+        string $moduleVersion
     ) {
-        $this->moduleVersion = $moduleVersion;
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->env = $env;
+        $this->paymentEnv = $paymentEnv;
         $this->psAccountRepository = $psAccountRepository;
         $this->logger = $logger;
+        $this->configuration = $configuration;
+        $this->link = $link;
+        $this->moduleVersion = $moduleVersion;
     }
 
     /**
@@ -76,17 +89,18 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
     public function build(): array
     {
         $configuration = [
-            'base_uri' => $this->env->getShipmentTrackingApiUrl(),
-            'timeout' => self::TIMEOUT,
+            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
+            'verify' => $this->getVerify(),
+            'timeout' => static::TIMEOUT,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),
-                'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),
+                'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
+                'Checkout-Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
                 'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
-                'Checkout-Bn-Code' => $this->env->getBnCode(),
-                'Checkout-Module-Version' => $this->moduleVersion,
-                'Checkout-Prestashop-Version' => _PS_VERSION_,
+                'Checkout-Module-Version' => $this->moduleVersion, // version of the module
+                'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
+                'PayPal-Merchant-Id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
             ],
         ];
 
@@ -116,5 +130,19 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
         }
 
         return $configuration;
+    }
+
+    /**
+     * @see https://docs.guzzlephp.org/en/5.3/clients.html#verify
+     *
+     * @return true|string
+     */
+    protected function getVerify()
+    {
+        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
+            return constant('_PS_CACHE_CA_CERT_FILE_');
+        }
+
+        return true;
     }
 }
