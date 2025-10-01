@@ -1,6 +1,6 @@
 <?php
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+$rootDirectory = __DIR__ . '/../../../../../../';
+$projectDir = __DIR__ . '/../../../../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);

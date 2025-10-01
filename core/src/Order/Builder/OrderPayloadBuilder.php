@@ -165,14 +165,19 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             }
         }
 
-        if (!$this->expressCheckout) {
-            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
+        if (!$this->expressCheckout || $this->isUpdate) {
+            $optionalPayload[] = $this->shippingNodeBuilder->setCart($this->cart)->build();
+        }
 
-            if (!$this->isUpdate) {
-                $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
-            }
-        } else {
-            $this->payPalPaymentSourceNodeBuilder->setExpressCheckout(true);
+        if (!$this->expressCheckout && !$this->isUpdate) {
+            $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
+        }
+
+        if (!$this->isUpdate) {
+            $optionalPayload[] = $this->applicationContextNodeBuilder
+                ->setIsExpressCheckout($this->expressCheckout)
+                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
+                ->build();
         }
 
         if ($this->isCard) {
@@ -257,6 +262,11 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
+
+                $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
+                    ->setPaypalCustomerId($this->paypalCustomerId)
+                    ->setPaypalVaultId($this->paypalVaultId);
+
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
 

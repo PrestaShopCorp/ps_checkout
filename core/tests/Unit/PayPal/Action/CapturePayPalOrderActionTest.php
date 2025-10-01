@@ -105,7 +105,7 @@ class CapturePayPalOrderActionTest extends TestCase
 
         // Setup cache expectations
         $this->payPalOrderCache->expects($this->once())
-            ->method('get')
+            ->method('getValue')
             ->willReturn([]);
         
         $this->payPalOrderCache->expects($this->once())
