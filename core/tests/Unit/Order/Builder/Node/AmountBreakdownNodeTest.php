@@ -18,6 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+namespace Tests\PsCheckout\Core\Order\Builder\Node;
+
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode;
 use PsCheckout\Utility\Common\StringUtility;

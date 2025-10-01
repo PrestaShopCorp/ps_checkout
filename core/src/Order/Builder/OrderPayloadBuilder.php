@@ -166,7 +166,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         if (!$this->expressCheckout || $this->isUpdate) {
-            $optionalPayload[] = $this->shippingNodeBuilder->setCart($this->cart)->build();
+            $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
         }
 
         if (!$this->expressCheckout && !$this->isUpdate) {
