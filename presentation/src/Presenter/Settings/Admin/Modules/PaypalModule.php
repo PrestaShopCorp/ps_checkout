@@ -22,6 +22,7 @@ namespace PsCheckout\Presentation\Presenter\Settings\Admin\Modules;
 
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
 /**

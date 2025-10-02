@@ -261,35 +261,22 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        if ('index' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER)) {
-            return true;
-        }
+        $payLaterMessagingCustomization = $this->configuration->get(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CONFIG);
 
-        if ('category' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER)) {
-            return true;
-        }
+        $payLaterMessagingCustomization = json_decode($payLaterMessagingCustomization, true);
 
-        if (
-            in_array($pageName, ['cart', 'order']) &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
-            )
-        ) {
-            return true;
+        switch ($pageName) {
+            case 'cart':
+            case 'category':
+            case 'product':
+                return $payLaterMessagingCustomization[$pageName]['status'] === 'enabled';
+            case 'order':
+                return $payLaterMessagingCustomization['checkout']['status'] === 'enabled';
+            case 'index':
+                return $payLaterMessagingCustomization['homepage']['status'] === 'enabled';
+            default:
+                return false;
         }
-
-        if (
-            'product' === $pageName &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     private function shouldIncludeGooglePayComponent(): bool
@@ -407,6 +394,7 @@ class PayPalSdkConfiguration
      */
     private function getCountryIsoCode(): string
     {
+        return 'FR';
         $code = '';
 
         if (\Validate::isLoadedObject($this->context->getCountry())) {
