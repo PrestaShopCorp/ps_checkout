@@ -82,7 +82,6 @@ function upgrade_module_9_5_1_1(Ps_checkout $module)
         } else {
             Shop::setContext($savedShopContext);
         }
-
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
