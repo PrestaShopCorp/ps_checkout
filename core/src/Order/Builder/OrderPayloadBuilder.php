@@ -173,23 +173,18 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
         }
 
-        if (!$this->isUpdate) {
-            $optionalPayload[] = $this->applicationContextNodeBuilder
-                ->setIsExpressCheckout($this->expressCheckout)
-                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
-                ->build();
-        }
-
-        if ($this->isCard) {
+        if ($this->isCard && !$this->isUpdate) {
             $optionalPayload[] = $this->buildCardPaymentSource();
             $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
         }
 
-        if ($isFullPayload) {
-            $optionalPayload[] = $this->buildPaymentSource();
-            if (empty($optionalPayload['payment_source'][$this->fundingSource]['experience_context'])) {
+        if (!$this->isUpdate) {
+            $paymentSource = $this->buildPaymentSource();
+            $optionalPayload[] = $paymentSource;
+            if (empty($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
                 $optionalPayload[] = $this->applicationContextNodeBuilder
                     ->setIsExpressCheckout($this->expressCheckout)
+                    ->setIsVirtualCart($this->cart['cart']['is_virtual'])
                     ->build();
             }
         }
@@ -265,7 +260,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
-                    ->setPaypalVaultId($this->paypalVaultId);
+                    ->setPaypalVaultId($this->paypalVaultId)
+                    ->setIsVirtualCart($this->cart['cart']['is_virtual']);
 
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
