@@ -611,56 +611,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     }
 
     /**
-     * AJAX: Toggle pay later message on order page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later message on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on home page
-     */
-    public function ajaxProcessTogglePayLaterHomePageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on cart page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
      * AJAX: Toggle pay later button on cart page
      */
     public function ajaxProcessTogglePayLaterCartPageButton()
