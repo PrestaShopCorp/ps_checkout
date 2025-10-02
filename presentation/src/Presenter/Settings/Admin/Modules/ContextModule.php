@@ -56,6 +56,7 @@ class ContextModule implements PresenterInterface
      * @var ConfigurationInterface
      */
     private $configuration;
+
     /**
      * @var EnvInterface
      */
