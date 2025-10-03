@@ -100,6 +100,7 @@ class PaymentHttpClientConfigurationBuilder implements HttpClientConfigurationBu
                 'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
                 'Checkout-Module-Version' => $this->moduleVersion, // version of the module
                 'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
+                'Checkout-Request-Id' => $this->generate_uuid(),
                 'PayPal-Merchant-Id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
             ],
         ];
@@ -144,5 +145,13 @@ class PaymentHttpClientConfigurationBuilder implements HttpClientConfigurationBu
         }
 
         return true;
+    }
+
+    protected function generate_uuid()
+    {
+        $b = random_bytes(16);
+        $b[6] = chr(ord($b[6]) & 0x0f | 0x40);
+        $b[8] = chr(ord($b[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
     }
 }
