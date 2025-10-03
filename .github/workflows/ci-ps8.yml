@@ -1,0 +1,40 @@
+name: CI for PS8 build
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  lint:
+    name: PHP CS fixer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Prepare workflow
+        run: |
+          cp -r .env.dist .env || true
+
+      - name: Build docker image for ps8
+        run: make build-ci module_version=ps8
+
+      - name: Run PHP CS Fixer for ps8
+        run: make php-cs-fixer-ci module_version=ps8

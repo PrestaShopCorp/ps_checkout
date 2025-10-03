@@ -137,7 +137,7 @@ class OrderAuthorizationValidatorTest extends TestCase
         $cart = $this->getMockBuilder(\Cart::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProducts', 'isAllProductsInStock', 'checkAllProductsAreStillAvailableInThisState',
-                         'checkAllProductsHaveMinimalQuantities', 'isVirtualCart', 'getDeliveryOptionList', 'getOrderTotal'])
+                         'checkAllProductsHaveMinimalQuantities', 'isVirtualCart', 'getDeliveryOptionList', 'getOrderTotal', ])
             ->getMock();
 
         $cart->id = 1;

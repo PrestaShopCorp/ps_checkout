@@ -14,11 +14,11 @@ class ValidateOrderDataFactory
             'orderStateId' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED,
             'paidAmount' => 29.00,
             'extraVars' => [
-                'transaction_id' => 'TEST-CAPTURE-123'
+                'transaction_id' => 'TEST-CAPTURE-123',
             ],
             'currencyId' => 1,
             'secureKey' => 'test-secure-key',
-            'fundingSource' => 'paypal'
+            'fundingSource' => 'paypal',
         ];
 
         $data = array_merge($defaultData, $data);

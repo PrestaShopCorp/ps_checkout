@@ -29,15 +29,15 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
     {
         // Create and save initial PayPalOrder with APPROVED status
         $payPalOrder = PayPalOrderFactory::create([
-            'status' => PayPalOrderStatus::APPROVED // Change from PENDING to APPROVED
+            'status' => PayPalOrderStatus::APPROVED, // Change from PENDING to APPROVED
         ]);
-        
+
         $saved = $this->payPalOrderRepository->save($payPalOrder);
         $this->assertTrue($saved, 'Failed to save PayPalOrder');
 
         // Create response with matching ID
         $payPalOrderResponse = PayPalOrderResponseFactory::create([
-            'id' => $payPalOrder->getId()
+            'id' => $payPalOrder->getId(),
         ]);
 
         // Execute handler
@@ -56,7 +56,7 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
         $this->expectExceptionCode(PsCheckoutException::ORDER_NOT_FOUND);
 
         $payPalOrderResponse = PayPalOrderResponseFactory::create([
-            'id' => 'NON-EXISTENT-ORDER'
+            'id' => 'NON-EXISTENT-ORDER',
         ]);
 
         $this->orderCompletedEventHandler->handle($payPalOrderResponse);
@@ -66,15 +66,15 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
     {
         // Create order with COMPLETED status
         $payPalOrder = PayPalOrderFactory::create([
-            'status' => PayPalOrderStatus::COMPLETED
+            'status' => PayPalOrderStatus::COMPLETED,
         ]);
         $this->payPalOrderRepository->save($payPalOrder);
 
         // Try to complete it again with matching ID
         $payPalOrderResponse = PayPalOrderResponseFactory::create([
-            'id' => $payPalOrder->getId()
+            'id' => $payPalOrder->getId(),
         ]);
-        
+
         // Should return early without throwing exception
         $this->orderCompletedEventHandler->handle($payPalOrderResponse);
 
@@ -87,7 +87,7 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
     {
         // Create initial order with APPROVED status
         $payPalOrder = PayPalOrderFactory::create([
-            'status' => PayPalOrderStatus::APPROVED // Change from PENDING to APPROVED
+            'status' => PayPalOrderStatus::APPROVED, // Change from PENDING to APPROVED
         ]);
         $this->payPalOrderRepository->save($payPalOrder);
 
@@ -97,9 +97,9 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
             'payment_source' => [
                 'paypal' => [
                     'email_address' => 'different@example.com',
-                    'account_id' => 'DIFFERENT-123'
-                ]
-            ]
+                    'account_id' => 'DIFFERENT-123',
+                ],
+            ],
         ]);
 
         $this->orderCompletedEventHandler->handle($payPalOrderResponse);
@@ -115,13 +115,13 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
         // Create initial order with APPROVED status
         $payPalOrder = PayPalOrderFactory::create([
             'status' => PayPalOrderStatus::APPROVED, // Change from PENDING to APPROVED
-            'funding_source' => 'card'
+            'funding_source' => 'card',
         ]);
         $this->payPalOrderRepository->save($payPalOrder);
 
         // Create response with paypal funding source and matching ID
         $payPalOrderResponse = PayPalOrderResponseFactory::create([
-            'id' => $payPalOrder->getId()
+            'id' => $payPalOrder->getId(),
         ]);
 
         $this->orderCompletedEventHandler->handle($payPalOrderResponse);

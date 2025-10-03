@@ -14,12 +14,21 @@ build:
 	MODULE_VERSION=$(module_version) docker compose build --no-cache
 	# make build module_version=ps8
 
+build-ci:
+	composer install
+	cd $${MODULE_VERSION} && composer install
+	MODULE_VERSION=$(module_version) SSL_ENABLED=$(ssl_enabled) docker compose up -d --build
+	# make build module_version=ps8
+
 down:
 	docker compose down --remove-orphans
 
 php-cs-fixer:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/php-cs-fixer fix"
 	# make php-cs-fixer module_version=ps8
+
+php-cs-fixer-ci:
+	docker exec -i ${MODULE_VERSION}-ps-prestashop-${PS_VERSION_TAG} /bin/bash -c 'cd modules/ps_checkout && php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose; exit \$\$?'
 
 autoindex:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout/vendor"

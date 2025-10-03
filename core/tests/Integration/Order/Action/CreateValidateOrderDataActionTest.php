@@ -42,7 +42,6 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
         $cart->total = $data['cart_total'];
         $cart->secure_key = 'test-secure-key';
 
-
         // Set cart in context
         $this->context->setCurrentCart($cart);
 
@@ -84,14 +83,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'partially paid order should be set to partially paid state' => [
                 [
@@ -109,14 +108,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '15.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '15.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'overpaid order should be set to completed state' => [
                 [
@@ -134,14 +133,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '35.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '35.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'pending order should be set to pending state' => [
                 [
@@ -158,14 +157,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'PENDING',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'order with different currency should use correct currency ID' => [
                 [
@@ -183,15 +182,15 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'USD', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                            'amount' => ['currency_code' => 'USD', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

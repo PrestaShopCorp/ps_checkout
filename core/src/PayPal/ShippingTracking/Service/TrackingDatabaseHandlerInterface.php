@@ -20,8 +20,8 @@
 
 namespace PsCheckout\Core\PayPal\ShippingTracking\Service;
 
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingRecord;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
+use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingRecord;
 
 interface TrackingDatabaseHandlerInterface
 {

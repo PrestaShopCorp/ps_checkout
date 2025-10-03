@@ -84,7 +84,6 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
             ],
         ];
 
-
         if (!$this->cart['cart']['is_virtual']) {
             $node['supplementary_data']['card']['level_3']['shipping_address'] = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
             $node['supplementary_data']['card']['level_3']['shipping_amount'] = $this->payload['purchase_units'][0]['amount']['breakdown']['shipping'];

@@ -19,7 +19,7 @@ class PayPalOrderFactory
             'is_card_fields' => false,
             'is_express_checkout' => false,
             'customer_intent' => [],
-            'payment_token_id' => null
+            'payment_token_id' => null,
         ];
 
         $data = array_merge($defaultData, $data);

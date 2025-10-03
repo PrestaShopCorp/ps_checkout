@@ -20,7 +20,7 @@ class PayPalOrderResponseFactory
                     'account_status' => 'VERIFIED',
                     'name' => [
                         'given_name' => 'John',
-                        'surname' => 'Doe'
+                        'surname' => 'Doe',
                     ],
                     'business_name' => 'Test Store',
                     'address' => [
@@ -28,16 +28,16 @@ class PayPalOrderResponseFactory
                         'address_line_2' => 'Floor 1',
                         'admin_area_2' => 'Paris',
                         'postal_code' => '75002',
-                        'country_code' => 'FR'
+                        'country_code' => 'FR',
                     ],
                     'attributes' => [
                         'vault' => [
                             'id' => 'TEST-VAULT-123',
                             'customer' => ['id' => 'TEST-CUSTOMER-123'],
-                            'status' => 'ACTIVE'
-                        ]
-                    ]
-                ]
+                            'status' => 'ACTIVE',
+                        ],
+                    ],
+                ],
             ],
             'purchase_units' => [
                 [
@@ -52,12 +52,12 @@ class PayPalOrderResponseFactory
                             'tax_total' => ['currency_code' => 'EUR', 'value' => '0.00'],
                             'discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
                             'insurance' => ['currency_code' => 'EUR', 'value' => '0.00'],
-                            'shipping_discount' => ['currency_code' => 'EUR', 'value' => '0.00']
-                        ]
+                            'shipping_discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                        ],
                     ],
                     'payee' => [
                         'merchant_id' => 'TEST_MERCHANT_ID',
-                        'display_data' => ['brand_name' => 'Test Store']
+                        'display_data' => ['brand_name' => 'Test Store'],
                     ],
                     'payment_instruction' => ['disbursement_mode' => 'INSTANT'],
                     'description' => 'Test Order Description',
@@ -71,8 +71,8 @@ class PayPalOrderResponseFactory
                             'quantity' => 1,
                             'description' => 'Test Description',
                             'sku' => 'TEST_SKU',
-                            'category' => 'PHYSICAL_GOODS'
-                        ]
+                            'category' => 'PHYSICAL_GOODS',
+                        ],
                     ],
                     'shipping' => [
                         'name' => '***',
@@ -81,8 +81,8 @@ class PayPalOrderResponseFactory
                             'address_line_2' => '***',
                             'admin_area_2' => 'Paris',
                             'postal_code' => '75002',
-                            'country_code' => 'FR'
-                        ]
+                            'country_code' => 'FR',
+                        ],
                     ],
                     'soft_descriptor' => 'TEST STORE',
                     'payments' => [
@@ -97,13 +97,13 @@ class PayPalOrderResponseFactory
                                     'status' => 'ELIGIBLE',
                                     'dispute_categories' => [
                                         'ITEM_NOT_RECEIVED',
-                                        'UNAUTHORIZED_TRANSACTION'
-                                    ]
+                                        'UNAUTHORIZED_TRANSACTION',
+                                    ],
                                 ],
                                 'seller_receivable_breakdown' => [
                                     'gross_amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
                                     'paypal_fee' => ['currency_code' => 'EUR', 'value' => '1.38'],
-                                    'net_amount' => ['currency_code' => 'EUR', 'value' => '27.62']
+                                    'net_amount' => ['currency_code' => 'EUR', 'value' => '27.62'],
                                 ],
                                 'custom_id' => 'test-uuid-123',
                                 'create_time' => '2025-01-01T10:00:00Z',
@@ -112,42 +112,42 @@ class PayPalOrderResponseFactory
                                     [
                                         'href' => 'https://api.test.paypal.com/v2/payments/captures/TEST-CAPTURE-123',
                                         'rel' => 'self',
-                                        'method' => 'GET'
+                                        'method' => 'GET',
                                     ],
                                     [
                                         'href' => 'https://api.test.paypal.com/v2/payments/captures/TEST-CAPTURE-123/refund',
                                         'rel' => 'refund',
-                                        'method' => 'POST'
+                                        'method' => 'POST',
                                     ],
                                     [
                                         'href' => 'https://api.test.paypal.com/v2/checkout/orders/TEST-ORDER-123',
                                         'rel' => 'up',
-                                        'method' => 'GET'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'method' => 'GET',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'links' => [
                 [
                     'href' => 'https://api.test.paypal.com/v2/checkout/orders/TEST-ORDER-123',
                     'rel' => 'self',
-                    'method' => 'GET'
+                    'method' => 'GET',
                 ],
                 [
                     'href' => 'https://api.test.paypal.com/v2/checkout/orders/TEST-ORDER-123',
                     'rel' => 'update',
-                    'method' => 'PATCH'
+                    'method' => 'PATCH',
                 ],
                 [
                     'href' => 'https://api.test.paypal.com/v2/checkout/orders/TEST-ORDER-123/capture',
                     'rel' => 'capture',
-                    'method' => 'POST'
-                ]
+                    'method' => 'POST',
+                ],
             ],
-            'create_time' => '2025-01-01T10:00:00Z'
+            'create_time' => '2025-01-01T10:00:00Z',
         ];
 
         $data = array_merge($defaultData, $data);

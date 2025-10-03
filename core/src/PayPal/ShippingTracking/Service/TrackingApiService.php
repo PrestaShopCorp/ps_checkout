@@ -20,11 +20,11 @@
 
 namespace PsCheckout\Core\PayPal\ShippingTracking\Service;
 
+use Http\Client\Exception\HttpException;
 use PsCheckout\Api\Http\OrderShipmentTrackingHttpClientInterface;
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingRecord;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\PayPalTrackingStatus;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingApiRequest;
-use Http\Client\Exception\HttpException;
+use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingRecord;
 use Psr\Log\LoggerInterface;
 
 class TrackingApiService implements TrackingApiServiceInterface
@@ -54,7 +54,7 @@ class TrackingApiService implements TrackingApiServiceInterface
     {
         try {
             $existingTracking = $request->getExistingTracking();
-            
+
             if ($existingTracking) {
                 // Check if we have a tracker_id before attempting UPDATE
                 if ($existingTracking->getTrackerId()) {
@@ -71,7 +71,7 @@ class TrackingApiService implements TrackingApiServiceInterface
             if ($request->shouldThrowOnError()) {
                 throw $e;
             }
-            
+
             $existingTracking = $request->getExistingTracking();
 
             return new TrackingApiResult(
@@ -87,21 +87,23 @@ class TrackingApiService implements TrackingApiServiceInterface
     /**
      * @param TrackingRecord $existingTracking
      * @param TrackingApiRequest $request
+     *
      * @return TrackingApiResult
+     *
      * @throws \Exception
      */
     private function updateExistingTracking(TrackingRecord $existingTracking, TrackingApiRequest $request): TrackingApiResult
     {
         $payload = $request->getPayload();
-        
+
         // Get status from payload, fallback to 'SHIPPED' if not provided
         $status = $this->getValidatedStatus($payload['status'] ?? null);
-        
+
         $updatePayload = [
             'order_id' => $request->getPayPalOrderId(),
             'status' => $status,
             'items' => $payload['items'] ?? [],
-            'notify_payer' => false
+            'notify_payer' => false,
         ];
 
         $apiResponse = $this->orderShipmentTrackingClient->updateTracking(
@@ -125,11 +127,11 @@ class TrackingApiService implements TrackingApiServiceInterface
         } else {
             $this->logger->error('UPDATE API call returned unexpected status code for order ' . $request->getOrderId());
             $apiResponseData['error'] = 'Unexpected status code: ' . $apiResponse->getStatusCode();
-            
+
             if ($request->shouldThrowOnError()) {
                 throw new \Exception('Unexpected status code: ' . $apiResponse->getStatusCode());
             }
-            
+
             return new TrackingApiResult(
                 true,
                 'api_error',
@@ -142,7 +144,9 @@ class TrackingApiService implements TrackingApiServiceInterface
 
     /**
      * @param TrackingApiRequest $request
+     *
      * @return TrackingApiResult
+     *
      * @throws \Exception
      */
     private function addNewTracking(TrackingApiRequest $request): TrackingApiResult
@@ -150,7 +154,7 @@ class TrackingApiService implements TrackingApiServiceInterface
         try {
             $apiResponse = $this->orderShipmentTrackingClient->addTracking($request->getPayload());
             $apiResponseData = json_decode((string) $apiResponse->getBody(), true) ?: [];
-            
+
             // Extract tracker ID from the correct location in response
             $trackerId = $this->extractTrackerIdFromResponse($apiResponseData);
 
@@ -167,11 +171,11 @@ class TrackingApiService implements TrackingApiServiceInterface
             } else {
                 $this->logger->error('ADD API call returned success but no tracker_id for order ' . $request->getOrderId());
                 $apiResponseData['error'] = 'Missing tracker_id in API response';
-                
+
                 if ($request->shouldThrowOnError()) {
                     throw new \Exception('Missing tracker_id in API response');
                 }
-                
+
                 return new TrackingApiResult(
                     false,
                     'api_error',
@@ -183,11 +187,11 @@ class TrackingApiService implements TrackingApiServiceInterface
         } catch (HttpException $e) {
             // Re-throw other HTTP exceptions or if no fallback data available
             $this->logger->error('ADD API call failed for order ' . $request->getOrderId() . ': ' . $e->getMessage());
-            
+
             if ($request->shouldThrowOnError()) {
                 throw $e;
             }
-            
+
             return new TrackingApiResult(
                 false,
                 'api_error',
@@ -202,6 +206,7 @@ class TrackingApiService implements TrackingApiServiceInterface
      * Validate and get the tracking status with fallback
      *
      * @param string|null $status
+     *
      * @return string
      */
     private function getValidatedStatus($status): string
@@ -209,7 +214,7 @@ class TrackingApiService implements TrackingApiServiceInterface
         try {
             // Try to create PayPalTrackingStatus with validation
             $trackingStatus = PayPalTrackingStatus::createWithFallback($status);
-            
+
             // Log if we're using fallback
             if (empty($status) || !PayPalTrackingStatus::isValid($status)) {
                 $this->logger->info(sprintf(
@@ -218,7 +223,7 @@ class TrackingApiService implements TrackingApiServiceInterface
                     $trackingStatus->getValue()
                 ));
             }
-            
+
             return $trackingStatus->getValue();
         } catch (\Exception $e) {
             // Fallback to default if any exception occurs
@@ -227,7 +232,7 @@ class TrackingApiService implements TrackingApiServiceInterface
                 $e->getMessage(),
                 PayPalTrackingStatus::getDefaultStatus()
             ));
-            
+
             return PayPalTrackingStatus::getDefaultStatus();
         }
     }
@@ -237,6 +242,7 @@ class TrackingApiService implements TrackingApiServiceInterface
      * Handles both direct tracker_id and nested purchase_units structure
      *
      * @param array $apiResponseData
+     *
      * @return string|null
      */
     private function extractTrackerIdFromResponse(array $apiResponseData)
@@ -253,7 +259,7 @@ class TrackingApiService implements TrackingApiServiceInterface
 
         // Log the response structure for debugging
         $this->logger->warning('Could not extract tracker_id from API response structure: ' . json_encode($apiResponseData));
-        
+
         return null;
     }
 }

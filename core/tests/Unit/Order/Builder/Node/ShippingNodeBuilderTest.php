@@ -159,7 +159,7 @@ class ShippingNodeBuilderTest extends TestCase
                     ],
                     'cart' => [
                         'is_virtual' => false,
-                    ]
+                    ],
                 ],
                 'expectedResult' => [
                     'shipping' => [

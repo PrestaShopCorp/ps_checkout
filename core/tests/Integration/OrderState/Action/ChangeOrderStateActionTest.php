@@ -3,13 +3,11 @@
 namespace PsCheckout\Core\Tests\Integration\OrderState\Action;
 
 use OrderState;
-use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\Action\ChangeOrderStateAction;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
-use PsCheckout\Core\Tests\Integration\Factory\CartFactory;
 use PsCheckout\Core\Tests\Integration\Factory\OrderFactory;
 use PsCheckout\Infrastructure\Repository\OrderStateRepository;
 
@@ -38,7 +36,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 
@@ -59,7 +57,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 
@@ -85,7 +83,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 

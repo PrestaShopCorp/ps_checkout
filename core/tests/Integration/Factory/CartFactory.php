@@ -3,7 +3,6 @@
 namespace PsCheckout\Core\Tests\Integration\Factory;
 
 use Cart;
-use Context;
 
 class CartFactory
 {
