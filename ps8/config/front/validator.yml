@@ -6,6 +6,7 @@ services:
     class: PsCheckout\Infrastructure\Validator\FrontControllerValidator
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
 
   PsCheckout\Core\Order\Validator\OrderAuthorizationValidator:
     class: PsCheckout\Core\Order\Validator\OrderAuthorizationValidator

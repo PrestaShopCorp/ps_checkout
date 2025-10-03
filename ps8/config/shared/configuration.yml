@@ -6,3 +6,8 @@ services:
     class: PsCheckout\Core\Settings\Configuration\PayPalConfiguration
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration:
+    class: PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'

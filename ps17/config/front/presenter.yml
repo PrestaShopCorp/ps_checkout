@@ -39,6 +39,7 @@ services:
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
       - '@PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
 
   PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule:
     class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule
