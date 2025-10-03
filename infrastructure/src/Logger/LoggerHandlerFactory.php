@@ -59,11 +59,17 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
      */
     public function build(): HandlerInterface
     {
-        return new RotatingFileHandler(
+        $handler = new RotatingFileHandler(
             $this->getPath() . $this->getFileName(),
             $this->getMaxFiles(),
             $this->getLoggerLevel()
         );
+        $formatter = $handler->getFormatter();
+        if (method_exists($formatter, 'setMaxDepth')) {
+            $formatter->setMaxDepth(15);
+        }
+
+        return $handler;
     }
 
     /**

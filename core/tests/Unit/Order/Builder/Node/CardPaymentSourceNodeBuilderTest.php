@@ -18,6 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+namespace Tests\PsCheckout\Core\Order\Builder\Node;
+
+use Address;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
