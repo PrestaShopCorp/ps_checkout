@@ -60,6 +60,7 @@ class ConfigurationModule implements PresenterInterface
      * @var PayPalSdkConfiguration
      */
     private $payPalSdkConfiguration;
+
     /**
      * @var PayPalPayLaterConfiguration
      */
