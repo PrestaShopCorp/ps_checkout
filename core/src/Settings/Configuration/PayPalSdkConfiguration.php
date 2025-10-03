@@ -83,6 +83,11 @@ class PayPalSdkConfiguration
     private $logger;
 
     /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
@@ -91,6 +96,7 @@ class PayPalSdkConfiguration
      * @param PayPalCustomerRepositoryInterface $payPalCustomerRepository
      * @param OAuthServiceInterface $oAuthService
      * @param LoggerInterface $logger
+     * @param PayPalPayLaterConfiguration $payPalPayLaterConfiguration
      */
     public function __construct(
         ContextInterface $context,
@@ -100,7 +106,8 @@ class PayPalSdkConfiguration
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
@@ -110,6 +117,7 @@ class PayPalSdkConfiguration
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -261,9 +269,7 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        $payLaterMessagingCustomization = $this->configuration->get(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CONFIG);
-
-        $payLaterMessagingCustomization = json_decode($payLaterMessagingCustomization, true);
+        $payLaterMessagingCustomization = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
 
         switch ($pageName) {
             case 'cart':

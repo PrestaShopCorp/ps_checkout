@@ -31,11 +31,17 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      * @var ConfigurationInterface
      */
     private $configuration;
+    /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
 
     public function __construct(
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->configuration = $configuration;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -43,7 +49,7 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      */
     public function shouldLoadFrontCss(string $controller): bool
     {
-        $payLaterConfiguration = json_decode($this->configuration->get(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CONFIG), true);
+        $payLaterConfiguration = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
 
         switch ($controller) {
             // Homepage
@@ -73,7 +79,7 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      */
     public function shouldLoadFrontJS(string $controller): bool
     {
-        $payLaterConfiguration = json_decode($this->configuration->get(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CONFIG), true);
+        $payLaterConfiguration = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
 
         switch ($controller) {
             // Homepage
