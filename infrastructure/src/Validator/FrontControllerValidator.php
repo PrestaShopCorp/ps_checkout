@@ -31,6 +31,7 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      * @var ConfigurationInterface
      */
     private $configuration;
+
     /**
      * @var PayPalPayLaterConfiguration
      */
