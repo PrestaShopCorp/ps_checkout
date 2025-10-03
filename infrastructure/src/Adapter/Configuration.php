@@ -70,7 +70,7 @@ class Configuration implements ConfigurationInterface
             return '';
         }
 
-        return json_decode($configuration);
+        return json_decode($configuration, true);
     }
 
     /**

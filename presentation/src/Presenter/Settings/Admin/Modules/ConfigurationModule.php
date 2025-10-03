@@ -91,25 +91,15 @@ class ConfigurationModule implements PresenterInterface
                     'productPage' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE),
                 ],
                 'payLater' => [
-//                    'orderPage' => [
-//                        'message' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE),
-//                        'banner' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER),
-//                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON),
-//                    ],
-//                    'cartPage' => [
-//                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON),
-//                    ],
-//                    'productPage' => [
-//                        'message' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE),
-//                        'banner' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER),
-//                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON),
-//                    ],
-//                    'categoryPage' => [
-//                        'banner' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER),
-//                    ],
-//                    'homePage' => [
-//                        'banner' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER),
-//                    ],
+                    'orderPage' => [
+                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON),
+                    ],
+                    'cartPage' => [
+                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON),
+                    ],
+                    'productPage' => [
+                        'button' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON),
+                    ],
                 ],
                 'logger' => [
                     'levels' => [

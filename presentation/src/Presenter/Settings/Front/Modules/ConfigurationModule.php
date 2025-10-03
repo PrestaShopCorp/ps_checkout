@@ -60,6 +60,10 @@ class ConfigurationModule implements PresenterInterface
      * @var PayPalSdkConfiguration
      */
     private $payPalSdkConfiguration;
+    /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payLaterConfiguration;
 
     /**
      * @param string $moduleName
@@ -74,7 +78,8 @@ class ConfigurationModule implements PresenterInterface
         ConfigurationInterface $configuration,
         PayPalConfiguration $payPalConfiguration,
         FundingSourcePresenterInterface $fundingSourcePresenter,
-        PayPalSdkConfiguration $payPalSdkConfiguration
+        PayPalSdkConfiguration $payPalSdkConfiguration,
+        PayPalPayLaterConfiguration $payLaterConfiguration
     ) {
         $this->moduleName = $moduleName;
         $this->context = $context;
@@ -82,6 +87,7 @@ class ConfigurationModule implements PresenterInterface
         $this->payPalConfiguration = $payPalConfiguration;
         $this->fundingSourcePresenter = $fundingSourcePresenter;
         $this->payPalSdkConfiguration = $payPalSdkConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
     }
 
     public function present(): array
@@ -111,7 +117,7 @@ class ConfigurationModule implements PresenterInterface
             $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->configuration->getDeserializedRaw(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CONFIG) : [
+            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration() : [
                 'product' => ['status' => 'disabled'],
                 'homepage' => ['status' => 'disabled'],
                 'cart' => ['status' => 'disabled'],
