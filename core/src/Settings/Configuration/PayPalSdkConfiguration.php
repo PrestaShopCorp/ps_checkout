@@ -400,7 +400,6 @@ class PayPalSdkConfiguration
      */
     private function getCountryIsoCode(): string
     {
-        return 'FR';
         $code = '';
 
         if (\Validate::isLoadedObject($this->context->getCountry())) {
