@@ -77,7 +77,7 @@ class EnvLoader
         $envVariables = [];
 
         foreach ($lines as $line) {
-            if (strpos(trim($line), '#') === 0) {
+            if (strpos(trim($line), '#') === 0 || strpos($line, '=') === false) {
                 continue;
             }
 

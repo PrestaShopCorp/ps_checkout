@@ -498,3 +498,7 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\System\SystemConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+
+  PrestaShop\Module\PrestashopCheckout\Adapter\ValidateAdapter:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\ValidateAdapter'
+    public: true

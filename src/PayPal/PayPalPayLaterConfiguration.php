@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 
 class PayPalPayLaterConfiguration
 {
@@ -155,7 +156,7 @@ class PayPalPayLaterConfiguration
      */
     public function isOrderPageButtonActive()
     {
-        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON);
     }
 
     /**
@@ -163,7 +164,7 @@ class PayPalPayLaterConfiguration
      */
     public function isCartPageButtonActive()
     {
-        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON);
     }
 
     /**
@@ -171,7 +172,7 @@ class PayPalPayLaterConfiguration
      */
     public function isProductPageButtonActive()
     {
-        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON);
     }
 
     /**

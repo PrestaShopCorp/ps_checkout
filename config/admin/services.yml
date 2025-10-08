@@ -12,3 +12,7 @@ services:
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
     public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder'
+      - '@PrestaShop\Module\PrestashopCheckout\Adapter\ValidateAdapter'
