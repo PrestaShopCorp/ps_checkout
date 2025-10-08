@@ -360,7 +360,11 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->validateBatchConfiguration($configuration);
 
             foreach ($configuration as $configurationItem) {
-                $configurationService->set(pSQL($configurationItem['name']), pSQL($configurationItem['value']));
+                if (is_array($configurationItem['value'])) {
+                    $configurationService->set($configurationItem['name'], json_encode($configurationItem['value']));
+                } else {
+                    $configurationService->set(pSQL($configurationItem['name']), pSQL($configurationItem['value']));
+                }
             }
 
             $this->exitWithResponse([
