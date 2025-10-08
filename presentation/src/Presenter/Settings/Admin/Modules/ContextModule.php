@@ -24,6 +24,7 @@ use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
 /**
@@ -57,6 +58,11 @@ class ContextModule implements PresenterInterface
     private $configuration;
 
     /**
+     * @var EnvInterface
+     */
+    private $env;
+
+    /**
      * @param string $moduleName
      * @param string $moduleVersion
      * @param ContextInterface $context
@@ -68,13 +74,15 @@ class ContextModule implements PresenterInterface
         string $moduleVersion,
         ContextInterface $context,
         LinkInterface $link,
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        EnvInterface $env
     ) {
         $this->moduleName = $moduleName;
         $this->moduleVersion = $moduleVersion;
         $this->context = $context;
         $this->link = $link;
         $this->configuration = $configuration;
+        $this->env = $env;
     }
 
     /**
@@ -109,6 +117,8 @@ class ContextModule implements PresenterInterface
                         'configure' => $this->moduleName,
                     ]
                 ),
+                'clientId' => $this->env->getPaypalClientId(),
+                'bnCode' => $this->env->getBnCode(),
             ],
         ];
     }

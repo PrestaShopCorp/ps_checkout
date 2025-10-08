@@ -83,6 +83,11 @@ class PayPalSdkConfiguration
     private $logger;
 
     /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
@@ -91,6 +96,7 @@ class PayPalSdkConfiguration
      * @param PayPalCustomerRepositoryInterface $payPalCustomerRepository
      * @param OAuthServiceInterface $oAuthService
      * @param LoggerInterface $logger
+     * @param PayPalPayLaterConfiguration $payPalPayLaterConfiguration
      */
     public function __construct(
         ContextInterface $context,
@@ -100,7 +106,8 @@ class PayPalSdkConfiguration
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
@@ -110,6 +117,7 @@ class PayPalSdkConfiguration
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -261,35 +269,20 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        if ('index' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER)) {
-            return true;
-        }
+        $payLaterMessagingCustomization = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
 
-        if ('category' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER)) {
-            return true;
+        switch ($pageName) {
+            case 'cart':
+            case 'category':
+            case 'product':
+                return $payLaterMessagingCustomization[$pageName]['status'] === 'enabled';
+            case 'order':
+                return $payLaterMessagingCustomization['checkout']['status'] === 'enabled';
+            case 'index':
+                return $payLaterMessagingCustomization['homepage']['status'] === 'enabled';
+            default:
+                return false;
         }
-
-        if (
-            in_array($pageName, ['cart', 'order']) &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        if (
-            'product' === $pageName &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     private function shouldIncludeGooglePayComponent(): bool

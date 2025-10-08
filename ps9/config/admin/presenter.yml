@@ -19,6 +19,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Environment\Env'
 
   PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ConfigurationModule:
     class: PsCheckout\Presentation\Presenter\Settings\Admin\Modules\ConfigurationModule

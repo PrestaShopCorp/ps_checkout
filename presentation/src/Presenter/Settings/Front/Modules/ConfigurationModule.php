@@ -62,6 +62,11 @@ class ConfigurationModule implements PresenterInterface
     private $payPalSdkConfiguration;
 
     /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payLaterConfiguration;
+
+    /**
      * @param string $moduleName
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
@@ -74,7 +79,8 @@ class ConfigurationModule implements PresenterInterface
         ConfigurationInterface $configuration,
         PayPalConfiguration $payPalConfiguration,
         FundingSourcePresenterInterface $fundingSourcePresenter,
-        PayPalSdkConfiguration $payPalSdkConfiguration
+        PayPalSdkConfiguration $payPalSdkConfiguration,
+        PayPalPayLaterConfiguration $payLaterConfiguration
     ) {
         $this->moduleName = $moduleName;
         $this->context = $context;
@@ -82,6 +88,7 @@ class ConfigurationModule implements PresenterInterface
         $this->payPalConfiguration = $payPalConfiguration;
         $this->fundingSourcePresenter = $fundingSourcePresenter;
         $this->payPalSdkConfiguration = $payPalSdkConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
     }
 
     public function present(): array
@@ -108,15 +115,16 @@ class ConfigurationModule implements PresenterInterface
             $this->moduleName . 'ExpressCheckoutCartEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'ExpressCheckoutOrderEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'ExpressCheckoutProductEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterOrderPageMessageEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterProductPageMessageEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterOrderPageBannerEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterHomePageBannerEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterCategoryPageBannerEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterProductPageBannerEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration() : [
+                'product' => ['status' => 'disabled'],
+                'homepage' => ['status' => 'disabled'],
+                'cart' => ['status' => 'disabled'],
+                'payment' => ['status' => 'disabled'],
+                'category' => ['status' => 'disabled'],
+            ],
         ];
     }
 }

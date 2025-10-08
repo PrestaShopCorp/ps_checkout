@@ -360,7 +360,11 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->validateBatchConfiguration($configuration);
 
             foreach ($configuration as $configurationItem) {
-                $configurationService->set(pSQL($configurationItem['name']), pSQL($configurationItem['value']));
+                if (is_array($configurationItem['value'])) {
+                    $configurationService->set($configurationItem['name'], json_encode($configurationItem['value']));
+                } else {
+                    $configurationService->set(pSQL($configurationItem['name']), pSQL($configurationItem['value']));
+                }
             }
 
             $this->exitWithResponse([
@@ -606,56 +610,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     public function ajaxProcessToggleECProductPage()
     {
         $this->setConfiguration(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later message on order page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later message on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on home page
-     */
-    public function ajaxProcessTogglePayLaterHomePageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on cart page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER, (bool) Tools::getValue('status'));
 
         $this->ajaxRender(json_encode(true));
     }
