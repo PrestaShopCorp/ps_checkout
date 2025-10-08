@@ -708,45 +708,39 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetLogs()
     {
-        header('Content-type: application/json');
-
         $filename = Tools::getValue('file');
         $offset = (int) Tools::getValue('offset');
         $limit = (int) Tools::getValue('limit');
 
-        if (empty($filename) || false === Validate::isFileName($filename)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    'Filename is invalid.',
-                ],
-            ]));
-        }
-
-        /** @var LoggerDirectory $loggerDirectory */
-        $loggerDirectory = $this->module->getService(LoggerDirectory::class);
         /** @var LoggerFileReader $loggerFileReader */
         $loggerFileReader = $this->module->getService(LoggerFileReader::class);
         $fileData = [];
 
         try {
             $fileData = $loggerFileReader->read(
-                new SplFileObject($loggerDirectory->getPath() . $filename),
+                $filename,
                 $offset,
                 $limit
             );
-        } catch (Exception $exception) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode([
+        } catch (InvalidArgumentException $exception) {
+            $this->exitWithResponse([
                 'status' => false,
+                'httpCode' => 400,
                 'errors' => [
                     $exception->getMessage(),
                 ],
-            ]));
+            ]);
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ]);
         }
 
-        $this->ajaxDie(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'file' => $fileData['filename'],
             'offset' => $fileData['offset'],
@@ -754,7 +748,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'currentOffset' => $fileData['currentOffset'],
             'eof' => (int) $fileData['eof'],
             'lines' => $fileData['lines'],
-        ]));
+        ]);
     }
 
     /**
@@ -1038,12 +1032,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $filename = Tools::getValue('file');
 
-        if (empty($filename) || false === Validate::isFileName($filename)) {
+        try {
+            /** @var LoggerFileReader $loggerFileReader */
+            $loggerFileReader = $this->module->getService(LoggerFileReader::class);
+            $loggerFileReader->validateFilename($filename);
+        } catch (InvalidArgumentException $exception) {
             $this->exitWithResponse([
                 'status' => false,
                 'httpCode' => 400,
                 'errors' => [
-                    'Filename is invalid.',
+                    $exception->getMessage(),
                 ],
             ]);
         }

@@ -48,7 +48,7 @@ class BatchConfigurationValidator
                 throw new Exception('Received invalid configuration key');
             }
 
-            if (array_search($configurationItem['name'], self::BLACKLISTED_CONFIGURATION_KEYS)) {
+            if (in_array($configurationItem['name'], self::BLACKLISTED_CONFIGURATION_KEYS, true)) {
                 throw new Exception('Received blacklisted configuration key');
             }
         }
