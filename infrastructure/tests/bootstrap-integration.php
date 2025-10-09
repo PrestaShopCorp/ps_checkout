@@ -17,8 +17,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+$rootDirectory = __DIR__ . '/../../../../../../';
+$projectDir = __DIR__ . '/../../../../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);

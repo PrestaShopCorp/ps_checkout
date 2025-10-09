@@ -70,6 +70,10 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
      */
     public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
     {
+        if (!$expressCheckoutRequest->getShippingAddress()) {
+            return false;
+        }
+
         // check if country is available for delivery
         $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($expressCheckoutRequest->getShippingCountryCode());
 

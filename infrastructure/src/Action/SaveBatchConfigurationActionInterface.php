@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,23 +19,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Infrastructure\Adapter;
+namespace PsCheckout\Infrastructure\Action;
 
-interface ToolsInterface
+interface SaveBatchConfigurationActionInterface
 {
     /**
-     * @param string $key
+     * Saves multiple configuration settings at once.
      *
-     * @return string
-     */
-    public function getValue(string $key): string;
-
-    /**
-     * @param string $url
+     * @param array $configuration an associative array where keys are configuration names and values are the corresponding settings to be saved
      *
      * @return void
+     *
+     * @throw InvalidArgumentException if configuration is not valid
+     * @throw RuntimeException if configuration could not be saved
      */
-    public function redirect(string $url);
-
-    public function getToken(bool $page): string;
+    public function execute(array $configuration);
 }

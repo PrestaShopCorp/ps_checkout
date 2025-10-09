@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Infrastructure\Action\SaveBatchConfigurationActionInterface:
+    class: PsCheckout\Infrastructure\Action\SaveBatchConfigurationAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'

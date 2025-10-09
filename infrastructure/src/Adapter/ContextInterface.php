@@ -95,4 +95,6 @@ interface ContextInterface
      * @return void
      */
     public function resetContextCartAddresses();
+
+    public function setPayPalEmail(string $email): void;
 }

@@ -25,7 +25,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 interface LoggerFileReaderInterface
 {
     /**
-     * @param \SplFileObject $logFile
+     * @param string $filename
      * @param int $offset
      * @param int $limit
      *
@@ -33,5 +33,7 @@ interface LoggerFileReaderInterface
      *
      * @throws PsCheckoutException
      */
-    public function read(\SplFileObject $logFile, int $offset, int $limit): array;
+    public function read(string $filename, int $offset, int $limit): array;
+
+    public function validateFilename(string $filename): void;
 }
