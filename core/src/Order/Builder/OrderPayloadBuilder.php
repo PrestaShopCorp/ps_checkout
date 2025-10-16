@@ -173,25 +173,28 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
         }
 
-        if (!$this->isUpdate) {
-            $optionalPayload[] = $this->applicationContextNodeBuilder
-                ->setIsExpressCheckout($this->expressCheckout)
-                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
-                ->build();
-        }
-
         if ($this->isCard) {
             $optionalPayload[] = $this->buildCardPaymentSource();
             $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
         }
 
         if ($isFullPayload) {
-            $optionalPayload[] = $this->buildPaymentSource();
-            if (empty($optionalPayload['payment_source'][$this->fundingSource]['experience_context'])) {
-                $optionalPayload[] = $this->applicationContextNodeBuilder
-                    ->setIsExpressCheckout($this->expressCheckout)
-                    ->build();
+            $paymentSource = $this->buildPaymentSource();
+
+            if (!empty($paymentSource)) {
+                $optionalPayload[] = $this->buildPaymentSource();
             }
+        }
+
+        if (
+            !$this->isUpdate
+            && !empty($paymentSource)
+            && empty($paymentSource['payment_source'][$this->fundingSource]['experience_context'])
+        ) {
+            $optionalPayload[] = $this->applicationContextNodeBuilder
+                ->setIsExpressCheckout($this->expressCheckout)
+                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
+                ->build();
         }
 
         return $optionalPayload;
@@ -262,7 +265,6 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
-
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
