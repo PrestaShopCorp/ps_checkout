@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Controller;
 
+use Connection;
 use Exception;
 use ModuleFrontController;
 use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
@@ -29,6 +30,33 @@ use Tools;
 
 class AbstractFrontController extends ModuleFrontController
 {
+    /**
+     * Override checkAccess to block access for bots and invalid token
+     *
+     * @see FrontController::checkAccess()
+     */
+    public function checkAccess()
+    {
+        return !Connection::isBot() && !($this->context->customer->isLogged() && !$this->isTokenValid());
+    }
+
+    /**
+     * Override initCursedPage to return json response with 403 code on POST request
+     *
+     * @see FrontController::initCursedPage()
+     */
+    public function initCursedPage()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 403,
+                'body' => 'Forbidden',
+            ]);
+        }
+
+        parent::initCursedPage();
+    }
+
     /**
      * @var Ps_checkout
      */
@@ -93,7 +121,7 @@ class AbstractFrontController extends ModuleFrontController
      */
     protected function getPageSize()
     {
-        return (int) Tools::getValue('pageSize', 10);
+        return (int)Tools::getValue('pageSize', 10);
     }
 
     /**
@@ -101,6 +129,6 @@ class AbstractFrontController extends ModuleFrontController
      */
     protected function getPageNumber()
     {
-        return (int) Tools::getValue('pageNumber', 1);
+        return (int)Tools::getValue('pageNumber', 1);
     }
 }

@@ -18,12 +18,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
-class ExpressCheckout
+use Validate as PrestaShopValidate;
+
+class ValidateAdapter
 {
-    const PS_CHECKOUT_EC_PRODUCT_PAGE = 'PS_CHECKOUT_EC_PRODUCT_PAGE';
-    const PS_CHECKOUT_EC_ORDER_PAGE = 'PS_CHECKOUT_EC_ORDER_PAGE';
-    const PS_CHECKOUT_EC_CHECKOUT_PAGE = 'PS_CHECKOUT_EC_CHECKOUT_PAGE';
-    const PS_GUEST_CHECKOUT_ENABLED = 'PS_GUEST_CHECKOUT_ENABLED';
+    /**
+     * @param string $filename
+     *
+     * @return bool
+     */
+    public function isFileName($filename)
+    {
+        return PrestaShopValidate::isFileName($filename);
+    }
 }

@@ -116,7 +116,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '8.4.4.0';
+    const VERSION = '8.4.4.1';
 
     const INTEGRATION_DATE = '2024-04-01';
 
@@ -137,7 +137,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '8.4.4.0';
+        $this->version = '8.4.4.1';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -1016,6 +1016,8 @@ class Ps_checkout extends PaymentModule
         }
         // END To be refactored in services
 
+        $token = Tools::getToken(false);
+
         Media::addJsDef([
             $this->name . 'Version' => $version->getSemVersion(),
             $this->name . 'LanguageIsoCode' => $this->context->language->iso_code,
@@ -1038,15 +1040,15 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CardBrands' => $supportedCardBrands,
             $this->name . 'PaymentMethodLogosTitleImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/lock_checkout.svg'),
             $this->name . 'IconsPath' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/icons/'),
-            $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
-            $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
-            $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
-            $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
-            $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
-            $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
-            $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
-            $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', [], true),
-            $this->name . 'ApplePayUrl' => $this->context->link->getModuleLink($this->name, 'applepay', [], true),
+            $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', ['token' => $token], true),
+            $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', ['token' => $token], true),
+            $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', ['token' => $token], true),
+            $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', ['token' => $token], true),
+            $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', ['token' => $token], true),
+            $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', ['token' => $token], true),
+            $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', ['token' => $token], true),
+            $this->name . 'GooglePayUrl' => $this->context->link->getModuleLink($this->name, 'googlepay', ['token' => $token], true),
+            $this->name . 'ApplePayUrl' => $this->context->link->getModuleLink($this->name, 'applepay', ['token' => $token], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),

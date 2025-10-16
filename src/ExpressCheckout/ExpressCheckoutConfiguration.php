@@ -37,17 +37,17 @@ class ExpressCheckoutConfiguration
 
     public function isOrderPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
     }
 
     public function isCheckoutPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
     }
 
     public function isProductPageEnabled()
     {
-        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
+        return $this->configuration->get(ExpressCheckout::PS_GUEST_CHECKOUT_ENABLED) && $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
     }
 
     /**
