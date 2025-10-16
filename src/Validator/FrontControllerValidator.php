@@ -144,4 +144,17 @@ class FrontControllerValidator
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function isExpressCheckoutEnabled()
+    {
+        return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+            || $this->expressCheckoutConfiguration->isProductPageEnabled()
+            || $this->expressCheckoutConfiguration->isOrderPageEnabled()
+            || $this->payLaterConfiguration->isCartPageButtonActive()
+            || $this->payLaterConfiguration->isOrderPageButtonActive()
+            || $this->payLaterConfiguration->isProductPageButtonActive();
+    }
 }
