@@ -4,6 +4,9 @@ services:
 
   PsCheckout\Infrastructure\Logger\LoggerFileReader:
     class: PsCheckout\Infrastructure\Logger\LoggerFileReader
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Validate'
+      - '@PsCheckout\Infrastructure\Logger\LoggerFileFinder'
 
   PsCheckout\Infrastructure\Logger\LoggerFileFinder:
     class: PsCheckout\Infrastructure\Logger\LoggerFileFinder

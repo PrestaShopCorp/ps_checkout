@@ -42,4 +42,6 @@ interface FrontControllerValidatorInterface
      * @return bool
      */
     public function shouldDisplayFundingLogo(string $controller): bool;
+
+    public function isExpressCheckoutEnabled(): bool;
 }
