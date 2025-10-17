@@ -63,6 +63,11 @@ class DispatchWebhookRequest
     private $firebaseId;
 
     /**
+     * @var string
+     */
+    private $eventStream;
+
+    /**
      * DispatchWebhookRequest constructor.
      *
      * @param array $resource
@@ -73,6 +78,7 @@ class DispatchWebhookRequest
      * @param string $shopId
      * @param string $merchantId
      * @param string $firebaseId
+     * @param string $eventStream
      */
     public function __construct(
         array $resource,
@@ -82,7 +88,8 @@ class DispatchWebhookRequest
         $orderId,
         string $shopId,
         string $merchantId,
-        string $firebaseId
+        string $firebaseId,
+        string $eventStream
     ) {
         $this->resource = $resource;
         $this->eventType = $eventType;
@@ -92,6 +99,7 @@ class DispatchWebhookRequest
         $this->shopId = $shopId;
         $this->merchantId = $merchantId;
         $this->firebaseId = $firebaseId;
+        $this->eventStream = $eventStream;
     }
 
     /**
@@ -159,6 +167,14 @@ class DispatchWebhookRequest
     }
 
     /**
+     * @return string
+     */
+    public function getEventStream(): string
+    {
+        return $this->eventStream;
+    }
+
+    /**
      * Creates a new instance of DispatchWebhookRequest from request data.
      *
      * @param array $bodyValues
@@ -174,9 +190,10 @@ class DispatchWebhookRequest
             (string) $bodyValues['category'],
             $bodyValues['summary'] ?? null,
             $bodyValues['orderId'] ?? null,
-            (string) $headerValues['Shop-Id'],
-            (string) $headerValues['Merchant-Id'],
-            (string) $headerValues['Psx-Id']
+            (string) $headerValues['Shop_Id'],
+            (string) $headerValues['Merchant_Id'],
+            (string) $headerValues['Psx_Id'],
+            (string) $bodyValues['eventStream']
         );
     }
 
@@ -196,6 +213,7 @@ class DispatchWebhookRequest
             'shopId' => $this->shopId,
             'merchantId' => $this->merchantId,
             'firebaseId' => $this->firebaseId,
+            'eventStream' => $this->eventStream,
         ], function ($value) {
             return $value !== null;
         });
