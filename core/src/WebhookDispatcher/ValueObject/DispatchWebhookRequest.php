@@ -190,9 +190,9 @@ class DispatchWebhookRequest
             (string) $bodyValues['category'],
             $bodyValues['summary'] ?? null,
             $bodyValues['orderId'] ?? null,
-            (string) $headerValues['Shop_Id'],
-            (string) $headerValues['Merchant_Id'],
-            (string) $headerValues['Psx_Id'],
+          (string) $headerValues['shopId'],
+          (string) $headerValues['merchantId'],
+          (string) $headerValues['firebaseId'],
             (string) $bodyValues['eventStream']
         );
     }
