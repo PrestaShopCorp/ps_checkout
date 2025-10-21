@@ -67,7 +67,7 @@ class Configuration implements ConfigurationInterface
         $configuration = $this->get($key);
 
         if (!$configuration) {
-            return '';
+            return [];
         }
 
         return json_decode($configuration, true);

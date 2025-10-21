@@ -50,15 +50,13 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      */
     public function shouldLoadFrontCss(string $controller): bool
     {
-        $payLaterConfiguration = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
-
         switch ($controller) {
             // Homepage
             case 'index':
-                return $payLaterConfiguration['homepage']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
                 // Category
             case 'category':
-                return $payLaterConfiguration['category']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('category');
                 // Payment step
             case 'orderopc':
             case 'order':
@@ -80,26 +78,24 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      */
     public function shouldLoadFrontJS(string $controller): bool
     {
-        $payLaterConfiguration = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
-
         switch ($controller) {
             // Homepage
             case 'index':
-                return $payLaterConfiguration['homepage']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
                 // Category
             case 'category':
-                return $payLaterConfiguration['category']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('category');
             case 'orderopc':
             case 'order':
                 return true;
             case 'product':
                 return
-                    $payLaterConfiguration['product']['status'] === 'enabled'
+                    $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('product')
                     || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON)
                     || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE)
                     || $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
             case 'cart':
-                return $payLaterConfiguration['cart']['status'] === 'enabled'
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('cart')
                     || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON)
                     || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE)
                     || $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);

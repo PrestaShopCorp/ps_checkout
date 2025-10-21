@@ -269,17 +269,15 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        $payLaterMessagingCustomization = $this->payPalPayLaterConfiguration->getPayLaterMessagingConfiguration();
-
         switch ($pageName) {
             case 'cart':
             case 'category':
             case 'product':
-                return $payLaterMessagingCustomization[$pageName]['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled($pageName);
             case 'order':
-                return $payLaterMessagingCustomization['checkout']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('checkout');
             case 'index':
-                return $payLaterMessagingCustomization['homepage']['status'] === 'enabled';
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
             default:
                 return false;
         }

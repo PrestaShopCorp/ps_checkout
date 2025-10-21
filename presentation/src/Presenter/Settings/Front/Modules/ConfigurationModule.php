@@ -118,13 +118,7 @@ class ConfigurationModule implements PresenterInterface
             $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration() : [
-                'product' => ['status' => 'disabled'],
-                'homepage' => ['status' => 'disabled'],
-                'cart' => ['status' => 'disabled'],
-                'payment' => ['status' => 'disabled'],
-                'category' => ['status' => 'disabled'],
-            ],
+            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration() : $this->payLaterConfiguration->getPayLaterMessagingConfigurationDefault(),
         ];
     }
 }
