@@ -22,13 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 7.5.1.1
+ * Update main function for module version 8.5.1.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_7_5_1_1(Ps_checkout $module)
+function upgrade_module_8_5_1_0(Ps_checkout $module)
 {
     try {
         $savedShopContext = Shop::getContext();
