@@ -37,9 +37,9 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
         // Fallback to $_SERVER for Nginx or other environments
         if (empty($headers)) {
             $headers = [
-                'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-                'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-                'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
+                'shopId' => $_SERVER['HTTP_SHOP_ID'] ?? null,
+                'merchantId' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
+                'firebaseId' => $_SERVER['HTTP_PSX_ID'] ?? null,
             ];
         }
 
