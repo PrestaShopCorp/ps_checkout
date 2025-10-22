@@ -26,6 +26,7 @@ class DispatchWebhookRequest
      * @var string
      */
     private $webhookId;
+
     /**
      * @var array
      */
@@ -75,7 +76,6 @@ class DispatchWebhookRequest
      * @var string
      */
     private $eventNumber;
-
 
     /**
      * DispatchWebhookRequest constructor.
