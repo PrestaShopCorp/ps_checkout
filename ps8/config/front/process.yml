@@ -248,3 +248,13 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler'
+
+  PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor:
+    class: PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
