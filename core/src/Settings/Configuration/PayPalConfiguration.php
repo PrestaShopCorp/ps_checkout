@@ -74,6 +74,9 @@ class PayPalConfiguration
 
     const PS_CHECKOUT_DOMAIN_REGISTERED_LIVE = 'PS_CHECKOUT_DOMAIN_REGISTERED_LIVE';
 
+    const PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT = 'PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT';
+
+    // NOT CONFIGURATION
     const PS_CHECKOUT_CUSTOMER_INTENT_VAULT = 'VAULT';
 
     const PS_CHECKOUT_CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
@@ -115,5 +118,13 @@ class PayPalConfiguration
     public function is3dSecureEnabled(): bool
     {
         return $this->getCardFieldsContingencies() !== 'NONE';
+    }
+
+    /**
+     *  @return string
+     */
+    public function getMerchantCountry(): string
+    {
+        return $this->configuration->get(self::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
     }
 }

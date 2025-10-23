@@ -20,12 +20,14 @@
 
 namespace PsCheckout\Presentation\Presenter\Settings\Front\Modules;
 
+use PsCheckout\Core\FundingSource\Constraint\FundingSourceConstraint;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
+use PsCheckout\Infrastructure\Validator\PayLaterValidatorInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
@@ -67,11 +69,19 @@ class ConfigurationModule implements PresenterInterface
     private $payLaterConfiguration;
 
     /**
+     * @var PayLaterValidatorInterface
+     */
+    private $payLaterValidator;
+
+    /**
      * @param string $moduleName
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
      * @param FundingSourcePresenterInterface $fundingSourcePresenter
+     * @param PayPalSdkConfiguration $payPalSdkConfiguration
+     * @param PayPalPayLaterConfiguration $payLaterConfiguration
+     * @param PayLaterValidatorInterface $payLaterValidator
      */
     public function __construct(
         string $moduleName,
@@ -80,7 +90,8 @@ class ConfigurationModule implements PresenterInterface
         PayPalConfiguration $payPalConfiguration,
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalSdkConfiguration $payPalSdkConfiguration,
-        PayPalPayLaterConfiguration $payLaterConfiguration
+        PayPalPayLaterConfiguration $payLaterConfiguration,
+        PayLaterValidatorInterface $payLaterValidator
     ) {
         $this->moduleName = $moduleName;
         $this->context = $context;
@@ -89,6 +100,7 @@ class ConfigurationModule implements PresenterInterface
         $this->fundingSourcePresenter = $fundingSourcePresenter;
         $this->payPalSdkConfiguration = $payPalSdkConfiguration;
         $this->payLaterConfiguration = $payLaterConfiguration;
+        $this->payLaterValidator = $payLaterValidator;
     }
 
     public function present(): array
@@ -104,6 +116,7 @@ class ConfigurationModule implements PresenterInterface
         }
 
         $isPayPalPaymentsReceivable = $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS);
+        $isPayLaterAvailable = $this->payLaterValidator->isPayLaterAvailable();
 
         return [
             $this->moduleName . 'PayPalSdkConfig' => $this->payPalSdkConfiguration->buildConfiguration(),
@@ -118,7 +131,9 @@ class ConfigurationModule implements PresenterInterface
             $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration() : $this->payLaterConfiguration->getPayLaterMessagingConfigurationDefault(),
+            $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable && $isPayLaterAvailable
+                    ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration()
+                    : $this->payLaterConfiguration->getPayLaterMessagingConfigurationDefault(),
         ];
     }
 }
