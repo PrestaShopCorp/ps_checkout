@@ -12,12 +12,14 @@ class PayLaterValidator implements PayLaterValidatorInterface
      * @var ContextInterface
      */
     private $context;
+
     /**
      * @var PayPalConfiguration
      */
     private $payPalConfiguration;
 
-    public function __construct(ContextInterface $context, PayPalConfiguration $payPalConfiguration) {
+    public function __construct(ContextInterface $context, PayPalConfiguration $payPalConfiguration)
+    {
         $this->context = $context;
         $this->payPalConfiguration = $payPalConfiguration;
     }

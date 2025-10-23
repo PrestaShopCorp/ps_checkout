@@ -29,7 +29,9 @@ use PsCheckout\Infrastructure\Validator\PayLaterValidator;
 class PayLaterValidatorTest extends TestCase
 {
     private $contextMock;
+
     private $payPalConfigurationMock;
+
     private $payLaterValidator;
 
     protected function setUp(): void
