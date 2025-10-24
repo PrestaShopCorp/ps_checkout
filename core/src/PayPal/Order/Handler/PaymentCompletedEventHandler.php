@@ -57,8 +57,8 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
-        $this->createOrderAction->execute($payPalOrderResponse);
-        $this->createOrderPaymentAction->execute($payPalOrderResponse);
+//        $this->createOrderAction->execute($payPalOrderResponse);
+//        $this->createOrderPaymentAction->execute($payPalOrderResponse);
         $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
     }
 }
