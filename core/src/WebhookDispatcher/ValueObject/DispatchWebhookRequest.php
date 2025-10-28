@@ -86,11 +86,11 @@ class DispatchWebhookRequest
      * @param string $category
      * @param string|null $summary
      * @param string|null $orderId
+     * @param string $eventStream
+     * @param string $eventNumber
      * @param string $shopId
      * @param string $merchantId
      * @param string $firebaseId
-     * @param string $eventStream
-     * @param string $eventNumber
      */
     public function __construct(
         string $webhookId,
@@ -99,11 +99,11 @@ class DispatchWebhookRequest
         string $category,
         $summary,
         $orderId,
+        string $eventStream,
+        string $eventNumber,
         string $shopId,
         string $merchantId,
-        string $firebaseId,
-        string $eventStream,
-        string $eventNumber
+        string $firebaseId
     ) {
         $this->webhookId = $webhookId;
         $this->resource = $resource;
@@ -111,11 +111,11 @@ class DispatchWebhookRequest
         $this->category = $category;
         $this->summary = $summary;
         $this->orderId = $orderId;
+        $this->eventStream = $eventStream;
+        $this->eventNumber = $eventNumber;
         $this->shopId = $shopId;
         $this->merchantId = $merchantId;
         $this->firebaseId = $firebaseId;
-        $this->eventStream = $eventStream;
-        $this->eventNumber = $eventNumber;
     }
 
     /**
@@ -215,11 +215,11 @@ class DispatchWebhookRequest
             (string) $bodyValues['category'],
             $bodyValues['summary'] ?? null,
             $bodyValues['orderId'] ?? null,
+            (string) $bodyValues['eventStream'],
+            (string) $bodyValues['eventNumber'],
             (string) $headerValues['shopId'],
             (string) $headerValues['merchantId'],
-            (string) $headerValues['firebaseId'],
-            (string) $bodyValues['eventStream'],
-            (string) $bodyValues['eventNumber']
+            (string) $headerValues['firebaseId']
         );
     }
 
@@ -237,11 +237,11 @@ class DispatchWebhookRequest
             'category' => $this->category,
             'summary' => $this->summary,
             'orderId' => $this->orderId,
+            'eventStream' => $this->eventStream,
+            'eventNumber' => $this->eventNumber,
             'shopId' => $this->shopId,
             'merchantId' => $this->merchantId,
             'firebaseId' => $this->firebaseId,
-            'eventStream' => $this->eventStream,
-            'eventNumber' => $this->eventNumber,
         ], function ($value) {
             return $value !== null;
         });
