@@ -57,6 +57,10 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
+        // Commented because order creation doesn't work in webhook context. During webhook processing context doesn't
+        // contain the cart needed for order creation. So temporarily we only change the order status if the order is
+        // already created
+        // TODO: Implement cart adding to context for order creation
 //        $this->createOrderAction->execute($payPalOrderResponse);
 //        $this->createOrderPaymentAction->execute($payPalOrderResponse);
         $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
