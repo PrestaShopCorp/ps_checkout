@@ -110,7 +110,6 @@ class FundingSource implements \JsonSerializable
     /**
      * @return array
      */
-    #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         $json = [
