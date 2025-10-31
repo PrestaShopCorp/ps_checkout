@@ -154,6 +154,7 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\Order\Action\CreateOrderPaymentAction'
       - '@PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
 
   PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler
