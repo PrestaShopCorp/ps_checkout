@@ -22,6 +22,7 @@ namespace PsCheckout\Presentation\Presenter\FundingSource;
 
 use PsCheckout\Core\FundingSource\Repository\FundingSourceRepositoryInterface;
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
+use PsCheckout\Infrastructure\Validator\FastlaneValidatorInterface;
 
 class FundingSourcePresenter implements FundingSourcePresenterInterface
 {
@@ -41,18 +42,26 @@ class FundingSourcePresenter implements FundingSourcePresenterInterface
     private $fundingSourceTranslationProvider;
 
     /**
+     * @var FastlaneValidatorInterface
+     */
+    private $fastlaneValidator;
+
+    /**
      * @param string $modulePathUri
      * @param FundingSourceRepositoryInterface $fundingSourceRepository
      * @param FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider
+     * @param FastlaneValidatorInterface $fastlaneValidator
      */
     public function __construct(
         string $modulePathUri,
         FundingSourceRepositoryInterface $fundingSourceRepository,
-        FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider
+        FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider,
+        FastlaneValidatorInterface $fastlaneValidator
     ) {
         $this->modulePathUri = $modulePathUri;
         $this->fundingSourceRepository = $fundingSourceRepository;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->fastlaneValidator = $fastlaneValidator;
     }
 
     /**
@@ -88,7 +97,19 @@ class FundingSourcePresenter implements FundingSourcePresenterInterface
         $fundingSourceData = $this->fundingSourceRepository->getAllActiveForSpecificShop($shopId);
         $fundingSources = [];
 
+        if ($this->fastlaneValidator->shouldLoadFastlane()) {
+            $fundingSources[] = $this->buildFundingSourceObject([
+                'name' => 'fastlane',
+                'position' => 0,
+                'active' => 1,
+            ]);
+        }
+
         foreach ($fundingSourceData as $fundingSource) {
+            if ($fundingSource['name'] === 'card' && $this->fastlaneValidator->shouldLoadFastlane()) {
+                continue;
+            }
+
             $fundingSources[] = $this->buildFundingSourceObject($fundingSource);
         }
 

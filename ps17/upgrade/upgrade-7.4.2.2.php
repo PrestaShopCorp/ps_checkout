@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 7.4.2.2
  *
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */
@@ -70,7 +70,7 @@ function upgrade_module_7_4_2_2($module)
 }
 
 /**
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */
@@ -171,7 +171,7 @@ function upgrade_7_4_0_0($module)
 }
 
 /**
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */

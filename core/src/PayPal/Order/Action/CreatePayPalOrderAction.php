@@ -110,15 +110,20 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     public function execute(int $cartId, CreatePayPalOrderRequest $request): bool
     {
+        $isVault = !empty($request->getSingleUseToken())
+            ? true
+            : ($request->getVaultId() || $request->isVault());
+
         $this->orderPayloadBuilder
             ->setCart($this->cartPresenter->present())
             ->setIsCard($this->isCardPayment($request))
             ->setIsExpressCheckout($request->isExpressCheckout())
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
-            ->setIsVault($request->getVaultId() || $request->isVault())
+            ->setIsVault($isVault)
             ->setCustomerBirthDay($request->getBirthDate())
-            ->setCustomerPhone($request->getPhone());
+            ->setCustomerPhone($request->getPhone())
+            ->setSingleUseToken($request->getSingleUseToken());
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());

@@ -25,6 +25,9 @@ use PsCheckout\Api\Http\CheckoutHttpClientInterface;
 
 class OAuthService implements OAuthServiceInterface
 {
+    /**
+     * @var CheckoutHttpClientInterface
+     */
     private $httpClient;
 
     public function __construct(CheckoutHttpClientInterface $httpClient)
@@ -49,6 +52,30 @@ class OAuthService implements OAuthServiceInterface
             return $data['id_token'];
         } catch (Exception $exception) {
             throw new Exception('Failed to get PayPal User ID token.', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClientToken(string $merchantId, string $domain): string
+    {
+        try {
+            $response = $this->httpClient->getClientToken($merchantId, $domain);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('Unexpected status code: ' . $response->getStatusCode());
+            }
+
+            $data = json_decode($response->getBody(), true);
+
+            if (empty($data['access_token'])) {
+                throw new Exception('Failed to get PayPal client token from response.');
+            }
+
+            return $data['access_token'];
+        } catch (Exception $exception) {
+            throw new Exception('Failed to get PayPal client token.', 0, $exception);
         }
     }
 }

@@ -414,6 +414,8 @@ class Translator implements TranslatorInterface
                 return $this->module->l('Your date of birth is invalid or missing. Please check and try again.', 'Translator');
             case 'Your email address is invalid or missing. Please update your contact details and try again.':
                 return $this->module->l('Your email address is invalid or missing. Please update your contact details and try again.', 'Translator');
+            case 'My address':
+                return $this->module->l('My address', 'Translator');
             default:
                 return $key;
         }

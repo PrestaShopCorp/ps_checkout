@@ -115,4 +115,16 @@ interface ContextInterface
      * @return void
      */
     public function loadCartForWebhook(\Cart $cart): void;
+
+    /**
+     * @param int $addressId
+     *
+     * @return void
+     */
+    public function setContextCartAddresses(int $addressId);
+
+    /**
+     * @return void
+     */
+    public function updateCartChecksum();
 }

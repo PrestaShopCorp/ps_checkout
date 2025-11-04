@@ -65,6 +65,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var bool */
     private $isCard = false;
 
+    /** @var string */
+    private $singleUseToken = '';
+
     /** @var array */
     private $payload = [];
 
@@ -219,6 +222,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
         }
 
+        if ($this->fundingSource === 'fastlane') {
+            $optionalPayload[] = $this->buildCardPaymentSource();
+        }
+
         if ($isFullPayload) {
             $paymentSource = $this->buildPaymentSource();
 
@@ -232,6 +239,22 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         return $optionalPayload;
+    }
+
+    /**
+     * Builds the card payment source payload element.
+     *
+     * @return array the card payment source payload
+     */
+    private function buildCardPaymentSource(): array
+    {
+        return $this->cardPaymentSourceNodeBuilder
+            ->setCart($this->cart)
+            ->setPaypalVaultId($this->paypalVaultId)
+            ->setPaypalCustomerId($this->paypalCustomerId)
+            ->setSavePaymentMethod($this->savePaymentMethod)
+            ->setSingleUseToken($this->singleUseToken)
+            ->build();
     }
 
     /**
@@ -443,6 +466,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     public function setIsVault(bool $isVault): self
     {
         $this->isVault = $isVault;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setSingleUseToken(string $singleUseToken): self
+    {
+        $this->singleUseToken = $singleUseToken;
 
         return $this;
     }

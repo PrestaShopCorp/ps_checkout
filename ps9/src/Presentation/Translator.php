@@ -413,6 +413,8 @@ class Translator implements TranslatorInterface
                 return $this->translator->trans('Your date of birth is invalid or missing. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'Your email address is invalid or missing. Please update your contact details and try again.':
                 return $this->translator->trans('Your email address is invalid or missing. Please update your contact details and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'My address':
+                return $this->translator->trans('My address', $parameters, 'Modules.Checkout.Pscheckout');
             default:
                 return $key;
         }

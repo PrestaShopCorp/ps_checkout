@@ -28,4 +28,11 @@ interface AddressInterface
      * @return \Address
      */
     public function initialize($idAddress): \Address;
+
+    /**
+     * @param int $customerId
+     *
+     * @return void
+     */
+    public function deleteByCustomerId(int $customerId);
 }

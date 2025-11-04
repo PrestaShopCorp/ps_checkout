@@ -50,6 +50,11 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     private $savePaymentMethod;
 
     /**
+     * @var string
+     */
+    private $singleUseToken;
+
+    /**
      * @var PayPalConfiguration
      */
     private $paypalConfiguration;
@@ -96,14 +101,24 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $address = $this->cart['addresses']['invoice'];
         $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
 
-        $node = [
-            'payment_source' => [
-                'card' => [
-                    'name' => $address->firstname . ' ' . $address->lastname,
-                    'billing_address' => $this->experienceContextHelper->buildInvoicePortableAddress($this->cart),
+        if (!empty($this->singleUseToken)) {
+            $node = [
+                'payment_source' => [
+                    'card' => [
+                        'single_use_token' => $this->singleUseToken,
+                    ],
                 ],
-            ],
-        ];
+            ];
+        } else {
+            $node = [
+                'payment_source' => [
+                    'card' => [
+                        'name' => $address->firstname . ' ' . $address->lastname,
+                        'billing_address' => $this->experienceContextHelper->buildInvoicePortableAddress($this->cart),
+                    ],
+                ],
+            ];
+        }
 
         if ($this->paypalConfiguration->is3dSecureEnabled()) {
             $node['payment_source']['card']['attributes']['verification']['method'] = $this->paypalConfiguration->getCardFieldsContingencies();
@@ -232,6 +247,16 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     public function setSavePaymentMethod(bool $savePaymentMethod): self
     {
         $this->savePaymentMethod = $savePaymentMethod;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSingleUseToken(string $singleUseToken): self
+    {
+        $this->singleUseToken = $singleUseToken;
 
         return $this;
     }

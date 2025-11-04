@@ -88,6 +88,11 @@ class CreatePayPalOrderRequest
     private $phone;
 
     /**
+     * @var string
+     */
+    private $singleUseToken;
+
+    /**
      * CheckoutCreateRequest constructor.
      *
      * @param array $request
@@ -107,6 +112,7 @@ class CreatePayPalOrderRequest
         $this->metaDataId = isset($request['metadataId']) ? (string) $request['metadataId'] : null;
         $this->birthDate = isset($request['birthDate']) ? (string) $request['birthDate'] : null;
         $this->phone = isset($request['phone']) ? (string) $request['phone'] : null;
+        $this->singleUseToken = isset($request['paymentToken']) ? (string) $request['paymentToken'] : '';
     }
 
     /**
@@ -237,5 +243,13 @@ class CreatePayPalOrderRequest
     public function getPhone()
     {
         return $this->phone;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSingleUseToken(): string
+    {
+        return $this->singleUseToken;
     }
 }

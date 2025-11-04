@@ -1,0 +1,168 @@
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+/* Fastlane email info */
+.ps_checkout-fastlane-email-info {
+  background-color: #F7F7F7;
+  width: 100%;
+  float: left;
+  margin-top: 8px;
+  padding: 16px;
+}
+
+.ps_checkout-fastlane-email-info[open] .fastlane-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.ps_checkout-fastlane-email-info[open] .fastlane-summary {
+  margin-bottom: 16px;
+}
+
+.fastlane-summary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.fastlane-summary-title {
+  color: #1D1D1B;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  margin: 0 0 4px;
+}
+
+.fastlane-summary-subtext {
+  color: #3F3F3D;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  margin: 0;
+}
+
+.fastlane-dropdown-content {
+  background-color: #EEEEEE;
+  padding: 16px;
+}
+
+.fastlane-dropdown-content p {
+  color: #3F3F3D;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  margin: 0;
+}
+
+#fastlane-email-watermark {
+  margin-left: 8px;
+}
+
+/* Fastlane shipping address */
+#fastlane-shipping-watermark {
+  margin-top: 10px;
+}
+
+/* Fastlane Card Container */
+#ps_checkout-fastlane-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.fastlane-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fastlane-card-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Card Summary */
+#ps_checkout-fastlane-card-summary {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* Payment Change Button */
+#payment-change-button {
+  background: inherit;
+  border: none;
+  padding: 8px;
+}
+
+#payment-change-button:hover {
+  opacity: 0.7;
+}
+
+/* Loading state */
+#ps_checkout-card-fields-form-loader {
+  padding: 20px;
+}
+
+/* Card Logo Styles */
+.ps-card-logo {
+  display: block;
+  width: 40px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Card Brand Specific Styles - SDK will add these classes dynamically */
+.ps-card-logo.ps-card-visa {
+  background-image: url('../img/visa.svg');
+}
+
+.ps-card-logo.ps-card-mastercard {
+  background-image: url('../img/mastercard.svg');
+}
+
+.ps-card-logo.ps-card-amex {
+  background-image: url('../img/amex.svg');
+}
+
+.ps-card-logo.ps-card-discover {
+  background-image: url('../img/discover.svg');
+}
+
+.ps-card-logo.ps-card-diners {
+  background-image: url('../img/diners.svg');
+}
+
+.ps-card-logo.ps-card-jcb {
+  background-image: url('../img/jcb.svg');
+}
+
+.ps-card-logo.ps-card-unionpay {
+  background-image: url('../img/unionpay.svg');
+}
+
+.ps-card-logo.ps-card-generic {
+  background-image: url('../img/card.svg');
+}
