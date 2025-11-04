@@ -73,6 +73,11 @@ class CreatePayPalOrderRequest
     private $isExpressCheckout;
 
     /**
+     * @var string
+     */
+    private $singleUseToken;
+
+    /**
      * CheckoutCreateRequest constructor.
      *
      * @param array $request
@@ -89,6 +94,7 @@ class CreatePayPalOrderRequest
         $this->fundingSource = isset($request['fundingSource']) ? (string) $request['fundingSource'] : 'paypal';
         $this->isCardFields = isset($request['isCardFields']) && (bool) $request['isCardFields'];
         $this->isExpressCheckout = (bool) $request['isExpressCheckout'];
+        $this->singleUseToken = isset($request['paymentToken']) ? (string) $request['paymentToken'] : '';
     }
 
     /**
@@ -189,5 +195,13 @@ class CreatePayPalOrderRequest
     public function isExpressCheckout(): bool
     {
         return $this->isExpressCheckout;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSingleUseToken(): string
+    {
+        return $this->singleUseToken;
     }
 }

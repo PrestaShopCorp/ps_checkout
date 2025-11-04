@@ -38,7 +38,7 @@ use Psr\Log\LoggerInterface;
 class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
+     * @var Ps_Checkout
      */
     public $module;
 
@@ -91,7 +91,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             /** @var PayPalOrderRepository $payPalOrderReposistory */
             $payPalOrderReposistory = $this->module->getService(PayPalOrderRepository::class);
 
-            /** @var PayPalOrder|null $psCheckoutCart */
+            /** @var PayPalOrder|null $payPalOrder */
             $payPalOrder = $payPalOrderReposistory->getOneBy(['id' => $expressCheckoutRequest->getOrderId()]);
 
             if (!$payPalOrder || $payPalOrder->getIdCart() !== $this->context->cart->id) {

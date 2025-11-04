@@ -8,6 +8,7 @@ services:
       - '@=service("ps_checkout.module").getPathUri()'
       - '@PsCheckout\Infrastructure\Repository\FundingSourceRepository'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Infrastructure\Validator\FastlaneValidator'
 
   PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter:
     class: PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter

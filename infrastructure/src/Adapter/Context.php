@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Infrastructure\Adapter;
 
+use AddressChecksum;
+use CartChecksum;
 use Context as PrestashopContext;
 
 class Context implements ContextInterface
@@ -161,5 +163,54 @@ class Context implements ContextInterface
             $this->context->cookie->__set('paypalEmail', $email);
             $this->context->cookie->write();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContextCartAddresses(int $addressId)
+    {
+        $this->context->cart->id_address_delivery = $addressId;
+        $this->context->cart->id_address_invoice = $addressId;
+
+        $products = $this->context->cart->getProducts();
+
+        foreach ($products as $product) {
+            $this->context->cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $addressId);
+        }
+
+        return $this->context->cart->save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateCartChecksum()
+    {
+        $cart = $this->context->cart;
+        $cartChecksum = new CartChecksum(new AddressChecksum());
+
+        $selectQuery = new \DbQuery();
+        $selectQuery
+            ->select('checkout_session_data')
+            ->from('cart')
+            ->where('id_cart = ' . (int) $cart->id);
+        $rawData = \Db::getInstance()->getValue($selectQuery);
+
+        $data = json_decode($rawData ?? '', true);
+
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        $data['checksum'] = $cartChecksum->generateChecksum($cart);
+
+        \Db::getInstance()->update(
+            'cart',
+            [
+                'checkout_session_data' => pSQL(json_encode($data)),
+            ],
+            'id_cart = ' . (int) $cart->id
+        );
     }
 }

@@ -35,5 +35,5 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    define('_PS_VERSION_', class_exists('AppKernel') ? AppKernel::VERSION : '8.0.0');
 }

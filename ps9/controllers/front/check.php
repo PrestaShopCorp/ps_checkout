@@ -35,7 +35,7 @@ use Psr\Log\LoggerInterface;
 class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
+     * @var Ps_Checkout
      */
     public $module;
 

@@ -17,8 +17,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+$rootDirectory = __DIR__ . '/../../../../../../';
+$projectDir = __DIR__ . '/../../../../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);
@@ -35,5 +35,5 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    define('_PS_VERSION_', class_exists('AppKernel') ? AppKernel::VERSION : '8.0.0');
 }

@@ -63,6 +63,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var bool */
     private $isCard = false;
 
+    /** @var string */
+    private $singleUseToken = '';
+
     /** @var array */
     private $payload = [];
 
@@ -185,6 +188,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             $optionalPayload[] = $this->buildSupplementaryData();
         }
 
+        if ($this->fundingSource === 'fastlane') {
+            $optionalPayload[] = $this->buildCardPaymentSource();
+        }
+
         if ($isFullPayload) {
             $optionalPayload[] = $this->buildPaymentSource();
         }
@@ -204,6 +211,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             ->setPaypalVaultId($this->paypalVaultId)
             ->setPaypalCustomerId($this->paypalCustomerId)
             ->setSavePaymentMethod($this->savePaymentMethod)
+            ->setSingleUseToken($this->singleUseToken)
             ->build();
     }
 
@@ -335,6 +343,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     public function setIsVault(bool $isVault): self
     {
         $this->isVault = $isVault;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setSingleUseToken(string $singleUseToken): self
+    {
+        $this->singleUseToken = $singleUseToken;
 
         return $this;
     }

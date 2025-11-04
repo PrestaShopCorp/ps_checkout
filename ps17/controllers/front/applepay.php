@@ -34,7 +34,7 @@ use PsCheckout\Utility\Common\InputStreamUtility;
 class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
+     * @var Ps_Checkout
      */
     public $module;
 
@@ -116,7 +116,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
             header('Content-Type: text/plain', true, 200);
         }
 
-        echo file_get_contents($associationFile);
+        echo Tools::file_get_contents($associationFile);
 
         exit;
     }

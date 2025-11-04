@@ -48,6 +48,11 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     private $savePaymentMethod;
 
     /**
+     * @var string
+     */
+    private $singleUseToken;
+
+    /**
      * @var PayPalConfiguration
      */
     private $paypalConfiguration;
@@ -82,14 +87,24 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
         $stateName = $this->stateRepository->getNameById($address->id_state);
 
-        $node = [
-            'payment_source' => [
-                'card' => [
-                    'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
-                    'billing_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
+        if (!empty($this->singleUseToken)) {
+            $node = [
+                'payment_source' => [
+                    'card' => [
+                        'single_use_token' => $this->singleUseToken,
+                    ],
                 ],
-            ],
-        ];
+            ];
+        } else {
+            $node = [
+                'payment_source' => [
+                    'card' => [
+                        'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
+                        'billing_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
+                    ],
+                ],
+            ];
+        }
 
         if ($this->paypalConfiguration->is3dSecureEnabled()) {
             $node['payment_source']['card']['attributes']['verification']['method'] = $this->paypalConfiguration->getCardFieldsContingencies();
@@ -151,6 +166,16 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     public function setSavePaymentMethod(bool $savePaymentMethod): self
     {
         $this->savePaymentMethod = $savePaymentMethod;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSingleUseToken(string $singleUseToken): self
+    {
+        $this->singleUseToken = $singleUseToken;
 
         return $this;
     }

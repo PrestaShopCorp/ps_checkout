@@ -54,4 +54,11 @@ interface CardPaymentSourceNodeBuilderInterface
      * @return self
      */
     public function setSavePaymentMethod(bool $savePaymentMethod);
+
+    /**
+     * @param string $singleUseToken
+     *
+     * @return self
+     */
+    public function setSingleUseToken(string $singleUseToken);
 }

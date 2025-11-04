@@ -191,6 +191,7 @@ class Translator implements TranslatorInterface
             'For more information, please go to the official PayPal website.' => $this->module->l('For more information, please go to the official PayPal website.', 'Translator'),
             'The payer paid for an item that they did not receive.' => $this->module->l('The payer paid for an item that they did not receive.', 'Translator'),
             'The payer did not authorize the payment.' => $this->module->l('The payer did not authorize the payment.', 'Translator'),
+            'My address' => $this->module->l('My address', 'Translator'),
         ];
 
         return $map[$key] ?: $key;

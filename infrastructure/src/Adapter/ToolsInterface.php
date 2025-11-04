@@ -37,4 +37,9 @@ interface ToolsInterface
     public function redirect(string $url);
 
     public function getToken(bool $page): string;
+
+    /**
+     * @return string
+     */
+    public function getShopDomain(): string;
 }

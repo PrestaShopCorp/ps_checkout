@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 3.1.0
  *
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */

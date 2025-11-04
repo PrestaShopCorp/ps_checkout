@@ -31,7 +31,7 @@ use PsCheckout\Utility\Common\InputStreamUtility;
 class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
+     * @var Ps_Checkout
      */
     public $module;
 

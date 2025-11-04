@@ -12,4 +12,6 @@ services:
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
+      - '@PsCheckout\Infrastructure\Validator\FastlaneValidator'
+      - '@PsCheckout\Infrastructure\Adapter\Tools'
       - '@Psr\Log\LoggerInterface'

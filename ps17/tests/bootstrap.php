@@ -19,7 +19,7 @@
  */
 
 $rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+$projectDir = __DIR__ . '/../../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);
@@ -36,5 +36,5 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    define('_PS_VERSION_', class_exists('AppKernel') ? AppKernel::VERSION : '1.7.0');
 }

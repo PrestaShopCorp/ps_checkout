@@ -24,6 +24,7 @@ use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalCardConfiguration;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
+use PsCheckout\Infrastructure\Validator\FastlaneValidatorInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenterInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProviderInterface;
@@ -77,6 +78,11 @@ class PayPalModule implements PresenterInterface
     private $fundingSourceTranslationProvider;
 
     /**
+     * @var FastlaneValidatorInterface
+     */
+    private $fastlaneValidator;
+
+    /**
      * @param string $moduleName
      * @param string $moduleVersion
      * @param ContextInterface $context,
@@ -86,6 +92,7 @@ class PayPalModule implements PresenterInterface
      * @param PresenterInterface $supportedCardBrandsPresenter
      * @param PayPalOrderRepositoryInterface $payPalOrderRepository
      * @param FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider
+     * @param FastlaneValidatorInterface $fastlaneValidator
      */
     public function __construct(
         string $moduleName,
@@ -96,7 +103,8 @@ class PayPalModule implements PresenterInterface
         FundingSourceTokenPresenterInterface $fundingSourceTokenPresenter,
         PresenterInterface $supportedCardBrandsPresenter,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
-        FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider
+        FundingSourceTranslationProviderInterface $fundingSourceTranslationProvider,
+        FastlaneValidatorInterface $fastlaneValidator
     ) {
         $this->moduleName = $moduleName;
         $this->moduleVersion = $moduleVersion;
@@ -107,6 +115,7 @@ class PayPalModule implements PresenterInterface
         $this->supportedCardBrandsPresenter = $supportedCardBrandsPresenter;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->fastlaneValidator = $fastlaneValidator;
     }
 
     public function present(): array
@@ -137,6 +146,15 @@ class PayPalModule implements PresenterInterface
             $payPalOrder = $this->payPalOrderRepository->getOneByCartId($this->context->getCart()->id);
         }
 
+
+        if ($this->fastlaneValidator->shouldLoadFastlane()) {
+            $shouldLoadFastlane = true;
+            $fastlaneLocale = strtoupper($this->context->getLanguage()->iso_code === "en" ? "us" : $this->context->getLanguage()->iso_code);
+        } else {
+            $shouldLoadFastlane = false;
+            $fastlaneLocale = '';
+        }
+
         return [
             $this->moduleName . 'Version' => $this->moduleVersion,
             $this->moduleName . 'CustomMarks' => $customMarks,
@@ -148,6 +166,8 @@ class PayPalModule implements PresenterInterface
             $this->moduleName . 'CartProductCount' => $this->context->getCart()->nbProducts(),
             $this->moduleName . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->moduleName . 'PayWithTranslations' => $payWithTranslations,
+            $this->moduleName . 'ShouldLoadFastlane' => $shouldLoadFastlane,
+            $this->moduleName . 'FastlaneLocale' => $fastlaneLocale,
         ];
     }
 }

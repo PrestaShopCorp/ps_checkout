@@ -34,6 +34,14 @@ interface CheckoutHttpClientInterface
 
     /**
      * @param string $merchantId
+     * @param string $domain
+     *
+     * @return ResponseInterface
+     */
+    public function getClientToken(string $merchantId, string $domain): ResponseInterface;
+
+    /**
+     * @param string $merchantId
      * @param string $vaultId
      *
      * @return ResponseInterface

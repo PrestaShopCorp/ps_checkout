@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -16,11 +15,25 @@
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
- */
+ *}
+<form id="ps_checkout-fastlane-card-form" class="form-horizontal loading">
+  <div id="ps_checkout-card-fields-form-loader">
+    <img src="{$modulePath}views/img/tail-spin.svg" alt="spin">
+  </div>
 
-namespace PsCheckout\Api\Http\Configuration;
+  <div id="ps_checkout-fastlane-card">
+    <div class="fastlane-card-info">
+      <div class="fastlane-card-main">
+        <div id="ps_checkout-fastlane-card-logo" class="ps-card-logo"></div>
 
-interface OrderShipmentTrackingConfigurationBuilderInterface
-{
-    public function build(): array;
-}
+        <div id="ps_checkout-fastlane-card-summary"></div>
+      </div>
+
+      <div id="fastlane-payment-watermark"></div>
+    </div>
+
+    <button id="payment-change-button" class="btn" type="button" >
+      <i class="material-icons edit">mode_edit</i>
+    </button>
+  </div>
+</form>

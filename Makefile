@@ -39,7 +39,7 @@ php-unit-utility:
 
 php-unit-infrastructure-integration:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/infrastructure/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/vendor/invertus/infrastructure/tests/bootstrap-integration.php"
-	 # make php-unit-integration module_version=ps8
+	 # make php-unit-infrastructure-integration module_version=ps8
 
 php-unit-core:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/core/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/core/tests/bootstrap.php"
@@ -47,7 +47,7 @@ php-unit-core:
 
 php-unit-presentation:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/presentation/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/presentation/tests/bootstrap.php"
-	 # php-unit-presentation module_version=ps8
+	 # make php-unit-presentation module_version=ps8
 
 php-integration-ps8:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/tests/bootstrap-integration.php"

@@ -71,6 +71,7 @@ class Translator implements TranslatorInterface
             '100% secure payments' => $this->translator->trans('100% secure payments', $parameters, 'Modules.Checkout.Pscheckout'),
             'or' => $this->translator->trans('or', $parameters, 'Modules.Checkout.Pscheckout'),
             'Express Checkout' => $this->translator->trans('Express Checkout', $parameters, 'Modules.Checkout.Pscheckout'),
+            'My address' => $this->translator->trans('My address', $parameters, 'Modules.Checkout.Pscheckout'),
 
             'Card' => $this->translator->trans('Card', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay by Card - 100% secure payments' => $this->translator->trans('Pay by Card - 100% secure payments', $parameters, 'Modules.Checkout.Pscheckout'),

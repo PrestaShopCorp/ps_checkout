@@ -10,3 +10,11 @@ services:
 
   PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator:
     class: PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator
+
+  PsCheckout\Infrastructure\Validator\FastlaneValidator:
+    class: PsCheckout\Infrastructure\Validator\FastlaneValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Tools'
+      

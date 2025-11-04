@@ -120,7 +120,13 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
             'orderId' => $id,
         ];
 
-        if ($payPalOrder && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)) {
+        if (
+            $payPalOrder &&
+            (
+                $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING) ||
+                $payPalOrder->getFundingSource() === 'fastlane'
+            )
+        ) {
             $payload['vault'] = true;
             $payload['payee'] = [
                 'merchant_id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),

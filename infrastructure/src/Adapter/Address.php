@@ -31,4 +31,33 @@ class Address implements AddressInterface
     {
         return PrestaShopAddress::initialize($idAddress);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteByCustomerId(int $customerId)
+    {
+        $query = new \DbQuery();
+        $query->select('id_address');
+        $query->from('address');
+        $query->where('id_customer = ' . (int) $customerId);
+
+        $ids = \Db::getInstance()->executeS($query);
+
+        if (!is_array($ids) || empty($ids)) {
+            return;
+        }
+
+        foreach ($ids as $row) {
+            if (!$row['id_address']) {
+                continue;
+            }
+
+            $address = new PrestaShopAddress($row['id_address']);
+
+            if (\Validate::isLoadedObject($address)) {
+                $address->delete();
+            }
+        }
+    }
 }

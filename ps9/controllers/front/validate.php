@@ -40,7 +40,7 @@ use PsCheckout\Utility\Common\InputStreamUtility;
 class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
+     * @var Ps_Checkout
      */
     public $module;
 
@@ -84,7 +84,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
 
-            /** @var PayPalOrder $payPalOrder */
+            /** @var PayPalOrder|null $payPalOrder */
             $payPalOrder = $payPalOrderRepository->getOneBy(['id' => $bodyValues['orderID']]);
 
             if (!$payPalOrder) {

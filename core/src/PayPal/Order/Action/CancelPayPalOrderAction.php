@@ -50,9 +50,8 @@ class CancelPayPalOrderAction implements CancelPayPalOrderActionInterface
 
             $paypalOrder
                 ->setIdCart($cancelOrderRequest->getCartId())
-                ->setPaymentTokenId($cancelOrderRequest->getOrderId()) // Assuming PayPal order ID is a payment token
                 ->setFundingSource($cancelOrderRequest->getFundingSource())
-                ->setIsCardFields($cancelOrderRequest->isHostedFields()) // Assuming "isHostedFields" maps to "isCardFields"
+                ->setIsCardFields($cancelOrderRequest->isHostedFields())
                 ->setIsExpressCheckout($cancelOrderRequest->isExpressCheckout())
                 ->setStatus($cancelOrderRequest->getOrderStatus());
 

@@ -94,6 +94,26 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
     /**
      * {@inheritdoc}
      */
+    public function getClientToken(string $merchantId, string $domain): ResponseInterface
+    {
+        $payload = [
+            'payer_id' => $merchantId,
+            'domain' => $domain,
+        ];
+
+        return $this->sendRequest(
+            new Request(
+                'POST',
+                self::SUFFIX_IDENTITY . '/oauth2/domain-token',
+                [],
+                json_encode($payload)
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function deletePaymentToken(string $merchantId, string $vaultId): ResponseInterface
     {
         return $this->sendRequest(new Request('DELETE', self::SUFFIX_VAULT . "/payment-token/$merchantId/$vaultId"));

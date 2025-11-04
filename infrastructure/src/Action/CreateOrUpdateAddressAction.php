@@ -127,15 +127,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
         }
 
-        $cart = $this->context->getCart();
-        $cart->id_address_delivery = $address->id;
-        $cart->id_address_invoice = $address->id;
+        $this->context->setContextCartAddresses($address->id);
 
-        $products = $cart->getProducts();
-        foreach ($products as $product) {
-            $cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $address->id);
-        }
-
-        return $cart->save();
+        return true;
     }
 }

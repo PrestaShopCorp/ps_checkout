@@ -26,7 +26,9 @@ use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface
 use PsCheckout\Core\PayPal\OAuth\OAuthServiceInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
+use PsCheckout\Infrastructure\Adapter\ToolsInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
+use PsCheckout\Infrastructure\Validator\FastlaneValidatorInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterface;
 use Psr\Log\LoggerInterface;
 
@@ -78,6 +80,16 @@ class PayPalSdkConfiguration
     private $oAuthService;
 
     /**
+     * @var FastlaneValidatorInterface
+     */
+    private $fastlaneValidator;
+
+    /**
+     * @var ToolsInterface
+     */
+    private $tools;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -90,6 +102,8 @@ class PayPalSdkConfiguration
      * @param FundingSourcePresenterInterface $fundingSourcePresenter
      * @param PayPalCustomerRepositoryInterface $payPalCustomerRepository
      * @param OAuthServiceInterface $oAuthService
+     * @param FastlaneValidatorInterface $fastlaneValidator
+     * @param ToolsInterface $tools
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -100,6 +114,8 @@ class PayPalSdkConfiguration
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
+        FastlaneValidatorInterface $fastlaneValidator,
+        ToolsInterface $tools,
         LoggerInterface $logger
     ) {
         $this->context = $context;
@@ -109,6 +125,8 @@ class PayPalSdkConfiguration
         $this->fundingSourcePresenter = $fundingSourcePresenter;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
+        $this->fastlaneValidator = $fastlaneValidator;
+        $this->tools = $tools;
         $this->logger = $logger;
     }
 
@@ -153,6 +171,20 @@ class PayPalSdkConfiguration
             'dataPartnerAttributionId' => $this->env->getBnCode(),
             'dataCspNonce' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_CSP_NONCE) ?: '',
         ];
+
+        if ($this->fastlaneValidator->shouldLoadFastlane()) {
+            try {
+                $merchantId = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
+
+                $clientToken = $this->oAuthService->getClientToken($merchantId, $this->tools->getShopDomain());
+
+                $params['dataSdkClientToken'] = $clientToken;
+
+                $components[] = 'fastlane';
+            } catch (Exception $exception) {
+                $this->logger->error('Failed to get PayPal client token.', ['exception' => $exception]);
+            }
+        }
 
         if (
             $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_VAULTING) &&

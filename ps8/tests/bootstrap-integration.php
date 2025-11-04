@@ -38,7 +38,10 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (class_exists(AppKernel::class)) {
-    $kernel = new AppKernel('dev', _PS_MODE_DEV_);
-    $kernel->boot();
+    $reflection = new \ReflectionClass(AppKernel::class);
+    if (!$reflection->isAbstract()) {
+        $kernel = new AppKernel('dev', _PS_MODE_DEV_);
+        $kernel->boot();
+    }
 }
 // any actions to apply before any given tests can be done here
