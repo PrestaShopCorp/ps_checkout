@@ -157,17 +157,6 @@ class Context implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function setPayPalEmail(string $email): void
-    {
-        if (\Validate::isEmail($email)) {
-            $this->context->cookie->__set('paypalEmail', $email);
-            $this->context->cookie->write();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setContextCartAddresses(int $addressId)
     {
         $this->context->cart->id_address_delivery = $addressId;
@@ -212,5 +201,16 @@ class Context implements ContextInterface
             ],
             'id_cart = ' . (int) $cart->id
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPayPalEmail(string $email): void
+    {
+        if (\Validate::isEmail($email)) {
+            $this->context->cookie->__set('paypalEmail', $email);
+            $this->context->cookie->write();
+        }
     }
 }

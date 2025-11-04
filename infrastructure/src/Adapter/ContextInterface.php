@@ -96,8 +96,6 @@ interface ContextInterface
      */
     public function resetContextCartAddresses();
 
-    public function setPayPalEmail(string $email): void;
-
     /**
      * @param int $addressId
      *
@@ -109,4 +107,6 @@ interface ContextInterface
      * @return void
      */
     public function updateCartChecksum();
+
+    public function setPayPalEmail(string $email): void;
 }

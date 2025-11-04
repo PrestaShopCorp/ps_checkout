@@ -71,6 +71,7 @@ class Translator implements TranslatorInterface
             '100% secure payments' => $this->module->l('100% secure payments', 'Translator'),
             'or' => $this->module->l('or', 'Translator'),
             'Express Checkout' => $this->module->l('Express Checkout', 'Translator'),
+            'My address' => $this->module->l('My address', 'Translator'),
 
             'Card' => $this->module->l('Card', 'Translator'),
             'Pay by Card - 100% secure payments' => $this->module->l('Pay by Card - 100% secure payments', 'Translator'),
@@ -191,7 +192,6 @@ class Translator implements TranslatorInterface
             'For more information, please go to the official PayPal website.' => $this->module->l('For more information, please go to the official PayPal website.', 'Translator'),
             'The payer paid for an item that they did not receive.' => $this->module->l('The payer paid for an item that they did not receive.', 'Translator'),
             'The payer did not authorize the payment.' => $this->module->l('The payer did not authorize the payment.', 'Translator'),
-            'My address' => $this->module->l('My address', 'Translator'),
         ];
 
         return $map[$key] ?: $key;

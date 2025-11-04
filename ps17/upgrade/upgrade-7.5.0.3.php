@@ -24,11 +24,11 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 7.5.0.3
  *
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */
-function upgrade_module_7_5_0_3(Ps_checkout $module)
+function upgrade_module_7_5_0_3(Ps_Checkout $module)
 {
     try {
         $module->registerHook('displayAdminOrderLeft');
