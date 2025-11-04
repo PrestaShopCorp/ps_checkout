@@ -68,7 +68,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             /** @var CheckPSLSignatureAction $checkPSLSignatureAction */
             $checkPSLSignatureAction = $this->module->getService(CheckPSLSignatureAction::class);
             $checkPSLSignatureAction->execute($bodyValues);
-            $logger->info('PSLS Signature validated', $bodyValues);
+            $logger->info('PSL Signature validated', $bodyValues);
 
             /** @var WebhookShopIdValidator $webhookShopIdValidator */
             $webhookShopIdValidator = $this->module->getService(WebhookShopIdValidator::class);

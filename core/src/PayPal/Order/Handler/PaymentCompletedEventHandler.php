@@ -24,6 +24,8 @@ use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
+use PsCheckout\Infrastructure\Adapter\Context;
+use PsCheckout\Infrastructure\Adapter\ContextInterface;
 
 class PaymentCompletedEventHandler implements EventHandlerInterface
 {
@@ -42,14 +44,21 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     private $setCompletedOrderStateAction;
 
+    /**
+     * @var ContextInterface
+     */
+    private $context;
+
     public function __construct(
         CreateOrderActionInterface $createOrderAction,
         CreateOrderPaymentActionInterface $createOrderPaymentAction,
-        SetOrderStateActionInterface $setCompletedOrderStateAction
+        SetOrderStateActionInterface $setCompletedOrderStateAction,
+        ContextInterface $context
     ) {
         $this->createOrderAction = $createOrderAction;
         $this->createOrderPaymentAction = $createOrderPaymentAction;
         $this->setCompletedOrderStateAction = $setCompletedOrderStateAction;
+        $this->context = $context;
     }
 
     /**
@@ -57,8 +66,10 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
-        $this->createOrderAction->execute($payPalOrderResponse);
-        $this->createOrderPaymentAction->execute($payPalOrderResponse);
+        if ($this->context->getCart()->id) {
+            $this->createOrderAction->execute($payPalOrderResponse);
+            $this->createOrderPaymentAction->execute($payPalOrderResponse);
+        }
         $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
     }
 }

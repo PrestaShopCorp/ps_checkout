@@ -23,6 +23,11 @@ namespace PsCheckout\Core\WebhookDispatcher\ValueObject;
 class DispatchWebhookRequest
 {
     /**
+     * @var string
+     */
+    private $webhookId;
+
+    /**
      * @var array
      */
     private $resource;
@@ -63,32 +68,51 @@ class DispatchWebhookRequest
     private $firebaseId;
 
     /**
+     * @var string
+     */
+    private $eventStream;
+
+    /**
+     * @var string
+     */
+    private $eventNumber;
+
+    /**
      * DispatchWebhookRequest constructor.
      *
+     * @param string $webhookId
      * @param array $resource
      * @param string $eventType
      * @param string $category
      * @param string|null $summary
      * @param string|null $orderId
+     * @param string $eventStream
+     * @param string $eventNumber
      * @param string $shopId
      * @param string $merchantId
      * @param string $firebaseId
      */
     public function __construct(
+        string $webhookId,
         array $resource,
         string $eventType,
         string $category,
         $summary,
         $orderId,
+        string $eventStream,
+        string $eventNumber,
         string $shopId,
         string $merchantId,
         string $firebaseId
     ) {
+        $this->webhookId = $webhookId;
         $this->resource = $resource;
         $this->eventType = $eventType;
         $this->category = $category;
         $this->summary = $summary;
         $this->orderId = $orderId;
+        $this->eventStream = $eventStream;
+        $this->eventNumber = $eventNumber;
         $this->shopId = $shopId;
         $this->merchantId = $merchantId;
         $this->firebaseId = $firebaseId;
@@ -159,6 +183,22 @@ class DispatchWebhookRequest
     }
 
     /**
+     * @return string
+     */
+    public function getEventStream(): string
+    {
+        return $this->eventStream;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEventNumber(): string
+    {
+        return $this->eventNumber;
+    }
+
+    /**
      * Creates a new instance of DispatchWebhookRequest from request data.
      *
      * @param array $bodyValues
@@ -169,14 +209,17 @@ class DispatchWebhookRequest
     public static function createFromRequest(array $bodyValues, array $headerValues): self
     {
         return new self(
+            (string) $bodyValues['webhookId'],
             (array) $bodyValues['resource'],
             (string) $bodyValues['eventType'],
             (string) $bodyValues['category'],
             $bodyValues['summary'] ?? null,
             $bodyValues['orderId'] ?? null,
-            (string) $headerValues['Shop-Id'],
-            (string) $headerValues['Merchant-Id'],
-            (string) $headerValues['Psx-Id']
+            (string) $bodyValues['eventStream'],
+            (string) $bodyValues['eventNumber'],
+            (string) $headerValues['shopId'],
+            (string) $headerValues['merchantId'],
+            (string) $headerValues['firebaseId']
         );
     }
 
@@ -188,11 +231,14 @@ class DispatchWebhookRequest
     public function toArray(): array
     {
         return array_filter([
+            'webhookId' => $this->webhookId,
             'resource' => $this->resource,
             'eventType' => $this->eventType,
             'category' => $this->category,
             'summary' => $this->summary,
             'orderId' => $this->orderId,
+            'eventStream' => $this->eventStream,
+            'eventNumber' => $this->eventNumber,
             'shopId' => $this->shopId,
             'merchantId' => $this->merchantId,
             'firebaseId' => $this->firebaseId,
