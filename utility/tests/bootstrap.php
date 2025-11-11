@@ -36,5 +36,9 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    if (class_exists('AppKernel')) {
+        define('_PS_VERSION_', AppKernel::VERSION);
+    } else {
+        define('_PS_VERSION_', '1.7');
+    }
 }

@@ -56,43 +56,43 @@ jobs:
         working-directory: ${{ matrix.module }}
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Link monorepo directories to vendor
+      - name: Copy monorepo directories to vendor
         working-directory: ${{ matrix.module }}
         run: |
           mkdir -p vendor/invertus
-          ln -sf ${{ github.workspace }}/api vendor/invertus/api
-          ln -sf ${{ github.workspace }}/core vendor/invertus/core
-          ln -sf ${{ github.workspace }}/infrastructure vendor/invertus/infrastructure
-          ln -sf ${{ github.workspace }}/presentation vendor/invertus/presentation
-          ln -sf ${{ github.workspace }}/utility vendor/invertus/utility
+          cp -r ${{ github.workspace }}/api vendor/invertus/
+          cp -r ${{ github.workspace }}/core vendor/invertus/
+          cp -r ${{ github.workspace }}/infrastructure vendor/invertus/
+          cp -r ${{ github.workspace }}/presentation vendor/invertus/
+          cp -r ${{ github.workspace }}/utility vendor/invertus/
 
       - name: Run Infrastructure Unit Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../infrastructure/tests/phpunit.xml \
-            --bootstrap=../infrastructure/tests/bootstrap.php
+            --configuration=vendor/invertus/infrastructure/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/infrastructure/tests/bootstrap.php
 
       - name: Run Utility Unit Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../utility/tests/phpunit.xml \
-            --bootstrap=../utility/tests/bootstrap.php
+            --configuration=vendor/invertus/utility/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/utility/tests/bootstrap.php
 
       - name: Run Core Unit Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../core/tests/phpunit.xml \
-            --bootstrap=../core/tests/bootstrap.php
+            --configuration=vendor/invertus/core/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/core/tests/bootstrap.php
 
       - name: Run Presentation Unit Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../presentation/tests/phpunit.xml \
-            --bootstrap=../presentation/tests/bootstrap.php
+            --configuration=vendor/invertus/presentation/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/presentation/tests/bootstrap.php
 
   integration-tests:
     name: Integration Tests - ${{ matrix.module }} (PHP ${{ matrix.php-version }})
@@ -139,29 +139,29 @@ jobs:
         working-directory: ${{ matrix.module }}
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Link monorepo directories to vendor
+      - name: Copy monorepo directories to vendor
         working-directory: ${{ matrix.module }}
         run: |
           mkdir -p vendor/invertus
-          ln -sf ${{ github.workspace }}/api vendor/invertus/api
-          ln -sf ${{ github.workspace }}/core vendor/invertus/core
-          ln -sf ${{ github.workspace }}/infrastructure vendor/invertus/infrastructure
-          ln -sf ${{ github.workspace }}/presentation vendor/invertus/presentation
-          ln -sf ${{ github.workspace }}/utility vendor/invertus/utility
+          cp -r ${{ github.workspace }}/api vendor/invertus/
+          cp -r ${{ github.workspace }}/core vendor/invertus/
+          cp -r ${{ github.workspace }}/infrastructure vendor/invertus/
+          cp -r ${{ github.workspace }}/presentation vendor/invertus/
+          cp -r ${{ github.workspace }}/utility vendor/invertus/
 
       - name: Run Infrastructure Integration Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../infrastructure/tests/phpunit-integration.xml \
-            --bootstrap=../infrastructure/tests/bootstrap-integration.php
+            --configuration=vendor/invertus/infrastructure/tests/phpunit-integration.xml \
+            --bootstrap=vendor/invertus/infrastructure/tests/bootstrap-integration.php
 
       - name: Run Core Integration Tests
         working-directory: ${{ matrix.module }}
         run: |
           php vendor/bin/phpunit \
-            --configuration=../core/tests/phpunit-integration.xml \
-            --bootstrap=../core/tests/bootstrap-integration.php
+            --configuration=vendor/invertus/core/tests/phpunit-integration.xml \
+            --bootstrap=vendor/invertus/core/tests/bootstrap-integration.php
 
       - name: Run Module Integration Tests
         working-directory: ${{ matrix.module }}
