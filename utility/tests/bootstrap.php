@@ -18,8 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+$rootDirectory = __DIR__ . '/../../../../../../';
+$projectDir = __DIR__ . '/../../../../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);
@@ -36,5 +36,9 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 }
 
 if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    if (class_exists('AppKernel')) {
+        define('_PS_VERSION_', AppKernel::VERSION);
+    } else {
+        define('_PS_VERSION_', '1.7');
+    }
 }

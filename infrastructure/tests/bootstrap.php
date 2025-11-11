@@ -34,6 +34,6 @@ if (file_exists($rootDirectory . 'autoload.php')) {
     require_once $rootDirectory . 'autoload.php';
 }
 
-if (!defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_') && class_exists('AppKernel')) {
     define('_PS_VERSION_', AppKernel::VERSION);
 }
