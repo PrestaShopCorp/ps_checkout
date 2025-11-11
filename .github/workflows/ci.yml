@@ -1,0 +1,171 @@
+name: CI - PHPUnit Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'master'
+      - 'main'
+
+jobs:
+  unit-tests:
+    name: Unit Tests - ${{ matrix.module }} (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: ps17
+            php-version: '7.2'
+          - module: ps8
+            php-version: '8.1'
+          - module: ps9
+            php-version: '8.4'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, xml, ctype, json, zip
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
+
+      - name: Install root dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install ${{ matrix.module }} module dependencies
+        working-directory: ${{ matrix.module }}
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Link monorepo directories to vendor
+        working-directory: ${{ matrix.module }}
+        run: |
+          mkdir -p vendor/invertus
+          ln -sf ${{ github.workspace }}/api vendor/invertus/api
+          ln -sf ${{ github.workspace }}/core vendor/invertus/core
+          ln -sf ${{ github.workspace }}/infrastructure vendor/invertus/infrastructure
+          ln -sf ${{ github.workspace }}/presentation vendor/invertus/presentation
+          ln -sf ${{ github.workspace }}/utility vendor/invertus/utility
+
+      - name: Run Infrastructure Unit Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../infrastructure/tests/phpunit.xml \
+            --bootstrap=../infrastructure/tests/bootstrap.php
+
+      - name: Run Utility Unit Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../utility/tests/phpunit.xml \
+            --bootstrap=../utility/tests/bootstrap.php
+
+      - name: Run Core Unit Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../core/tests/phpunit.xml \
+            --bootstrap=../core/tests/bootstrap.php
+
+      - name: Run Presentation Unit Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../presentation/tests/phpunit.xml \
+            --bootstrap=../presentation/tests/bootstrap.php
+
+  integration-tests:
+    name: Integration Tests - ${{ matrix.module }} (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: ps17
+            php-version: '7.2'
+          - module: ps8
+            php-version: '8.1'
+          - module: ps9
+            php-version: '8.4'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, xml, ctype, json, zip
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
+
+      - name: Install root dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install ${{ matrix.module }} module dependencies
+        working-directory: ${{ matrix.module }}
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Link monorepo directories to vendor
+        working-directory: ${{ matrix.module }}
+        run: |
+          mkdir -p vendor/invertus
+          ln -sf ${{ github.workspace }}/api vendor/invertus/api
+          ln -sf ${{ github.workspace }}/core vendor/invertus/core
+          ln -sf ${{ github.workspace }}/infrastructure vendor/invertus/infrastructure
+          ln -sf ${{ github.workspace }}/presentation vendor/invertus/presentation
+          ln -sf ${{ github.workspace }}/utility vendor/invertus/utility
+
+      - name: Run Infrastructure Integration Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../infrastructure/tests/phpunit-integration.xml \
+            --bootstrap=../infrastructure/tests/bootstrap-integration.php
+
+      - name: Run Core Integration Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=../core/tests/phpunit-integration.xml \
+            --bootstrap=../core/tests/bootstrap-integration.php
+
+      - name: Run Module Integration Tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          php vendor/bin/phpunit \
+            --configuration=tests/phpunit-integration.xml \
+            --bootstrap=tests/bootstrap-integration.php
