@@ -62,10 +62,11 @@ class CountryRepository implements CountryRepositoryInterface
     {
         return \Db::getInstance()->execute(
             '
-                DELETE FROM ' . _DB_PREFIX_ . 'module_country
-                WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . pSQL($isoCode) . '")
-                AND id_module = ' . (int) \Module::getModuleIdByName($this->moduleName) . '
-                AND id_shop = ' . (int) \Context::getContext()->shop->id
+                DELETE mc FROM ' . _DB_PREFIX_ . 'module_country AS mc
+                INNER JOIN ' . _DB_PREFIX_ . 'country AS c ON mc.id_country = c.id_country
+                WHERE c.iso_code = "' . pSQL($isoCode) . '"
+                AND mc.id_module = ' . (int) \Module::getModuleIdByName($this->moduleName) . '
+                AND mc.id_shop = ' . (int) \Context::getContext()->shop->id
         );
     }
 
