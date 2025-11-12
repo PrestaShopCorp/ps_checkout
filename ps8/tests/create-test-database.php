@@ -14,7 +14,7 @@ if (file_exists($rootDirectory . 'autoload.php')) {
     require_once $rootDirectory . 'autoload.php';
 }
 
-$sourceHost = defined('_DB_SERVER_') ? _DB_SERVER_ : 'mysql';
+$sourceHost = 'mysql';
 $sourceUser = defined('_DB_USER_') ? _DB_USER_ : 'root';
 $sourcePassword = defined('_DB_PASSWD_') ? _DB_PASSWD_ : 'prestashop';
 $sourceDatabase = defined('_DB_NAME_') ? _DB_NAME_ : 'prestashop';

@@ -9,8 +9,6 @@ if (!getenv('IS_CI')) {
     define('_PS_FRONT_', true);  // Ensure front is enabled in the test environment
 }
 
-require_once 'create-test-database.php';
-
 require_once $projectDir . 'vendor/autoload.php';
 require_once $rootDirectory . 'config/config.inc.php';
 
