@@ -87,28 +87,24 @@ jobs:
           docker cp utility/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/utility/
 
       - name: Run Infrastructure Unit Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/infrastructure/tests/phpunit.xml \
             --bootstrap=vendor/invertus/infrastructure/tests/bootstrap.php"
 
       - name: Run Utility Unit Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/utility/tests/phpunit.xml \
             --bootstrap=vendor/invertus/utility/tests/bootstrap.php"
 
       - name: Run Core Unit Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/core/tests/phpunit.xml \
             --bootstrap=vendor/invertus/core/tests/bootstrap.php"
 
       - name: Run Presentation Unit Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/presentation/tests/phpunit.xml \
@@ -120,21 +116,18 @@ jobs:
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL tests/create-test-database.php"
 
       - name: Run Infrastructure Integration Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/infrastructure/tests/phpunit-integration.xml \
             --bootstrap=vendor/invertus/infrastructure/tests/bootstrap-integration.php"
 
       - name: Run Core Integration Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/core/tests/phpunit-integration.xml \
             --bootstrap=vendor/invertus/core/tests/bootstrap-integration.php"
 
       - name: Run Module Integration Tests
-        continue-on-error: true
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=tests/phpunit-integration.xml \
