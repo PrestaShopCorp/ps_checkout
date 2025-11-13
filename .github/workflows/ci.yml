@@ -114,7 +114,7 @@ jobs:
             --configuration=vendor/invertus/presentation/tests/phpunit.xml \
             --bootstrap=vendor/invertus/presentation/tests/bootstrap.php"
 
-      - name: Create testing database for Integration tests
+      - name: Install module and Create testing database for Integration tests
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html && php bin/console  prestashop:module install ps_checkout"
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL tests/create-test-database.php"
