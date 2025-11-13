@@ -30,6 +30,3 @@ echo shell_exec($createDatabaseCommand) . PHP_EOL;
 
 echo 'Step 2: Importing into New Database' . PHP_EOL;
 echo shell_exec($importCommand) . PHP_EOL;
-
-//shell_exec($createDatabaseCommand);
-//shell_exec($importCommand);
