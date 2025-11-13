@@ -115,8 +115,15 @@ class Ps_CheckoutFastlaneModuleFrontController extends AbstractFrontController
 
     private function handleSaveShippingAddressToCookie($shippingAddress, $email)
     {
-        $this->context->cookie->{PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SHIPPING_ADDRESS . $email} = json_encode($shippingAddress);
-        $this->context->cookie->{PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SAVED_SHIPPING_ADDRESS . $email} = true;
+        $this->context->cookie->__set(
+            PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SHIPPING_ADDRESS . $email,
+            json_encode($shippingAddress)
+        );
+        $this->context->cookie->__set(
+            PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SAVED_SHIPPING_ADDRESS . $email,
+            true
+        );
+        $this->context->cookie->write();
     }
 
     private function handleSaveShippingAddress($shippingAddress)
