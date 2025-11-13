@@ -352,7 +352,7 @@ class Ps_Checkout extends PaymentModule
                 ]
             );
 
-            if ($this->context->cookie->{PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SAVED_SHIPPING_ADDRESS . $this->context->customer->email}) {
+            if ($this->context->cookie->__get(PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SAVED_SHIPPING_ADDRESS . $this->context->customer->email)) {
                 $this->context->controller->registerStylesheet(
                     $this->name . '-css-fastlane-address',
                     $this->getPathUri() . 'views/css/fastlane-address.css?version=' . $this->version,
@@ -1282,9 +1282,9 @@ class Ps_Checkout extends PaymentModule
 
         $cookieKey = PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SHIPPING_ADDRESS . $customer->email;
 
-        $fastlaneShippingAddress = $this->context->cookie->{$cookieKey} ?? null;
+        $fastlaneShippingAddress = $this->context->cookie->__get($cookieKey) ?? null;
 
-        unset($this->context->cookie->{$cookieKey});
+        $this->context->cookie->__unset($cookieKey);
 
         if (!$fastlaneShippingAddress) {
             return;
