@@ -2,18 +2,15 @@ name: CI - PHPUnit Tests
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
     branches:
       - '**'
-  push:
-    branches:
-      - 'master'
-      - 'main'
 
 jobs:
   tests:
     name: Tests - ${{ matrix.module }} (PS ${{ matrix.ps-version }})
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'ready to review')
 
     strategy:
       fail-fast: false
