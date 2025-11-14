@@ -121,7 +121,7 @@ class CreateOrderPaymentAction implements CreateOrderPaymentActionInterface
 
         $paymentAdded = $order->addOrderPayment(
             $capture['amount']['value'],
-            $this->fundingSourceTranslationProvider->getFundingSourceName($payPalOrderResponse->getFundingSource()),
+            $this->fundingSourceTranslationProvider->getFundingSourceName($payPalOrder->getFundingSource()),
             $capture['id'],
             $currency,
             $date->format('Y-m-d H:i:s'),

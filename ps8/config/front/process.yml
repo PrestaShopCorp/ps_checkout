@@ -40,6 +40,7 @@ services:
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
       - '@PsCheckout\Core\Order\Validator\OrderAmountValidator'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
 
   PsCheckout\Core\Order\Action\ValidateOrderAction:
     class: PsCheckout\Core\Order\Action\ValidateOrderAction
