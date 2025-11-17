@@ -85,7 +85,7 @@ class PayPalPayLaterConfiguration
             'product' => ['status' => 'disabled'],
             'homepage' => ['status' => 'disabled'],
             'category' => ['status' => 'disabled'],
-            'payment' => ['status' => 'disabled'],
+            'checkout' => ['status' => 'disabled'],
             'cart' => ['status' => 'disabled'],
         ];
     }
@@ -106,7 +106,7 @@ class PayPalPayLaterConfiguration
             'product' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ? 'enabled': 'disabled'],
             'homepage' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER) ? 'enabled': 'disabled'],
             'category' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER) ? 'enabled': 'disabled'],
-            'payment' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ? 'enabled': 'disabled'],
+            'checkout' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ? 'enabled': 'disabled'],
             'cart' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ? 'enabled': 'disabled'],
         ];
     }

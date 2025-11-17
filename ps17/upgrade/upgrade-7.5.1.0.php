@@ -39,36 +39,69 @@ function upgrade_module_7_5_1_0(Ps_checkout $module)
 
         foreach ($shopsList as $shopId) {
             $configuration = json_encode([
-                'product' => ['status' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE',
-                    null,
-                    null,
-                    $shopId
-                ) ? 'enabled' : 'disabled'],
-                'homepage' => ['status' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER',
-                    null,
-                    null,
-                    $shopId
-                ) ? 'enabled' : 'disabled'],
-                'cart' => ['status' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER',
-                    null,
-                    null,
-                    $shopId
-                ) ? 'enabled' : 'disabled'],
-                'payment' => ['status' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER',
-                    null,
-                    null,
-                    $shopId
-                ) ? 'enabled' : 'disabled'],
-                'category' => ['status' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER',
-                    null,
-                    null,
-                    $shopId
-                ) ? 'enabled' : 'disabled'],
+                'cart' => [
+                    'placement' => 'cart',
+                    'status' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER',
+                        null,
+                        null,
+                        $shopId
+                    ) ? 'enabled' : 'disabled',
+                    'layout' => 'text',
+                    'logo-type' => 'inline',
+                    'text-color' => 'black',
+                    'text-size' => '12',
+                ],
+                'category' => [
+                    'placement' => 'category',
+                    'status' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER',
+                        null,
+                        null,
+                        $shopId
+                    ) ? 'enabled' : 'disabled',
+                    'color' => 'white',
+                    'layout' => 'flex',
+                    'ratio' => '8x1',
+                ],
+                'checkout' => [
+                    'placement' => 'checkout',
+                    'status' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER',
+                        null,
+                        null,
+                        $shopId
+                    ) ? 'enabled' : 'disabled',
+                    'layout' => 'text',
+                    'logo-type' => 'inline',
+                    'text-color' => 'black',
+                    'text-size' => '12',
+                ],
+                'homepage' => [
+                    'placement' => 'homepage',
+                    'status' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER',
+                        null,
+                        null,
+                        $shopId
+                    ) ? 'enabled' : 'disabled',
+                    'color' => 'white',
+                    'layout' => 'flex',
+                    'ratio' => '8x1',
+                ],
+                'product' => [
+                    'placement' => 'product',
+                    'status' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE',
+                        null,
+                        null,
+                        $shopId
+                    ) ? 'enabled' : 'disabled',
+                    'layout' => 'text',
+                    'logo-type' => 'inline',
+                    'text-color' => 'black',
+                    'text-size' => '12',
+                ],
             ]);
 
             Configuration::updateValue('PS_CHECKOUT_PAY_LATER_CONFIG', $configuration, false, null, (int) $shopId);

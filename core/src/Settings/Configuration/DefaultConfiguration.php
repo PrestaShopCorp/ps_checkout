@@ -47,6 +47,6 @@ class DefaultConfiguration
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
         'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
         'PS_CHECKOUT_PAYPAL_BUTTON' => '{"shape":"pill","label":"pay","color":"gold"}',
-        'PS_CHECKOUT_PAY_LATER_CONFIG' => '{"cart":{"status":"enabled"},"category":{"status":"disabled"},"checkout":{"status":"enabled"},"homepage":{"status":"disabled"},"product":{"status":"enabled"}}',
+        'PS_CHECKOUT_PAY_LATER_CONFIG' => '{"cart":{"placement":"cart","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"},"category":{"placement":"category","status":"disabled","color":"white","layout":"flex","ratio":"8x1"},"checkout":{"placement":"checkout","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"},"homepage":{"placement":"homepage","status":"disabled","color":"white","layout":"flex","ratio":"8x1"},"product":{"placement":"product","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"}}',
     ];
 }
