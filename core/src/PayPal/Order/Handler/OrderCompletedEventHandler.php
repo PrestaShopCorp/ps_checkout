@@ -91,10 +91,6 @@ class OrderCompletedEventHandler implements EventHandlerInterface
         $payPalOrder->setStatus($payPalOrderResponse->getStatus());
         $payPalOrder->setIntent($payPalOrderResponse->getIntent() ?? 'CAPTURE');
 
-        if ($payPalOrderResponse->getFundingSource()) {
-            $payPalOrder->setFundingSource($payPalOrderResponse->getFundingSource());
-        }
-
         if ($payPalOrderResponse->getPaymentSource()) {
             $payPalOrder->setPaymentSource($payPalOrderResponse->getPaymentSource());
         }
