@@ -147,7 +147,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             throw $exception;
         }
 
-        $this->deleteExistingPayPalOrder($cartId);
+//        $this->deleteExistingPayPalOrder($cartId);
+        $this->cancelExistingPayPalOrder($cartId);
 
         $this->payPalOrderCache->updateOrderCache($orderResponse);
 
@@ -181,6 +182,22 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {
             throw new PsCheckoutException('Failed to create order', PsCheckoutException::UNKNOWN, $exception);
+        }
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     * @throws PsCheckoutException
+     */
+    private function deleteExistingPayPalOrder(int $cartId)
+    {
+        $existingOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
+        if ($existingOrder) {
+            $this->payPalOrderRepository->deletePayPalOrder($existingOrder->getId());
         }
     }
 

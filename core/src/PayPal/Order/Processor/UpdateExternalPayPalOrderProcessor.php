@@ -26,6 +26,8 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
+use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -104,6 +106,10 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
         try {
             $paypalOrderResponse = $this->paypalOrderProvider->getById($request->getOrderId());
         } catch (Exception $exception) {
+            return;
+        }
+
+        if ($paypalOrderResponse->getStatus() === PayPalOrderStatus::COMPLETED) {
             return;
         }
 

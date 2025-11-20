@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
@@ -108,9 +109,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 if ($payPalOrder && in_array(
                     $payPalOrder->getStatus(),
                     [
-                            PayPalOrderStatusConfiguration::STATUS_CREATED,
-                            PayPalOrderStatusConfiguration::STATUS_APPROVED,
-                            PayPalOrderStatusConfiguration::STATUS_PAYER_ACTION_REQUIRED,
+                            PayPalOrderStatus::CREATED,
+                            PayPalOrderStatus::APPROVED,
+                            PayPalOrderStatus::PAYER_ACTION_REQUIRED,
                         ],
                     true
                 )) {
