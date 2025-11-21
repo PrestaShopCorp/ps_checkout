@@ -28,6 +28,8 @@ class PayPalOrder
 
     const THREE_D_SECURE_NOT_REQUIRED = '3DS_NOT_REQUIRED';
 
+    const DELETED = 'DELETED';
+
     /**
      * @var string
      */

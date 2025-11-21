@@ -90,6 +90,10 @@ class OrderApprovedEventHandler implements EventHandlerInterface
         $this->payPalOrderRepository->save($payPalOrder);
         $this->updatePayPalOrderPurchaseUnit->execute($payPalOrderResponse);
 
+        if ($payPalOrder->isExpressCheckout()) {
+            return;
+        }
+
         $this->card3DSecureValidator->getAuthorizationDecision($payPalOrderResponse);
         $this->capturePayPalOrderAction->execute($payPalOrderResponse);
     }

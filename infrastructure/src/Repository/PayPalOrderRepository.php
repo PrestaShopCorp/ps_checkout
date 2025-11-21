@@ -48,7 +48,8 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
 
         $query->select('*')
         ->from(self::TABLE_NAME)
-        ->where('id_cart=' . $cartId);
+        ->where('id_cart=' . $cartId)
+        ->where('tags NOT LIKE "%DELETED%"');
 
         $payPalOrderData = $this->db->getRow($query);
 

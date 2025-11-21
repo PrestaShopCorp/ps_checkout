@@ -29,6 +29,8 @@ use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
+use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
@@ -147,8 +149,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             throw $exception;
         }
 
-//        $this->deleteExistingPayPalOrder($cartId);
-        $this->cancelExistingPayPalOrder($cartId);
+        $this->softDeleteExistingPayPalOrder($cartId);
 
         $this->payPalOrderCache->updateOrderCache($orderResponse);
 
@@ -209,11 +210,12 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      * @throws PrestaShopException
      * @throws PsCheckoutException
      */
-    private function deleteExistingPayPalOrder(int $cartId)
+    private function softDeleteExistingPayPalOrder(int $cartId)
     {
         $existingOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
         if ($existingOrder) {
-            $this->payPalOrderRepository->deletePayPalOrder($existingOrder->getId());
+            $existingOrder->addTag(PayPalOrder::DELETED);
+            $this->payPalOrderRepository->save($existingOrder);
         }
     }
 }
