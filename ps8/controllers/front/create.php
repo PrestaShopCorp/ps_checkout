@@ -98,15 +98,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 /** @var PayPalOrderRepository $payPalOrderRepository */
                 $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
 
-                /** @var PayPalOrder|null $payPalOrder */
-                $payPalOrder = $payPalOrderRepository->getOneBy(
-                    [
-                        'id_cart' => (int) $context->getCart()->id,
-                        'is_express_checkout' => '1',
-                    ]
-                );
+                $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $context->getCart()->id);
 
-                if ($payPalOrder && in_array(
+                if ($payPalOrder && $payPalOrder->isExpressCheckout() && in_array(
                     $payPalOrder->getStatus(),
                     [
                             PayPalOrderStatus::CREATED,
