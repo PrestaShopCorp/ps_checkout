@@ -112,7 +112,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                             PayPalOrderStatus::CREATED,
                             PayPalOrderStatus::APPROVED,
                             PayPalOrderStatus::PAYER_ACTION_REQUIRED,
-                            PayPalOrderStatus::COMPLETED
                         ],
                     true
                 )) {
