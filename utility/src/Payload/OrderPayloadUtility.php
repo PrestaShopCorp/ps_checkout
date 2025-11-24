@@ -106,6 +106,7 @@ class OrderPayloadUtility
                 if (!self::isZeroValueItem($item2)) {
                     $diff[$key] = $item2;
                 }
+
                 continue;
             }
 
@@ -114,6 +115,7 @@ class OrderPayloadUtility
                 if (!self::isZeroValueItem($item1)) {
                     $diff[$key] = $item1;
                 }
+
                 continue;
             }
 
