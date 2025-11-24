@@ -34,6 +34,7 @@ use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CheckPayPalOrderRequest;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 use PsCheckout\Utility\Common\ArrayUtility;
+use PsCheckout\Utility\Payload\OrderPayloadUtility;
 
 class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderProcessorInterface
 {
@@ -129,7 +130,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
         $needToUpdate = false;
 
         if ($paypalOrderResponse->getOrderAmount() && isset($payload['amount'])) {
-            $amountDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getOrderAmount(), $payload['amount']);
+            $amountDiff = OrderPayloadUtility::amountWithBreakdownDiff($paypalOrderResponse->getOrderAmount(), $payload['amount']);
             if (!empty($amountDiff)) {
                 $needToUpdate = true;
             }
