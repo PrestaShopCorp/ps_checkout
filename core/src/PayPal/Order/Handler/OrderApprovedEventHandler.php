@@ -26,6 +26,7 @@ use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
+use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
 
@@ -90,7 +91,10 @@ class OrderApprovedEventHandler implements EventHandlerInterface
         $this->payPalOrderRepository->save($payPalOrder);
         $this->updatePayPalOrderPurchaseUnit->execute($payPalOrderResponse);
 
-        if ($payPalOrder->isExpressCheckout()) {
+        if (
+            $payPalOrder->isExpressCheckout()
+            || $payPalOrder->hasTag(PayPalOrder::DELETED)
+            || in_array($payPalOrder->getStatus(), [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::CANCELED], true)) {
             return;
         }
 

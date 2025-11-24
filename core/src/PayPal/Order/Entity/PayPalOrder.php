@@ -371,4 +371,14 @@ class PayPalOrder
     {
         $this->tags[] = $tag;
     }
+
+    /**
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasTag($tag)
+    {
+        return in_array($tag, $this->tags, true);
+    }
 }
