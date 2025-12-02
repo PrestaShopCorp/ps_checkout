@@ -46,9 +46,10 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
     {
         $query = new \DbQuery();
 
-        $query->select('*');
-        $query->from(self::TABLE_NAME);
-        $query->where('id_cart=' . $cartId);
+        $query->select('*')
+        ->from(self::TABLE_NAME)
+        ->where('id_cart=' . $cartId)
+        ->where('tags NOT LIKE "%' . PayPalOrder::DELETED . '%"');
 
         $payPalOrderData = $this->db->getRow($query);
 
