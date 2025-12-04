@@ -27,19 +27,20 @@ use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PayerNodeBuilderInterface;
+use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
 class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 {
-    /** @var array * */
+    /** @var array */
     private $cart;
 
-    /** @var string * */
+    /** @var string */
     private $fundingSource;
 
-    /** @var string * */
+    /** @var string */
     private $paypalOrderId;
 
     /** @var string */
@@ -93,6 +94,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var GooglePayPaymentSourceNodeBuilderInterface */
     private $googlePayPaymentSourceNodeBuilder;
 
+    /** @var VenmoPaymentSourceNodeBuilderInterface */
+    private $venmoPaymentSourceNodeBuilder;
+
     public function __construct(
         BaseNodeBuilderInterface $baseNodeBuilder,
         AmountBreakdownNodeInterface $amountBreakdownNodeBuilder,
@@ -102,7 +106,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         SupplementaryDataNodeBuilderInterface $supplementaryDataNodeBuilder,
         ApplicationContextNodeBuilderInterface $applicationContextNodeBuilder,
         PayPalPaymentSourceNodeBuilderInterface $payPalPaymentSourceNodeBuilder,
-        GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder
+        GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder,
+        VenmoPaymentSourceNodeBuilderInterface $venmoPaymentSourceNodeBuilder
     ) {
         $this->baseNodeBuilder = $baseNodeBuilder;
         $this->amountBreakdownNodeBuilder = $amountBreakdownNodeBuilder;
@@ -113,6 +118,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->applicationContextNodeBuilder = $applicationContextNodeBuilder;
         $this->payPalPaymentSourceNodeBuilder = $payPalPaymentSourceNodeBuilder;
         $this->googlePayPaymentSourceNodeBuilder = $googlePayPaymentSourceNodeBuilder;
+        $this->venmoPaymentSourceNodeBuilder = $venmoPaymentSourceNodeBuilder;
     }
 
     /** {@inheritDoc} */
@@ -262,6 +268,12 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                     ->setPaypalVaultId($this->paypalVaultId);
 
                 return $this->payPalPaymentSourceNodeBuilder->build();
+            case 'venmo':
+                return $this->venmoPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
+                    ->setCart($this->cart)
+                    ->setPaypalCustomerId($this->paypalCustomerId)
+                    ->setPaypalVaultId($this->paypalVaultId)
+                    ->build();
         }
 
         return null;
