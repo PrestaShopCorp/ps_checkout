@@ -15,6 +15,7 @@ use PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CheckPayPalOrderRequest;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -96,7 +97,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
             'COMPLETED',
-            'CAPTURE',
+            PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             null,
             null,
             [],
@@ -135,7 +136,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
             'COMPLETED',
-            'CAPTURE',
+            PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             null,
             ['card' => []],
             [
@@ -221,7 +222,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
             'PENDING',
-            'CAPTURE',
+            PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             null,
             ['card' => []],
             [

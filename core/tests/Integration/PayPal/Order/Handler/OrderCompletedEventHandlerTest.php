@@ -5,6 +5,7 @@ namespace PsCheckout\Core\Tests\Integration\PayPal\Order\Handler;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderFactory;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
@@ -47,7 +48,7 @@ class OrderCompletedEventHandlerTest extends BaseTestCase
         $updatedOrder = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrder->getId()]);
         $this->assertNotNull($updatedOrder, 'PayPalOrder not found after update');
         $this->assertEquals('COMPLETED', $updatedOrder->getStatus());
-        $this->assertEquals('CAPTURE', $updatedOrder->getIntent());
+        $this->assertEquals(PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE, $updatedOrder->getIntent());
     }
 
     public function testHandleWithNonExistentOrder(): void

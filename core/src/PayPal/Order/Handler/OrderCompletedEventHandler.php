@@ -30,6 +30,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 
 class OrderCompletedEventHandler implements EventHandlerInterface
@@ -89,7 +90,7 @@ class OrderCompletedEventHandler implements EventHandlerInterface
         }
 
         $payPalOrder->setStatus($payPalOrderResponse->getStatus());
-        $payPalOrder->setIntent($payPalOrderResponse->getIntent() ?? 'CAPTURE');
+        $payPalOrder->setIntent($payPalOrderResponse->getIntent() ?? PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE);
 
         if ($payPalOrderResponse->getPaymentSource()) {
             $payPalOrder->setPaymentSource($payPalOrderResponse->getPaymentSource());

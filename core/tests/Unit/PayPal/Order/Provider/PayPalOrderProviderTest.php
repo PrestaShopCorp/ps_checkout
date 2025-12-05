@@ -13,6 +13,7 @@ use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -66,7 +67,7 @@ class PayPalOrderProviderTest extends TestCase
         $cachedData = [
             'id' => $orderId,
             'status' => 'COMPLETED',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',
@@ -95,7 +96,7 @@ class PayPalOrderProviderTest extends TestCase
         $orderData = [
             'id' => $orderId,
             'status' => 'PENDING',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',
@@ -149,7 +150,7 @@ class PayPalOrderProviderTest extends TestCase
         $orderData = [
             'id' => $orderId,
             'status' => 'PENDING',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',

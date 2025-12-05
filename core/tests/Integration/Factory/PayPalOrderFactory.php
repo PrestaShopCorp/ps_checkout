@@ -2,6 +2,7 @@
 
 namespace PsCheckout\Core\Tests\Integration\Factory;
 
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 
 class PayPalOrderFactory
@@ -11,7 +12,7 @@ class PayPalOrderFactory
         $defaultData = [
             'id' => 'TEST-ORDER-123',
             'id_cart' => 1,
-            'intent' => 'CAPTURE',
+            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             'funding_source' => 'paypal',
             'status' => 'PENDING',
             'payment_source' => [],

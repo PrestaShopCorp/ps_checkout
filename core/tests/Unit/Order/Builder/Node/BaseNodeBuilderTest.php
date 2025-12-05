@@ -21,6 +21,7 @@
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Utility\Common\NumberUtility;
 use PsCheckout\Utility\Common\StringUtility;
@@ -55,7 +56,7 @@ class BaseNodeBuilderTest extends TestCase
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Test Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
                     PayPalConfiguration::PS_ROUND_TYPE => 'round',
                     PayPalConfiguration::PS_PRICE_ROUND_MODE => 'up',
                 ],
@@ -76,7 +77,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => false,
                 'paypalOrderId' => null,
                 'expected' => [
-                    'intent' => 'CAPTURE',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
                     'purchase_units' => [
                         [
                             'custom_id' => '123',
@@ -138,7 +139,7 @@ class BaseNodeBuilderTest extends TestCase
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Another Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT456',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
                     PayPalConfiguration::PS_ROUND_TYPE => 'round',
                     PayPalConfiguration::PS_PRICE_ROUND_MODE => 'down',
                 ],
@@ -159,7 +160,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => false,
                 'paypalOrderId' => null,
                 'expected' => [
-                    'intent' => 'CAPTURE',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
                     'purchase_units' => [
                         [
                             'custom_id' => '789',

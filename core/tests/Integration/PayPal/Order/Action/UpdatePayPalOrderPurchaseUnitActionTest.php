@@ -4,6 +4,7 @@ namespace PsCheckout\Core\Tests\Integration\PayPal\Order\Action;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
 use PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository;
 
@@ -26,7 +27,7 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $orderResponse = new PayPalOrderResponse(
             'PAY-123',
             'COMPLETED',
-            'CAPTURE',
+            PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             [], // payer
             [], // payment_source
             [
