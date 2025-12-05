@@ -20,7 +20,9 @@
 
 namespace PsCheckout\Core\Customer\Action;
 
+use Exception;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Action\CreateOrUpdateAddressActionInterface;
 use PsCheckout\Infrastructure\Action\CustomerAuthenticationActionInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -54,9 +56,25 @@ class ExpressCheckoutAction implements ExpressCheckoutActionInterface
 
     public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
     {
-        if ($this->context->getCustomer() && !$this->context->getCustomer()->isLogged()) {
-            $this->customerAuthenticationAction->execute($expressCheckoutRequest);
+        $customer = $this->context->getCustomer();
+
+        if (!$customer->isLogged()) {
+            $customer->is_guest = true;
+            $customer->email = $expressCheckoutRequest->getPayerEmail();
+            $customer->firstname = $expressCheckoutRequest->getPayerFirstName();
+            $customer->lastname = $expressCheckoutRequest->getPayerLastName();
+            $customer->passwd = md5(time() . _COOKIE_KEY_);
+
+            try {
+                $customer->save();
+            } catch (Exception $exception) {
+                throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER, $exception);
+            }
+
+            $this->context->updateCustomer($customer);
         }
+
+        $this->context->setPayPalEmail($expressCheckoutRequest->getPayerEmail());
 
         $this->context->resetContextCartAddresses();
 

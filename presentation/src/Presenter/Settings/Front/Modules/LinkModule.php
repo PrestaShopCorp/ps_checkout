@@ -21,6 +21,7 @@
 namespace PsCheckout\Presentation\Presenter\Settings\Front\Modules;
 
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ToolsInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
 class LinkModule implements PresenterInterface
@@ -36,29 +37,36 @@ class LinkModule implements PresenterInterface
     private $link;
 
     /**
-     * @param string $moduleName
-     * @param LinkInterface $link,
+     * @var ToolsInterface
      */
+    private $tools;
+
     public function __construct(
         string $moduleName,
-        LinkInterface $link
+        LinkInterface $link,
+        ToolsInterface $tools
     ) {
         $this->moduleName = $moduleName;
         $this->link = $link;
+        $this->tools = $tools;
     }
 
     public function present(): array
     {
+        $params = [
+            'token' => $this->tools->getToken(false),
+        ];
+
         return [
-            $this->moduleName . 'CreateUrl' => $this->link->getModuleLink('create'),
-            $this->moduleName . 'CheckUrl' => $this->link->getModuleLink('check'),
-            $this->moduleName . 'ValidateUrl' => $this->link->getModuleLink('validate'),
-            $this->moduleName . 'CancelUrl' => $this->link->getModuleLink('cancel'),
-            $this->moduleName . 'ExpressCheckoutUrl' => $this->link->getModuleLink('ExpressCheckout'),
-            $this->moduleName . 'VaultUrl' => $this->link->getModuleLink('vault'),
-            $this->moduleName . 'PaymentUrl' => $this->link->getModuleLink('payment'),
-            $this->moduleName . 'GooglePayUrl' => $this->link->getModuleLink('googlepay'),
-            $this->moduleName . 'ApplePayUrl' => $this->link->getModuleLink('applepay'),
+            $this->moduleName . 'CreateUrl' => $this->link->getModuleLink('create', $params),
+            $this->moduleName . 'CheckUrl' => $this->link->getModuleLink('check', $params),
+            $this->moduleName . 'ValidateUrl' => $this->link->getModuleLink('validate', $params),
+            $this->moduleName . 'CancelUrl' => $this->link->getModuleLink('cancel', $params),
+            $this->moduleName . 'ExpressCheckoutUrl' => $this->link->getModuleLink('ExpressCheckout', $params),
+            $this->moduleName . 'VaultUrl' => $this->link->getModuleLink('vault', $params),
+            $this->moduleName . 'PaymentUrl' => $this->link->getModuleLink('payment', $params),
+            $this->moduleName . 'GooglePayUrl' => $this->link->getModuleLink('googlepay', $params),
+            $this->moduleName . 'ApplePayUrl' => $this->link->getModuleLink('applepay', $params),
             $this->moduleName . 'CheckoutUrl' => $this->link->getPageLink('order'),
             $this->moduleName . 'ConfirmUrl' => $this->link->getPageLink('order-confirmation'),
         ];
