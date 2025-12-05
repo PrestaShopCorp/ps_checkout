@@ -104,6 +104,7 @@ jobs:
           cp -r api core infrastructure presentation utility $MODULE_NAME/vendor/invertus/
           
           rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
+                 $MODULE_NAME/docs \
                  $MODULE_NAME/tests \
                  $MODULE_NAME/vendor/tests \
                  $MODULE_NAME/.php-cs-fixer.cache
