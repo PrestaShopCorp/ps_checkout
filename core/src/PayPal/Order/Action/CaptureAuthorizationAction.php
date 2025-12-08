@@ -130,9 +130,9 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
             $authorizationEntity = new PayPalOrderAuthorization(
                 $capturedAuthorization['id'],
                 $payPalOrder->getId(),
-                    $capturedAuthorization['status'],
-                    $capturedAuthorization['expiration_time'],
-                    $capturedAuthorization['seller_protection']
+                $capturedAuthorization['status'],
+                $capturedAuthorization['expiration_time'],
+                $capturedAuthorization['seller_protection']
             );
         }
 
