@@ -1,4 +1,7 @@
 <?php
+
+namespace PsCheckout\Tests\Unit\Presenter\Cart;
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,6 +21,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Infrastructure\Adapter\AddressInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -26,18 +30,39 @@ use PsCheckout\Infrastructure\Repository\CustomerRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\LanguageRepositoryInterface;
 use PsCheckout\Presentation\Presenter\Cart\CartPresenter;
 
+/**
+ * @coversDefaultClass \PsCheckout\Presentation\Presenter\Cart\CartPresenter
+ */
 class CartPresenterTest extends TestCase
 {
+    /**
+     * @var ContextInterface&MockObject
+     */
     private $context;
 
+    /**
+     * @var AddressInterface&MockObject
+     */
     private $address;
 
+    /**
+     * @var CurrencyInterface&MockObject
+     */
     private $currency;
 
+    /**
+     * @var LanguageRepositoryInterface&MockObject
+     */
     private $languageRepository;
 
+    /**
+     * @var CustomerRepositoryInterface&MockObject
+     */
     private $customerRepository;
 
+    /**
+     * @var CartPresenter
+     */
     private $cartPresenter;
 
     protected function setUp(): void
@@ -62,27 +87,44 @@ class CartPresenterTest extends TestCase
      */
     public function testPresentReturnsExpectedData($cartData, $expectedResult)
     {
-        $cartMock = $this->createMock(Cart::class);
+        $cartMock = $this->createMock(\Cart::class);
         $cartMock->id = $cartData['id'];
         $cartMock->id_address_delivery = $cartData['id_address_delivery'];
         $cartMock->id_address_invoice = $cartData['id_address_invoice'];
         $cartMock->id_currency = $cartData['id_currency'];
         $cartMock->id_customer = $cartData['id_customer'];
         $cartMock->id_lang = $cartData['id_lang'];
+        $cartMock->gift = true;
 
         $cartMock->method('getProducts')->willReturn($cartData['products']);
         $cartMock->method('getTotalShippingCost')->willReturn($cartData['shipping_cost']);
         $cartMock->method('getOrderTotal')->willReturn($cartData['total_including_tax']);
-        $cartMock->method('getGiftWrappingPrice')->willReturn($cartData['gift_wrapping']);
+        $cartMock->method('getGiftWrappingPrice')->with(true)->willReturn($cartData['gift_wrapping']);
 
         $this->context->method('getCart')->willReturn($cartMock);
 
+        $shippingAddress = null;
+        if ($cartData['shipping_address']) {
+            $shippingAddress = $this->createMock(\Address::class);
+            $shippingAddress->id = $cartData['shipping_address']['id'];
+            $shippingAddress->address1 = $cartData['shipping_address']['address'];
+        }
+
+        $invoiceAddress = null;
+        if ($cartData['invoice_address']) {
+            $invoiceAddress = $this->createMock(\Address::class);
+            $invoiceAddress->id = $cartData['invoice_address']['id'];
+            $invoiceAddress->address1 = $cartData['invoice_address']['address'];
+        }
+
         $this->address->method('initialize')->willReturnMap([
-            [$cartData['id_address_delivery'], $cartData['shipping_address']],
-            [$cartData['id_address_invoice'], $cartData['invoice_address']],
+            [$cartData['id_address_delivery'], $shippingAddress],
+            [$cartData['id_address_invoice'], $invoiceAddress],
         ]);
 
-        $this->currency->method('getCurrencyInstance')->willReturn((object) ['iso_code' => $cartData['currency_iso_code']]);
+        $currency = $this->createMock(\Currency::class);
+        $currency->iso_code = $cartData['currency_iso_code'];
+        $this->currency->method('getCurrencyInstance')->willReturn($currency);
 
         $this->customerRepository->method('getOneBy')->willReturn($cartData['customer']);
 
@@ -118,6 +160,7 @@ class CartPresenterTest extends TestCase
                     'cart' => [
                         'id' => 1,
                         'shipping_cost' => 10.00,
+                        'is_virtual' => null,
                         'totals' => [
                             'total_including_tax' => ['amount' => 100.00],
                         ],
@@ -157,6 +200,7 @@ class CartPresenterTest extends TestCase
                     'cart' => [
                         'id' => null,
                         'shipping_cost' => 0.00,
+                        'is_virtual' => null,
                         'totals' => [
                             'total_including_tax' => ['amount' => 0.00],
                         ],

@@ -51,6 +51,9 @@ class BodyValuesValidatorTest extends TestCase
             'category' => 'PAYMENT',
             'summary' => 'Payment completed',
             'orderId' => 'ORDER-123',
+            'eventStream' => '1234567890',
+            'eventNumber' => '1234567890',
+            'webhookId' => '1234567890'
         ];
 
         $this->webhookBodyProvider->expects($this->once())
@@ -67,6 +70,9 @@ class BodyValuesValidatorTest extends TestCase
             'category' => 'PAYMENT',
             'summary' => 'Payment completed',
             'orderId' => 'ORDER-123',
+            'eventStream' => '1234567890',
+            'eventNumber' => '1234567890',
+            'webhookId' => '1234567890'
         ], $result);
     }
 
@@ -77,6 +83,9 @@ class BodyValuesValidatorTest extends TestCase
             'resource' => json_encode(['id' => '123']),
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
             'category' => 'PAYMENT',
+            'eventStream' => '1234567890',
+            'eventNumber' => '1234567890',
+            'webhookId' => '1234567890'
         ];
 
         $this->webhookBodyProvider->expects($this->once())
@@ -93,6 +102,9 @@ class BodyValuesValidatorTest extends TestCase
             'category' => 'PAYMENT',
             'summary' => null,
             'orderId' => null,
+            'eventStream' => '1234567890',
+            'eventNumber' => '1234567890',
+            'webhookId' => '1234567890'
         ], $result);
     }
 

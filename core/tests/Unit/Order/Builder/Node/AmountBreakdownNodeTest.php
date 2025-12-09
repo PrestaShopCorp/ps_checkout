@@ -1,4 +1,7 @@
 <?php
+
+namespace PsCheckout\Tests\Unit\Order\Builder\Node;
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -140,6 +143,14 @@ class AmountBreakdownNodeTest extends TestCase
                                 'currency_code' => 'USD',
                                 'value' => '45.50', // 5.00 (gift_wrapping) + 40.50 (remainder)
                             ],
+                            'insurance' => [
+                                'currency_code' => 'USD',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'USD',
+                                'value' => '0.00',
+                            ],
                         ],
                     ],
                 ],
@@ -214,6 +225,14 @@ class AmountBreakdownNodeTest extends TestCase
                                 'currency_code' => 'JPY',
                                 'value' => '8000', // 500 (gift_wrapping) + 7500 (remainder)
                             ],
+                            'insurance' => [
+                                'currency_code' => 'JPY',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'JPY',
+                                'value' => '0.00',
+                            ],
                         ],
                     ],
                 ],
@@ -287,6 +306,14 @@ class AmountBreakdownNodeTest extends TestCase
                             'handling' => [
                                 'currency_code' => 'EUR',
                                 'value' => '40.00', // remainder (100 - 45 - 5 - 10)
+                            ],
+                            'insurance' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
                             ],
                         ],
                     ],

@@ -47,8 +47,16 @@ class OrderPayloadUtility
      * Normalizes 'value' properties to 2 decimal places before comparison.
      * Ignores breakdown properties that don't exist in one array but have '0.00' value in the other.
      *
-     * @param array $amount1 The first amount array (e.g., PayPal response)
-     * @param array $amount2 The second amount array (e.g., new payload)
+     * @param array{
+     *     currency_code: string,
+     *     value: string,
+     *     breakdown?: array<string, array{currency_code: string, value: string}>
+     * } $amount1 The first amount array (e.g., PayPal response)
+     * @param array{
+     *     currency_code: string,
+     *     value: string,
+     *     breakdown?: array<string, array{currency_code: string, value: string}>
+     * } $amount2 The second amount array (e.g., new payload)
      *
      * @return array Differences found between amounts
      */
