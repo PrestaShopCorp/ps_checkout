@@ -1,30 +1,135 @@
-name: CI pipeline
+name: CI - PHPUnit Tests
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     branches:
       - '**'
-  push:
-    branches:
-      - 'main'
 
 jobs:
-  lint:
-    name: Php cs fixer
+  tests:
+    name: Tests - ${{ matrix.module }} (PS ${{ matrix.ps-version }})
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'ready to review')
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: ps17
+            ps-version: '1.7.7.0'
+            php-version: '7.2'
+          - module: ps8
+            ps-version: '8.1.5'
+            php-version: '8.1'
+          - module: ps9
+            ps-version: '9.0.0'
+            php-version: '8.4'
+
+    services:
+      mysql:
+        image: mariadb:10.9.4
+        env:
+          MYSQL_ROOT_PASSWORD: prestashop
+          MYSQL_DATABASE: prestashop
+        options: >-
+          --health-cmd="mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.1
-          tools: php-cs-fixer:2.18
+      - name: Pull PrestaShop Docker image
+        run: docker pull prestashop/prestashop:${{ matrix.ps-version }}
 
-      - name: Run php cs fixer
-        run: php-cs-fixer fix . --config=.php-cs-fixer.php --no-interaction --using-cache=no
+      - name: Start PrestaShop container
+        run: |
+          docker run -tid --rm \
+            --name prestashop-${{ matrix.module }} \
+            --network ${{ job.container.network }} \
+            -e DB_SERVER=mysql \
+            -e DB_NAME=prestashop \
+            -e DB_USER=root \
+            -e DB_PASSWD=prestashop \
+            -e PS_INSTALL_AUTO=1 \
+            prestashop/prestashop:${{ matrix.ps-version }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Apply PHP-CS-Fixer changes
+      - name: Wait for PrestaShop to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec prestashop-${{ matrix.module }} test -f /var/www/html/config/config.inc.php 2>/dev/null || docker exec prestashop-${{ matrix.module }} test -f /var/www/html/app/config/parameters.php 2>/dev/null; do sleep 2; done' || true
+          sleep 5
+
+      - name: Copy module to PrestaShop
+        run: |
+          docker cp ${{ matrix.module }}/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/
+
+      - name: Install Composer
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
+
+      - name: Install Composer dependencies in container
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && composer install --no-interaction --prefer-dist"
+
+      - name: Copy monorepo directories to module vendor
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "mkdir -p /var/www/html/modules/ps_checkout/vendor/invertus"
+          docker cp api/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/api/
+          docker cp core/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/core/
+          docker cp infrastructure/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/infrastructure/
+          docker cp presentation/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/presentation/
+          docker cp utility/. prestashop-${{ matrix.module }}:/var/www/html/modules/ps_checkout/vendor/invertus/utility/
+
+      - name: Run Infrastructure Unit Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/infrastructure/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/infrastructure/tests/bootstrap.php"
+
+      - name: Run Utility Unit Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/utility/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/utility/tests/bootstrap.php"
+
+      - name: Run Core Unit Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/core/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/core/tests/bootstrap.php"
+
+      - name: Run Presentation Unit Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/presentation/tests/phpunit.xml \
+            --bootstrap=vendor/invertus/presentation/tests/bootstrap.php"
+
+      - name: Install module and Create testing database for Integration tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html && php bin/console  prestashop:module install ps_checkout"
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL tests/create-test-database.php"
+
+      - name: Run Infrastructure Integration Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/infrastructure/tests/phpunit-integration.xml \
+            --bootstrap=vendor/invertus/infrastructure/tests/bootstrap-integration.php"
+
+      - name: Run Core Integration Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=vendor/invertus/core/tests/phpunit-integration.xml \
+            --bootstrap=vendor/invertus/core/tests/bootstrap-integration.php"
+
+      - name: Run Module Integration Tests
+        run: |
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
+            --configuration=tests/phpunit-integration.xml \
+            --bootstrap=tests/bootstrap-integration.php"  
+
+      - name: Cleanup
+        if: always()
+        run: docker stop prestashop-${{ matrix.module }} || true
