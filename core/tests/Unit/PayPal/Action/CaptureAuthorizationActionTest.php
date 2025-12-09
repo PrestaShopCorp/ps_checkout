@@ -18,7 +18,9 @@ use Psr\Http\Message\StreamInterface;
 class CaptureAuthorizationActionTest extends TestCase
 {
     private $paymentHttpClient;
+
     private $authorizationRepository;
+
     private $action;
 
     protected function setUp(): void
