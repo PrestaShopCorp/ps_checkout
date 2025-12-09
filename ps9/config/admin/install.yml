@@ -41,8 +41,8 @@ services:
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
 
-  PsCheckout\Infrastructure\Bootstrap\Install\AppleInstaller:
-    class: 'PsCheckout\Infrastructure\Bootstrap\Install\AppleInstaller'
+  PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstaller:
+    class: 'PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstaller'
     public: true
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\SystemConfiguration'

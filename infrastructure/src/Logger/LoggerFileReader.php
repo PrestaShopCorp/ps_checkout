@@ -20,17 +20,40 @@
 
 namespace PsCheckout\Infrastructure\Logger;
 
-use PsCheckout\Core\Exception\PsCheckoutException;
+use InvalidArgumentException;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
+use RuntimeException;
+use SplFileObject;
 
 class LoggerFileReader implements LoggerFileReaderInterface
 {
     /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
+     * @var LoggerFileFinderInterface
+     */
+    private $loggerFileFinder;
+
+    public function __construct(ValidateInterface $validate, LoggerFileFinderInterface $loggerFileFinder)
+    {
+        $this->validate = $validate;
+        $this->loggerFileFinder = $loggerFileFinder;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function read(\SplFileObject $logFile, $offset, $limit): array
+    public function read(string $filename, int $offset, int $limit): array
     {
+        $this->validateParams($filename, $offset, $limit);
+
+        $logFile = new SplFileObject(LoggerFileFinder::LOGGER_DIRECTORY_PATH . $filename);
+
         if (false === $logFile->isFile()) {
-            throw new PsCheckoutException('File not found');
+            throw new RuntimeException('File not found');
         }
 
         $isEndOfFile = true;
@@ -39,7 +62,7 @@ class LoggerFileReader implements LoggerFileReaderInterface
         $fileLines = [];
 
         if (false === $logFile->isReadable()) {
-            throw new PsCheckoutException('File is not readable');
+            throw new RuntimeException('File is not readable');
         }
 
         while ($logFile->valid()) {
@@ -72,5 +95,37 @@ class LoggerFileReader implements LoggerFileReaderInterface
             'eof' => $isEndOfFile,
             'lines' => $fileLines,
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateFilename(string $filename): void
+    {
+        if (empty($filename)
+            || !$this->validate->isFileName($filename)
+            || preg_match('/\.\.(\/|\\\\)/', $filename)
+        ) {
+            throw new InvalidArgumentException('Filename is invalid');
+        }
+
+        $files = $this->loggerFileFinder->getFiles();
+
+        if (!array_key_exists($filename, $files)) {
+            throw new InvalidArgumentException('File does not exist');
+        }
+    }
+
+    private function validateParams(string $filename, int $offset, int $limit): void
+    {
+        $this->validateFilename($filename);
+
+        if ($offset < 0) {
+            throw new InvalidArgumentException('Offset must be a positive integer or zero');
+        }
+
+        if ($limit <= 0) {
+            throw new InvalidArgumentException('Limit must be a positive integer');
+        }
     }
 }

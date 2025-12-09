@@ -39,4 +39,12 @@ class Validate implements ValidateInterface
     {
         return PrestaShopValidate::isGenericName($name);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isFileName(string $filename): bool
+    {
+        return PrestaShopValidate::isFileName($filename);
+    }
 }

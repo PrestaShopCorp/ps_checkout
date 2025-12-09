@@ -62,10 +62,11 @@ class CurrencyRepository implements CurrencyRepositoryInterface
     {
         return \Db::getInstance()->execute(
             '
-                DELETE FROM ' . _DB_PREFIX_ . 'module_currency
-                WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . pSQL($isoCode) . '")
-                AND id_module = ' . (int) \Module::getModuleIdByName($this->moduleName) . '
-                AND id_shop = ' . (int) \Context::getContext()->shop->id
+                DELETE mc FROM ' . _DB_PREFIX_ . 'module_currency AS mc
+                INNER JOIN ' . _DB_PREFIX_ . 'currency AS c ON c.id_currency = mc.id
+                WHERE c.iso_code = "' . pSQL($isoCode) . '"
+                AND mc.id_module = ' . (int) \Module::getModuleIdByName($this->moduleName) . '
+                AND mc.id_shop = ' . (int) \Context::getContext()->shop->id
         ) ?: false;
     }
 

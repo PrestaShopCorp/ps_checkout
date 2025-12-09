@@ -35,4 +35,6 @@ interface ValidateInterface
      * @return bool
      */
     public function isGenericName(string $name): bool;
+
+    public function isFileName(string $filename): bool;
 }

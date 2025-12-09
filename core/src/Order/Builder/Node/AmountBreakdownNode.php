@@ -85,6 +85,14 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
                 'currency_code' => $currencyIsoCode,
                 'value' => NumberUtility::formatAmount($breakdownTaxTotal, $currencyIsoCode),
             ],
+            'insurance' => [
+                'currency_code' => $currencyIsoCode,
+                'value' => '0.00',
+            ],
+            'shipping_discount' => [
+                'currency_code' => $currencyIsoCode,
+                'value' => '0.00',
+            ],
         ];
 
         // set handling cost id needed -> principally used in case of gift_wrapping

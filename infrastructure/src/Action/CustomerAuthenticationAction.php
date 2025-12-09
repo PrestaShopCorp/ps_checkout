@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Infrastructure\Action;
 
-use Customer;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
@@ -63,45 +62,6 @@ class CustomerAuthenticationAction implements CustomerAuthenticationActionInterf
      */
     public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
     {
-        /** @var int $idCustomerExists */
-        $customerId = $this->customer->customerExists($expressCheckoutRequest->getPayerEmail());
-
-        if ($customerId === 0) {
-            $customer = $this->createCustomer($expressCheckoutRequest);
-        } else {
-            $customer = new Customer($customerId);
-        }
-
-        $this->context->updateCustomer($customer);
-    }
-
-    /**
-     * @param ExpressCheckoutRequest $expressCheckoutRequest
-     *
-     * @return Customer
-     *
-     * @throws PsCheckoutException
-     */
-    private function createCustomer(ExpressCheckoutRequest $expressCheckoutRequest): Customer
-    {
-        $customer = new Customer();
-        $customer->email = $expressCheckoutRequest->getPayerEmail();
-        $customer->firstname = $expressCheckoutRequest->getPayerFirstName();
-        $customer->lastname = $expressCheckoutRequest->getPayerLastName();
-
-        if ($this->configuration->get('PS_CHECKOUT_EXPRESS_USE_GUEST')) {
-            $customer->is_guest = true;
-            $customer->id_default_group = $this->configuration->getInteger('PS_GUEST_GROUP');
-        }
-
-        $customer->passwd = md5(time() . _COOKIE_KEY_);
-
-        try {
-            $customer->save();
-        } catch (\Exception $exception) {
-            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER, $exception);
-        }
-
-        return $customer;
+        throw new PsCheckoutException('CustomerAuthenticationAction is deprecated and should not be used anymore.');
     }
 }
