@@ -23,7 +23,7 @@ There are 4 main branches on the repository:
 - `prestashop/9.x` is the branch for PrestaShop Checkout v4 for PrestaShop v9.x
 - `prestashop/8.x` is the branch for PrestaShop Checkout v4 for PrestaShop v8.x
 - `prestashop/1.7.x` is the branch for PrestaShop Checkout v4 for PrestaShop v1.7.x
-- `prestashop/1.6.1.x` is the branch for PrestaShop Checkout for PrestaShop v1.6.1.x (deprecated)
+- ~~`prestashop/1.6.1.x` is the branch for PrestaShop Checkout for PrestaShop v1.6.1.x~~ (deprecated)
 
 Contributors **must** follow the following rules:
 
@@ -31,20 +31,77 @@ Contributors **must** follow the following rules:
 * Do not update the module's version number.
 * Follow [the coding standards][1].
 
+## Development
+
+### Requirements
+
+- PHP
+- Composer
+- Docker
+- Docker Compose
+- Make (GNU Make)
+
+#### PHP Matrix versions
+
+- [PrestaShop 1.7.x](https://devdocs.prestashop-project.org/1.7/basics/installation/system-requirements/#php-compatibility-chart)
+
+| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
+|---------------------|---------------|-------------------------|
+| `>=1.7.0 <=1.7.3`   | `>=5.4 <=7.1` | `7.1`                   |
+| `1.7.4`             | `>=5.6 <=7.1` | `7.1`                   |
+| `>=1.7.5 <=1.7.6`   | `>=5.6 <=7.2` | `7.2`                   |
+| `>=1.7.7`           | `>=7.1 <=7.3` | `7.3`                   |
+| `>=1.7.8`           | `>=7.1 <=7.4` | `7.4`                   |
+
+- [PrestaShop 8.x](https://devdocs.prestashop-project.org/8/basics/installation/system-requirements/#php-compatibility-chart)
+
+| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
+|---------------------|---------------|-------------------------|
+| `>=8.0 <=8.2`       | `>=7.2 <=8.1` | `8.1`                   |
+
+- [PrestaShop 9.x](https://devdocs.prestashop-project.org/9/basics/installation/system-requirements/#php-compatibility-chart)
+
+| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
+|---------------------|---------------|-------------------------|
+| `>=9.0`             | `>=8.1 <=8.4` | `8.4`                   |
+
+#### PHP Versions older than 8.x
+
+To install PHP versions older than 8.x, please refer to these specific repositories:
+
+- macOS using Homebrew: https://github.com/shivammathur/homebrew-php
+- Ubuntu: https://launchpad.net/~ondrej/+archive/ubuntu/php
+
 ### Build
 
 1. Clone repository to local environment
 2. Copy .env.dist -> .env
-3. Configure .env file to your environment settings. Change `INSTALL_XDEBUG=1` if you want to install Xdebug
+3. Configure the .env file to your environment settings.
 4. Copy MODULE_VERSION/.env.dist -> MODULE_VERSION/.env
-5. Run Makefile command in terminal `make build module_version=ps8`
-6. Run Makefile command in terminal `make run module_version=ps8`
-7. Website is accessible at `http://localhost:8991`
-8. `http://localhost:8991/admin1` - admin panel
+5. Copy the docker-compose.local.yml.dist -> docker-compose.local.yml
+6. Uncomment the services in the docker-compose.local.yml file to your needs.
+7. Run Makefile command in terminal `make build`
+8. Run Makefile command in terminal `make run`
+9. Website is accessible at `http://localhost:8991`
+10. `http://localhost:8991/admin1` - admin panel
 
 Use default PrestaShop credentials to login:
 - `demo@prestashop.com`
 - `prestashop_demo`
+
+### Lint
+
+Run `make lint` in terminal.
+
+### Tests
+
+#### Unit tests
+
+Run `make unit-test` in terminal.
+
+#### Integration tests
+
+Run `make integration-test` in terminal.
 
 ## Contributing
 
