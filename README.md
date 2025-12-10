@@ -45,25 +45,25 @@ Contributors **must** follow the following rules:
 
 - [PrestaShop 1.7.x](https://devdocs.prestashop-project.org/1.7/basics/installation/system-requirements/#php-compatibility-chart)
 
-| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
-|---------------------|---------------|-------------------------|
-| `>=1.7.0 <=1.7.3`   | `>=5.4 <=7.1` | `7.1`                   |
-| `1.7.4`             | `>=5.6 <=7.1` | `7.1`                   |
-| `>=1.7.5 <=1.7.6`   | `>=5.6 <=7.2` | `7.2`                   |
-| `>=1.7.7`           | `>=7.1 <=7.3` | `7.3`                   |
-| `>=1.7.8`           | `>=7.1 <=7.4` | `7.4`                   |
+| PrestaShop Versions | Symfony components version | PHP Versions  | Recommended PHP Version |
+|---------------------|----------------------------|---------------|-------------------------|
+| `>=1.7.0 <=1.7.3`   | Symfony `2.8` ⚠️           | `>=5.4 <=7.1` | `7.1`                   |
+| `1.7.4`             | Symfony `3.4`              | `>=5.6 <=7.1` | `7.1`                   |
+| `>=1.7.5 <=1.7.6`   | Symfony `3.4`              | `>=5.6 <=7.2` | `7.2`                   |
+| `>=1.7.7`           | Symfony `3.4`              | `>=7.1 <=7.3` | `7.3`                   |
+| `>=1.7.8`           | Symfony `3.4`              | `>=7.1 <=7.4` | `7.4`                   |
 
 - [PrestaShop 8.x](https://devdocs.prestashop-project.org/8/basics/installation/system-requirements/#php-compatibility-chart)
 
-| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
-|---------------------|---------------|-------------------------|
-| `>=8.0 <=8.2`       | `>=7.2 <=8.1` | `8.1`                   |
+| PrestaShop Versions | Symfony components version | PHP Versions  | Recommended PHP Version |
+|---------------------|----------------------------|---------------|-------------------------|
+| `>=8.0 <=8.2`       | Symfony `4.4`              | `>=7.2 <=8.1` | `8.1`                   |
 
 - [PrestaShop 9.x](https://devdocs.prestashop-project.org/9/basics/installation/system-requirements/#php-compatibility-chart)
 
-| PrestaShop Versions | PHP Versions  | Recommended PHP Version |
-|---------------------|---------------|-------------------------|
-| `>=9.0`             | `>=8.1 <=8.4` | `8.4`                   |
+| PrestaShop Versions | Symfony components version | PHP Versions  | Recommended PHP Version |
+|---------------------|----------------------------|---------------|-------------------------|
+| `>=9.0`             | Symfony `6.4`              | `>=8.1 <=8.4` | `8.4`                   |
 
 #### PHP Versions older than 8.x
 
