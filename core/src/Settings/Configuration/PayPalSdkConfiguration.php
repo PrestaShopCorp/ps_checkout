@@ -142,11 +142,13 @@ class PayPalSdkConfiguration
             $components[] = 'applepay';
         }
 
+        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE;
+
         $params = [
             'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
             'currency' => $this->context->getCurrencyIsoCode(),
-            'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ? strtolower($this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT)) : 'capture',
+            'intent' => strtolower($intent),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
             'integrationDate' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTEGRATION_DATE) ?: '2024-04-01',
@@ -319,7 +321,7 @@ class PayPalSdkConfiguration
     }
 
     /**
-     * @see https://developer.paypal.com/docs/checkout/reference/customize-sdk/#disable-funding
+     * @see https://developer.paypal.com/sdk/js/configuration/#disable-funding
      *
      * @return array
      */

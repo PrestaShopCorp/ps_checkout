@@ -2,13 +2,15 @@
 
 namespace PsCheckout\Core\Tests\Integration\Response;
 
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+
 class CaptureOrderResponse
 {
     public static function getSuccessResponse(): array
     {
         return [
             'id' => 'PAY-TEST-123',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
             'status' => 'COMPLETED',
             'payment_source' => [
                 'paypal' => [
