@@ -324,9 +324,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     }
 
     /** {@inheritDoc} */
-    public function setPaypalOrderId(string $id): self
+    public function setPaypalOrderId(string $paypalOrderId): self
     {
-        $this->paypalOrderId = $id;
+        $this->paypalOrderId = $paypalOrderId;
 
         return $this;
     }

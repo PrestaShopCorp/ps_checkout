@@ -108,7 +108,7 @@ class Ps_Checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '7.5.0.5';
+        $this->version = '7.5.0.6';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -680,7 +680,7 @@ class Ps_Checkout extends PaymentModule
 
         $paymentOptions = [];
 
-        foreach ($fundingSourceTokenPresenter->getFundingSourceTokens($cart->id_customer) as $fundingSource) {
+        foreach ($fundingSourceTokenPresenter->getFundingSourceTokens((int) $cart->id_customer) as $fundingSource) {
             $paymentOptions[] = $fundingSource->getName();
         }
 

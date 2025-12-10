@@ -91,7 +91,7 @@ class CartPresenter implements PresenterInterface
                 ],
                 'subtotals' => [
                     'gift_wrapping' => [
-                        'amount' => $this->context->getCart()->getGiftWrappingPrice(true),
+                        'amount' => $this->context->getCart()->gift ? $this->context->getCart()->getGiftWrappingPrice(true) : 0,
                     ],
                 ],
             ],

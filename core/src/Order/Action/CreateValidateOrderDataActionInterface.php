@@ -26,9 +26,9 @@ use PsCheckout\Core\Order\ValueObject\ValidateOrderData;
 interface CreateValidateOrderDataActionInterface
 {
     /**
-     * @param PayPalOrderResponse $paypalOrder
+     * @param PayPalOrderResponse $payPalOrderResponse
      *
      * @return ValidateOrderData
      */
-    public function execute(PayPalOrderResponse $paypalOrder): ValidateOrderData;
+    public function execute(PayPalOrderResponse $payPalOrderResponse): ValidateOrderData;
 }
