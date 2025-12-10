@@ -13,11 +13,22 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
-      - !tagged_iterator funding_source.eligibility_checker
+      - [
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker'
+      ]
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker
-    tags: ['funding_source.eligibility_checker']
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -25,6 +36,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -32,6 +45,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -39,6 +54,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -46,7 +63,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -54,6 +72,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -61,6 +81,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -68,6 +90,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -75,7 +99,8 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
