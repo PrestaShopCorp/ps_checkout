@@ -29,11 +29,6 @@ class P24EligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'p24';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['PL'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['EUR', 'PLN'];

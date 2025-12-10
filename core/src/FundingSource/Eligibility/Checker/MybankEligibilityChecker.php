@@ -29,11 +29,6 @@ class MybankEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'mybank';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['IT'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['EUR'];

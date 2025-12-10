@@ -29,11 +29,6 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'paylater';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['FR', 'GB', 'US', 'ES', 'IT'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return [];

@@ -29,11 +29,6 @@ class BlikEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'blik';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['PL'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['PLN'];

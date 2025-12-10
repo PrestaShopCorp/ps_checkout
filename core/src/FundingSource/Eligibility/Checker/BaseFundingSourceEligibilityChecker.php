@@ -68,7 +68,7 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         }
 
         $country = $this->countryResolver->getBuyerCountryIsoCode();
-        if (!empty($this->getRequiredCountryIsoCodes()) && !in_array($country, $this->getRequiredCountryIsoCodes(), true)) {
+        if (!empty($fundingSource->getCountries()) && !in_array($country, $fundingSource->getCountries(), true)) {
             return false;
         }
 
@@ -84,13 +84,6 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
      * Name of the funding source handled by this checker (e.g. 'bancontact').
      */
     abstract protected function getSupportedName(): string;
-
-    /**
-     * Country ISO code required by the funding source (e.g. 'BE').
-     *
-     * @return string[]
-     */
-    abstract protected function getRequiredCountryIsoCodes(): array;
 
     /**
      * Allowed currencies for this funding source.

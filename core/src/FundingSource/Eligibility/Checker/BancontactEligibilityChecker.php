@@ -29,11 +29,6 @@ class BancontactEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'bancontact';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['BE'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['EUR'];

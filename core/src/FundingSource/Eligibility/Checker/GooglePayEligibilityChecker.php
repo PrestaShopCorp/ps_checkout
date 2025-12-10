@@ -30,11 +30,6 @@ class GooglePayEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'google_pay';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LI', 'LT', 'LU', 'MK', 'MT', 'NL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'];

@@ -29,11 +29,6 @@ class IdealEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'ideal';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['NL'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['EUR'];

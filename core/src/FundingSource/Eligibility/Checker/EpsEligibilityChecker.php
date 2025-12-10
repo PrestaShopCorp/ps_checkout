@@ -29,11 +29,6 @@ class EpsEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return 'eps';
     }
 
-    protected function getRequiredCountryIsoCodes(): array
-    {
-        return ['AT'];
-    }
-
     protected function getAllowedCurrenciesIsoCodes(): array
     {
         return ['EUR'];
