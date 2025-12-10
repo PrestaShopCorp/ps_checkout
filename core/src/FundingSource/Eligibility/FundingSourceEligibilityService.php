@@ -49,7 +49,7 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
     /**
      * {@inheritdoc}
      */
-    public function getEligibleAlternativePaymentMethods(): array
+    public function getEligibleFundingSource(): array
     {
         $eligible = [];
 

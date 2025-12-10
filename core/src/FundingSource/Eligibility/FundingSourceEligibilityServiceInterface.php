@@ -30,7 +30,7 @@ interface FundingSourceEligibilityServiceInterface
      *
      * @return array<string, FundingSource> list of eligible APM funding sources (e.g. bancontact, blik, eps, ideal, mybank, p24)
      */
-    public function getEligibleAlternativePaymentMethods(): array;
+    public function getEligibleFundingSource(): array;
 
     /**
      * Returns whether a funding source is eligible to be exposed as a payment option in the current context.
