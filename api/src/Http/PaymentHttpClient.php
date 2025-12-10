@@ -71,14 +71,6 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function fetchAuthorization(string $authorizationId): ResponseInterface
-    {
-        return $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
-    }
-
-    /**
      * @param array $body
      *
      * @return string
