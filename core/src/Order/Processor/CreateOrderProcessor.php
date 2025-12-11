@@ -89,6 +89,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
      * @var DeletePaymentTokenActionInterface
      */
     private $deletePaymentTokenAction;
+
     /**
      * @var AuthorizePayPalOrderActionInterface
      */
