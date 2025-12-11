@@ -49,7 +49,7 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
     /**
      * {@inheritdoc}
      */
-    public function getEligibleFundingSource(): array
+    public function getEligibleFundingSources(): array
     {
         $eligible = [];
 
@@ -57,7 +57,7 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
 
         foreach ($fundingSources as $fundingSource) {
             $name = $fundingSource->getName();
-            if ($this->isFundingSourceEligible($fundingSource)) {
+            if ($fundingSource->getIsEnabled() && $this->isFundingSourceEligible($fundingSource)) {
                 $eligible[$name] = $fundingSource;
             }
         }

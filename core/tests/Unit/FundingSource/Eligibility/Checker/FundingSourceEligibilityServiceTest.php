@@ -92,7 +92,32 @@ class FundingSourceEligibilityServiceTest extends TestCase
         $this->context->method('getShop')->willReturn($shop);
         $this->fundingSourcePresenter->method('getAllActiveForSpecificShop')->with(1)->willReturn([]);
 
-        self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSource());
+        self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
+    }
+
+    public function testDisabledEligibleFundingSources()
+    {
+        $shop = $this->createMock(\Shop::class);
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+        $this->fundingSourcePresenter->method('getAllActiveForSpecificShop')->with(1)->willReturn([
+            new FundingSource('paypal', 'PayPal', 0, false, null),
+            new FundingSource('apple_pay', 'Apple Pay', 0, false, null),
+        ]);
+
+        self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
+    }
+
+    public function testUnknownEligibilityChecker()
+    {
+        $shop = $this->createMock(\Shop::class);
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+        $this->fundingSourcePresenter->method('getAllActiveForSpecificShop')->with(1)->willReturn([
+            new FundingSource('paypal', 'PayPal', 0, true, null),
+        ]);
+
+        self::assertArrayHasKey('paypal', $this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
     /**
@@ -134,7 +159,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
 
         $this->context->method('getCurrencyIsoCode')->willReturn($context['currency'] ?: 'EUR');
 
-        $eligibleFundingSources = $this->fundingSourceEligibilityService->getEligibleFundingSource();
+        $eligibleFundingSources = $this->fundingSourceEligibilityService->getEligibleFundingSources();
         $isEligible = array_key_exists($name, $eligibleFundingSources);
 
         self::assertSame($eligible, $isEligible);
@@ -169,17 +194,13 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => true
             ],
-            'eligible_google_pay' => [
-                'name' => 'google_pay',
+            'eligible_bancontact' => [
+                'name' => 'bancontact',
                 'context' => [
-                    'country' => 'FR',
+                    'country' => 'BE',
                     'currency' => 'EUR',
                     'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
-                    'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                    'configurations' => []
                 ],
                 'eligible' => true
             ],
@@ -200,6 +221,20 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
                     'configurations' => []
+                ],
+                'eligible' => true
+            ],
+            'eligible_google_pay' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
                 ],
                 'eligible' => true
             ],
@@ -242,6 +277,328 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => []
                 ],
                 'eligible' => true
+            ],
+            'ineligible_apple_pay_wrong_country' => [
+                'name' => 'apple_pay',
+                'context' => [
+                    'country' => 'ZZ',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'ineligible_apple_pay_wrong_currency' => [
+                'name' => 'apple_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'XXX',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'ineligible_apple_pay_wrong_configuration' => [
+                'name' => 'apple_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, false],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'eligible_apple_pay_authorization_intent' => [
+                'name' => 'apple_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => true
+            ],
+            'ineligible_bancontact_wrong_country' => [
+                'name' => 'bancontact',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_bancontact_wrong_currency' => [
+                'name' => 'bancontact',
+                'context' => [
+                    'country' => 'BE',
+                    'currency' => 'USD',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_bancontact_authorization_intent' => [
+                'name' => 'bancontact',
+                'context' => [
+                    'country' => 'BE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_blik_wrong_country' => [
+                'name' => 'blik',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'PLN',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_blik_wrong_currency' => [
+                'name' => 'blik',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_blik_authorization_intent' => [
+                'name' => 'blik',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'PLN',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_eps_wrong_country' => [
+                'name' => 'eps',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_eps_wrong_currency' => [
+                'name' => 'eps',
+                'context' => [
+                    'country' => 'AT',
+                    'currency' => 'USD',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_eps_authorization_intent' => [
+                'name' => 'eps',
+                'context' => [
+                    'country' => 'AT',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_google_pay_wrong_country' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'ZZ',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'ineligible_google_pay_wrong_currency' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'XXX',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'ineligible_google_pay_wrong_configuration' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, false],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => false
+            ],
+            'eligible_google_pay_authorization_intent' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
+                    ]
+                ],
+                'eligible' => true
+            ],
+            'ineligible_ideal_wrong_country' => [
+                'name' => 'ideal',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_ideal_wrong_currency' => [
+                'name' => 'ideal',
+                'context' => [
+                    'country' => 'NL',
+                    'currency' => 'USD',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_ideal_authorization_intent' => [
+                'name' => 'ideal',
+                'context' => [
+                    'country' => 'NL',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_mybank_wrong_country' => [
+                'name' => 'mybank',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_mybank_wrong_currency' => [
+                'name' => 'mybank',
+                'context' => [
+                    'country' => 'IT',
+                    'currency' => 'USD',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_mybank_authorization_intent' => [
+                'name' => 'mybank',
+                'context' => [
+                    'country' => 'IT',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_p24_wrong_country' => [
+                'name' => 'p24',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_p24_wrong_currency' => [
+                'name' => 'p24',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'USD',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_p24_authorization_intent' => [
+                'name' => 'p24',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'EUR',
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'ineligible_paylater_wrong_country' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'ZZ',
+                    'currency' => null,
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => false
+            ],
+            'eligible_paylater_wrong_currency' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'XXX', // Paylater does not restrict any currencies
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+                    'configurations' => []
+                ],
+                'eligible' => true
+            ],
+            'ineligible_paylater_authorization_intent' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => null,
+                    'intent' => PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE,
+                    'configurations' => []
+                ],
+                'eligible' => false
             ]
         ];
     }

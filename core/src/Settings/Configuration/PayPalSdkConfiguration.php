@@ -197,7 +197,7 @@ class PayPalSdkConfiguration
             $params['disableFunding'] = implode(',', $fundingSourcesDisabled);
         }
 
-        $eligibleAlternativePaymentMethods = $this->eligibilityService->getEligibleFundingSource();
+        $eligibleAlternativePaymentMethods = $this->eligibilityService->getEligibleFundingSources();
 
         if (array_key_exists('google_pay', $eligibleAlternativePaymentMethods)) {
             unset($eligibleAlternativePaymentMethods['google_pay']);
