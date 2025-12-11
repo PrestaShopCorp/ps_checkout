@@ -141,4 +141,6 @@ class PsCheckoutException extends \Exception
     const UPDATE_FAILED = 63;
 
     const FAILED_ADD_PAYMENT = 64;
+
+    const PAYPAL_ORDER_STATUS_INVALID = 65;
 }

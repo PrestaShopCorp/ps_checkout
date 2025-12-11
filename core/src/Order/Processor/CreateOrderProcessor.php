@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Processor;
 
 use Cart;
 use PsCheckout\Api\Http\Exception\PayPalException;
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Request\ValueObject\ValidateOrderRequest;
@@ -162,41 +163,46 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         if ($payPalOrderResponse->getIntent() === PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE) {
             $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
         } else {
-            try {
-                $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
+            $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
+        }
+    }
 
-                $this->savePaymentTokenAction->execute($capturedOrderResponse);
-            } catch (PayPalException $exception) {
-                switch ($exception->getCode()) {
-                    case PayPalException::ORDER_NOT_APPROVED:
-                        $this->createOrderAction->execute($payPalOrderResponse);
+    private function capturePayPalOrder(string $orderId, PayPalOrderResponse $payPalOrderResponse)
+    {
+        try {
+            $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
 
-                        return;
+            $this->savePaymentTokenAction->execute($capturedOrderResponse);
+        } catch (PayPalException $exception) {
+            switch ($exception->getCode()) {
+                case PayPalException::ORDER_NOT_APPROVED:
+                    $this->createOrderAction->execute($payPalOrderResponse);
 
-                    case PayPalException::RESOURCE_NOT_FOUND:
-                        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $request->getOrderId()]);
+                    return;
 
-                        if ($payPalOrder) {
-                            $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
-                            $this->payPalOrderRepository->save($payPalOrder);
-                        }
+                case PayPalException::RESOURCE_NOT_FOUND:
+                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
 
-                        throw $exception;
-                    case PayPalException::ORDER_ALREADY_CAPTURED:
-                        $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
-                        $this->createOrderAction->execute($capturedOrderResponse);
+                    if ($payPalOrder) {
+                        $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
+                        $this->payPalOrderRepository->save($payPalOrder);
+                    }
 
-                        return;
-                    case PayPalException::CARD_CLOSED:
-                        $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
-                        $this->deletePaymentTokenAction->execute(
-                            $capturedOrderResponse->getVault()['id'],
-                            $this->context->getCustomer()->id
-                        );
-                    // no break
-                    default:
-                        throw $exception;
-                }
+                    throw $exception;
+                case PayPalException::ORDER_ALREADY_CAPTURED:
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
+                    $this->createOrderAction->execute($capturedOrderResponse);
+
+                    return;
+                case PayPalException::CARD_CLOSED:
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
+                    $this->deletePaymentTokenAction->execute(
+                        $capturedOrderResponse->getVault()['id'],
+                        $this->context->getCustomer()->id
+                    );
+                // no break
+                default:
+                    throw $exception;
             }
         }
     }

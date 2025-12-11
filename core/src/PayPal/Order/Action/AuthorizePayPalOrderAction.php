@@ -25,6 +25,7 @@ use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
@@ -83,6 +84,13 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
      */
     public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderResponse
     {
+        if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {
+            throw new PsCheckoutException(
+                sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
+                PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID
+            );
+        }
+
         $response = $this->orderHttpClient->authorizeOrder($payPalOrder->getId(), []);
 
         $orderPayPal = json_decode($response->getBody(), true);
@@ -92,10 +100,6 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($orderPayPal['id']);
 
-        if (!$payPalOrderResponse) {
-            throw new PsCheckoutException('Capture declined', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
-        }
-
         $authorization = $payPalOrderResponse->getAuthorization();
 
         $payPalAuthorization = new PayPalOrderAuthorization(
@@ -103,8 +107,11 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
             $orderPayPal['id'],
             $authorization['status'],
             $authorization['expiration_time'],
-            $authorization['seller_protection']
+            $authorization['seller_protection'],
+            $authorization['create_time'],
+            $authorization['update_time']
         );
+
         $this->payPalOrderAuthorizationRepository->save($payPalAuthorization);
 
         $authorizationStatus = $authorization['status'];

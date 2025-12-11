@@ -123,6 +123,8 @@ class DatabaseTableInstaller implements InstallerInterface
             `status` varchar(30) NOT NULL,
             `expiration_time` varchar(50) NOT NULL,
             `seller_protection` text,
+            `created_at` varchar(20) NOT NULL,
+            `updated_at` varchar(20) NOT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
