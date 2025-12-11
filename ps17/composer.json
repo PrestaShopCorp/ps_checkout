@@ -1,7 +1,7 @@
 {
     "config": {
         "platform": {
-            "php": "7.2.5"
+            "php": "7.2"
         },
         "sort-packages": true,
         "preferred-install": "dist",
@@ -19,7 +19,13 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5.41",
-        "prestashop/php-dev-tools": "~4.0"
+        "prestashop/php-dev-tools": "~4.0",
+        "stancer/php-stubs-prestashop": "^1.7.8.11"
+    },
+    "scripts": {
+        "phpstan": "../vendor/bin/phpstan analyse --memory-limit=1G",
+        "phpstan:baseline": "@phpstan --generate-baseline",
+        "phpstan:ci": "@phpstan --error-format=github"
     },
     "autoload": {
         "psr-4": {

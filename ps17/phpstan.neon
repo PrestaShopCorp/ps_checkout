@@ -1,0 +1,21 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	level: max
+	paths:
+		- ../api
+		- ../core
+		- ../infrastructure
+		- ../presentation
+		- ../utility
+		- src
+		- tests
+	excludePaths:
+	    - ../api/vendor
+	    - ../core/vendor
+	    - ../infrastructure/vendor
+	    - ../presentation/vendor
+	    - ../utility/vendor
+	scanDirectories:
+		- vendor/stancer/php-stubs-prestashop/stubs/
