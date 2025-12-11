@@ -29,10 +29,12 @@ use PsCheckout\Core\Order\Validator\CheckoutValidatorInterface;
 use PsCheckout\Core\Order\Validator\OrderAuthorizationValidatorInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
 use PsCheckout\Core\PaymentToken\Action\SavePaymentTokenActionInterface;
+use PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
+use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\CartRepositoryInterface;
 
@@ -87,6 +89,10 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
      * @var DeletePaymentTokenActionInterface
      */
     private $deletePaymentTokenAction;
+    /**
+     * @var AuthorizePayPalOrderActionInterface
+     */
+    private $authorizePayPalOrderAction;
 
     public function __construct(
         OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
@@ -98,7 +104,8 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         SavePaymentTokenActionInterface $savePaymentTokenAction,
         PayPalOrderProviderInterface $payPalOrderProvider,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
-        DeletePaymentTokenActionInterface $deletePaymentTokenAction
+        DeletePaymentTokenActionInterface $deletePaymentTokenAction,
+        AuthorizePayPalOrderActionInterface $authorizePayPalOrderAction
     ) {
         $this->orderAuthorizationValidator = $orderAuthorizationValidator;
         $this->createOrderAction = $createOrderAction;
@@ -110,6 +117,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
+        $this->authorizePayPalOrderAction = $authorizePayPalOrderAction;
     }
 
     /**
@@ -150,40 +158,44 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
             throw $exception;
         }
 
-        try {
-            $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
+        if ($payPalOrderResponse->getIntent() === PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE) {
+            $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
+        } else {
+            try {
+                $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
 
-            $this->savePaymentTokenAction->execute($capturedOrderResponse);
-        } catch (PayPalException $exception) {
-            switch ($exception->getCode()) {
-                case PayPalException::ORDER_NOT_APPROVED:
-                    $this->createOrderAction->execute($payPalOrderResponse);
+                $this->savePaymentTokenAction->execute($capturedOrderResponse);
+            } catch (PayPalException $exception) {
+                switch ($exception->getCode()) {
+                    case PayPalException::ORDER_NOT_APPROVED:
+                        $this->createOrderAction->execute($payPalOrderResponse);
 
-                    return;
+                        return;
 
-                case PayPalException::RESOURCE_NOT_FOUND:
-                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $request->getOrderId()]);
+                    case PayPalException::RESOURCE_NOT_FOUND:
+                        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $request->getOrderId()]);
 
-                    if ($payPalOrder) {
-                        $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
-                        $this->payPalOrderRepository->save($payPalOrder);
-                    }
+                        if ($payPalOrder) {
+                            $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
+                            $this->payPalOrderRepository->save($payPalOrder);
+                        }
 
-                    throw $exception;
-                case PayPalException::ORDER_ALREADY_CAPTURED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
-                    $this->createOrderAction->execute($capturedOrderResponse);
+                        throw $exception;
+                    case PayPalException::ORDER_ALREADY_CAPTURED:
+                        $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                        $this->createOrderAction->execute($capturedOrderResponse);
 
-                    return;
-                case PayPalException::CARD_CLOSED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
-                    $this->deletePaymentTokenAction->execute(
-                        $capturedOrderResponse->getVault()['id'],
-                        $this->context->getCustomer()->id
-                    );
+                        return;
+                    case PayPalException::CARD_CLOSED:
+                        $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                        $this->deletePaymentTokenAction->execute(
+                            $capturedOrderResponse->getVault()['id'],
+                            $this->context->getCustomer()->id
+                        );
                     // no break
-                default:
-                    throw $exception;
+                    default:
+                        throw $exception;
+                }
             }
         }
     }

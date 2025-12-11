@@ -71,4 +71,14 @@ interface OrderHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function updateOrder(string $orderId, array $payload): ResponseInterface;
+
+    /**
+     * @param array $payload
+     * @param string $orderId
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function authorizeOrder(string $orderId, array $payload): ResponseInterface;
 }
