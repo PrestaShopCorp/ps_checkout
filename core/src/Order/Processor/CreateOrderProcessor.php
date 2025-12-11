@@ -35,7 +35,7 @@ use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\CartRepositoryInterface;
 
@@ -160,7 +160,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
             throw $exception;
         }
 
-        if ($payPalOrderResponse->getIntent() === PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE) {
+        if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
             $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
         } else {
             $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);

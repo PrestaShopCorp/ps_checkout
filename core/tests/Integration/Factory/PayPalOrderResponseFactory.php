@@ -3,7 +3,7 @@
 namespace PsCheckout\Core\Tests\Integration\Factory;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class PayPalOrderResponseFactory
 {
@@ -12,7 +12,7 @@ class PayPalOrderResponseFactory
         $defaultData = [
             'id' => 'TEST-ORDER-123',
             'status' => 'COMPLETED',
-            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+            'intent' => PayPalOrderIntent::CAPTURE,
             'payer' => '***',
             'payment_source' => [
                 'paypal' => [
