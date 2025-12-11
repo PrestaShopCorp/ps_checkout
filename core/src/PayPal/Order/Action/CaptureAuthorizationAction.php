@@ -27,9 +27,15 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var PaymentHttpClientInterface
      */
@@ -41,9 +47,11 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
     private $authorizationRepository;
 
     public function __construct(
+        LoggerInterface $logger,
         PaymentHttpClientInterface $paymentHttpClient,
         PayPalOrderAuthorizationRepositoryInterface $authorizationRepository
     ) {
+        $this->logger = $logger;
         $this->paymentHttpClient = $paymentHttpClient;
         $this->authorizationRepository = $authorizationRepository;
     }
@@ -85,7 +93,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
         // Check if status is VOIDED
         if ($authorizationStatus === PayPalAuthorizationStatus::VOIDED) {
             throw new PsCheckoutException(
-                sprintf('Authorization %s is voided and cannot be captured', $authorizationId),
+                "Authorization $authorizationId is voided and cannot be captured",
                 PsCheckoutException::PAYPAL_AUTHORIZATION_VOIDED
             );
         }
@@ -93,11 +101,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
         // Validate authorization status must be CREATED or PARTIALLY_CAPTURED
         if (!in_array($authorizationStatus, [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PARTIALLY_CAPTURED], true)) {
             throw new PsCheckoutException(
-                sprintf(
-                    'Authorization %s status must be CREATED or PARTIALLY_CAPTURED, current status: %s',
-                    $authorizationId,
-                    $authorizationStatus
-                ),
+                "Authorization $authorizationId status must be CREATED or PARTIALLY_CAPTURED, current status: $authorizationStatus",
                 PsCheckoutException::PAYPAL_AUTHORIZATION_STATUS_INVALID
             );
         }
@@ -110,7 +114,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
 
                 if ($expirationTime < $currentTime) {
                     throw new PsCheckoutException(
-                        sprintf('Authorization %s has expired', $authorizationId),
+                        "Authorization $authorizationId has expired",
                         PsCheckoutException::PAYPAL_AUTHORIZATION_EXPIRED
                     );
                 }
@@ -118,6 +122,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
                 // Re-throw PsCheckoutException
                 throw $e;
             } catch (\Exception $e) {
+                $this->logger->error("Failed parsing $authorizationId expiration date");
                 // If we can't parse the expiration time, log it but don't block the capture
                 // The PayPal API will reject it if it's actually expired
             }
@@ -135,9 +140,9 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
             $authorizationEntity = new PayPalOrderAuthorization(
                 $capturedAuthorization['id'],
                 $payPalOrder->getId(),
-                $capturedAuthorization['status'] ?? null,
-                $capturedAuthorization['expiration_time'] ?? null,
-                $capturedAuthorization['seller_protection'] ?? []
+                $capturedAuthorization['status'],
+                $capturedAuthorization['expiration_time'] ?? '',
+                $capturedAuthorization['seller_protection']
             );
         }
 
