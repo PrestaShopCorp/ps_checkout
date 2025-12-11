@@ -135,3 +135,9 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor'
       - '@Psr\Log\LoggerInterface'
 
+
+  PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction
+    arguments:
+      - '@PsCheckout\Api\Http\PaymentHttpClient'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
