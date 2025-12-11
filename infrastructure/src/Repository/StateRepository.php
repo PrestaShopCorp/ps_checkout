@@ -29,4 +29,12 @@ class StateRepository implements StateRepositoryInterface
     {
         return \State::getNameById($idState);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIsoById($idState)
+    {
+        return (new \State($idState))->iso_code;
+    }
 }

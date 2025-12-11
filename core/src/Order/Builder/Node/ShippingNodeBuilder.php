@@ -74,12 +74,17 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
         $address = $this->cart['addresses']['shipping'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $this->stateRepository->getNameById($address->id_state);
+
+        $stateName = $countryIso === 'US' ?
+            $this->stateRepository->getIsoById($address->id_state)
+            : $this->stateRepository->getNameById($address->id_state);
+
+        $gender = $this->gender->getGenderNameById($this->cart['customer']->id_gender, $this->cart['language']->id);
 
         return [
             'shipping' => [
                 'name' => [
-                    'full_name' => $this->gender->getGenderNameById($this->cart['customer']->id_gender, $this->cart['language']->id) . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
+                    'full_name' => !empty($gender) ? "$gender " : "" . $this->cart['addresses']['shipping']->firstname  . ' ' . $this->cart['addresses']['shipping']->lastname,
                 ],
                 'address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
             ],
