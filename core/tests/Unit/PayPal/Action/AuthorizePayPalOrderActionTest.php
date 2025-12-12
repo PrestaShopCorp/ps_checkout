@@ -21,11 +21,17 @@ use Psr\Http\Message\StreamInterface;
 class AuthorizePayPalOrderActionTest extends TestCase
 {
     private $orderHttpClient;
+
     private $payPalOrderCache;
+
     private $paymentPendingEventHandler;
+
     private $paymentDeniedEventHandler;
+
     private $payPalOrderProvider;
+
     private $payPalOrderAuthorizationRepository;
+
     private $action;
 
     protected function setUp(): void
