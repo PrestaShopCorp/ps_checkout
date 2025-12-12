@@ -20,8 +20,8 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 
 class ApplePayEligibilityChecker extends BaseFundingSourceEligibilityChecker
 {
@@ -37,7 +37,7 @@ class ApplePayEligibilityChecker extends BaseFundingSourceEligibilityChecker
 
     protected function getSupportedIntents(): array
     {
-        return [PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE, PayPalIntentConfiguration::PS_CHECKOUT_AUTHORIZE];
+        return [PayPalOrderIntent::CAPTURE, PayPalOrderIntent::AUTHORIZE];
     }
 
     protected function assertConfigurations(): array

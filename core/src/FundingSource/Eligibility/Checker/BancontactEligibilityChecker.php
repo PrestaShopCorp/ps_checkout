@@ -20,7 +20,7 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class BancontactEligibilityChecker extends BaseFundingSourceEligibilityChecker
 {
@@ -36,7 +36,7 @@ class BancontactEligibilityChecker extends BaseFundingSourceEligibilityChecker
 
     protected function getSupportedIntents(): array
     {
-        return [PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE];
+        return [PayPalOrderIntent::CAPTURE];
     }
 
     protected function assertConfigurations(): array

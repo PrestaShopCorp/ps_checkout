@@ -21,8 +21,8 @@
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
 use PsCheckout\Core\Util\CountryResolverInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -55,7 +55,7 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
 
     public function isEligible(FundingSource $fundingSource): bool
     {
-        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE;
+        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
         if (!in_array($intent, $this->getSupportedIntents(), true)) {
             return false;
         }
