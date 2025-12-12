@@ -1,4 +1,5 @@
-version: "3.8"
+include:
+  - docker-compose.local.yml
 
 services:
   mysql:
@@ -60,3 +61,5 @@ services:
       start_period: 15s
       timeout: 10s
       retries: 5
+    post_start:
+      - command: chmod -R 777 /var/www/html

@@ -142,7 +142,7 @@ class PayPalSdkConfiguration
             $components[] = 'applepay';
         }
 
-        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE;
+        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
 
         $params = [
             'clientId' => $this->env->getPaypalClientId(),

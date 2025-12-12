@@ -1,0 +1,6 @@
+tunnel: ${TUNNEL_ID}
+credentials-file: /credentials.json
+ingress:
+  - hostname: ${PS_DOMAIN}
+    service: http://${MODULE_VERSION}-ps-prestashop-${PS_VERSION_TAG}:80
+  - service: http_status:404

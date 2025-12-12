@@ -2,7 +2,7 @@
 
 namespace PsCheckout\Core\Tests\Integration\Response;
 
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class CaptureOrderResponse
 {
@@ -10,7 +10,7 @@ class CaptureOrderResponse
     {
         return [
             'id' => 'PAY-TEST-123',
-            'intent' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+            'intent' => PayPalOrderIntent::CAPTURE,
             'status' => 'COMPLETED',
             'payment_source' => [
                 'paypal' => [

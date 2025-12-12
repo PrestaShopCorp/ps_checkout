@@ -9,3 +9,5 @@ vendor
 */.php-cs-fixer.cache
 */.php_cs.cache
 **/.phpunit.result.cache
+.cloudflared.yml
+docker-compose.local.yml
