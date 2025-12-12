@@ -106,26 +106,30 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
             );
         }
 
-        // Check if expiration_time has passed
         if (isset($authorization['expiration_time'])) {
-            try {
-                $expirationTime = new \DateTime($authorization['expiration_time']);
-                $currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
+            $expirationTime = new \DateTime($authorization['expiration_time']);
+        } else {
+            $expirationTime = new \DateTime($authorization['create_time']);
+            $expirationTime->modify('+30 days');
+        }
 
-                if ($expirationTime < $currentTime) {
-                    throw new PsCheckoutException(
-                        "Authorization $authorizationId has expired",
-                        PsCheckoutException::PAYPAL_AUTHORIZATION_EXPIRED
-                    );
-                }
-            } catch (PsCheckoutException $e) {
-                // Re-throw PsCheckoutException
-                throw $e;
-            } catch (\Exception $e) {
-                $this->logger->error("Failed parsing $authorizationId expiration date");
-                // If we can't parse the expiration time, log it but don't block the capture
-                // The PayPal API will reject it if it's actually expired
+        // Check if expiration_time has passed
+        try {
+            $currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+            if ($expirationTime < $currentTime) {
+                throw new PsCheckoutException(
+                    "Authorization $authorizationId has expired",
+                    PsCheckoutException::PAYPAL_AUTHORIZATION_EXPIRED
+                );
             }
+        } catch (PsCheckoutException $e) {
+            // Re-throw PsCheckoutException
+            throw $e;
+        } catch (\Exception $e) {
+            $this->logger->error("Failed parsing $authorizationId expiration date");
+            // If we can't parse the expiration time, log it but don't block the capture
+            // The PayPal API will reject it if it's actually expired
         }
 
         // Call captureAuthorization in PaymentHttpClient
@@ -134,17 +138,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
 
         $authorizationEntity = $this->authorizationRepository->getById($capturedAuthorization['id']);
 
-        if ($authorizationEntity) {
-            $authorizationEntity->setStatus($capturedAuthorization['status']);
-        } else {
-            $authorizationEntity = new PayPalOrderAuthorization(
-                $capturedAuthorization['id'],
-                $payPalOrder->getId(),
-                $capturedAuthorization['status'],
-                $capturedAuthorization['expiration_time'] ?? '',
-                $capturedAuthorization['seller_protection']
-            );
-        }
+        $authorizationEntity->setStatus($capturedAuthorization['status']);
 
         $this->authorizationRepository->save($authorizationEntity);
 
