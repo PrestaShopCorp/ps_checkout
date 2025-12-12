@@ -311,7 +311,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, false],
@@ -325,7 +325,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
@@ -359,7 +359,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'BE',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -389,7 +389,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'PL',
                     'currency' => 'PLN',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -419,7 +419,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'AT',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -457,7 +457,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, false],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
@@ -471,7 +471,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
@@ -505,7 +505,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'NL',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -535,7 +535,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'IT',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -565,7 +565,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'PL',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
@@ -595,7 +595,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 'context' => [
                     'country' => 'FR',
                     'currency' => null,
-                    'intent' => PayPalOrderIntent::PS_CHECKOUT_AUTHORIZE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => []
                 ],
                 'eligible' => false
