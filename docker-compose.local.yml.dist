@@ -1,0 +1,28 @@
+#services:
+#  wiremock:
+#    image: wiremock/wiremock
+#    container_name: ${MODULE_VERSION}-wiremock-${PS_VERSION_TAG}
+#    volumes:
+#      - ./prestashop/${PS_VERSION_TAG}/modules/${MODULE_NAME}/wiremock:/home/wiremock
+#    ports:
+#      - ${WIREMOCK_PORT}:8080
+#    restart: "no"
+#
+#  cloudflared:
+#    image: cloudflare/cloudflared:latest
+#    platform: linux/amd64
+#    container_name: cloudflared
+#    env_file: ./.env
+#    command: tunnel --config /config.yml run
+#    volumes:
+#      - ./.cloudflared.yml:/config.yml
+#      - ${CLOUDFLARED_CREDENTIALS_FILE}:/credentials.json
+#    tty: true
+#    stdin_open: true
+#    logging:
+#      options:
+#        max-size: 10m
+#    ulimits:
+#      nofile:
+#        soft: 65536
+#        hard: 65536
