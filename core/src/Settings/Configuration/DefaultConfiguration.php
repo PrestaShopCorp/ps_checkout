@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\Settings\Configuration;
 
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
+
 class DefaultConfiguration
 {
     const DEFAULT_CONFIGURATION_VALUES = [
-        'PS_CHECKOUT_INTENT' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+        'PS_CHECKOUT_INTENT' => PayPalOrderIntent::CAPTURE,
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',

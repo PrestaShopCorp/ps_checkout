@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Processor;
 
 use Cart;
 use PsCheckout\Api\Http\Exception\PayPalException;
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Request\ValueObject\ValidateOrderRequest;
@@ -29,10 +30,12 @@ use PsCheckout\Core\Order\Validator\CheckoutValidatorInterface;
 use PsCheckout\Core\Order\Validator\OrderAuthorizationValidatorInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
 use PsCheckout\Core\PaymentToken\Action\SavePaymentTokenActionInterface;
+use PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\CartRepositoryInterface;
 
@@ -88,6 +91,11 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
      */
     private $deletePaymentTokenAction;
 
+    /**
+     * @var AuthorizePayPalOrderActionInterface
+     */
+    private $authorizePayPalOrderAction;
+
     public function __construct(
         OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
         CreateOrderActionInterface $createOrderAction,
@@ -98,7 +106,8 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         SavePaymentTokenActionInterface $savePaymentTokenAction,
         PayPalOrderProviderInterface $payPalOrderProvider,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
-        DeletePaymentTokenActionInterface $deletePaymentTokenAction
+        DeletePaymentTokenActionInterface $deletePaymentTokenAction,
+        AuthorizePayPalOrderActionInterface $authorizePayPalOrderAction
     ) {
         $this->orderAuthorizationValidator = $orderAuthorizationValidator;
         $this->createOrderAction = $createOrderAction;
@@ -110,6 +119,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
+        $this->authorizePayPalOrderAction = $authorizePayPalOrderAction;
     }
 
     /**
@@ -150,6 +160,15 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
             throw $exception;
         }
 
+        if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
+            $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
+        } else {
+            $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
+        }
+    }
+
+    private function capturePayPalOrder(string $orderId, PayPalOrderResponse $payPalOrderResponse)
+    {
         try {
             $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
 
@@ -162,7 +181,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
                     return;
 
                 case PayPalException::RESOURCE_NOT_FOUND:
-                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $request->getOrderId()]);
+                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
 
                     if ($payPalOrder) {
                         $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
@@ -171,17 +190,17 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
 
                     throw $exception;
                 case PayPalException::ORDER_ALREADY_CAPTURED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->createOrderAction->execute($capturedOrderResponse);
 
                     return;
                 case PayPalException::CARD_CLOSED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->deletePaymentTokenAction->execute(
                         $capturedOrderResponse->getVault()['id'],
                         $this->context->getCustomer()->id
                     );
-                    // no break
+                // no break
                 default:
                     throw $exception;
             }

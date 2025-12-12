@@ -5,7 +5,7 @@ namespace PsCheckout\Core\Tests\Integration;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Adapter\ContainerBuilder;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
-use PsCheckout\Core\Settings\Configuration\PayPalIntentConfiguration;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class BaseTestCase extends TestCase
 {
@@ -106,7 +106,7 @@ class BaseTestCase extends TestCase
             'CONF_PS_CHECKOUT_VAR' => 2,
             'CONF_PS_CHECKOUT_FIXED_FOREIGN' => 0.2,
             'CONF_PS_CHECKOUT_VAR_FOREIGN' => 2,
-            'PS_CHECKOUT_INTENT' => PayPalIntentConfiguration::PS_CHECKOUT_CAPTURE,
+            'PS_CHECKOUT_INTENT' => PayPalOrderIntent::CAPTURE,
             'PS_CHECKOUT_MODE' => 'SANDBOX',
             'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => 'HDVL5SJRCQVGL',
             'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => 'CheckoutSandbox@business.example.com',

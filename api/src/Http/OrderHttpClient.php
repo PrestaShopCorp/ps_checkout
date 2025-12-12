@@ -107,6 +107,14 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     }
 
     /**
+     * @inheritDoc
+     */
+    public function authorizeOrder(string $orderId, array $payload): ResponseInterface
+    {
+        return $this->sendRequest(new Request('POST', "orders/$orderId/authorize", [], json_encode($payload)));
+    }
+
+    /**
      * @param array $body
      *
      * @return string

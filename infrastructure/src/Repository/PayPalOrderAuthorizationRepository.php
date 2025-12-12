@@ -53,6 +53,8 @@ class PayPalOrderAuthorizationRepository implements PayPalOrderAuthorizationRepo
                     'status' => pSQL($payPalOrderAuthorization->getStatus()),
                     'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
                     'seller_protection' => pSQL(json_encode($payPalOrderAuthorization->getSellerProtection())),
+                    'created_at' => pSQL($payPalOrderAuthorization->getCreateTime()),
+                    'updated_at' => pSQL($payPalOrderAuthorization->getUpdateTime()),
                 ],
                 false,
                 true,
