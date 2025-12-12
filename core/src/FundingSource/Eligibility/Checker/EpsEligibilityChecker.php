@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
-
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class EpsEligibilityChecker extends BaseFundingSourceEligibilityChecker
