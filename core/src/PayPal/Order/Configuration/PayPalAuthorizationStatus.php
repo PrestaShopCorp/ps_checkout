@@ -1,6 +1,6 @@
 <?php
 
-namespace PsCheckout\src\PayPal\Order\Configuration;
+namespace PsCheckout\Core\PayPal\Order\Configuration;
 
 class PayPalAuthorizationStatus
 {
