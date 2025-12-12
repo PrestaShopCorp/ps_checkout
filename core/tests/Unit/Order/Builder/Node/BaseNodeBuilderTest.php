@@ -52,7 +52,7 @@ class BaseNodeBuilderTest extends TestCase
     public function buildDataProvider(): array
     {
         return [
-            'new_order_without_vault' => [
+            'new_order_without_vault_capture' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Test Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
@@ -94,7 +94,132 @@ class BaseNodeBuilderTest extends TestCase
                     ],
                 ],
             ],
-            'update_order_with_vault' => [
+            'update_order_with_vault_capture' => [
+                'configurationData' => [
+                    'PS_SHOP_NAME' => 'Test Shop',
+                    PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
+                ],
+                'cartData' => [
+                    'cart' => [
+                        'id' => 456,
+                        'totals' => [
+                            'total_including_tax' => [
+                                'amount' => 200.75,
+                            ],
+                        ],
+                    ],
+                    'currency' => [
+                        'iso_code' => 'EUR',
+                    ],
+                ],
+                'isVault' => true,
+                'isUpdate' => true,
+                'paypalOrderId' => 'PAYPAL123',
+                'expected' => [
+                    'intent' => 'CAPTURE',
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '456',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #456 from Test Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => NumberUtility::formatAmount(200.75, 'EUR'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT123',
+                            ],
+                        ],
+                    ],
+                    'id' => 'PAYPAL123',
+                ],
+            ],
+            'new_order_with_vault_capture' => [
+                'configurationData' => [
+                    'PS_SHOP_NAME' => 'Another Shop',
+                    PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT456',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalOrderIntent::CAPTURE,
+                    PayPalConfiguration::PS_ROUND_TYPE => 'round',
+                    PayPalConfiguration::PS_PRICE_ROUND_MODE => 'down',
+                ],
+                'cartData' => [
+                    'cart' => [
+                        'id' => 789,
+                        'totals' => [
+                            'total_including_tax' => [
+                                'amount' => 150.25,
+                            ],
+                        ],
+                    ],
+                    'currency' => [
+                        'iso_code' => 'GBP',
+                    ],
+                ],
+                'isVault' => true,
+                'isUpdate' => false,
+                'paypalOrderId' => null,
+                'expected' => [
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '789',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #789 from Another Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'GBP',
+                                'value' => NumberUtility::formatAmount(150.25, 'GBP'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT456',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'new_order_without_vault_authorize' => [
+                'configurationData' => [
+                    'PS_SHOP_NAME' => 'Test Shop',
+                    PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'AUTHORIZE',
+                    PayPalConfiguration::PS_ROUND_TYPE => 'round',
+                    PayPalConfiguration::PS_PRICE_ROUND_MODE => 'up',
+                ],
+                'cartData' => [
+                    'cart' => [
+                        'id' => 123,
+                        'totals' => [
+                            'total_including_tax' => [
+                                'amount' => 100.50,
+                            ],
+                        ],
+                    ],
+                    'currency' => [
+                        'iso_code' => 'USD',
+                    ],
+                ],
+                'isVault' => false,
+                'isUpdate' => false,
+                'paypalOrderId' => null,
+                'expected' => [
+                    'intent' => 'AUTHORIZE',
+                    'purchase_units' => [
+                        [
+                            'custom_id' => '123',
+                            'invoice_id' => '',
+                            'description' => StringUtility::truncate('Checking out with your cart #123 from Test Shop', 127),
+                            'amount' => [
+                                'currency_code' => 'USD',
+                                'value' => NumberUtility::formatAmount(100.50, 'USD'),
+                            ],
+                            'payee' => [
+                                'merchant_id' => 'MERCHANT123',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'update_order_with_vault_authorize' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Test Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
@@ -135,11 +260,11 @@ class BaseNodeBuilderTest extends TestCase
                     'id' => 'PAYPAL123',
                 ],
             ],
-            'new_order_with_vault' => [
+            'new_order_with_vault_authorize' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Another Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT456',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalOrderIntent::CAPTURE,
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'AUTHORIZE',
                     PayPalConfiguration::PS_ROUND_TYPE => 'round',
                     PayPalConfiguration::PS_PRICE_ROUND_MODE => 'down',
                 ],
@@ -160,7 +285,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => false,
                 'paypalOrderId' => null,
                 'expected' => [
-                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'intent' => 'AUTHORIZE',
                     'purchase_units' => [
                         [
                             'custom_id' => '789',
