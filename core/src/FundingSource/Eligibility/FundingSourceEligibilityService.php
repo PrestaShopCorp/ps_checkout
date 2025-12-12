@@ -33,13 +33,16 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
     /** @var FundingSourcePresenterInterface */
     private $fundingSourcePresenter;
 
-    /** @var FundingSourceEligibilityCheckerInterface[] */
+    /** @var iterable<FundingSourceEligibilityCheckerInterface> */
     private $checkers;
 
+    /**
+     * @param FundingSourceEligibilityCheckerInterface[] $checkers
+     */
     public function __construct(
         ContextInterface $context,
         FundingSourcePresenterInterface $fundingSourcePresenter,
-        iterable $checkers = []
+        iterable $checkers
     ) {
         $this->context = $context;
         $this->fundingSourcePresenter = $fundingSourcePresenter;
@@ -53,7 +56,12 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
     {
         $eligible = [];
 
-        $fundingSources = $this->fundingSourcePresenter->getAllActiveForSpecificShop($this->context->getShop()->id);
+        $shop = $this->context->getShop();
+        if (null === $shop || !$shop->id) {
+            return $eligible;
+        }
+
+        $fundingSources = $this->fundingSourcePresenter->getAllActiveForSpecificShop($shop->id);
 
         foreach ($fundingSources as $fundingSource) {
             $name = $fundingSource->getName();

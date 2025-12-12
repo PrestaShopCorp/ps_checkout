@@ -27,7 +27,7 @@ class FundingSourceConstraint
      *
      * @param string $fundingSourceName
      *
-     * @return array
+     * @return string[]
      */
     public static function getCountries(string $fundingSourceName): array
     {

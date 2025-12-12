@@ -34,7 +34,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
     private $context;
 
     /**
-     * @var ConfigurationInterface
+     * @var ConfigurationInterface&MockObject
      */
     private $configuration;
 
@@ -54,7 +54,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
     private $fundingSourceEligibilityService;
 
     /**
-     * @var array<string, FundingSourceEligibilityCheckerInterface>
+     * @var array<string, class-string<FundingSourceEligibilityCheckerInterface>>
      */
     private $checkers = [
         'apple_pay' => ApplePayEligibilityChecker::class,
@@ -85,6 +85,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyEligibleFundingSources()
     {
         $shop = $this->createMock(\Shop::class);
@@ -95,6 +98,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
         self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
+    /**
+     * @return void
+     */
     public function testDisabledEligibleFundingSources()
     {
         $shop = $this->createMock(\Shop::class);
@@ -108,6 +114,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
         self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
+    /**
+     * @return void
+     */
     public function testUnknownEligibilityChecker()
     {
         $shop = $this->createMock(\Shop::class);
@@ -131,6 +140,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
      *     configurations: array<int, array{string, bool}>
      * } $context
      * @param bool $eligible
+     *
+     * @return void
      */
     public function testEligibleFundingSources($name, $context, $eligible)
     {

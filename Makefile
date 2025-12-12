@@ -57,6 +57,12 @@ integration-test: php-integration php-integration-core php-integration-infrastru
 
 test: unit-test integration-test
 
+phpstan:
+	cd $${MODULE_VERSION} && composer phpstan
+
+phpstan-baseline:
+	cd $${MODULE_VERSION} && composer phpstan:baseline
+
 ssh:
 	docker exec -it $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash
 

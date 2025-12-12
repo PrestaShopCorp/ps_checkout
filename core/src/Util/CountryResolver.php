@@ -41,13 +41,13 @@ class CountryResolver implements CountryResolverInterface
     {
         $code = '';
 
-        if (\Validate::isLoadedObject($this->context->getCountry())) {
-            $code = \strtoupper($this->context->getCountry()->iso_code);
+        $country = $this->context->getCountry();
+        if ($country && \Validate::isLoadedObject($country)) {
+            $code = \strtoupper($country->iso_code);
         }
 
         $cart = $this->context->getCart();
-
-        if ($cart && \Validate::isLoadedObject($cart)) {
+        if ($cart && $country && \Validate::isLoadedObject($cart)) {
             $taxAddressType = $this->configuration->get('PS_TAX_ADDRESS_TYPE');
             $taxAddressId = \property_exists($cart, $taxAddressType) ? $cart->{$taxAddressType} : $cart->id_address_delivery;
             $address = new \Address($taxAddressId);
