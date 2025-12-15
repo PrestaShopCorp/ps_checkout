@@ -387,6 +387,5 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->birthDate = $birthDate;
 
         return $this;
-
     }
 }
