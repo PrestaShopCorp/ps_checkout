@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\PayPal\Order\Validator;
 
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\ValueObject\PayPalOrderCompletionData;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
@@ -75,9 +76,9 @@ class CreatedPayUponInvoiceOrderValidator implements CreatedPayPalOrderValidator
         $paypalOrderResponse = $this->payPalOrderProvider->getById($payPalOrderId);
 
         //NOTE: order must exist in paypal and have correct status
-        if ($paypalOrderResponse->getStatus() !== PayPalCaptureStatus::PENDING
-            && $paypalOrderResponse->getStatus() !== PayPalCaptureStatus::COMPLETED
-            && $paypalOrderResponse->getStatus() !== PayPalCaptureStatus::CREATED) {
+        if ($paypalOrderResponse->getStatus() !== PayPalOrderStatus::PENDING_APPROVAL
+            && $paypalOrderResponse->getStatus() !== PayPalOrderStatus::COMPLETED
+            && $paypalOrderResponse->getStatus() !== PayPalOrderStatus::CREATED) {
             return null;
         }
 
