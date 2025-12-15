@@ -29,6 +29,7 @@ use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilderInterfac
 use PsCheckout\Core\Order\Builder\Node\PayerNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
@@ -97,6 +98,12 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var VenmoPaymentSourceNodeBuilderInterface */
     private $venmoPaymentSourceNodeBuilder;
 
+    /** @var PuiPaymentSourceNodeBuilderInterface */
+    private $puiPaymentSourceNodeBuilder;
+
+    /** @var PuiPaymentSourceNodeBuilderInterface */
+    private $birthDate;
+
     public function __construct(
         BaseNodeBuilderInterface $baseNodeBuilder,
         AmountBreakdownNodeInterface $amountBreakdownNodeBuilder,
@@ -107,7 +114,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         ApplicationContextNodeBuilderInterface $applicationContextNodeBuilder,
         PayPalPaymentSourceNodeBuilderInterface $payPalPaymentSourceNodeBuilder,
         GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder,
-        VenmoPaymentSourceNodeBuilderInterface $venmoPaymentSourceNodeBuilder
+        VenmoPaymentSourceNodeBuilderInterface $venmoPaymentSourceNodeBuilder,
+        PuiPaymentSourceNodeBuilderInterface $puiPaymentSourceNodeBuilder
     ) {
         $this->baseNodeBuilder = $baseNodeBuilder;
         $this->amountBreakdownNodeBuilder = $amountBreakdownNodeBuilder;
@@ -119,6 +127,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->payPalPaymentSourceNodeBuilder = $payPalPaymentSourceNodeBuilder;
         $this->googlePayPaymentSourceNodeBuilder = $googlePayPaymentSourceNodeBuilder;
         $this->venmoPaymentSourceNodeBuilder = $venmoPaymentSourceNodeBuilder;
+        $this->puiPaymentSourceNodeBuilder = $puiPaymentSourceNodeBuilder;
     }
 
     /** {@inheritDoc} */
@@ -165,7 +174,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $optionalPayload = [];
 
         if ($isFullPayload) {
-            $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
+            $amountBreakdown = $this->amountBreakdownNodeBuilder
+                ->setCart($this->cart)
+                ->setFundingSource($this->fundingSource)
+                ->build();
             if (!empty($amountBreakdown)) {
                 $this->payload = array_replace_recursive($this->payload, $amountBreakdown);
             }
@@ -193,6 +205,12 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($isFullPayload) {
             $optionalPayload[] = $this->buildPaymentSource();
+        }
+
+        // Add processing_instruction for PUI orders
+        if ($this->fundingSource === 'pay_upon_invoice' && !$this->isUpdate) {
+            $optionalPayload[] = [
+                'processing_instruction' => 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL'];
         }
 
         return $optionalPayload;
@@ -273,6 +291,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                     ->setCart($this->cart)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
+                    ->build();
+            case 'pay_upon_invoice':
+                return $this->puiPaymentSourceNodeBuilder->setCart($this->cart)
+                    ->setBirthDate($this->birthDate)
                     ->build();
         }
 
@@ -357,5 +379,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->isCard = $isCard;
 
         return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setCustomerBirthDay($birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+
     }
 }

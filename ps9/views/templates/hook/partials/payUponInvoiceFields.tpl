@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -16,25 +15,23 @@
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
- */
-
-namespace PsCheckout\Core\Settings\Configuration;
-
-class FundingSourceConfig
-{
-    const FUNDING_SOURCES = [
-        'paypal',
-        'paylater',
-        'card',
-        'bancontact',
-        'eps',
-        'ideal',
-        'mybank',
-        'p24',
-        'blik',
-        'pay_upon_invoice',
-        'google_pay',
-        'apple_pay',
-        'venmo',
-    ];
-}
+ *}
+<div>
+  <form id="ps_checkout-pay-upon-invoice-fields-form" class="form-horizontal loading">
+    <div class="form-group">
+      <label for="ps_checkout-pui-birthday" class="form-control-label required">
+        {l s='Date of Birth' d='Modules.Checkout.Pscheckout'}
+      </label>
+      <input
+              type="date"
+              id="ps_checkout-pui-birthday"
+              name="ps_checkout-pui-birthday"
+              class="form-control"
+              required="required"
+              placeholder="YYYY-MM-DD"
+      />
+      <span class="form-control-comment" id="ps_checkout-pui-birthday-error" style="display: none; color: #dc3545;"></span>
+    </div>
+    <div id="paypal-legal-container"></div>
+  </form>
+</div>

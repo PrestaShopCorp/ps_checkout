@@ -18,23 +18,25 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Settings\Configuration;
+namespace PsCheckout\Core\Order\Builder\Node;
 
-class FundingSourceConfig
+interface PuiPaymentSourceNodeBuilderInterface
 {
-    const FUNDING_SOURCES = [
-        'paypal',
-        'paylater',
-        'card',
-        'bancontact',
-        'eps',
-        'ideal',
-        'mybank',
-        'p24',
-        'blik',
-        'pay_upon_invoice',
-        'google_pay',
-        'apple_pay',
-        'venmo',
-    ];
+    /**
+     * Build the Pay upon Invoice payment source node
+     *
+     * @return array
+     */
+    public function build(): array;
+
+    /**
+     * Set the cart data
+     *
+     * @param array $cart
+     *
+     * @return self
+     */
+    public function setCart(array $cart);
+
+    public function setBirthDate($birthDate);
 }

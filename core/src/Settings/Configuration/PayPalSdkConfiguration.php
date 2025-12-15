@@ -37,10 +37,10 @@ class PayPalSdkConfiguration
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
     /**
-     * google_pay and apple_pay are not considered funding sources
+     * google_pay, apple_pay and pui are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK
      */
-    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay', 'pay_upon_invoice'];
 
     /**
      * @var ContextInterface
@@ -149,6 +149,10 @@ class PayPalSdkConfiguration
 
         if ($this->shouldIncludeApplePayComponent()) {
             $components[] = 'applepay';
+        }
+
+        if ($this->shouldIncludePayUponInvoiceComponent()) {
+            $components[] = 'legal';
         }
 
         $params = [
@@ -310,6 +314,18 @@ class PayPalSdkConfiguration
             in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('apple_pay'), true);
     }
 
+    private function shouldIncludePayUponInvoiceComponent(): bool
+    {
+        $countryIso = $this->getCountryIsoCode();
+        $fundingSource = $this->fundingSourcePresenter->getOneBy(['name' => 'pay_upon_invoice', 'id_shop' => $this->context->getShop()->id]);
+
+        return $fundingSource &&
+            $fundingSource->getIsEnabled() &&
+            in_array($countryIso, FundingSourceConstraint::getCountries('pay_upon_invoice'), true) &&
+            in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('pay_upon_invoice'), true) &&
+            !$this->hasVirtualProducts();
+    }
+
     /**
      * @see https://developer.paypal.com/docs/checkout/reference/customize-sdk/#disable-funding
      *
@@ -460,5 +476,34 @@ class PayPalSdkConfiguration
             default:
                 return '';
         }
+    }
+
+    /**
+     * Check if the cart contains any virtual or downloadable products.
+     * PUI (Pay upon Invoice) cannot be used for virtual products according to PayPal's Acceptable Use Policy.
+     *
+     * @return bool true if cart contains any virtual products, false otherwise
+     */
+    private function hasVirtualProducts(): bool
+    {
+        $cart = $this->context->getCart();
+
+        if (!$cart || !$cart->id) {
+            return false;
+        }
+
+        $products = $cart->getProducts();
+
+        if (empty($products)) {
+            return false;
+        }
+
+        foreach ($products as $product) {
+            if (isset($product['is_virtual']) && $product['is_virtual'] == '1') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

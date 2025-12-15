@@ -86,4 +86,9 @@ interface OrderPayloadBuilderInterface
      * @param bool $isVault
      */
     public function setIsVault(bool $isVault): OrderPayloadBuilder;
+
+    /**
+     * @param ?string $birthDate
+     */
+    public function setCustomerBirthDay($birthDate): OrderPayloadBuilder;
 }

@@ -603,6 +603,8 @@ class Ps_Checkout extends PaymentModule
                 )
             ) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/cardFields.tpl'));
+            } elseif ($fundingSource->getName() === 'pay_upon_invoice') {
+                $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/payUponInvoiceFields.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && empty($vaultedPayPal)) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/vaultPaymentForm.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && $vaultedPayPal) {

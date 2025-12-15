@@ -115,7 +115,7 @@ class FundingSourcePresenter implements FundingSourcePresenterInterface
             $this->fundingSourceTranslationProvider->getFundingSourceName($fundingSource['name']),
             $fundingSource['position'],
             (bool) $fundingSource['active'],
-            in_array($fundingSource['name'], ['google_pay', 'apple_pay']) ? $this->modulePathUri . 'views/img/' . $fundingSource['name'] . '.svg' : null
+            in_array($fundingSource['name'], ['google_pay', 'apple_pay', 'pay_upon_invoice']) ? $this->modulePathUri . 'views/img/' . $fundingSource['name'] . '.svg' : null
         );
     }
 }
