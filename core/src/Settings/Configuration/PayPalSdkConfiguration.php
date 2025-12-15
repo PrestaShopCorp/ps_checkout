@@ -126,6 +126,7 @@ class PayPalSdkConfiguration
     public function buildConfiguration(): array
     {
         $components = [
+            'legal',
             'marks',
             'funding-eligibility',
         ];

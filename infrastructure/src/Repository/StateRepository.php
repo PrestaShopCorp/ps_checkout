@@ -35,6 +35,9 @@ class StateRepository implements StateRepositoryInterface
      */
     public function getIsoById($idState)
     {
+        if (!$idState) {
+            return false;
+        }
         return (new \State($idState))->iso_code;
     }
 }
