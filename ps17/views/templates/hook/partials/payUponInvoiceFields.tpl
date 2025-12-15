@@ -29,6 +29,9 @@
               class="form-control"
               required="required"
               placeholder="YYYY-MM-DD"
+              {if !empty($min_date)}min="{$min_date}"{/if}
+              {if !empty($max_date)}max="{$max_date}"{/if}
+              {if isset($customerBirthday) && $customerBirthday}value="{$customerBirthday|escape:'html':'UTF-8'}"{/if}
       />
       <span class="form-control-comment" id="ps_checkout-pui-birthday-error" style="display: none; color: #dc3545;"></span>
     </div>

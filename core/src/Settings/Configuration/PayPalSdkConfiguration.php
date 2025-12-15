@@ -323,7 +323,9 @@ class PayPalSdkConfiguration
             $fundingSource->getIsEnabled() &&
             in_array($countryIso, FundingSourceConstraint::getCountries('pay_upon_invoice'), true) &&
             in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('pay_upon_invoice'), true) &&
-            !$this->hasVirtualProducts();
+            !$this->hasVirtualProducts() &&
+            $this->hasPhoneNumber()
+        ;
     }
 
     /**
@@ -505,5 +507,29 @@ class PayPalSdkConfiguration
         }
 
         return false;
+    }
+
+    /**
+     * Check if the customer has entered a phone number in their address.
+     *
+     * @return bool true if a valid phone number exists, false otherwise
+     */
+    private function hasPhoneNumber(): bool
+    {
+        $cart = $this->context->getCart();
+
+        if (!$cart || !$cart->id) {
+            return false;
+        }
+
+        $taxAddressType = $this->configuration->get('PS_TAX_ADDRESS_TYPE');
+        $taxAddressId = property_exists($cart, $taxAddressType) ? $cart->{$taxAddressType} : $cart->id_address_delivery;
+        $address = new \Address($taxAddressId);
+
+        if (!\Validate::isLoadedObject($address)) {
+            return false;
+        }
+
+        return !empty($address->phone) || !empty($address->phone_mobile);
     }
 }

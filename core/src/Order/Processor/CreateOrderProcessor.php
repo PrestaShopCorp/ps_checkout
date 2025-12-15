@@ -151,12 +151,16 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         }
 
         try {
-            $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
+            if (!$this->orderNeedsCapture($request)) {
+                throw new PayPalException('Order doesn\'t need capture', PayPalException::ORDER_REQUIRES_ASYNC_CAPTURE);
+            }
 
+            $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
             $this->savePaymentTokenAction->execute($capturedOrderResponse);
         } catch (PayPalException $exception) {
             switch ($exception->getCode()) {
                 case PayPalException::ORDER_NOT_APPROVED:
+                case PayPalException::ORDER_REQUIRES_ASYNC_CAPTURE:
                     $this->createOrderAction->execute($payPalOrderResponse);
 
                     return;
@@ -186,5 +190,10 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
                     throw $exception;
             }
         }
+    }
+
+    private function orderNeedsCapture(ValidateOrderRequest $request): bool
+    {
+        return $request->getFundingSource() !== 'pay_upon_invoice';
     }
 }
