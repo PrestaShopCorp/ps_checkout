@@ -108,6 +108,14 @@ class FundingSource implements \JsonSerializable
     }
 
     /**
+     * @return string[]
+     */
+    public function getCountries(): array
+    {
+        return $this->countries;
+    }
+
+    /**
      * @return array
      */
     #[\ReturnTypeWillChange]

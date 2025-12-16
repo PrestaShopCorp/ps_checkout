@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Core\Settings\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Utility\Common\NumberUtility;

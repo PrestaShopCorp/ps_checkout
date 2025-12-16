@@ -91,6 +91,12 @@ parameters:
 			path: ../api/src/Http/OrderHttpClient.php
 
 		-
+			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClient\:\:authorizeOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/OrderHttpClient.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClient\:\:captureOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -135,8 +141,14 @@ parameters:
 		-
 			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
-			count: 3
+			count: 4
 			path: ../api/src/Http/OrderHttpClient.php
+
+		-
+			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:authorizeOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/OrderHttpClientInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:captureOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
@@ -1081,16 +1093,10 @@ parameters:
 			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\FundingSource\\Constraint\\FundingSourceConstraint\:\:getCountries\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Instanceof between PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface and PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
-			path: ../core/src/FundingSource/Constraint/FundingSourceConstraint.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\FundingSource\\Constraint\\FundingSourceConstraint\:\:getCurrencies\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/FundingSource/Constraint/FundingSourceConstraint.php
+			path: ../core/src/FundingSource/Eligibility/FundingSourceEligibilityService.php
 
 		-
 			message: '#^Binary operation "\." between '' \*'' and mixed results in an error\.$#'
@@ -1191,6 +1197,12 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\FundingSource\\ValueObject\\FundingSource\:\:__construct\(\) has parameter \$position with no type specified\.$#'
 			identifier: missingType.parameter
+			count: 1
+			path: ../core/src/FundingSource/ValueObject/FundingSource.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\FundingSource\\ValueObject\\FundingSource\:\:getCountries\(\) should return array\<string\> but returns array\.$#'
+			identifier: return.type
 			count: 1
 			path: ../core/src/FundingSource/ValueObject/FundingSource.php
 
@@ -2641,6 +2653,12 @@ parameters:
 			path: ../core/src/Order/Processor/CreateOrderProcessor.php
 
 		-
+			message: '#^Method PsCheckout\\Core\\Order\\Processor\\CreateOrderProcessor\:\:capturePayPalOrder\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../core/src/Order/Processor/CreateOrderProcessor.php
+
+		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
@@ -2661,7 +2679,13 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$id of method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:getById\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
-			count: 3
+			count: 1
+			path: ../core/src/Order/Processor/CreateOrderProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Core\\Order\\Processor\\CreateOrderProcessor\:\:capturePayPalOrder\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/src/Order/Processor/CreateOrderProcessor.php
 
 		-
@@ -3217,6 +3241,96 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
+			message: '#^Access to constant CREATED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Access to constant DENIED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Access to constant PENDING on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''create_time'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''expiration_time'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''id'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''seller_protection'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''status'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''update_time'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#1 \$id of method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:getById\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:getValue\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:set\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
 			message: '#^Parameter \#1 \$fundingSource of method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrder\:\:setFundingSource\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3715,6 +3829,12 @@ parameters:
 			path: ../core/src/PayPal/Order/Entity/PayPalOrder.php
 
 		-
+			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$createTime with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$expirationTime with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -3745,6 +3865,12 @@ parameters:
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
 		-
+			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$updateTime with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:getSellerProtection\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3753,6 +3879,12 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:setSellerProtection\(\) has parameter \$sellerProtection with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$createTime \(string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
@@ -3788,6 +3920,12 @@ parameters:
 
 		-
 			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$status \(string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$updateTime \(string\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
@@ -6369,29 +6507,11 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Shop\|null\.$#'
 			identifier: property.nonObject
-			count: 5
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Cannot access property \$id_address_delivery on Cart\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Cannot access property \$iso_code on Country\|null\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\Settings\\Configuration\\PayPalSdkConfiguration\:\:buildConfiguration\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Settings\\Configuration\\PayPalSdkConfiguration\:\:getEligibleAlternativePaymentMethods\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
@@ -6409,31 +6529,7 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
-			message: '#^Parameter \#1 \$id_address of class Address constructor expects int\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
 			message: '#^Parameter \#1 \$merchantId of method PsCheckout\\Core\\PayPal\\OAuth\\OAuthServiceInterface\:\:getUserIdToken\(\) expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Parameter \#1 \$object of static method ValidateCore\:\:isLoadedObject\(\) expects object, Cart\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Parameter \#1 \$object of static method ValidateCore\:\:isLoadedObject\(\) expects object, Country\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function property_exists expects object\|string, Cart\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
@@ -6441,7 +6537,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$shopId of method PsCheckout\\Presentation\\Presenter\\FundingSource\\FundingSourcePresenterInterface\:\:getAllForSpecificShop\(\) expects int, int\|null given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
@@ -6451,10 +6547,16 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
+			message: '#^Parameter \#1 \$id_address of class Address constructor expects int\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Util/CountryResolver.php
+
+		-
 			message: '#^Parameter \#2 \$property_name of function property_exists expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
+			path: ../core/src/Util/CountryResolver.php
 
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
@@ -8071,6 +8173,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/AmountBreakdownNodeTest.php
 
 		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Core\\\\Order\\\\Builder\\\\Node\\\\ApplicationContextNodeBuilder'' and PsCheckout\\Core\\Order\\Builder\\Node\\ApplicationContextNodeBuilder will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -8151,19 +8259,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''card'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 17
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''customer'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 7
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8193,7 +8295,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''payment_source'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 18
+			count: 14
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8211,25 +8313,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''stored_credential'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
+			count: 3
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''usage'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''vault'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''vault_id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8308,12 +8398,6 @@ parameters:
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
 			count: 7
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8419,36 +8503,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|Psr\\Log\\LoggerInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method libphonenumber\\PhoneNumberUtil\|PHPUnit\\Framework\\MockObject\\MockObject\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
@@ -8515,12 +8569,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^PHPDoc tag @return with type Address\|PHPUnit\\Framework\\MockObject\\MockObject is not subtype of native type Address\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
 			message: '#^Parameter \#1 \$phoneNumber of method Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:mockPhoneNumberHandling\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -8545,58 +8593,46 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$countryRepository \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$countryRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$logger \(PHPUnit\\Framework\\MockObject\\MockObject\|Psr\\Log\\LoggerInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$logger \(PHPUnit\\Framework\\MockObject\\MockObject&Psr\\Log\\LoggerInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$originalPhoneUtil \(libphonenumber\\PhoneNumberUtil\|PHPUnit\\Framework\\MockObject\\MockObject\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$originalPhoneUtil \(libphonenumber\\PhoneNumberUtil&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept libphonenumber\\PhoneNumberUtil\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$phoneUtil \(libphonenumber\\PhoneNumberUtil\|PHPUnit\\Framework\\MockObject\\MockObject\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$originalPhoneUtil \(libphonenumber\\PhoneNumberUtil&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$stateRepository \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$phoneUtil \(libphonenumber\\PhoneNumberUtil&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$validate \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$stateRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:\$validate \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
+			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
@@ -8653,31 +8689,25 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
-			message: '#^PHPDoc tag @return with type Address\|PHPUnit\\Framework\\MockObject\\MockObject is not subtype of native type Address\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
 			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$builder \(PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilder\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$countryRepository \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$countryRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$genderRepository \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$genderRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$stateRepository \(PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\) does not accept null\.$#'
+			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$stateRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
@@ -8761,27 +8791,21 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/SupplementaryDataNodeBuilderTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\CartRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 4
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''Validation passed…'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
 			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\OrderRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Trying to mock an undefined method getAllBy\(\) on class PsCheckout\\Infrastructure\\Repository\\OrderRepositoryInterface\.$#'
+			identifier: phpunit.mockMethod
 			count: 2
 			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 5
-			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
-
-		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''Validation passed…'' will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 1
+			message: '#^Trying to mock an undefined method getOneBy\(\) on class PsCheckout\\Infrastructure\\Repository\\CartRepositoryInterface\.$#'
+			identifier: phpunit.mockMethod
+			count: 4
 			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
 
 		-
@@ -8825,36 +8849,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/Order/Validator/OrderAmountValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Card3DSecure\\Card3DSecureValidatorInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\CartInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ConfigurationInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\CustomerInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|Psr\\Log\\LoggerInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
 
 		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\Order\\Validator\\OrderAuthorizationValidatorTest\:\:provide3DSecureScenarios\(\) return type has no value type specified in iterable type array\.$#'
@@ -9013,135 +9007,15 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Card3DSecure/Card3DSecureValidatorTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\CheckoutHttpClientInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/PayPal/OAuth/OAuthServiceTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|Psr\\Http\\Message\\ResponseInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/PayPal/OAuth/OAuthServiceTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|Psr\\Http\\Message\\StreamInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/PayPal/OAuth/OAuthServiceTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 8
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 5
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitActionInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Repository\\PayPalOrderRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Repository\\PayPalOrderRepositoryInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Presentation\\Presenter\\PresenterInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Presentation\\Presenter\\PresenterInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
 			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor invoked with 8 parameters, 7 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
 			count: 3
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PayPal\\Order\\Repository\\PayPalOrderRepositoryInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ConfigurationInterface\:\:method\(\)\.$#'
-			identifier: method.notFound
-			count: 1
 			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
 
 		-
@@ -9161,24 +9035,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/PayPal/OrderStatus/Action/PayPalCheckOrderStatusActionTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\CheckoutHttpClientInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/PaymentToken/Action/DeletePaymentTokenActionTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\PaymentToken\\Repository\\PaymentTokenRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 5
-			path: ../core/tests/Unit/PaymentToken/Action/DeletePaymentTokenActionTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ConfigurationInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/PaymentToken/Action/DeletePaymentTokenActionTest.php
 
 		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\PaymentToken\\Action\\DeletePaymentTokenActionTest\:\:providePayPalErrorScenarios\(\) return type has no value type specified in iterable type array\.$#'
@@ -9203,12 +9059,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/tests/Unit/PaymentToken/Action/DeletePaymentTokenActionTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Adapter\\ConfigurationInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/tests/Unit/Webhook/Handler/WebhookEventConfigurationUpdatedHandlerTest.php
 
 		-
 			message: '#^Parameter \#1 \$payload of method PsCheckout\\Core\\Webhook\\Handler\\WebhookEventConfigurationUpdatedHandler\:\:handle\(\) expects array\{id\: string, createTime\: string, eventType\: string, eventVersion\: string, summary\: string, resourceType\: string, resource\: array\}, array\{eventType\: ''PRESTASHOP…'', resource\: array\{configuration\: ''not_an_array''\}\} given\.$#'
@@ -9253,18 +9103,6 @@ parameters:
 			path: ../core/tests/Unit/Webhook/Handler/WebhookEventConfigurationUpdatedHandlerTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\Webhook\\Handler\\WebhookEventHandlerInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 10
-			path: ../core/tests/Unit/Webhook/Handler/WebhookHandlerTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\Webhook\\Service\\WebhookTokenInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: ../core/tests/Unit/Webhook/Handler/WebhookHandlerTest.php
-
-		-
 			message: '#^Parameter \#1 \$payload of method PsCheckout\\Core\\Webhook\\Handler\\WebhookHandler\:\:handle\(\) expects array\{id\: string, createTime\: string, eventType\: string, eventVersion\: string, summary\: string, resourceType\: string, resource\: array\}, array\{eventType\: ''TEST_EVENT''\} given\.$#'
 			identifier: argument.type
 			count: 3
@@ -9275,12 +9113,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/Webhook/Handler/WebhookHandlerTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Api\\Http\\WebhookHttpClientInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: ../core/tests/Unit/WebhookDispatcher/Action/VerifyWebhookActionTest.php
 
 		-
 			message: '#^Parameter \#1 \$rawBody of method PsCheckout\\Core\\WebhookDispatcher\\Action\\VerifyWebhookAction\:\:execute\(\) expects string, string\|false given\.$#'
@@ -9391,12 +9223,6 @@ parameters:
 			path: ../core/tests/Unit/WebhookDispatcher/Provider/WebhookHeaderProviderTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\WebhookDispatcher\\Provider\\WebhookBodyProviderInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
-
-		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\WebhookDispatcher\\Validator\\BodyValuesValidatorTest\:\:provideMissingRequiredFields\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9409,12 +9235,6 @@ parameters:
 			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
 
 		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Core\\WebhookDispatcher\\Provider\\WebhookHeaderProviderInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/WebhookDispatcher/Validator/HeaderValuesValidatorTest.php
-
-		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\WebhookDispatcher\\Validator\\HeaderValuesValidatorTest\:\:provideInvalidHeaders\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9425,12 +9245,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/tests/Unit/WebhookDispatcher/Validator/HeaderValuesValidatorTest.php
-
-		-
-			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\|PsCheckout\\Infrastructure\\Repository\\PsAccountRepositoryInterface\:\:expects\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: ../core/tests/Unit/WebhookDispatcher/Validator/WebhookShopIdValidatorTest.php
 
 		-
 			message: '#^Binary operation "\." between ''test_'' and mixed results in an error\.$#'
@@ -10713,7 +10527,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
 			identifier: argument.type
-			count: 4
+			count: 6
 			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
 		-

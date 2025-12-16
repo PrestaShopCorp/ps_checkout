@@ -27,7 +27,7 @@ class FundingSourceConstraint
      *
      * @param string $fundingSourceName
      *
-     * @return array
+     * @return string[]
      */
     public static function getCountries(string $fundingSourceName): array
     {
@@ -43,23 +43,6 @@ class FundingSourceConstraint
             'apple_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
         ];
 
-        return isset($countries[$fundingSourceName]) ? $countries[$fundingSourceName] : [];
-    }
-
-    /**
-     * Get eligible currencies for PayPal funding sources
-     *
-     * @param string $fundingSourceName
-     *
-     * @return array
-     */
-    public static function getCurrencies(string $fundingSourceName): array
-    {
-        $currencies = [
-            'google_pay' => ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
-            'apple_pay' => ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
-        ];
-
-        return isset($currencies[$fundingSourceName]) ? $currencies[$fundingSourceName] : [];
+        return $countries[$fundingSourceName] ?? [];
     }
 }
