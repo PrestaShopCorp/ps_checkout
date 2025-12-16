@@ -1,18 +1,13 @@
 {
     "config": {
-        "platform": {
-            "php": "7.2"
-        },
         "sort-packages": true,
         "preferred-install": "dist",
         "optimize-autoloader": true,
         "prepend-autoloader": false,
-        "platform-check": false,
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
+        "platform-check": false
     },
     "require": {
+        "php": "^7.2|^8.1",
         "gmponos/guzzle_logger": "^2.2",
         "prestashop/module-lib-mbo-installer": "^2.0",
         "prestashop/module-lib-service-container": "^2.0",
@@ -21,8 +16,6 @@
         "giggsey/libphonenumber-for-php": "^8.12"
     },
     "require-dev": {
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^8.5.41",
         "prestashop/php-dev-tools": "~4.0",
         "stancer/php-stubs-prestashop": "^8.2.2"

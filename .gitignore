@@ -1,6 +1,7 @@
 .env
 .idea
 .gitmodules
+.DS_Store
 prestashop
 mysql
 vendor
@@ -11,3 +12,6 @@ vendor
 **/.phpunit.result.cache
 .cloudflared.yml
 docker-compose.local.yml
+ps17/composer.lock
+ps8/composer.lock
+ps9/composer.lock

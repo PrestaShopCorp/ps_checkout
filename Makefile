@@ -5,9 +5,9 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 install:
 	composer install
-	cd $${MODULE_VERSION} && composer install
 
 up: install
+	docker compose run ps-prestashop /bin/bash -c "cd modules/ps_checkout && composer install"
 	docker compose up -d
 
 build:
