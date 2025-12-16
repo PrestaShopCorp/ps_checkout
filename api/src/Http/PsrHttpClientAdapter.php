@@ -52,12 +52,12 @@ class PsrHttpClientAdapter implements HttpClientInterface
     {
         try {
             $response = $this->client->sendRequest($request);
-        } catch (ConnectException $exception) { // @phpstan-ignore-line
+        } catch (ConnectException $exception) {
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new NetworkException($exception->getMessage(), $request, $exception); // @phpstan-ignore-line
-        } catch (RingException $exception) { // @phpstan-ignore-line
+            throw new NetworkException($exception->getMessage(), $request, $exception);
+        } catch (RingException $exception) {
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new TransferException($exception->getMessage(), 0, $exception); // @phpstan-ignore-line
+            throw new TransferException($exception->getMessage(), 0, $exception);
         }
 
         // Guzzle 5.3 does not throw exceptions on 4xx and 5xx status codes
