@@ -48,4 +48,14 @@ interface PaymentHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
+
+    /**
+     * @param string $authorizationId
+     * @param array $payload
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function voidAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
 }
