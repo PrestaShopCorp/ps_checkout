@@ -36,13 +36,13 @@ class DeletePaymentTokenActionTest extends TestCase
     /** @var DeletePaymentTokenAction */
     private $action;
 
-    /** @var PaymentTokenRepositoryInterface|MockObject */
+    /** @var PaymentTokenRepositoryInterface&MockObject */
     private $paymentTokenRepository;
 
-    /** @var CheckoutHttpClientInterface|MockObject */
+    /** @var CheckoutHttpClientInterface&MockObject */
     private $checkoutHttpClient;
 
-    /** @var ConfigurationInterface|MockObject */
+    /** @var ConfigurationInterface&MockObject */
     private $configuration;
 
     protected function setUp(): void

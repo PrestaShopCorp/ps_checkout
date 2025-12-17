@@ -6925,12 +6925,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/AmountBreakdownNodeTest.php
 
 		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Core\\\\Order\\\\Builder\\\\Node\\\\ApplicationContextNodeBuilder'' and PsCheckout\\Core\\Order\\Builder\\Node\\ApplicationContextNodeBuilder will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
-
-		-
 			message: '#^Method PsCheckout\\Tests\\Core\\Order\\Builder\\Node\\ApplicationContextNodeBuilderTest\:\:applicationContextDataProvider\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -7054,6 +7048,12 @@ parameters:
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
 			count: 7
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -7432,18 +7432,6 @@ parameters:
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''Validation passed…'' will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
-
-		-
-			message: '#^Trying to mock an undefined method getAllBy\(\) on class PsCheckout\\Infrastructure\\Repository\\OrderRepositoryInterface\.$#'
-			identifier: phpunit.mockMethod
-			count: 2
-			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
-
-		-
-			message: '#^Trying to mock an undefined method getOneBy\(\) on class PsCheckout\\Infrastructure\\Repository\\CartRepositoryInterface\.$#'
-			identifier: phpunit.mockMethod
-			count: 4
 			path: ../core/tests/Unit/Order/Validator/CheckoutValidatorTest.php
 
 		-

@@ -3,6 +3,7 @@ includes:
 
 parameters:
 	level: max
+	treatPhpDocTypesAsCertain: false
 	paths:
 		- ../api
 		- ../core

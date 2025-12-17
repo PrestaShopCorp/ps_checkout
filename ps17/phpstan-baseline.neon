@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/CheckoutHttpClient.php
@@ -9,6 +9,12 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\CheckoutClientConfigurationBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/Configuration/CheckoutClientConfigurationBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$logger of class GuzzleHttp\\Subscriber\\Log\\LogSubscriber constructor expects \(callable\(\)\: mixed\)\|GuzzleHttp\\Subscriber\\Log\\LoggerInterface\|resource\|null, Psr\\Log\\LoggerInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/Configuration/CheckoutClientConfigurationBuilder.php
 
@@ -25,8 +31,20 @@ parameters:
 			path: ../api/src/Http/Configuration/OrderHttpClientConfigurationBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$logger of class GuzzleHttp\\Subscriber\\Log\\LogSubscriber constructor expects \(callable\(\)\: mixed\)\|GuzzleHttp\\Subscriber\\Log\\LoggerInterface\|resource\|null, Psr\\Log\\LoggerInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Http/Configuration/OrderHttpClientConfigurationBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\OrderShipmentTrackingConfigurationBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/Configuration/OrderShipmentTrackingConfigurationBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$logger of class GuzzleHttp\\Subscriber\\Log\\LogSubscriber constructor expects \(callable\(\)\: mixed\)\|GuzzleHttp\\Subscriber\\Log\\LoggerInterface\|resource\|null, Psr\\Log\\LoggerInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/Configuration/OrderShipmentTrackingConfigurationBuilder.php
 
@@ -37,8 +55,20 @@ parameters:
 			path: ../api/src/Http/Configuration/PaymentHttpClientConfigurationBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$logger of class GuzzleHttp\\Subscriber\\Log\\LogSubscriber constructor expects \(callable\(\)\: mixed\)\|GuzzleHttp\\Subscriber\\Log\\LoggerInterface\|resource\|null, Psr\\Log\\LoggerInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Http/Configuration/PaymentHttpClientConfigurationBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\WebhookHttpClientConfigurationBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/Configuration/WebhookHttpClientConfigurationBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$logger of class GuzzleHttp\\Subscriber\\Log\\LogSubscriber constructor expects \(callable\(\)\: mixed\)\|GuzzleHttp\\Subscriber\\Log\\LoggerInterface\|resource\|null, Psr\\Log\\LoggerInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/Configuration/WebhookHttpClientConfigurationBuilder.php
 
@@ -47,6 +77,18 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: ../api/src/Http/Exception/PayPalError.php
+
+		-
+			message: '#^Cannot access offset ''issue'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/OrderHttpClient.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/OrderHttpClient.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClient\:\:authorizeOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
@@ -97,7 +139,7 @@ parameters:
 			path: ../api/src/Http/OrderHttpClient.php
 
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 4
 			path: ../api/src/Http/OrderHttpClient.php
@@ -125,6 +167,18 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/Http/OrderHttpClientInterface.php
+
+		-
+			message: '#^Cannot access offset ''issue'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/OrderShipmentTrackingHttpClient.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/OrderShipmentTrackingHttpClient.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\OrderShipmentTrackingHttpClient\:\:addTracking\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
@@ -163,7 +217,7 @@ parameters:
 			path: ../api/src/Http/OrderShipmentTrackingHttpClient.php
 
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../api/src/Http/OrderShipmentTrackingHttpClient.php
@@ -179,6 +233,18 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/Http/OrderShipmentTrackingHttpClientInterface.php
+
+		-
+			message: '#^Cannot access offset ''issue'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
@@ -211,7 +277,7 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/PaymentHttpClient.php
@@ -221,30 +287,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/Http/PaymentHttpClientInterface.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class GuzzleHttp\\Ring\\Exception\\ConnectException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../api/src/Http/PsrHttpClientAdapter.php
-
-		-
-			message: '#^Call to method getMessage\(\) on an unknown class GuzzleHttp\\Ring\\Exception\\RingException\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../api/src/Http/PsrHttpClientAdapter.php
-
-		-
-			message: '#^Caught class GuzzleHttp\\Ring\\Exception\\ConnectException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../api/src/Http/PsrHttpClientAdapter.php
-
-		-
-			message: '#^Caught class GuzzleHttp\\Ring\\Exception\\RingException not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../api/src/Http/PsrHttpClientAdapter.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\PsrHttpClientAdapter\:\:__construct\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
@@ -259,10 +301,16 @@ parameters:
 			path: ../api/src/Http/PsrHttpClientAdapter.php
 
 		-
-			message: '#^Parameter \#3 \$previous of class Http\\Client\\Exception\\NetworkException constructor expects Exception\|null, GuzzleHttp\\Ring\\Exception\\ConnectException&Throwable given\.$#'
-			identifier: argument.type
+			message: '#^Cannot access offset ''issue'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: ../api/src/Http/PsrHttpClientAdapter.php
+			path: ../api/src/Http/WebhookHttpClient.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/Http/WebhookHttpClient.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\WebhookHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
@@ -307,13 +355,13 @@ parameters:
 			path: ../api/src/Http/WebhookHttpClient.php
 
 		-
-			message: '#^Parameter \#3 \$headers of class GuzzleHttp\\Psr7\\Request constructor expects array\<string, array\<string\>\|string\>, array given\.$#'
+			message: '#^Parameter \#3 \$headers of class GuzzleHttp\\Psr7\\Request constructor expects array\<array\<string\>\|string\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/WebhookHttpClient.php
 
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/WebhookHttpClient.php
@@ -335,6 +383,108 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/Http/WebhookHttpClientInterface.php
+
+		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''authentication_result'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''authorizations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''captures'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''href'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''payments'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 7
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''rel'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset ''vault'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:__construct\(\) has parameter \$links with no value type specified in iterable type array\.$#'
@@ -601,6 +751,54 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
+			message: '#^Cannot access offset ''href'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''links'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''rel'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset ''trackers'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\TrackingResponse\:\:__construct\(\) has parameter \$links with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -733,6 +931,66 @@ parameters:
 			path: ../core/src/Customer/Action/ExpressCheckoutAction.php
 
 		-
+			message: '#^Cannot access offset ''address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''given_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''payer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''phone'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''phone_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
+			message: '#^Cannot access offset ''surname'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:__construct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -843,6 +1101,12 @@ parameters:
 		-
 			message: '#^Binary operation "\." between mixed and string results in an error\.$#'
 			identifier: binaryOp.invalid
+			count: 1
+			path: ../core/src/FundingSource/Factory/FundingSourceTokenFactory.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/FundingSource/Factory/FundingSourceTokenFactory.php
 
@@ -1105,6 +1369,12 @@ parameters:
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
 
 		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
+
+		-
 			message: '#^Cannot access property \$id on bool\|ObjectModel\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1141,7 +1411,7 @@ parameters:
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
 
 		-
-			message: '#^Parameter \#1 \$amount_paid of method OrderCore\:\:addOrderPayment\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$amount_paid of method OrderCore\:\:addOrderPayment\(\) expects float, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
@@ -1155,7 +1425,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
 
 		-
@@ -1169,6 +1439,18 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
 
 		-
 			message: '#^Cannot access property \$id on Cart\|null\.$#'
@@ -1309,6 +1591,114 @@ parameters:
 			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''gift_wrapping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''id_product'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''id_product_attribute'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''iso_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''quantity'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''reference'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''shipping_cost'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''subtotals'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''total'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''total_including_tax'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''total_wt'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
+			message: '#^Cannot access offset ''totals'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/AmountBreakdownNode.php
+
+		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 2
@@ -1399,6 +1789,36 @@ parameters:
 			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''iso_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''total_including_tax'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''totals'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/BaseNodeBuilder.php
+
+		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 1
@@ -1473,6 +1893,24 @@ parameters:
 		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''method'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''verification'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
@@ -1573,6 +2011,12 @@ parameters:
 			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilderInterface.php
 
 		-
+			message: '#^Cannot access offset ''vault'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1607,6 +2051,18 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilderInterface.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/PayerNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/PayerNodeBuilder.php
 
 		-
 			message: '#^Cannot access property \$birthday on mixed\.$#'
@@ -1753,6 +2209,18 @@ parameters:
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
 
 		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
+
+		-
 			message: '#^Cannot access property \$firstname on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1855,6 +2323,72 @@ parameters:
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilderInterface.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''discount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''tax_total'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 7
+			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilder.php
+
+		-
 			message: '#^Cannot access property \$id_country on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1931,6 +2465,30 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilderInterface.php
+
+		-
+			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
@@ -2221,12 +2779,6 @@ parameters:
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
 
 		-
-			message: '#^Parameter \#2 \$idAddress of method PsCheckout\\Infrastructure\\Adapter\\CustomerInterface\:\:customerHasAddress\(\) expects int, int\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\Order\\ValueObject\\ValidateOrderData\:\:__construct\(\) has parameter \$extraVars with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2313,6 +2865,12 @@ parameters:
 		-
 			message: '#^Call to an undefined method PsCheckout\\Infrastructure\\Repository\\OrderRepositoryInterface\:\:getOneBy\(\)\.$#'
 			identifier: method.notFound
+			count: 1
+			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
 
@@ -2419,6 +2977,18 @@ parameters:
 			path: ../core/src/OrderState/Action/SetPendingOrderStateAction.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
+
+		-
 			message: '#^Cannot cast mixed to float\.$#'
 			identifier: cast.double
 			count: 1
@@ -2467,7 +3037,7 @@ parameters:
 			path: ../core/src/OrderState/Action/SetReversedOrderStateAction.php
 
 		-
-			message: '#^Parameter \#2 \$id_order_state of method OrderCore\:\:getHistory\(\) expects bool\|int, string\|null given\.$#'
+			message: '#^Parameter \#2 \$id_order_state of method OrderCore\:\:getHistory\(\) expects int, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/OrderState/Action/SetReversedOrderStateAction.php
@@ -2509,6 +3079,30 @@ parameters:
 			path: ../core/src/OrderState/Service/OrderStateMapperInterface.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/ApplePay/Builder/ApplePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ApplePay/Builder/ApplePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ApplePay/Builder/ApplePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/ApplePay/Builder/ApplePayPaymentRequestDataBuilder.php
+
+		-
 			message: '#^Parameter \#1 \$currencyCode of class PsCheckout\\Core\\PayPal\\ApplePay\\ValueObject\\ApplePayPaymentRequestData constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2533,6 +3127,36 @@ parameters:
 			path: ../core/src/PayPal/Card3DSecure/Card3DSecureValidator.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
+
+		-
 			message: '#^Parameter \#1 \$currencyCode of class PsCheckout\\Core\\PayPal\\GooglePay\\ValueObject\\GooglePayPaymentRequestData constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -2555,6 +3179,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/GooglePay/ValueObject/GooglePayPaymentRequestData.php
+
+		-
+			message: '#^Cannot access offset ''id_token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
 			message: '#^Cannot call method getBody\(\) on mixed\.$#'
@@ -2585,6 +3215,12 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../core/src/PayPal/OAuth/OAuthService.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
 
 		-
 			message: '#^Offset ''create_time'' might not exist on array\|null\.$#'
@@ -2657,6 +3293,42 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''cvv_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''payment_advice_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''response_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
 			message: '#^Offset ''status'' might not exist on array\|null\.$#'
@@ -2797,9 +3469,117 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
 
 		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/RefundPayPalOrderAction.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 3
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''acquirer_reference_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''authorizations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''captures'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''custom_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''expiration_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''final_capture'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''invoice_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''reference_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''seller_payable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -2842,6 +3622,12 @@ parameters:
 			message: '#^Call to method set\(\) on an unknown class Symfony\\Component\\Cache\\Adapter\\CacheItem\.$#'
 			identifier: class.notFound
 			count: 1
+			path: ../core/src/PayPal/Order/Cache/PayPalOrderCache.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: ../core/src/PayPal/Order/Cache/PayPalOrderCache.php
 
 		-
@@ -3403,6 +4189,12 @@ parameters:
 			path: ../core/src/PayPal/Order/Handler/OrderCompletedEventHandler.php
 
 		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Handler/PayPalEventDispatcher.php
+
+		-
 			message: '#^Cannot call method handle\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -3424,6 +4216,108 @@ parameters:
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 3
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''acquirer_reference_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''authorizations'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''captures'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''custom_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''expiration_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''final_capture'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''invoice_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''reference_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''seller_payable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -3484,6 +4378,36 @@ parameters:
 			message: '#^Call to an undefined method PsCheckout\\Api\\Http\\HttpClientInterface\:\:updateOrder\(\)\.$#'
 			identifier: method.notFound
 			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''reference_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
@@ -3557,6 +4481,12 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider\:\:buildPayPalOrderResponse\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -4045,6 +4975,12 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingCarrierModuleNodeBuilderInterface.php
 
 		-
+			message: '#^Access to property \$id on an unknown class InstallLanguage\.$#'
+			identifier: class.notFound
+			count: 3
+			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
+
+		-
 			message: '#^Binary operation "\." between ''Product name is…'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -4063,9 +4999,21 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$id on InstallLanguage\|Language\|null\.$#'
-			identifier: property.nonObject
-			count: 3
+			message: '#^Cannot access offset ''id_image'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''id_product'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''id_product_attribute'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
@@ -4078,18 +5026,6 @@ parameters:
 			message: '#^Cannot access property \$link on Context\|null\.$#'
 			identifier: property.nonObject
 			count: 2
-			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
-
-		-
-			message: '#^Cannot call method getImageLink\(\) on Link\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
-
-		-
-			message: '#^Cannot call method getProductLink\(\) on Link\|null\.$#'
-			identifier: method.nonObject
-			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
@@ -4177,6 +5113,12 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$name of method LinkCore\:\:getImageLink\(\) expects string, array\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
+
+		-
 			message: '#^Parameter \#1 \$product of method PsCheckout\\Core\\PayPal\\ShippingTracking\\Builder\\Node\\TrackingItemsNodeBuilder\:\:getProductImageUrl\(\) expects Product, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4208,6 +5150,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$str of function strip_tags expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
+
+		-
+			message: '#^Parameter \#2 \$ids of method LinkCore\:\:getImageLink\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
@@ -4351,6 +5299,12 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
 
 		-
+			message: '#^Cannot access offset ''issue'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
+
+		-
 			message: '#^Cannot call method expiresAfter\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -4437,6 +5391,36 @@ parameters:
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''id_product'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''id_product_attribute'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''quantity'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''reference'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
 
@@ -4573,12 +5557,6 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
 
 		-
-			message: '#^Parameter \#2 \$shopId of method PsCheckout\\Core\\PayPal\\ShippingTracking\\Builder\\TrackingPayloadBuilderInterface\:\:setOrderContext\(\) expects int, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
-
-		-
 			message: '#^Parameter \#3 \$captureId of class PsCheckout\\Core\\PayPal\\ShippingTracking\\ValueObject\\TrackingData constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4631,6 +5609,36 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessorInterface.php
+
+		-
+			message: '#^Cannot access offset ''id_product'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''product_attribute_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''product_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''product_quantity'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
+
+		-
+			message: '#^Cannot access offset ''reference'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
 
 		-
 			message: '#^Cannot call method getId\(\) on mixed\.$#'
@@ -4748,12 +5756,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$payPalOrderId of method PsCheckout\\Core\\PayPal\\ShippingTracking\\Repository\\ShippingTrackingRepositoryInterface\:\:saveComplete\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
-
-		-
-			message: '#^Parameter \#2 \$shopId of method PsCheckout\\Core\\PayPal\\ShippingTracking\\Builder\\TrackingPayloadBuilderInterface\:\:setOrderContext\(\) expects int, int\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
@@ -4895,6 +5897,36 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiResult.php
+
+		-
+			message: '#^Cannot access offset ''error'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiService.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiService.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiService.php
+
+		-
+			message: '#^Cannot access offset ''trackers'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiService.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PayPal/ShippingTracking/Service/TrackingApiService.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\ShippingTracking\\Service\\TrackingApiService\:\:extractTrackerIdFromResponse\(\) has parameter \$apiResponseData with no value type specified in iterable type array\.$#'
@@ -5191,6 +6223,30 @@ parameters:
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
+
+		-
+			message: '#^Cannot access offset ''order_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
+
+		-
+			message: '#^Cannot access offset ''verification_status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
+
+		-
+			message: '#^Cannot access offset int\|string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
+
+		-
 			message: '#^Cannot access property \$id on Customer\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -5353,6 +6409,12 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalCodeConfiguration.php
 
 		-
+			message: '#^Access to property \$php_self on an unknown class PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\.$#'
+			identifier: class.notFound
+			count: 3
+			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
+
+		-
 			message: '#^Cannot access property \$id on Shop\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -5409,6 +6471,18 @@ parameters:
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
+			count: 1
+			path: ../core/src/Webhook/Handler/WebhookEventConfigurationUpdatedHandler.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/src/Webhook/Handler/WebhookEventConfigurationUpdatedHandler.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/Webhook/Handler/WebhookEventConfigurationUpdatedHandler.php
 
@@ -5767,7 +6841,7 @@ parameters:
 			path: ../core/tests/Integration/BaseTestCase.php
 
 		-
-			message: '#^Cannot call method get\(\) on PrestaShop\\PrestaShop\\Adapter\\ContainerInterface\|null\.$#'
+			message: '#^Cannot call method get\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: ../core/tests/Integration/BaseTestCase.php
@@ -5809,13 +6883,13 @@ parameters:
 			path: ../core/tests/Integration/Factory/CartFactory.php
 
 		-
-			message: '#^Property CartCore\:\:\$id_address_delivery \(int\|null\) does not accept mixed\.$#'
+			message: '#^Property CartCore\:\:\$id_address_delivery \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Integration/Factory/CartFactory.php
 
 		-
-			message: '#^Property CartCore\:\:\$id_address_invoice \(int\|null\) does not accept mixed\.$#'
+			message: '#^Property CartCore\:\:\$id_address_invoice \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Integration/Factory/CartFactory.php
@@ -5839,7 +6913,7 @@ parameters:
 			path: ../core/tests/Integration/Factory/CartFactory.php
 
 		-
-			message: '#^Property CartCore\:\:\$id_shop \(int\|null\) does not accept mixed\.$#'
+			message: '#^Property CartCore\:\:\$id_shop \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Integration/Factory/CartFactory.php
@@ -6205,6 +7279,12 @@ parameters:
 			path: ../core/tests/Integration/Order/Action/CreateValidateOrderDataActionTest.php
 
 		-
+			message: '#^Cannot access offset ''transaction_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -6433,7 +7513,7 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
 
 		-
-			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|OrderCore, int\|null given\.$#'
+			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|Order, int\|null given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
@@ -6493,7 +7573,7 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
 
 		-
-			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|OrderCore, int\|null given\.$#'
+			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|Order, int\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
@@ -6619,6 +7699,12 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetReversedOrderStateActionTest.php
 
 		-
+			message: '#^Cannot access offset ''current_state'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/OrderState/Action/SetReversedOrderStateActionTest.php
+
+		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -6739,6 +7825,24 @@ parameters:
 			path: ../core/tests/Integration/PayPal/Order/Action/CancelPayPalOrderActionTest.php
 
 		-
+			message: '#^Cannot access offset ''items'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
+
+		-
+			message: '#^Cannot access offset ''reference_id'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
+
+		-
+			message: '#^Cannot access offset ''status'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
+
+		-
 			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitAction\|null\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -6755,6 +7859,24 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
+
+		-
+			message: '#^Cannot access offset ''account_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/PayPal/Order/Handler/OrderCompletedEventHandlerTest.php
+
+		-
+			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/PayPal/Order/Handler/OrderCompletedEventHandlerTest.php
+
+		-
+			message: '#^Cannot access offset ''paypal'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PayPal/Order/Handler/OrderCompletedEventHandlerTest.php
 
 		-
 			message: '#^Cannot call method getFundingSource\(\) on mixed\.$#'
@@ -6819,6 +7941,36 @@ parameters:
 		-
 			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\PaymentToken\\Action\\SavePaymentTokenActionTest\:\:\$customer\.$#'
 			identifier: property.notFound
+			count: 2
+			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
+
+		-
+			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
+
+		-
+			message: '#^Cannot access offset ''vault'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
@@ -6931,6 +8083,30 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''cancel_url'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''return_url'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''shipping_preference'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/tests/Unit/Order/Builder/Node/ApplicationContextNodeBuilderTest.php
+
+		-
 			message: '#^Method PsCheckout\\Tests\\Core\\Order\\Builder\\Node\\ApplicationContextNodeBuilderTest\:\:applicationContextDataProvider\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -6983,6 +8159,78 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/BaseNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''card'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 7
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''method'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''payment_initiator'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''payment_source'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 14
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''payment_type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''store_in_vault'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''stored_credential'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''usage'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''verification'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot call method build\(\) on mixed\.$#'
@@ -7159,6 +8407,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access property \$email on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -7277,6 +8531,12 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access property \$id on mixed\.$#'
@@ -7523,6 +8783,24 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
+
+		-
+			message: '#^Cannot access offset ''existing_field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
+
+		-
+			message: '#^Cannot access offset ''new_field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
@@ -7945,6 +9223,24 @@ parameters:
 			path: ../infrastructure/src/Action/AddProductToCartAction.php
 
 		-
+			message: '#^Cannot access offset ''id_address_delivery'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
+			message: '#^Cannot access offset ''id_product'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
+			message: '#^Cannot access offset ''id_product_attribute'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
 			message: '#^Cannot access property \$id on Customer\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -8101,6 +9397,12 @@ parameters:
 			path: ../infrastructure/src/Action/CustomerNotifyAction.php
 
 		-
+			message: '#^Cannot access offset ''id_contact'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/CustomerNotifyAction.php
+
+		-
 			message: '#^Cannot access property \$id on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -8147,6 +9449,18 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Action/CustomerNotifyAction.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/SaveBatchConfigurationAction.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/SaveBatchConfigurationAction.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Action\\SaveBatchConfigurationAction\:\:execute\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
@@ -8239,49 +9553,13 @@ parameters:
 			path: ../infrastructure/src/Adapter/ConfigurationInterface.php
 
 		-
-			message: '#^Cannot access property \$id_address_delivery on Cart\|null\.$#'
-			identifier: property.nonObject
+			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\Context\:\:getController\(\) has invalid return type PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\.$#'
+			identifier: class.notFound
 			count: 1
 			path: ../infrastructure/src/Adapter/Context.php
 
 		-
-			message: '#^Cannot access property \$id_address_invoice on Cart\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Cannot access property \$theme_name on Shop\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Cannot call method __set\(\) on Cookie\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Cannot call method save\(\) on Cart\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Cannot call method write\(\) on Cookie\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\Context\:\:getController\(\) should return AdminController\|FrontController\|PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\|null but returns AdminController\|FrontController\|LegacyControllerBridgeInterface\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: ../infrastructure/src/Adapter/Context.php
-
-		-
-			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\Context\:\:getLanguage\(\) should return Language\|PrestaShopBundle\\Install\\Language\|null but returns InstallLanguage\|Language\|null\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\Context\:\:getLanguage\(\) should return Language\|PrestaShopBundle\\Install\\Language\|null but returns InstallLanguage\|Language\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Adapter/Context.php
@@ -8291,6 +9569,12 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Adapter/Context.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\ContextInterface\:\:getController\(\) has invalid return type PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Adapter/ContextInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\Customer\:\:customerExists\(\) should return int but returns bool\|int\.$#'
@@ -8455,7 +9739,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/ApplePayInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$module_instance of static method HookCore\:\:registerHook\(\) expects ModuleCore, Module\|false given\.$#'
+			message: '#^Parameter \#1 \$module_instance of static method HookCore\:\:registerHook\(\) expects Module, Module\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/ApplePayInstaller.php
@@ -8465,6 +9749,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/ApplePayInstaller.php
+
+		-
+			message: '#^Cannot access offset ''iso_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Bootstrap/Install/CompatibilityRulesInstaller.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Bootstrap\\Install\\CompatibilityRulesInstaller\:\:disableIncompatibleCountries\(\) should return bool but returns int\|true\.$#'
@@ -8497,7 +9787,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/ConfigurationInstaller.php
 
 		-
-			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource\|true supplied for foreach, only iterables are supported\.$#'
+			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 2
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
@@ -8527,16 +9817,46 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$input of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource\|true given\.$#'
+			message: '#^Cannot access offset ''Field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
+
+		-
+			message: '#^Cannot access offset ''Type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
+
+		-
+			message: '#^Parameter \#1 \$input of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
+
+		-
+			message: '#^Cannot access offset ''id_shop'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Bootstrap/Install/FundingSourceInstaller.php
 
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/FundingSourceInstaller.php
+
+		-
+			message: '#^Cannot access offset ''id_lang'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
+
+		-
+			message: '#^Cannot access offset ''iso_code'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
 
 		-
 			message: '#^Cannot cast mixed to int\.$#'
@@ -8575,7 +9895,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
 
 		-
-			message: '#^Property OrderStateCore\:\:\$name \(array\<int, string\>\|string\) does not accept array\.$#'
+			message: '#^Property OrderStateCore\:\:\$name \(array\<string\>\) does not accept array\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
@@ -8597,18 +9917,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Controller/AbstractAdminController.php
-
-		-
-			message: '#^Call to function method_exists\(\) with ''Connection'' and ''isBot'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../infrastructure/src/Controller/AbstractFrontController.php
-
-		-
-			message: '#^Cannot call method isLogged\(\) on Customer\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../infrastructure/src/Controller/AbstractFrontController.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Controller\\AbstractFrontController\:\:exitWithResponse\(\) has parameter \$response with no value type specified in iterable type array\.$#'
@@ -8947,12 +10255,6 @@ parameters:
 			path: ../infrastructure/src/Repository/CountryRepository.php
 
 		-
-			message: '#^Cannot access property \$id on Shop\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../infrastructure/src/Repository/CountryRepository.php
-
-		-
 			message: '#^Cannot access property \$shop on Context\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -8971,19 +10273,13 @@ parameters:
 			path: ../infrastructure/src/Repository/CountryRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CountryRepository\:\:getCountryIsoCodeById\(\) should return string but returns string\|true\.$#'
-			identifier: return.type
-			count: 1
-			path: ../infrastructure/src/Repository/CountryRepository.php
-
-		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CountryRepository\:\:getModuleCountryCodes\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../infrastructure/src/Repository/CountryRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CountryRepository\:\:getModuleCountryCodes\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CountryRepository\:\:getModuleCountryCodes\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/CountryRepository.php
@@ -9019,12 +10315,6 @@ parameters:
 			path: ../infrastructure/src/Repository/CurrencyRepository.php
 
 		-
-			message: '#^Cannot access property \$id on Shop\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../infrastructure/src/Repository/CurrencyRepository.php
-
-		-
 			message: '#^Cannot access property \$shop on Context\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -9037,7 +10327,7 @@ parameters:
 			path: ../infrastructure/src/Repository/CurrencyRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CurrencyRepository\:\:getModuleCurrencyCodes\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CurrencyRepository\:\:getModuleCurrencyCodes\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/CurrencyRepository.php
@@ -9061,7 +10351,7 @@ parameters:
 			path: ../infrastructure/src/Repository/FundingSourceRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\FundingSourceRepository\:\:getAllActiveForSpecificShop\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\FundingSourceRepository\:\:getAllActiveForSpecificShop\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/FundingSourceRepository.php
@@ -9073,7 +10363,7 @@ parameters:
 			path: ../infrastructure/src/Repository/FundingSourceRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\FundingSourceRepository\:\:getAllForSpecificShop\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\FundingSourceRepository\:\:getAllForSpecificShop\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/FundingSourceRepository.php
@@ -9115,7 +10405,7 @@ parameters:
 			path: ../infrastructure/src/Repository/GenderRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalCustomerRepository\:\:getPayPalCustomerIdByCustomerId\(\) should return string\|null but returns string\|false\|null\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalCustomerRepository\:\:getPayPalCustomerIdByCustomerId\(\) should return string\|null but returns string\|false\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalCustomerRepository.php
@@ -9133,7 +10423,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
 		-
-			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource\|true supplied for foreach, only iterables are supported\.$#'
+			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
@@ -9205,6 +10495,48 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRefundRepository.php
 
 		-
+			message: '#^Cannot access offset ''environment'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''isExpressCheckout'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''isHostedFields'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''paypal_funding'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''paypal_intent'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''paypal_order'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Cannot access offset ''paypal_status'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 1
@@ -9223,7 +10555,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource\|true given\.$#'
+			message: '#^Parameter \#1 \$array_arg of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
@@ -9319,7 +10651,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PaymentTokenRepository\:\:findVaultedTokensByCustomerAndMerchant\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PaymentTokenRepository\:\:findVaultedTokensByCustomerAndMerchant\(\) should return array but returns array\|mysqli_result\|PDOStatement\|resource\.$#'
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
@@ -9349,7 +10681,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
 
 		-
-			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource\|true given\.$#'
+			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
@@ -9499,7 +10831,7 @@ parameters:
 			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
 
 		-
-			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource\|true given\.$#'
+			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 4
 			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
@@ -9515,12 +10847,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../infrastructure/src/Repository/ShopRepositoryInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Infrastructure\\Repository\\StateRepository\:\:getNameById\(\) should return string but returns bool\|string\.$#'
-			identifier: return.type
-			count: 1
-			path: ../infrastructure/src/Repository/StateRepository.php
 
 		-
 			message: '#^Method Tests\\Unit\\PsCheckout\\Infrastructure\\Action\\SaveBatchConfigurationActionTest\:\:testExecuteSavesValidConfiguration\(\) has no return type specified\.$#'
@@ -9757,6 +11083,12 @@ parameters:
 			path: ../presentation/src/Presenter/FundingSource/FundingSourceTranslationProvider.php
 
 		-
+			message: '#^Cannot access offset ''brand'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/FundingSource/LogoPresenter.php
+
+		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\FundingSource\\LogoPresenter\:\:__construct\(\) has parameter \$modulePath with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -9795,6 +11127,48 @@ parameters:
 		-
 			message: '#^Call to an undefined method Locale\:\:formatPrice\(\)\.$#'
 			identifier: method.notFound
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''brand'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''last_digits'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
+
+		-
+			message: '#^Cannot access offset ''vault'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
@@ -9883,6 +11257,54 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
 
 		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''captures'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''payments'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''paypal_fee'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
+
+		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderTotalsPresenter\:\:present\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9910,6 +11332,96 @@ parameters:
 			message: '#^Binary operation "\-" between mixed and \(float\|int\) results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''captures'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''dispute_categories'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''gross_amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''net_amount'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''payments'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''paypal_fee'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''seller_payable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 10
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
@@ -10021,6 +11533,12 @@ parameters:
 			path: ../presentation/src/Presenter/Settings/Admin/Modules/ConfigurationModule.php
 
 		-
+			message: '#^Cannot access offset ''iso_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/Settings/Admin/Modules/ConfigurationModule.php
+
+		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\Settings\\Admin\\Modules\\ConfigurationModule\:\:checkNonDecimalCurrencies\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -10045,8 +11563,14 @@ parameters:
 			path: ../presentation/src/Presenter/Settings/Admin/Modules/ContextModule.php
 
 		-
-			message: '#^Cannot access property \$id on Shop\|null\.$#'
-			identifier: property.nonObject
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/src/Presenter/Settings/Admin/Modules/ContextModule.php
+
+		-
+			message: '#^Cannot access offset ''shops'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/src/Presenter/Settings/Admin/Modules/ContextModule.php
 
@@ -10213,6 +11737,96 @@ parameters:
 			path: ../presentation/src/TranslatorInterface.php
 
 		-
+			message: '#^Cannot access offset ''currency_iso_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''gift_wrapping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id_address_delivery'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id_address_invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id_currency'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id_customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''id_lang'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''invoice_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''language'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''products'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''shipping_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''shipping_cost'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''total_including_tax'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 5
@@ -10267,13 +11881,13 @@ parameters:
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
-			message: '#^Property CartCore\:\:\$id_address_delivery \(int\|null\) does not accept mixed\.$#'
+			message: '#^Property CartCore\:\:\$id_address_delivery \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
-			message: '#^Property CartCore\:\:\$id_address_invoice \(int\|null\) does not accept mixed\.$#'
+			message: '#^Property CartCore\:\:\$id_address_invoice \(int\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
@@ -10469,6 +12083,18 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: ../utility/src/Common/NumberUtility.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../utility/src/Payload/OrderPayloadUtility.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../utility/src/Payload/OrderPayloadUtility.php
 
 		-
 			message: '#^Method PsCheckout\\Utility\\Payload\\OrderPayloadUtility\:\:amountWithBreakdownDiff\(\) has parameter \$amount1 with no value type specified in iterable type array\.$#'
@@ -10831,8 +12457,32 @@ parameters:
 			path: ../utility/tests/Unit/Payload/OrderPayloadUtilityTest.php
 
 		-
+			message: '#^Call to method l\(\) on an unknown class Ps_Checkout\.$#'
+			identifier: class.notFound
+			count: 136
+			path: src/Presentation/Translator.php
+
+		-
 			message: '#^Method PsCheckout\\Module\\Presentation\\Translator\:\:trans\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: src/Presentation/Translator.php
+
+		-
+			message: '#^Method PsCheckout\\Module\\Presentation\\Translator\:\:trans\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Presentation/Translator.php
+
+		-
+			message: '#^Parameter \$module of method PsCheckout\\Module\\Presentation\\Translator\:\:__construct\(\) has invalid type Ps_Checkout\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Presentation/Translator.php
+
+		-
+			message: '#^Property PsCheckout\\Module\\Presentation\\Translator\:\:\$module has unknown class Ps_Checkout as its type\.$#'
+			identifier: class.notFound
 			count: 1
 			path: src/Presentation/Translator.php
 
@@ -10850,12 +12500,6 @@ parameters:
 
 		-
 			message: '#^Cannot call method getBody\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot call method getModuleLink\(\) on Link\|null\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: tests/Integration/Controller/WebhookControllerTest.php

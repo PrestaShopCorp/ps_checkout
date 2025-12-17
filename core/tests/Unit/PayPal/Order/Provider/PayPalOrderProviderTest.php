@@ -41,16 +41,16 @@ class PayPalOrderProviderTest extends TestCase
     /** @var PayPalOrderProvider */
     private $provider;
 
-    /** @var ConfigurationInterface|MockObject */
+    /** @var ConfigurationInterface&MockObject */
     private $configuration;
 
-    /** @var PayPalOrderCacheInterface|MockObject */
+    /** @var PayPalOrderCacheInterface&MockObject */
     private $orderPayPalCache;
 
-    /** @var PayPalOrderRepositoryInterface|MockObject */
+    /** @var PayPalOrderRepositoryInterface&MockObject */
     private $payPalOrderRepository;
 
-    /** @var OrderHttpClientInterface|MockObject */
+    /** @var OrderHttpClientInterface&MockObject */
     private $orderHttpClient;
 
     protected function setUp(): void

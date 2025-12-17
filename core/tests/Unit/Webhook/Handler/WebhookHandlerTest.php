@@ -32,13 +32,13 @@ class WebhookHandlerTest extends TestCase
     /** @var WebhookHandler */
     private $handler;
 
-    /** @var WebhookTokenInterface|MockObject */
+    /** @var WebhookTokenInterface&MockObject */
     private $webhookSecretTokenService;
 
-    /** @var WebhookEventHandlerInterface|MockObject */
+    /** @var WebhookEventHandlerInterface&MockObject */
     private $eventHandler1;
 
-    /** @var WebhookEventHandlerInterface|MockObject */
+    /** @var WebhookEventHandlerInterface&MockObject */
     private $eventHandler2;
 
     protected function setUp(): void

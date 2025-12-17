@@ -42,25 +42,25 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
     /** @var UpdateExternalPayPalOrderProcessor */
     private $processor;
 
-    /** @var PayPalOrderProviderInterface|MockObject */
+    /** @var PayPalOrderProviderInterface&MockObject */
     private $paypalOrderProvider;
 
-    /** @var PresenterInterface|MockObject */
+    /** @var PresenterInterface&MockObject */
     private $cartPresenter;
 
-    /** @var OrderPayloadBuilder|MockObject */
+    /** @var OrderPayloadBuilder&MockObject */
     private $orderPayloadBuilder;
 
-    /** @var OrderHttpClientInterface|MockObject */
+    /** @var OrderHttpClientInterface&MockObject */
     private $httpClient;
 
-    /** @var PayPalOrderRepositoryInterface|MockObject */
+    /** @var PayPalOrderRepositoryInterface&MockObject */
     private $paypalOrderRepository;
 
-    /** @var PayPalOrderCacheInterface|MockObject */
+    /** @var PayPalOrderCacheInterface&MockObject */
     private $paypalOrderCache;
 
-    /** @var UpdatePayPalOrderPurchaseUnitActionInterface|MockObject */
+    /** @var UpdatePayPalOrderPurchaseUnitActionInterface&MockObject */
     private $updatePayPalOrderPurchaseUnit;
 
     protected function setUp(): void

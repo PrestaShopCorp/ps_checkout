@@ -33,13 +33,13 @@ class CheckoutValidatorTest extends TestCase
     /** @var CheckoutValidator */
     private $validator;
 
-    /** @var PayPalOrderRepository|MockObject */
+    /** @var PayPalOrderRepository&MockObject */
     private $payPalOrderRepository;
 
-    /** @var OrderRepositoryInterface|MockObject */
+    /** @var OrderRepositoryInterface&MockObject */
     private $orderRepository;
 
-    /** @var CartRepositoryInterface|MockObject */
+    /** @var CartRepositoryInterface&MockObject */
     private $cartRepository;
 
     protected function setUp(): void

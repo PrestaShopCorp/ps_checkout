@@ -31,7 +31,7 @@ class VerifyWebhookActionTest extends TestCase
     /** @var VerifyWebhookAction */
     private $action;
 
-    /** @var WebhookHttpClientInterface|MockObject */
+    /** @var WebhookHttpClientInterface&MockObject */
     private $webhookHttpClient;
 
     protected function setUp(): void

@@ -32,7 +32,7 @@ class HeaderValuesValidatorTest extends TestCase
     /** @var HeaderValuesValidator */
     private $validator;
 
-    /** @var WebhookHeaderProviderInterface|MockObject */
+    /** @var MockObject&WebhookHeaderProviderInterface */
     private $webhookHeaderProvider;
 
     protected function setUp(): void
