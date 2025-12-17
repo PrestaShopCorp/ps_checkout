@@ -8209,12 +8209,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot access offset ''payment_source'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 18
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access offset ''payment_type'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -8257,48 +8251,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot call method build\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method method\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setCart\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setPaypalCustomerId\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setPaypalVaultId\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setSavePaymentMethod\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Method CardPaymentSourceNodeBuilderTest\:\:testBuildValidData\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8325,36 +8277,12 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 7
+			count: 6
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$cardPaymentSourceNodeBuilder has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$countryRepository has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$paypalConfiguration has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$stateRepository has no type specified\.$#'
-			identifier: missingType.property
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
