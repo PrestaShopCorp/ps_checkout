@@ -243,10 +243,7 @@ class DatabaseTableInstaller implements InstallerInterface
 
             foreach ($fields as $field) {
                 if ($field['Field'] === 'seller_protection') {
-                    $this->db->execute('
-                    ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
-                    DROP COLUMN `seller_protection`
-                ');
+                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` DROP COLUMN `seller_protection`');
                 }
 
                 if ($field['Field'] === 'create_time') {
@@ -259,17 +256,11 @@ class DatabaseTableInstaller implements InstallerInterface
             }
 
             if (!$hasCreateTime) {
-                $this->db->execute('
-                    ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
-                    ADD COLUMN `create_time` varchar(20) NOT NULL DEFAULT ""
-                ');
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` ADD COLUMN `create_time` varchar(20) NOT NULL DEFAULT ""');
             }
 
             if (!$hasUpdateTime) {
-                $this->db->execute('
-                    ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
-                    ADD COLUMN `update_time` varchar(20) NOT NULL DEFAULT ""
-                ');
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` ADD COLUMN `update_time` varchar(20) NOT NULL DEFAULT ""');
             }
         }
     }
