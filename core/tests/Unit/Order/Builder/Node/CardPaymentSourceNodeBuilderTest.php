@@ -27,7 +27,6 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
-
     /**
      * @var PayPalConfiguration&MockObject
      */
