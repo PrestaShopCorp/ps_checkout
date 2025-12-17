@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace FundingSource\Eligibility\Checker;
 
@@ -200,10 +218,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_bancontact' => [
                 'name' => 'bancontact',
@@ -211,9 +229,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'BE',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_blik' => [
                 'name' => 'blik',
@@ -221,9 +239,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'PLN',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_eps' => [
                 'name' => 'eps',
@@ -231,9 +249,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'AT',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_google_pay' => [
                 'name' => 'google_pay',
@@ -244,10 +262,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_ideal' => [
                 'name' => 'ideal',
@@ -255,9 +273,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'NL',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_mybank' => [
                 'name' => 'mybank',
@@ -265,9 +283,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'IT',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_p24' => [
                 'name' => 'p24',
@@ -275,9 +293,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'eligible_paylater' => [
                 'name' => 'paylater',
@@ -285,9 +303,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => null,
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'ineligible_apple_pay_wrong_country' => [
                 'name' => 'apple_pay',
@@ -298,10 +316,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_apple_pay_wrong_currency' => [
                 'name' => 'apple_pay',
@@ -312,10 +330,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_apple_pay_wrong_configuration' => [
                 'name' => 'apple_pay',
@@ -326,10 +344,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, false],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'eligible_apple_pay_authorization_intent' => [
                 'name' => 'apple_pay',
@@ -340,10 +358,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'ineligible_bancontact_wrong_country' => [
                 'name' => 'bancontact',
@@ -351,9 +369,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_bancontact_wrong_currency' => [
                 'name' => 'bancontact',
@@ -361,9 +379,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'BE',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_bancontact_authorization_intent' => [
                 'name' => 'bancontact',
@@ -371,9 +389,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'BE',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_blik_wrong_country' => [
                 'name' => 'blik',
@@ -381,9 +399,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'DE',
                     'currency' => 'PLN',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_blik_wrong_currency' => [
                 'name' => 'blik',
@@ -391,9 +409,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_blik_authorization_intent' => [
                 'name' => 'blik',
@@ -401,9 +419,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'PLN',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_eps_wrong_country' => [
                 'name' => 'eps',
@@ -411,9 +429,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'DE',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_eps_wrong_currency' => [
                 'name' => 'eps',
@@ -421,9 +439,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'AT',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_eps_authorization_intent' => [
                 'name' => 'eps',
@@ -431,9 +449,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'AT',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_google_pay_wrong_country' => [
                 'name' => 'google_pay',
@@ -444,10 +462,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_google_pay_wrong_currency' => [
                 'name' => 'google_pay',
@@ -458,10 +476,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_google_pay_wrong_configuration' => [
                 'name' => 'google_pay',
@@ -472,10 +490,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, false],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'eligible_google_pay_authorization_intent' => [
                 'name' => 'google_pay',
@@ -486,10 +504,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true]
-                    ]
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                    ],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'ineligible_ideal_wrong_country' => [
                 'name' => 'ideal',
@@ -497,9 +515,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_ideal_wrong_currency' => [
                 'name' => 'ideal',
@@ -507,9 +525,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'NL',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_ideal_authorization_intent' => [
                 'name' => 'ideal',
@@ -517,9 +535,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'NL',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_mybank_wrong_country' => [
                 'name' => 'mybank',
@@ -527,9 +545,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_mybank_wrong_currency' => [
                 'name' => 'mybank',
@@ -537,9 +555,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'IT',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_mybank_authorization_intent' => [
                 'name' => 'mybank',
@@ -547,9 +565,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'IT',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_p24_wrong_country' => [
                 'name' => 'p24',
@@ -557,9 +575,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'DE',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_p24_wrong_currency' => [
                 'name' => 'p24',
@@ -567,9 +585,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_p24_authorization_intent' => [
                 'name' => 'p24',
@@ -577,9 +595,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'PL',
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'ineligible_paylater_wrong_country' => [
                 'name' => 'paylater',
@@ -587,9 +605,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'ZZ',
                     'currency' => null,
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
+                'eligible' => false,
             ],
             'eligible_paylater_wrong_currency' => [
                 'name' => 'paylater',
@@ -597,9 +615,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => 'XXX', // Paylater does not restrict any currencies
                     'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => true
+                'eligible' => true,
             ],
             'ineligible_paylater_authorization_intent' => [
                 'name' => 'paylater',
@@ -607,10 +625,10 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'country' => 'FR',
                     'currency' => null,
                     'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => []
+                    'configurations' => [],
                 ],
-                'eligible' => false
-            ]
+                'eligible' => false,
+            ],
         ];
     }
 }

@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\PaymentToken\Action;
 
@@ -75,9 +93,9 @@ class SavePaymentTokenActionTest extends BaseTestCase
                                 'vault' => [
                                     'id' => 'TEST-VAULT-123',
                                     'customer' => ['id' => 'TEST-CUSTOMER-123'],
-                                    'status' => 'VERIFIED'
-                                ]
-                            ]
+                                    'status' => 'VERIFIED',
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -85,8 +103,8 @@ class SavePaymentTokenActionTest extends BaseTestCase
                     'id_token' => 'TEST-VAULT-123',
                     'paypal_customer_id' => 'TEST-CUSTOMER-123',
                     'payment_source' => 'card',
-                    'status' => 'VERIFIED'
-                ]
+                    'status' => 'VERIFIED',
+                ],
             ],
             'paypal payment source with status ACTIVE' => [
                 'vaultData' => [
@@ -98,9 +116,9 @@ class SavePaymentTokenActionTest extends BaseTestCase
                                 'vault' => [
                                     'id' => 'TEST-VAULT-456',
                                     'customer' => ['id' => 'TEST-CUSTOMER-456'],
-                                    'status' => 'ACTIVE'
-                                ]
-                            ]
+                                    'status' => 'ACTIVE',
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -108,8 +126,8 @@ class SavePaymentTokenActionTest extends BaseTestCase
                     'id_token' => 'TEST-VAULT-456',
                     'paypal_customer_id' => 'TEST-CUSTOMER-456',
                     'payment_source' => 'paypal',
-                    'status' => 'ACTIVE'
-                ]
+                    'status' => 'ACTIVE',
+                ],
             ],
         ];
     }
@@ -118,4 +136,4 @@ class SavePaymentTokenActionTest extends BaseTestCase
     {
         parent::tearDown();
     }
-} 
+}

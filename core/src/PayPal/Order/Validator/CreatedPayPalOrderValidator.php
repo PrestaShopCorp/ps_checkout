@@ -67,14 +67,14 @@ class CreatedPayPalOrderValidator implements CreatedPayPalOrderValidatorInterfac
     {
         $order = $this->orderRepository->getOneBy(['id_cart' => $cartId]);
 
-        //NOTE: order must be created in shop
+        // NOTE: order must be created in shop
         if (!$order) {
             return null;
         }
 
         $paypalOrderResponse = $this->payPalOrderProvider->getById($payPalOrderId);
 
-        //NOTE: order must exist in paypal and have correct status
+        // NOTE: order must exist in paypal and have correct status
         if ($paypalOrderResponse->getStatus() !== PayPalCaptureStatus::PENDING
             && $paypalOrderResponse->getStatus() !== PayPalCaptureStatus::COMPLETED
         ) {

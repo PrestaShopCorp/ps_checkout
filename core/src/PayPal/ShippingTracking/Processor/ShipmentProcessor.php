@@ -30,8 +30,8 @@ use PsCheckout\Core\PayPal\ShippingTracking\Repository\ShippingTrackingRepositor
 use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService;
 use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler;
 use PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidatorInterface;
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingApiRequest;
+use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
 use Psr\Log\LoggerInterface;
 
 class ShipmentProcessor implements ShipmentProcessorInterface
@@ -147,7 +147,7 @@ class ShipmentProcessor implements ShipmentProcessorInterface
                 $orderCarrier->id_order,
                 false // throwOnError = false for normal flow
             );
-            
+
             $apiResult = $this->trackingApiService->processTracking($apiRequest);
 
             // Cache the API response with payload
@@ -159,7 +159,7 @@ class ShipmentProcessor implements ShipmentProcessorInterface
                 'cache_key' => $cacheKey,
             ];
             $this->cache->set($cacheKey, $cacheData);
-            
+
             // Save to database using service
             $trackingData = new TrackingData(
                 $order->id,
@@ -171,7 +171,7 @@ class ShipmentProcessor implements ShipmentProcessorInterface
                 $products,
                 $payloadChecksum
             );
-            
+
             $this->trackingDatabaseHandler->saveTrackingResult(
                 $apiResult,
                 $existingTracking,
@@ -181,16 +181,16 @@ class ShipmentProcessor implements ShipmentProcessorInterface
         } catch (\InvalidArgumentException $e) {
             // Handle validation errors for required fields (SKU, quantity, name)
             $this->logger->error('Tracking validation failed for order ' . $orderCarrier->id_order . ': ' . $e->getMessage());
-            
+
             // Save failed tracking attempt to database
             $this->saveFailedTracking($orderCarrier, 'VALIDATION_FAILED', $e->getMessage());
-            
+
             // Re-throw to ensure tracking fails
             throw $e;
         } catch (\Exception $e) {
             // Handle other errors (API failures, etc.)
             $this->logger->error('Tracking processing failed for order ' . $orderCarrier->id_order . ': ' . $e->getMessage());
-            
+
             // Save failed tracking attempt to database
             $this->saveFailedTracking($orderCarrier, 'PROCESSING_FAILED', $e->getMessage());
         }
@@ -206,11 +206,11 @@ class ShipmentProcessor implements ShipmentProcessorInterface
     private function getProductsFromOrderCarrier(OrderCarrier $orderCarrier): array
     {
         $products = [];
-        
+
         if ($orderCarrier->id_order_invoice) {
             $orderInvoice = new OrderInvoice($orderCarrier->id_order_invoice);
             $invoiceProducts = $orderInvoice->getProducts();
-            
+
             foreach ($invoiceProducts as $product) {
                 $products[] = [
                     'id_product' => (int) $product['id_product'],
@@ -237,11 +237,11 @@ class ShipmentProcessor implements ShipmentProcessorInterface
         try {
             $order = new Order($orderCarrier->id_order);
             $carrier = new Carrier($orderCarrier->id_carrier);
-            
+
             // Try to get PayPal order data for logging
             $payPalOrderId = '';
             $captureId = '';
-            
+
             try {
                 $orderData = $this->orderTrackerValidator->validate($order, $carrier);
                 $payPalOrderId = $orderData['paypal_order']->getId();
@@ -249,7 +249,7 @@ class ShipmentProcessor implements ShipmentProcessorInterface
             } catch (\Exception $e) {
                 // Ignore validation errors when saving failed tracking
             }
-            
+
             $this->shippingTrackingRepository->saveComplete(
                 $order->id,
                 $payPalOrderId,

@@ -92,7 +92,6 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
 
-
         if (empty($data)) {
             return [];
         }

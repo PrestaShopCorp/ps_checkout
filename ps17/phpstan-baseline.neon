@@ -3241,24 +3241,6 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Access to constant CREATED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant DENIED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant PENDING on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -3278,12 +3260,6 @@ parameters:
 
 		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''seller_protection'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php

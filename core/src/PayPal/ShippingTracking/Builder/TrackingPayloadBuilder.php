@@ -22,8 +22,8 @@ namespace PsCheckout\Core\PayPal\ShippingTracking\Builder;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingBaseNodeBuilderInterface;
-use PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingItemsNodeBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingCarrierModuleNodeBuilderInterface;
+use PsCheckout\Core\PayPal\ShippingTracking\Builder\Node\TrackingItemsNodeBuilderInterface;
 
 class TrackingPayloadBuilder implements TrackingPayloadBuilderInterface
 {
@@ -270,7 +270,7 @@ class TrackingPayloadBuilder implements TrackingPayloadBuilderInterface
     {
         // Always set carrier to "OTHER" for hook usage
         $this->setCarrier(self::CARRIER_OTHER);
-        
+
         // Always set carrier_name_other to the actual carrier name when carrier is "OTHER"
         $this->setCarrierNameOther($carrier->name);
 

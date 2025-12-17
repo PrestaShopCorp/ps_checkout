@@ -28,9 +28,9 @@ class TrackingStatus
     public const SENT = 'SENT';
 
     public const FAILED = 'FAILED';
-    
+
     public const UPDATE_FAILED = 'UPDATE_FAILED'; // Update operation failed
-    
+
     public const UPDATE_SENT = 'UPDATE_SENT'; // Update operation succeeded
 
     /**

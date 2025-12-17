@@ -1093,12 +1093,6 @@ parameters:
 			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
 
 		-
-			message: '#^Instanceof between PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface and PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: ../core/src/FundingSource/Eligibility/FundingSourceEligibilityService.php
-
-		-
 			message: '#^Binary operation "\." between '' \*'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -1395,12 +1389,6 @@ parameters:
 		-
 			message: '#^Cannot call method getIdCart\(\) on PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrder\|null\.$#'
 			identifier: method.nonObject
-			count: 1
-			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../core/src/Order/Action/CreateOrderPaymentAction.php
 
@@ -2563,12 +2551,6 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Offset ''payment_source'' on array\{0\: mixed, 1\?\: mixed, 2\?\: array\|null, 3\?\: array\|null, 4\?\: array\|null\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$arr1 of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3019,12 +3001,6 @@ parameters:
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
-
-		-
 			message: '#^Parameter \#1 \$number of function round expects float, float\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3247,24 +3223,6 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Access to constant CREATED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant DENIED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant PENDING on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -3284,12 +3242,6 @@ parameters:
 
 		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''seller_protection'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
@@ -3381,12 +3333,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''type'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
@@ -3561,7 +3507,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3621,7 +3567,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3639,7 +3585,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3859,12 +3805,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$sellerProtection with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$status with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -3873,18 +3813,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$updateTime with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:getSellerProtection\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:setSellerProtection\(\) has parameter \$sellerProtection with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
@@ -3909,18 +3837,6 @@ parameters:
 		-
 			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$idOrder \(string\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$sellerProtection \(array\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$sellerProtection type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
@@ -4329,7 +4245,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -4389,7 +4305,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -4407,7 +4323,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -5003,12 +4919,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../core/src/PayPal/OrderStatus/Action/PayPalCheckOrderStatusAction.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../core/src/PayPal/Refund/Provider/PayPalRefundOrderProvider.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\ShippingTracking\\Action\\AddTrackingAction\:\:execute\(\) has no return type specified\.$#'
@@ -6663,12 +6573,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Processor\\DispatchWebhookProcessor\:\:log\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
 
@@ -8545,12 +8449,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayerNodeBuilderTest.php
-
-		-
 			message: '#^Method Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\PayerNodeBuilderTest\:\:createMockAddress\(\) has parameter \$properties with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9023,12 +8921,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 3
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
 
 		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\PayPal\\OrderStatus\\Action\\PayPalCheckOrderStatusActionTest\:\:provideInvalidTransitions\(\) return type has no value type specified in iterable type array\.$#'
@@ -10327,12 +10219,6 @@ parameters:
 			path: ../infrastructure/src/Logger/LoggerHandlerFactory.php
 
 		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: ../infrastructure/src/Repository/CollectionRepository.php
-
-		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\CollectionRepository\:\:__construct\(\) has parameter \$fullyClassifiedClassName with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -10581,12 +10467,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalOrderAuthorizationRepository\:\:save\(\) with return type void returns bool but should not return anything\.$#'
 			identifier: return.void
-			count: 1
-			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
@@ -11353,12 +11233,6 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\OrderSummary\\OrderSummaryPresenter\:\:getPaymentTokenIdentifier\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -11689,12 +11563,6 @@ parameters:
 			path: ../presentation/src/Presenter/PresenterInterface.php
 
 		-
-			message: '#^Instanceof between PsCheckout\\Presentation\\Presenter\\PresenterInterface and PsCheckout\\Presentation\\Presenter\\PresenterInterface will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: ../presentation/src/Presenter/Settings/Admin/AdminSettingsPresenter.php
-
-		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\Settings\\Admin\\AdminSettingsPresenter\:\:__construct\(\) has parameter \$store with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -11795,12 +11663,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../presentation/src/Presenter/Settings/Admin/Modules/PaypalModule.php
-
-		-
-			message: '#^Instanceof between PsCheckout\\Presentation\\Presenter\\PresenterInterface and PsCheckout\\Presentation\\Presenter\\PresenterInterface will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: ../presentation/src/Presenter/Settings/Front/FrontSettingsPresenter.php
 
 		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\Settings\\Front\\FrontSettingsPresenter\:\:present\(\) return type has no value type specified in iterable type array\.$#'

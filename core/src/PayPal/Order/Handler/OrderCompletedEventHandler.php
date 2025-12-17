@@ -25,12 +25,12 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 
 class OrderCompletedEventHandler implements EventHandlerInterface

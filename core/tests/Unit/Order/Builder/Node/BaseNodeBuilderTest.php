@@ -20,8 +20,8 @@
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
+use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Utility\Common\NumberUtility;
 use PsCheckout\Utility\Common\StringUtility;

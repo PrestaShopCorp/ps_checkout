@@ -1,7 +1,26 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
@@ -20,18 +39,39 @@ use Psr\Http\Message\StreamInterface;
 
 class AuthorizePayPalOrderActionTest extends TestCase
 {
+    /**
+     * @var MockObject&OrderHttpClientInterface
+     */
     private $orderHttpClient;
 
+    /**
+     * @var MockObject&PayPalOrderCacheInterface
+     */
     private $payPalOrderCache;
 
+    /**
+     * @var MockObject&EventHandlerInterface
+     */
     private $paymentPendingEventHandler;
 
+    /**
+     * @var MockObject&EventHandlerInterface
+     */
     private $paymentDeniedEventHandler;
 
+    /**
+     * @var MockObject&PayPalOrderProviderInterface
+     */
     private $payPalOrderProvider;
 
+    /**
+     * @var MockObject&PayPalOrderAuthorizationRepositoryInterface
+     */
     private $payPalOrderAuthorizationRepository;
 
+    /**
+     * @var AuthorizePayPalOrderAction
+     */
     private $action;
 
     protected function setUp(): void
@@ -71,12 +111,12 @@ class AuthorizePayPalOrderActionTest extends TestCase
                                 'status' => PayPalAuthorizationStatus::CREATED,
                                 'expiration_time' => '2099-12-31T23:59:59Z',
                                 'create_time' => '2025-01-01T00:00:00Z',
-                                'update_time' => '2025-01-01T00:00:00Z'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'update_time' => '2025-01-01T00:00:00Z',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->orderHttpClient->expects($this->once())
@@ -138,12 +178,12 @@ class AuthorizePayPalOrderActionTest extends TestCase
                                 'status' => PayPalAuthorizationStatus::PENDING,
                                 'expiration_time' => '2099-12-31T23:59:59Z',
                                 'create_time' => '2025-01-01T00:00:00Z',
-                                'update_time' => '2025-01-01T00:00:00Z'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'update_time' => '2025-01-01T00:00:00Z',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->orderHttpClient->expects($this->once())
@@ -185,12 +225,12 @@ class AuthorizePayPalOrderActionTest extends TestCase
                                 'status' => PayPalAuthorizationStatus::DENIED,
                                 'expiration_time' => '2099-12-31T23:59:59Z',
                                 'create_time' => '2025-01-01T00:00:00Z',
-                                'update_time' => '2025-01-01T00:00:00Z'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'update_time' => '2025-01-01T00:00:00Z',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->orderHttpClient->expects($this->once())
@@ -236,7 +276,7 @@ class AuthorizePayPalOrderActionTest extends TestCase
 
         $cachedData = [
             'id' => 'ORDER-123',
-            'existing_field' => 'existing_value'
+            'existing_field' => 'existing_value',
         ];
 
         $authorizedOrderData = [
@@ -252,12 +292,12 @@ class AuthorizePayPalOrderActionTest extends TestCase
                                 'status' => PayPalAuthorizationStatus::CREATED,
                                 'expiration_time' => '2099-12-31T23:59:59Z',
                                 'create_time' => '2025-01-01T00:00:00Z',
-                                'update_time' => '2025-01-01T00:00:00Z'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'update_time' => '2025-01-01T00:00:00Z',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->orderHttpClient->expects($this->once())
@@ -303,12 +343,12 @@ class AuthorizePayPalOrderActionTest extends TestCase
                                 'status' => PayPalAuthorizationStatus::CREATED,
                                 'expiration_time' => '2099-12-31T23:59:59Z',
                                 'create_time' => '2025-01-15T10:30:00Z',
-                                'update_time' => '2025-01-15T10:30:00Z'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'update_time' => '2025-01-15T10:30:00Z',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->orderHttpClient->method('authorizeOrder')
@@ -340,10 +380,29 @@ class AuthorizePayPalOrderActionTest extends TestCase
         return PayPalOrderResponseFactory::create([
             'id' => $orderId,
             'status' => $status,
-            'intent' => 'AUTHORIZE'
+            'intent' => 'AUTHORIZE',
         ]);
     }
 
+    /**
+     * @param array{
+     *     id: string,
+     *     status: string,
+     *     purchase_units: array<array{
+     *         payments: array{
+     *             authorizations: array<array{
+     *                 id: string,
+     *                 status: string,
+     *                 expiration_time: string,
+     *                 create_time: string,
+     *                 update_time: string
+     *             }>
+     *         }
+     *     }>
+     * } $data
+     *
+     * @return ResponseInterface
+     */
     private function createHttpResponse(array $data): ResponseInterface
     {
         $body = $this->createMock(StreamInterface::class);

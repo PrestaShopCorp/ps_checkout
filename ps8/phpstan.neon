@@ -3,6 +3,7 @@ includes:
 
 parameters:
 	level: max
+	treatPhpDocTypesAsCertain: false
 	paths:
 		- ../api
 		- ../core
@@ -19,3 +20,6 @@ parameters:
 	    - ../utility/vendor
 	scanDirectories:
 		- vendor/stancer/php-stubs-prestashop/stubs/
+	ignoreErrors:
+	    -
+	        identifier: offsetAccess.nonOffsetAccessible

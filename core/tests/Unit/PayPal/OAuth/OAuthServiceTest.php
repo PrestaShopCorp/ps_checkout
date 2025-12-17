@@ -39,7 +39,7 @@ class OAuthServiceTest extends TestCase
     /** @var StreamInterface|MockObject */
     private $stream;
 
-    /** @var OAuthService  */
+    /** @var OAuthService */
     private $oauthService;
 
     protected function setUp(): void

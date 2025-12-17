@@ -64,7 +64,7 @@ class ProcessExternalShipmentAction implements ProcessExternalShipmentActionInte
             // Log error and stop execution as requested
             $this->logger->error('External shipment processing error: ' . $exception->getMessage(), [
                 'order_id' => $order->id,
-                'exception' => $exception
+                'exception' => $exception,
             ]);
 
             throw $exception;
@@ -72,7 +72,7 @@ class ProcessExternalShipmentAction implements ProcessExternalShipmentActionInte
             // Log unexpected errors and stop execution
             $this->logger->error('Unexpected external shipment error: ' . $exception->getMessage(), [
                 'order_id' => $order->id,
-                'exception' => $exception
+                'exception' => $exception,
             ]);
 
             throw $exception;
