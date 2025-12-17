@@ -31,7 +31,7 @@ class WebhookShopIdValidatorTest extends TestCase
     /** @var WebhookShopIdValidator */
     private $validator;
 
-    /** @var MockObject&PsAccountRepositoryInterface */
+    /** @var MockObject|PsAccountRepositoryInterface */
     private $psAccountRepository;
 
     protected function setUp(): void

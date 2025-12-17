@@ -31,7 +31,7 @@ class WebhookEventConfigurationUpdatedHandlerTest extends TestCase
     /** @var WebhookEventConfigurationUpdatedHandler */
     private $handler;
 
-    /** @var ConfigurationInterface&MockObject */
+    /** @var ConfigurationInterface|MockObject */
     private $configuration;
 
     protected function setUp(): void

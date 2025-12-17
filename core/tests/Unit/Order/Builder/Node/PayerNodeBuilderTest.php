@@ -35,25 +35,25 @@ use ReflectionClass;
 
 class PayerNodeBuilderTest extends TestCase
 {
-    /** @var LoggerInterface&MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var ValidateInterface&MockObject */
+    /** @var ValidateInterface|MockObject */
     private $validate;
 
-    /** @var CountryRepositoryInterface&MockObject */
+    /** @var CountryRepositoryInterface|MockObject */
     private $countryRepository;
 
-    /** @var StateRepositoryInterface&MockObject */
+    /** @var StateRepositoryInterface|MockObject */
     private $stateRepository;
 
     /** @var PayerNodeBuilder */
     private $builder;
 
-    /** @var PhoneNumberUtil&MockObject */
+    /** @var PhoneNumberUtil|MockObject */
     private $phoneUtil;
 
-    /** @var PhoneNumberUtil&MockObject */
+    /** @var PhoneNumberUtil|MockObject */
     private $originalPhoneUtil;
 
     protected function setUp(): void
@@ -281,7 +281,7 @@ class PayerNodeBuilderTest extends TestCase
      *
      * @param array $properties
      *
-     * @return Address&MockObject
+     * @return Address|MockObject
      */
     private function createMockAddress(array $properties): Address
     {

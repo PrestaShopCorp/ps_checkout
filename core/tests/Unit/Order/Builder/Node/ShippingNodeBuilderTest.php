@@ -31,13 +31,13 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class ShippingNodeBuilderTest extends TestCase
 {
-    /** @var GenderRepositoryInterface&MockObject */
+    /** @var GenderRepositoryInterface|MockObject */
     private $genderRepository;
 
-    /** @var CountryRepositoryInterface&MockObject */
+    /** @var CountryRepositoryInterface|MockObject */
     private $countryRepository;
 
-    /** @var StateRepositoryInterface&MockObject */
+    /** @var StateRepositoryInterface|MockObject */
     private $stateRepository;
 
     /** @var ShippingNodeBuilder */
@@ -199,7 +199,7 @@ class ShippingNodeBuilderTest extends TestCase
      *
      * @param array $properties
      *
-     * @return Address&MockObject
+     * @return Address|MockObject
      */
     private function createMockAddress(array $properties): Address
     {

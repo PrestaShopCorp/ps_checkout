@@ -40,32 +40,32 @@ use Psr\Http\Message\StreamInterface;
 class AuthorizePayPalOrderActionTest extends TestCase
 {
     /**
-     * @var MockObject&OrderHttpClientInterface
+     * @var MockObject|OrderHttpClientInterface
      */
     private $orderHttpClient;
 
     /**
-     * @var MockObject&PayPalOrderCacheInterface
+     * @var MockObject|PayPalOrderCacheInterface
      */
     private $payPalOrderCache;
 
     /**
-     * @var MockObject&EventHandlerInterface
+     * @var MockObject|EventHandlerInterface
      */
     private $paymentPendingEventHandler;
 
     /**
-     * @var MockObject&EventHandlerInterface
+     * @var MockObject|EventHandlerInterface
      */
     private $paymentDeniedEventHandler;
 
     /**
-     * @var MockObject&PayPalOrderProviderInterface
+     * @var MockObject|PayPalOrderProviderInterface
      */
     private $payPalOrderProvider;
 
     /**
-     * @var MockObject&PayPalOrderAuthorizationRepositoryInterface
+     * @var MockObject|PayPalOrderAuthorizationRepositoryInterface
      */
     private $payPalOrderAuthorizationRepository;
 

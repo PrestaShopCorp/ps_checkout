@@ -30,13 +30,13 @@ use Psr\Http\Message\StreamInterface;
 
 class OAuthServiceTest extends TestCase
 {
-    /** @var CheckoutHttpClientInterface&MockObject */
+    /** @var CheckoutHttpClientInterface|MockObject */
     private $httpClient;
 
-    /** @var ResponseInterface&MockObject */
+    /** @var ResponseInterface|MockObject */
     private $response;
 
-    /** @var StreamInterface&MockObject */
+    /** @var StreamInterface|MockObject */
     private $stream;
 
     /** @var OAuthService */

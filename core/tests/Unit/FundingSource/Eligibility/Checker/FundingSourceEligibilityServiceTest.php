@@ -47,22 +47,22 @@ use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterf
 class FundingSourceEligibilityServiceTest extends TestCase
 {
     /**
-     * @var ContextInterface&MockObject
+     * @var ContextInterface|MockObject
      */
     private $context;
 
     /**
-     * @var ConfigurationInterface&MockObject
+     * @var ConfigurationInterface|MockObject
      */
     private $configuration;
 
     /**
-     * @var CountryResolverInterface&MockObject
+     * @var CountryResolverInterface|MockObject
      */
     private $countryResolver;
 
     /**
-     * @var FundingSourcePresenterInterface&MockObject
+     * @var FundingSourcePresenterInterface|MockObject
      */
     private $fundingSourcePresenter;
 

@@ -37,19 +37,19 @@ class OrderAuthorizationValidatorTest extends TestCase
     /** @var OrderAuthorizationValidator */
     private $validator;
 
-    /** @var LoggerInterface&MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var CustomerInterface&MockObject */
+    /** @var CustomerInterface|MockObject */
     private $customer;
 
-    /** @var CartInterface&MockObject */
+    /** @var CartInterface|MockObject */
     private $cartAdapter;
 
-    /** @var ConfigurationInterface&MockObject */
+    /** @var ConfigurationInterface|MockObject */
     private $configuration;
 
-    /** @var Card3DSecureValidatorInterface&MockObject */
+    /** @var Card3DSecureValidatorInterface|MockObject */
     private $card3DSecureValidator;
 
     protected function setUp(): void

@@ -28,17 +28,17 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
     /**
-     * @var PayPalConfiguration&MockObject
+     * @var PayPalConfiguration|MockObject
      */
     private $paypalConfiguration;
 
     /**
-     * @var CountryRepositoryInterface&MockObject
+     * @var CountryRepositoryInterface|MockObject
      */
     private $countryRepository;
 
     /**
-     * @var StateRepositoryInterface&MockObject
+     * @var StateRepositoryInterface|MockObject
      */
     private $stateRepository;
 
