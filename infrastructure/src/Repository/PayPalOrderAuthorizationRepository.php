@@ -85,7 +85,8 @@ class PayPalOrderAuthorizationRepository implements PayPalOrderAuthorizationRepo
             $authorization['id_order'],
             $authorization['status'],
             $authorization['expiration_time'],
-            json_decode($authorization['seller_protection'])
+            $authorization['create_time'],
+            $authorization['update_time']
         );
     }
 }

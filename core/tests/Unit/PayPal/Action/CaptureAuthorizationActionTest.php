@@ -2,11 +2,13 @@
 
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction;
+use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
@@ -14,13 +16,17 @@ use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryIn
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Log\LoggerInterface;
 
 class CaptureAuthorizationActionTest extends TestCase
 {
+    /** @var PaymentHttpClientInterface|MockObject  */
     private $paymentHttpClient;
 
+    /** @var PayPalOrderAuthorizationRepositoryInterface|MockObject  */
     private $authorizationRepository;
 
+    /** @var CaptureAuthorizationActionInterface  */
     private $action;
 
     protected function setUp(): void
@@ -36,7 +42,7 @@ class CaptureAuthorizationActionTest extends TestCase
         );
     }
 
-    public function testSuccessfulCaptureCreatesNewAuthorization(): void
+    public function testSuccessfulCaptureWithCreatedStatus(): void
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
@@ -62,14 +68,23 @@ class CaptureAuthorizationActionTest extends TestCase
             ->with('AUTH-456')
             ->willReturn($this->createHttpResponse($capturedAuthData));
 
+        $existingEntity = new PayPalOrderAuthorization(
+            'AUTH-456',
+            'ORDER-123',
+            PayPalAuthorizationStatus::CREATED,
+            '2099-12-31T23:59:59Z',
+            '2025-01-01T00:00:00Z',
+            '2025-01-01T00:00:00Z'
+        );
+
         $this->authorizationRepository->expects($this->once())
             ->method('getById')
             ->with('AUTH-456')
-            ->willReturn(null);
+            ->willReturn($existingEntity);
 
         $this->authorizationRepository->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($entity) use ($capturedAuthData) {
+            ->with($this->callback(function ($entity) {
                 return $entity instanceof PayPalOrderAuthorization
                     && $entity->getId() === 'AUTH-456'
                     && $entity->getStatus() === PayPalAuthorizationStatus::CAPTURED
@@ -78,7 +93,6 @@ class CaptureAuthorizationActionTest extends TestCase
 
         $result = $this->action->execute($payPalOrder);
 
-        $this->assertInstanceOf(PayPalOrderAuthorization::class, $result);
         $this->assertEquals('AUTH-456', $result->getId());
         $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
@@ -123,7 +137,7 @@ class CaptureAuthorizationActionTest extends TestCase
 
         $this->authorizationRepository->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($entity) {
+            ->with($this->callback(function (PayPalOrderAuthorization $entity) {
                 return $entity->getStatus() === PayPalAuthorizationStatus::CAPTURED;
             }));
 
@@ -152,11 +166,20 @@ class CaptureAuthorizationActionTest extends TestCase
                 'status' => PayPalAuthorizationStatus::CAPTURED
             ]));
 
-        $this->authorizationRepository->method('getById')->willReturn(null);
+        $existingEntity = new PayPalOrderAuthorization(
+            'AUTH-456',
+            'ORDER-123',
+            PayPalAuthorizationStatus::PARTIALLY_CAPTURED,
+            '2099-12-31T23:59:59Z',
+            '2025-01-01T00:00:00Z',
+            '2025-01-01T00:00:00Z'
+        );
+
+        $this->authorizationRepository->method('getById')->willReturn($existingEntity);
         $this->authorizationRepository->expects($this->once())->method('save');
 
         $result = $this->action->execute($payPalOrder);
-        $this->assertInstanceOf(PayPalOrderAuthorization::class, $result);
+        $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
 
     public function testThrowsExceptionWhenOrderStatusNotApproved(): void
@@ -289,11 +312,20 @@ class CaptureAuthorizationActionTest extends TestCase
                 'status' => PayPalAuthorizationStatus::CAPTURED
             ]));
 
-        $this->authorizationRepository->method('getById')->willReturn(null);
+        $existingEntity = new PayPalOrderAuthorization(
+            'AUTH-456',
+            'ORDER-123',
+            PayPalAuthorizationStatus::CREATED,
+            'invalid-date',
+            '2025-01-01T00:00:00Z',
+            '2025-01-01T00:00:00Z'
+        );
+
+        $this->authorizationRepository->method('getById')->willReturn($existingEntity);
         $this->authorizationRepository->expects($this->once())->method('save');
 
         $result = $this->action->execute($payPalOrder);
-        $this->assertInstanceOf(PayPalOrderAuthorization::class, $result);
+        $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
 
     private function createPayPalOrder(
