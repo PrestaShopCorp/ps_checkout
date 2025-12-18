@@ -31,7 +31,7 @@ class BodyValuesValidatorTest extends TestCase
     /** @var BodyValuesValidator */
     private $validator;
 
-    /** @var WebhookBodyProviderInterface|MockObject */
+    /** @var MockObject|WebhookBodyProviderInterface */
     private $webhookBodyProvider;
 
     protected function setUp(): void

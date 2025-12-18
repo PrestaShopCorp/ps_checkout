@@ -21,8 +21,8 @@
 namespace PsCheckout\Core\Settings\Configuration;
 
 use Exception;
-use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityServiceInterface;
+use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\OAuth\OAuthServiceInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Util\CountryResolverInterface;
@@ -149,7 +149,6 @@ class PayPalSdkConfiguration
         if ($this->shouldIncludeMessagesComponent()) {
             $components[] = 'messages';
         }
-
 
         $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
 

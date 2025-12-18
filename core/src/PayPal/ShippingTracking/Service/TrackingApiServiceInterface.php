@@ -33,7 +33,9 @@ interface TrackingApiServiceInterface
      * @param string $payPalOrderId
      * @param int $orderId
      * @param bool $throwOnError
+     *
      * @return TrackingApiResult
+     *
      * @throws \Exception
      */
     public function processTracking(TrackingApiRequest $request): TrackingApiResult;

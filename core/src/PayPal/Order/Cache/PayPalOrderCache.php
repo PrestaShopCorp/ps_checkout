@@ -22,7 +22,6 @@ namespace PsCheckout\Core\PayPal\Order\Cache;
 
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
-use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -53,8 +52,6 @@ class PayPalOrderCache extends ChainAdapter implements PayPalOrderCacheInterface
         PayPalOrderStatus::COMPLETED => 3600,
     ];
 
-    /**
-     */
     public function updateOrderCache($orderResponse)
     {
         $currentOrderPayPal = $this->getValue($orderResponse->getId());

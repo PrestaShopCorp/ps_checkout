@@ -88,10 +88,10 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
         foreach ($this->products as $product) {
             $productId = (int) $product['id_product'];
             $productAttributeId = (int) $product['id_product_attribute'];
-            
+
             // Get product details
             $productData = $this->getProductData($productId, $productAttributeId);
-            
+
             // Validate required fields
             $sku = $this->validateSku($product, $productData);
             $quantity = $this->validateQuantity($product);
@@ -138,19 +138,17 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     private function validateSku(array $product, array $productData): string
     {
         $sku = $productData['sku'] ?? '';
-        
+
         // If no SKU from order data, try to get from product data
         if (empty($sku)) {
             $sku = $product['reference'] ?? '';
         }
-        
+
         // SKU is required and must not be empty
         if (empty($sku)) {
-            throw new \InvalidArgumentException(
-                'SKU is required for tracking items. Product ID: ' . ($product['id_product'] ?? 'unknown')
-            );
+            throw new \InvalidArgumentException('SKU is required for tracking items. Product ID: ' . ($product['id_product'] ?? 'unknown'));
         }
-        
+
         return $sku;
     }
 
@@ -166,15 +164,12 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     private function validateQuantity(array $product): string
     {
         $quantity = (int) $product['quantity'];
-        
+
         // Quantity must be a positive whole number
         if ($quantity <= 0) {
-            throw new \InvalidArgumentException(
-                'Quantity must be a positive whole number. Got: ' . $quantity .
-                ' for product ID: ' . ($product['id_product'] ?? 'unknown')
-            );
+            throw new \InvalidArgumentException('Quantity must be a positive whole number. Got: ' . $quantity . ' for product ID: ' . ($product['id_product'] ?? 'unknown'));
         }
-        
+
         return (string) $quantity;
     }
 
@@ -191,14 +186,12 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     private function validateName(array $product, array $productData): string
     {
         $name = $product['name'] ?? $productData['name'] ?? '';
-        
+
         // Name is required and must not be empty
         if (empty($name)) {
-            throw new \InvalidArgumentException(
-                'Product name is required for tracking items. Product ID: ' . ($product['id_product'] ?? 'unknown')
-            );
+            throw new \InvalidArgumentException('Product name is required for tracking items. Product ID: ' . ($product['id_product'] ?? 'unknown'));
         }
-        
+
         return $name;
     }
 
@@ -220,7 +213,7 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             // Use order's language instead of global context
             $languageId = $this->languageId ?: \Context::getContext()->language->id;
             $product = new \Product($productId, false, $languageId);
-            
+
             if (!\Validate::isLoadedObject($product)) {
                 return [];
             }
@@ -251,11 +244,11 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             // Simple UPC type detection - just recognize basic types
             $upcType = $this->getSimpleUpcType($product);
             $upcCode = '';
-            
+
             if (!empty($upcType)) {
                 $upcCode = $this->getUpcCodeByType($product, $upcType);
             }
-            
+
             $productData['upc_type'] = $upcType;
             $productData['upc_code'] = $upcCode;
 
@@ -265,7 +258,7 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             $this->logger->error('Error getting product data for tracking: ' . $e->getMessage(), [
                 'product_id' => $productId,
             ]);
-            
+
             return [];
         }
     }
@@ -289,19 +282,19 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
         if (!empty($upc)) {
             return $this->detectUpcType($upc);
         }
-        
+
         if (!empty($ean13)) {
             return $this->detectUpcType($ean13);
         }
-        
+
         if (!empty($isbn)) {
             return 'ISBN';
         }
-        
+
         if (!empty($mpn)) {
             return 'MPN';
         }
-        
+
         return '';
     }
 
@@ -315,7 +308,7 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     private function detectUpcType(string $barcode): string
     {
         $length = strlen($barcode);
-        
+
         // Simple type detection based on length
         switch ($length) {
             case 8:
@@ -344,10 +337,10 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
         try {
             $context = \Context::getContext();
             $link = $context->link;
-            
+
             // Use shop ID from order if available
             $shopId = $this->shopId ?: null;
-            
+
             return $link->getProductLink(
                 $product,
                 null,
@@ -374,10 +367,10 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
         try {
             $context = \Context::getContext();
             $link = $context->link;
-            
+
             // Get product images
             $images = $product->getImages($this->languageId ?: $context->language->id);
-            
+
             if (!empty($images)) {
                 $image = reset($images);
 
@@ -387,7 +380,7 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                     'home_default'
                 );
             }
-            
+
             return '';
         } catch (\Exception $e) {
             return '';
@@ -404,15 +397,15 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     private function getProductDescription(array $productData): string
     {
         $description = $productData['description'] ?? '';
-        
+
         // Strip HTML tags and limit length
         $description = strip_tags($description);
         $description = trim($description);
-        
+
         if (strlen($description) > 255) {
             $description = substr($description, 0, 252) . '...';
         }
-        
+
         // Fallback to name if description is empty
         return $description ?: ($productData['name'] ?? '');
     }
@@ -432,19 +425,19 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             case 'UPC-E':
             case 'OTHER':
                 return trim($product->upc ?? '');
-                
+
             case 'EAN-13':
                 return trim($product->ean13 ?? '');
-                
+
             case 'ISBN':
                 return trim($product->isbn ?? '');
-                
+
             case 'MPN':
                 return trim($product->mpn ?? '');
-                
+
             case 'Reference':
                 return trim($product->reference ?? '');
-                
+
             case 'GTIN-14':
                 // GTIN-14 could be in UPC or EAN13 field
                 $gtin = trim($product->upc ?? '');
@@ -453,7 +446,7 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 }
 
                 return $gtin;
-                
+
             default:
                 return '';
         }

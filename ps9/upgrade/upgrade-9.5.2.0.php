@@ -33,35 +33,47 @@ function upgrade_module_9_5_2_0(Ps_checkout $module)
     try {
         $db = Db::getInstance();
 
-        // Check if created_at column exists in pscheckout_authorization table
+        // Check columns in pscheckout_authorization table
         $fields = $db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_authorization`');
 
         if (!empty($fields)) {
-            $hasCreatedAt = false;
-            $hasUpdatedAt = false;
+            $hasCreateTime = false;
+            $hasUpdateTime = false;
+            $hasSellerProtection = false;
 
             foreach ($fields as $field) {
-                if ($field['Field'] === 'created_at') {
-                    $hasCreatedAt = true;
+                if ($field['Field'] === 'create_time') {
+                    $hasCreateTime = true;
                 }
-                if ($field['Field'] === 'updated_at') {
-                    $hasUpdatedAt = true;
+                if ($field['Field'] === 'update_time') {
+                    $hasUpdateTime = true;
+                }
+                if ($field['Field'] === 'seller_protection') {
+                    $hasSellerProtection = true;
                 }
             }
 
-            // Add created_at column if it doesn't exist
-            if (!$hasCreatedAt) {
+            // Add create_time column if it doesn't exist
+            if (!$hasCreateTime) {
                 $db->execute('
                     ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
-                    ADD COLUMN `created_at` varchar(20) NOT NULL DEFAULT ""
+                    ADD COLUMN `create_time` varchar(20) NOT NULL DEFAULT ""
                 ');
             }
 
-            // Add updated_at column if it doesn't exist
-            if (!$hasUpdatedAt) {
+            // Add update_time column if it doesn't exist
+            if (!$hasUpdateTime) {
                 $db->execute('
                     ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
-                    ADD COLUMN `updated_at` varchar(20) NOT NULL DEFAULT ""
+                    ADD COLUMN `update_time` varchar(20) NOT NULL DEFAULT ""
+                ');
+            }
+
+            // Drop seller_protection column if it exists
+            if ($hasSellerProtection) {
+                $db->execute('
+                    ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization`
+                    DROP COLUMN `seller_protection`
                 ');
             }
         }

@@ -27,7 +27,6 @@ use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -161,7 +160,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
                 'op' => 'replace',
                 'path' => "/purchase_units/@reference_id=='$purchaseUnitReferenceId'",
                 'value' => $payload['purchase_units'],
-            ]
+            ],
         ];
 
         $response = $this->httpClient->updateOrder($request->getOrderId(), $payloadToSend);

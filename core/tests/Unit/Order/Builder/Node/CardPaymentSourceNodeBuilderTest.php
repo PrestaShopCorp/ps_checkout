@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
@@ -26,12 +27,24 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
+    /**
+     * @var PayPalConfiguration|MockObject
+     */
     private $paypalConfiguration;
 
+    /**
+     * @var CountryRepositoryInterface|MockObject
+     */
     private $countryRepository;
 
+    /**
+     * @var StateRepositoryInterface|MockObject
+     */
     private $stateRepository;
 
+    /**
+     * @var CardPaymentSourceNodeBuilder
+     */
     private $cardPaymentSourceNodeBuilder;
 
     protected function setUp(): void

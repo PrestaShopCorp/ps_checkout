@@ -186,12 +186,13 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         if ($isFullPayload) {
-            $optionalPayload[] = $this->buildPaymentSource();
-            if (empty($optionalPayload['payment_source'][$this->fundingSource]['experience_context'])) {
+            $paymentSource = $this->buildPaymentSource();
+            if (empty($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
                 $optionalPayload[] = $this->applicationContextNodeBuilder
                     ->setIsExpressCheckout($this->expressCheckout)
                     ->build();
             }
+            $optionalPayload[] = $paymentSource;
         }
 
         return $optionalPayload;
@@ -262,7 +263,6 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
-
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId);

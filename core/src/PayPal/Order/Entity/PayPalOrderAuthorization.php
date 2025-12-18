@@ -43,11 +43,6 @@ class PayPalOrderAuthorization
     private $expirationTime;
 
     /**
-     * @var array
-     */
-    private $sellerProtection;
-
-    /**
      * @var string|null
      */
     private $createTime;
@@ -62,7 +57,6 @@ class PayPalOrderAuthorization
         $idOrder = null,
         $status = null,
         $expirationTime = null,
-        $sellerProtection = [],
         $createTime = null,
         $updateTime = null
     ) {
@@ -70,7 +64,6 @@ class PayPalOrderAuthorization
         $this->idOrder = $idOrder;
         $this->status = $status;
         $this->expirationTime = $expirationTime;
-        $this->sellerProtection = $sellerProtection;
         $this->createTime = $createTime;
         $this->updateTime = $updateTime;
     }
@@ -151,26 +144,6 @@ class PayPalOrderAuthorization
     public function setExpirationTime($expirationTime): self
     {
         $this->expirationTime = $expirationTime;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSellerProtection()
-    {
-        return $this->sellerProtection;
-    }
-
-    /**
-     * @param array $sellerProtection
-     *
-     * @return PayPalOrderAuthorization
-     */
-    public function setSellerProtection(array $sellerProtection): self
-    {
-        $this->sellerProtection = $sellerProtection;
 
         return $this;
     }

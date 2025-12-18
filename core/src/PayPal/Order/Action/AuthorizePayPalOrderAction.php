@@ -85,10 +85,7 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
     public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderResponse
     {
         if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {
-            throw new PsCheckoutException(
-                sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
-                PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID
-            );
+            throw new PsCheckoutException(sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()), PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
         }
 
         $response = $this->orderHttpClient->authorizeOrder($payPalOrder->getId(), []);
@@ -107,7 +104,6 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
             $orderPayPal['id'],
             $authorization['status'],
             $authorization['expiration_time'],
-            $authorization['seller_protection'],
             $authorization['create_time'],
             $authorization['update_time']
         );

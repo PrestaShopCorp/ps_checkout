@@ -32,10 +32,10 @@ use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
 use PsCheckout\Core\PaymentToken\Action\SavePaymentTokenActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
-use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\CartRepositoryInterface;
 
@@ -200,7 +200,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
                         $capturedOrderResponse->getVault()['id'],
                         $this->context->getCustomer()->id
                     );
-                // no break
+                    // no break
                 default:
                     throw $exception;
             }

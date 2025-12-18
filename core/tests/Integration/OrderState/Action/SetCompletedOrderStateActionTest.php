@@ -1,10 +1,27 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\OrderState\Action;
 
 use Exception;
 use Order;
-use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\Order\Validator\OrderAmountValidator;
@@ -14,13 +31,11 @@ use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
-use PsCheckout\Core\Tests\Integration\Factory\CartFactory;
 use PsCheckout\Core\Tests\Integration\Factory\OrderFactory;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderFactory;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use PsCheckout\Infrastructure\Repository\OrderRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
-use Shop;
 
 class SetCompletedOrderStateActionTest extends BaseTestCase
 {
@@ -64,11 +79,11 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
                     'captures' => [[
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '29.00'
+                            'value' => '29.00',
                         ],
-                    ]]
-                ]
-            ]]
+                    ]],
+                ],
+            ]],
         ];
 
         // Create a mock for PayPalOrderProviderInterface
@@ -86,7 +101,6 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
         $this->orderRepositoryMock->expects($this->once())
             ->method('getOneBy')
             ->willReturn($order);
-
 
         $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
 
@@ -103,7 +117,7 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
 
     public function testItShouldChangeStateToPartialyPaid(): void
     {
-        //NOTE : Order total paid more than paid amount
+        // NOTE : Order total paid more than paid amount
         $order = OrderFactory::create(['total_paid' => 29.00]);
 
         $payPalOrderResponseData = [
@@ -112,11 +126,11 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
                     'captures' => [[
                         'amount' => [
                             'currency_code' => 'EUR',
-                            'value' => '15.00'
+                            'value' => '15.00',
                         ],
-                    ]]
-                ]
-            ]]
+                    ]],
+                ],
+            ]],
         ];
 
         // Create a mock for PayPalOrderProviderInterface
@@ -134,7 +148,6 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
         $this->orderRepositoryMock->expects($this->once())
             ->method('getOneBy')
             ->willReturn($order);
-
 
         $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID);
 

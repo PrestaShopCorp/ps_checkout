@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\Response;
 
@@ -19,7 +37,7 @@ class CaptureOrderResponse
                     'account_status' => 'VERIFIED',
                     'name' => [
                         'given_name' => 'John',
-                        'surname' => 'Doe'
+                        'surname' => 'Doe',
                     ],
                     'business_name' => 'Test Store',
                     'address' => [
@@ -27,9 +45,9 @@ class CaptureOrderResponse
                         'address_line_2' => 'Unit 1',
                         'admin_area_2' => 'Test City',
                         'postal_code' => '12345',
-                        'country_code' => 'FR'
-                    ]
-                ]
+                        'country_code' => 'FR',
+                    ],
+                ],
             ],
             'purchase_units' => [
                 [
@@ -44,12 +62,12 @@ class CaptureOrderResponse
                             'tax_total' => ['currency_code' => 'EUR', 'value' => '0.00'],
                             'insurance' => ['currency_code' => 'EUR', 'value' => '0.00'],
                             'shipping_discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
-                            'discount' => ['currency_code' => 'EUR', 'value' => '0.00']
-                        ]
+                            'discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                        ],
                     ],
                     'payee' => [
                         'merchant_id' => 'MERCHANT123',
-                        'display_data' => ['brand_name' => 'Test Store']
+                        'display_data' => ['brand_name' => 'Test Store'],
                     ],
                     'payment_instruction' => ['disbursement_mode' => 'INSTANT'],
                     'description' => 'Test order #123',
@@ -62,8 +80,8 @@ class CaptureOrderResponse
                             'quantity' => 1,
                             'description' => 'Test Description',
                             'sku' => 'TEST_SKU_1',
-                            'category' => 'PHYSICAL_GOODS'
-                        ]
+                            'category' => 'PHYSICAL_GOODS',
+                        ],
                     ],
                     'shipping' => [
                         'name' => 'Test Shipping',
@@ -72,8 +90,8 @@ class CaptureOrderResponse
                             'address_line_2' => 'Unit 2',
                             'admin_area_2' => 'Ship City',
                             'postal_code' => '12345',
-                            'country_code' => 'FR'
-                        ]
+                            'country_code' => 'FR',
+                        ],
                     ],
                     'payments' => [
                         'captures' => [
@@ -87,21 +105,21 @@ class CaptureOrderResponse
                                     'status' => 'ELIGIBLE',
                                     'dispute_categories' => [
                                         'ITEM_NOT_RECEIVED',
-                                        'UNAUTHORIZED_TRANSACTION'
-                                    ]
+                                        'UNAUTHORIZED_TRANSACTION',
+                                    ],
                                 ],
                                 'seller_receivable_breakdown' => [
                                     'gross_amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
                                     'paypal_fee' => ['currency_code' => 'EUR', 'value' => '1.00'],
-                                    'net_amount' => ['currency_code' => 'EUR', 'value' => '28.00']
+                                    'net_amount' => ['currency_code' => 'EUR', 'value' => '28.00'],
                                 ],
                                 'custom_id' => 'test-uuid-123',
                                 'create_time' => '2024-01-01T10:00:00Z',
-                                'update_time' => '2024-01-01T10:00:00Z'
-                            ]
-                        ]
-                    ]
-                ]
+                                'update_time' => '2024-01-01T10:00:00Z',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'create_time' => '2024-01-01T10:00:00Z',
             'update_time' => '2024-01-01T10:00:00Z',
@@ -109,9 +127,9 @@ class CaptureOrderResponse
                 [
                     'href' => 'https://api.test.paypal.com/v2/checkout/orders/PAY-TEST-123',
                     'rel' => 'self',
-                    'method' => 'GET'
-                ]
-            ]
+                    'method' => 'GET',
+                ],
+            ],
         ];
     }
 }

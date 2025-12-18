@@ -24,7 +24,6 @@ use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
-use PsCheckout\Infrastructure\Adapter\Context;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 
 class PaymentCompletedEventHandler implements EventHandlerInterface

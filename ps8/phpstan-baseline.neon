@@ -2563,12 +2563,6 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Offset ''payment_source'' on array\{0\: mixed, 1\?\: mixed, 2\?\: array\|null, 3\?\: array\|null, 4\?\: array\|null\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$arr1 of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3247,24 +3241,6 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Access to constant CREATED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant DENIED on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Access to constant PENDING on an unknown class PsCheckout\\Core\\PayPal\\Order\\Configuration\\PayPalAuthorizationStatus\.$#'
-			identifier: class.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -3284,12 +3260,6 @@ parameters:
 
 		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''seller_protection'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
@@ -3561,7 +3531,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3621,7 +3591,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3639,7 +3609,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
@@ -3859,12 +3829,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$sellerProtection with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$status with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -3873,18 +3837,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:__construct\(\) has parameter \$updateTime with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:getSellerProtection\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:setSellerProtection\(\) has parameter \$sellerProtection with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
@@ -3909,18 +3861,6 @@ parameters:
 		-
 			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$idOrder \(string\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$sellerProtection \(array\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\:\:\$sellerProtection type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/PayPal/Order/Entity/PayPalOrderAuthorization.php
 
@@ -4329,7 +4269,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -4389,7 +4329,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''seller_protection'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -4407,7 +4347,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''update_time'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
@@ -8305,12 +8245,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot access offset ''payment_source'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 14
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access offset ''payment_type'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -8341,48 +8275,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot call method build\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method method\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setCart\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setPaypalCustomerId\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setPaypalVaultId\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method setSavePaymentMethod\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Method CardPaymentSourceNodeBuilderTest\:\:testBuildValidData\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -8409,31 +8301,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 7
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$cardPaymentSourceNodeBuilder has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$countryRepository has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$paypalConfiguration has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Property CardPaymentSourceNodeBuilderTest\:\:\$stateRepository has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
+			count: 6
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8897,6 +8765,30 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/Order/Validator/OrderAuthorizationValidatorTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 3
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
+
+		-
+			message: '#^Cannot access offset ''existing_field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
+
+		-
+			message: '#^Cannot access offset ''new_field'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
@@ -9921,7 +9813,7 @@ parameters:
 		-
 			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource\|true supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 1
+			count: 2
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -9933,13 +9825,13 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''ALTER TABLE `'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 4
+			count: 7
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
 			message: '#^Binary operation "\." between ''SHOW COLUMNS FROM `'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 2
+			count: 3
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -9951,7 +9843,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''Field'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 5
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -10581,12 +10473,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalOrderAuthorizationRepository\:\:save\(\) with return type void returns bool but should not return anything\.$#'
 			identifier: return.void
-			count: 1
-			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
