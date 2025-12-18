@@ -84,7 +84,7 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
         return [
             'shipping' => [
                 'name' => [
-                    'full_name' => !empty($gender) ? "$gender " : "" . $this->cart['addresses']['shipping']->firstname  . ' ' . $this->cart['addresses']['shipping']->lastname,
+                    'full_name' => (!empty($gender) ? "$gender " : "") . $this->cart['addresses']['shipping']->firstname  . ' ' . $this->cart['addresses']['shipping']->lastname,
                 ],
                 'address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
             ],
