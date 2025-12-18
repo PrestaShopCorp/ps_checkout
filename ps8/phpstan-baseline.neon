@@ -217,6 +217,12 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
+			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClient\:\:captureAuthorization\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -251,6 +257,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
+			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClientInterface\:\:captureAuthorization\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/PaymentHttpClientInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClientInterface\:\:refundOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
@@ -3317,6 +3329,36 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
+
+		-
+			message: '#^Cannot call method setStatus\(\) on PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 4
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Action\\CaptureAuthorizationAction\:\:execute\(\) should return PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization but returns PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
+
+		-
+			message: '#^Parameter \#1 \$payPalOrderAuthorization of method PsCheckout\\Core\\PayPal\\Order\\Repository\\PayPalOrderAuthorizationRepositoryInterface\:\:save\(\) expects PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization, PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrderAuthorization\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
@@ -8791,6 +8833,18 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Action/AuthorizePayPalOrderActionTest.php
 
 		-
+			message: '#^Method PsCheckout\\Core\\Tests\\Unit\\PayPal\\Order\\Action\\CaptureAuthorizationActionTest\:\:createHttpResponse\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/CaptureAuthorizationActionTest.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Tests\\Unit\\PayPal\\Order\\Action\\CaptureAuthorizationActionTest\:\:createPayPalOrder\(\) has parameter \$authorization with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/tests/Unit/PayPal/Action/CaptureAuthorizationActionTest.php
+
+		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 3
@@ -10469,6 +10523,42 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalCustomerRepository.php
+
+		-
+			message: '#^Cannot access offset ''create_time'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
+			message: '#^Cannot access offset ''expiration_time'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
+			message: '#^Cannot access offset ''id'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
+			message: '#^Cannot access offset ''id_order'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
+			message: '#^Cannot access offset ''status'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
+			message: '#^Cannot access offset ''update_time'' on non\-empty\-array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalOrderAuthorizationRepository\:\:save\(\) with return type void returns bool but should not return anything\.$#'
