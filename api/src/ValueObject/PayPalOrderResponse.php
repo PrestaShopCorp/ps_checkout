@@ -169,7 +169,19 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array|null
+     * @return array{
+     *     status: string,
+     *     id: string,
+     *     invoice_id: string,
+     *     custom_id: string,
+     *     custom_id: string,
+     *     status_details: array{
+     *         reason: string
+     *     },
+     *     expiration_time: string,
+     *     create_time: string,
+     *     update_time: string
+     * }|null
      */
     public function getAuthorization()
     {

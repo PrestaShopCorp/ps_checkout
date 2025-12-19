@@ -72,15 +72,15 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
         // Fetch payment authorization from order
         $authorization = $payPalOrder->getAuthorization();
 
-        if (!$authorization || !isset($authorization['id'])) {
+        if (!$authorization) {
             throw new PsCheckoutException(
                 sprintf('PayPal Order %s does not have a valid authorization', $payPalOrder->getId()),
                 PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
             );
         }
 
-        $authorizationId = (string) $authorization['id'];
-        $authorizationStatus = (string) $authorization['status'];
+        $authorizationId = $authorization['id'];
+        $authorizationStatus = $authorization['status'];
 
         // Check if status is VOIDED
         if ($authorizationStatus === PayPalAuthorizationStatus::VOIDED) {
@@ -114,13 +114,32 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
             );
         }
 
-        // Call captureAuthorization in PaymentHttpClient
         $captureResponse = $this->paymentHttpClient->captureAuthorization($authorizationId);
+
+        /**
+         * @var array{
+         *     id: string,
+         *     status: string,
+         *     create_time: string,
+         *     update_time: string
+         * } $capturedAuthorization
+         */
         $capturedAuthorization = json_decode($captureResponse->getBody(), true);
 
         $authorizationEntity = $this->authorizationRepository->getById($authorizationId);
 
-        $authorizationEntity->setStatus($capturedAuthorization['status']);
+        if ($authorizationEntity) {
+            $authorizationEntity->setStatus($capturedAuthorization['status']);
+        } else {
+            $authorizationEntity = new PayPalOrderAuthorization(
+                $authorizationId,
+                $payPalOrder->getId(),
+                $capturedAuthorization['status'],
+                '',
+                $capturedAuthorization['create_time'],
+                $capturedAuthorization['update_time'],
+            );
+        }
 
         $this->authorizationRepository->save($authorizationEntity);
 
