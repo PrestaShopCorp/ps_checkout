@@ -41,7 +41,7 @@ interface PaymentHttpClientInterface
 
     /**
      * @param string $authorizationId
-     * @param array $payload
+     * @param array<mixed> $payload
      *
      * @return ResponseInterface
      *

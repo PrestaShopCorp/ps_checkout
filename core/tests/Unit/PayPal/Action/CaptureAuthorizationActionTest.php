@@ -51,8 +51,10 @@ class CaptureAuthorizationActionTest extends TestCase
             [
                 'id' => 'AUTH-456',
                 'status' => PayPalAuthorizationStatus::CREATED,
-                'expiration_time' => '2099-12-31T23:59:59Z',
-                'seller_protection' => ['status' => 'ELIGIBLE']
+                'expiration_time' => '2100-01-28T23:59:59Z',
+                'seller_protection' => ['status' => 'ELIGIBLE'],
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -106,7 +108,9 @@ class CaptureAuthorizationActionTest extends TestCase
             [
                 'id' => 'AUTH-456',
                 'status' => PayPalAuthorizationStatus::CREATED,
-                'expiration_time' => '2099-12-31T23:59:59Z'
+                'expiration_time' => '2099-12-31T23:59:59Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -155,7 +159,9 @@ class CaptureAuthorizationActionTest extends TestCase
             [
                 'id' => 'AUTH-456',
                 'status' => PayPalAuthorizationStatus::PARTIALLY_CAPTURED,
-                'expiration_time' => '2099-12-31T23:59:59Z'
+                'expiration_time' => '2099-12-31T23:59:59Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -188,7 +194,13 @@ class CaptureAuthorizationActionTest extends TestCase
             'ORDER-123',
             PayPalOrderStatus::CREATED,
             'AUTHORIZE',
-            ['id' => 'AUTH-456', 'status' => PayPalAuthorizationStatus::CREATED]
+            [
+                'id' => 'AUTH-456',
+                'status' => PayPalAuthorizationStatus::CREATED,
+                'expiration_time' => '2020-01-01T00:00:00Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
+            ]
         );
 
         $this->expectException(PsCheckoutException::class);
@@ -204,7 +216,13 @@ class CaptureAuthorizationActionTest extends TestCase
             'ORDER-123',
             PayPalOrderStatus::APPROVED,
             'CAPTURE',
-            ['id' => 'AUTH-456', 'status' => PayPalAuthorizationStatus::CREATED]
+            [
+                'id' => 'AUTH-456',
+                'status' => PayPalAuthorizationStatus::CREATED,
+                'expiration_time' => '2020-01-01T00:00:00Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
+            ]
         );
 
         $this->expectException(PsCheckoutException::class);
@@ -242,7 +260,10 @@ class CaptureAuthorizationActionTest extends TestCase
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::CAPTURED
+                'status' => PayPalAuthorizationStatus::CAPTURED,
+                'expiration_time' => '2020-01-01T00:00:00Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -261,7 +282,10 @@ class CaptureAuthorizationActionTest extends TestCase
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::VOIDED
+                'status' => PayPalAuthorizationStatus::VOIDED,
+                'expiration_time' => '2020-01-01T00:00:00Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -281,7 +305,9 @@ class CaptureAuthorizationActionTest extends TestCase
             [
                 'id' => 'AUTH-456',
                 'status' => PayPalAuthorizationStatus::CREATED,
-                'expiration_time' => '2020-01-01T00:00:00Z'
+                'expiration_time' => '2020-01-01T00:00:00Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -301,7 +327,9 @@ class CaptureAuthorizationActionTest extends TestCase
             [
                 'id' => 'AUTH-456',
                 'status' => PayPalAuthorizationStatus::CREATED,
-                'expiration_time' => 'invalid-date'
+                'expiration_time' => 'invalid-date',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
             ]
         );
 
@@ -328,6 +356,20 @@ class CaptureAuthorizationActionTest extends TestCase
         $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
 
+
+    /**
+     * @param string $orderId
+     * @param string $status
+     * @param string $intent
+     * @param array{
+     *      id: string,
+     *      status: string,
+     *      expiration_time: string,
+     *      create_time: string,
+     *      update_time: string
+     *  } $authorization
+     * @return PayPalOrderResponse
+     */
     private function createPayPalOrder(
         string $orderId,
         string $status,
@@ -348,6 +390,11 @@ class CaptureAuthorizationActionTest extends TestCase
         ]);
     }
 
+
+    /**
+     * @param array<mixed> $data
+     * @return ResponseInterface
+     */
     private function createHttpResponse(array $data): ResponseInterface
     {
         $body = $this->createMock(StreamInterface::class);

@@ -99,6 +99,10 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
 
         $authorization = $payPalOrderResponse->getAuthorization();
 
+        if (!$authorization) {
+            return $payPalOrderResponse;
+        }
+
         $payPalAuthorization = new PayPalOrderAuthorization(
             $authorization['id'],
             $orderPayPal['id'],

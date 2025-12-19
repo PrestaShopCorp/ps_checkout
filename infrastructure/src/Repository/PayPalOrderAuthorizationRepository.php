@@ -74,6 +74,16 @@ class PayPalOrderAuthorizationRepository implements PayPalOrderAuthorizationRepo
             ->from(self::TABLE_NAME)
             ->where('id = "' . pSQL($payPalOrderAuthorizationId) . '"');
 
+        /**
+         * @var array{
+         *     id: string,
+         *     id_order: string,
+         *     status: string,
+         *     expiration_time: string,
+         *     create_time: string,
+         *     update_time: string
+         * }|false $authorization
+         */
         $authorization = $this->db->getRow($query);
 
         if (empty($authorization)) {
