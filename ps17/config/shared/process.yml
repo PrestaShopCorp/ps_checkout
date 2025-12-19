@@ -140,3 +140,9 @@ services:
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+
+  PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction
+    arguments:
+      - '@PsCheckout\Api\Http\PaymentHttpClient'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
