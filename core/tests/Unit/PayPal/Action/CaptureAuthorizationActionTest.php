@@ -356,7 +356,6 @@ class CaptureAuthorizationActionTest extends TestCase
         $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
 
-
     /**
      * @param string $orderId
      * @param string $status
@@ -389,7 +388,6 @@ class CaptureAuthorizationActionTest extends TestCase
             ]
         ]);
     }
-
 
     /**
      * @param array<mixed> $data
