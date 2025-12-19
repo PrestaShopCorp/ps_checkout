@@ -70,6 +70,7 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface
     {
         $body = $this->generatePayloadString($payload);
+
         return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $body));
     }
 
@@ -112,7 +113,6 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
 
         return '';
     }
-
 
     /**
      * @param array<mixed> $payload
