@@ -65,7 +65,7 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
         // Fetch payment authorization from order
         $authorization = $payPalOrder->getAuthorization();
 
-        if (!$authorization || !isset($authorization['id'])) {
+        if (!$authorization) {
             throw new PsCheckoutException(
                 sprintf('PayPal Order %s does not have a valid authorization', $payPalOrder->getId()),
                 PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
@@ -92,9 +92,33 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
 
         // Call captureAuthorization in PaymentHttpClient
         $voidResponse = $this->paymentHttpClient->voidAuthorization($authorizationId);
+
+        /**
+         * @var array{
+         *      id: string,
+         *      status: string,
+         *      expiration_time: string,
+         *      create_time: string,
+         *      update_time: string
+         *  }|empty $voidedAuthorization
+         */
         $voidedAuthorization = json_decode($voidResponse->getBody(), true);
 
+        if (empty($voidedAuthorization)) {
+            throw new PsCheckoutException(
+                sprintf('Invalid void response for authorization %s', $authorizationId),
+                PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
+            );
+        }
+
         $authorizationEntity = $this->authorizationRepository->getById($authorizationId);
+
+        if (!$authorizationEntity) {
+            throw new PsCheckoutException(
+                sprintf('Authorization entity %s not found in repository', $authorizationId),
+                PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
+            );
+        }
 
         $authorizationEntity->setStatus($voidedAuthorization['status'])
         ->setUpdateTime($voidedAuthorization['update_time']);

@@ -30,7 +30,7 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 interface PaymentHttpClientInterface
 {
     /**
-     * @param array $payload
+     * @param array<string, mixed> $payload
      * @param string $captureId
      *
      * @return ResponseInterface
@@ -51,7 +51,7 @@ interface PaymentHttpClientInterface
 
     /**
      * @param string $authorizationId
-     * @param array $payload
+     * @param array<string, mixed> $payload
      *
      * @return ResponseInterface
      *

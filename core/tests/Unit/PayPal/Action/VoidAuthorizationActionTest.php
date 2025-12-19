@@ -20,9 +20,6 @@ use Psr\Log\LoggerInterface;
 
 class VoidAuthorizationActionTest extends TestCase
 {
-    /** @var MockObject|LoggerInterface */
-    private $logger;
-
     /** @var MockObject|PaymentHttpClientInterface  */
     private $paymentHttpClient;
 
@@ -36,12 +33,10 @@ class VoidAuthorizationActionTest extends TestCase
     {
         parent::setUp();
 
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->paymentHttpClient = $this->createMock(PaymentHttpClientInterface::class);
         $this->authorizationRepository = $this->createMock(PayPalOrderAuthorizationRepositoryInterface::class);
 
         $this->action = new VoidAuthorizationAction(
-            $this->logger,
             $this->paymentHttpClient,
             $this->authorizationRepository
         );
@@ -86,7 +81,7 @@ class VoidAuthorizationActionTest extends TestCase
 
         $this->authorizationRepository->expects($this->once())
             ->method('save')
-            ->with($this->callback(function ($entity) {
+            ->with($this->callback(function (PayPalOrderAuthorization $entity): bool {
                 return $entity->getStatus() === PayPalAuthorizationStatus::VOIDED
                     && $entity->getUpdateTime() === '2025-12-16T10:00:00Z';
             }));
@@ -130,7 +125,7 @@ class VoidAuthorizationActionTest extends TestCase
         $this->authorizationRepository->expects($this->once())->method('save');
 
         $result = $this->action->execute($payPalOrder);
-        $this->assertInstanceOf(PayPalOrderAuthorization::class, $result);
+        $this->assertEquals(PayPalAuthorizationStatus::VOIDED, $result->getStatus());
     }
 
     public function testSuccessfulVoidWithPartiallyCapturedStatus(): void
@@ -166,7 +161,7 @@ class VoidAuthorizationActionTest extends TestCase
         $this->authorizationRepository->expects($this->once())->method('save');
 
         $result = $this->action->execute($payPalOrder);
-        $this->assertInstanceOf(PayPalOrderAuthorization::class, $result);
+        $this->assertEquals(PayPalAuthorizationStatus::VOIDED, $result->getStatus());
     }
 
     public function testThrowsExceptionWhenIntentNotAuthorize(): void
@@ -243,6 +238,9 @@ class VoidAuthorizationActionTest extends TestCase
         $this->action->execute($payPalOrder);
     }
 
+    /**
+     * @param array<string, mixed> $authorization
+     */
     private function createPayPalOrder(
         string $orderId,
         string $status,
@@ -263,6 +261,9 @@ class VoidAuthorizationActionTest extends TestCase
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function createHttpResponse(array $data): ResponseInterface
     {
         $body = $this->createMock(StreamInterface::class);
