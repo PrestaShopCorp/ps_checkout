@@ -3,10 +3,12 @@
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction;
+use PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
@@ -18,12 +20,16 @@ use Psr\Log\LoggerInterface;
 
 class VoidAuthorizationActionTest extends TestCase
 {
+    /** @var MockObject|LoggerInterface */
     private $logger;
 
+    /** @var MockObject|PaymentHttpClientInterface  */
     private $paymentHttpClient;
 
+    /** @var MockObject|PayPalOrderAuthorizationRepositoryInterface  */
     private $authorizationRepository;
 
+    /** @var VoidAuthorizationActionInterface  */
     private $action;
 
     protected function setUp(): void

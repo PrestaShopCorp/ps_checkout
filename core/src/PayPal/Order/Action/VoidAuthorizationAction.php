@@ -32,11 +32,6 @@ use Psr\Log\LoggerInterface;
 class VoidAuthorizationAction implements VoidAuthorizationActionInterface
 {
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var PaymentHttpClientInterface
      */
     private $paymentHttpClient;
@@ -47,11 +42,9 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
     private $authorizationRepository;
 
     public function __construct(
-        LoggerInterface $logger,
         PaymentHttpClientInterface $paymentHttpClient,
         PayPalOrderAuthorizationRepositoryInterface $authorizationRepository
     ) {
-        $this->logger = $logger;
         $this->paymentHttpClient = $paymentHttpClient;
         $this->authorizationRepository = $authorizationRepository;
     }
