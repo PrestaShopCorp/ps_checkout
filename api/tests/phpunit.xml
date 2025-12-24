@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         bootstrap="bootstrap-integration.php"
+         bootstrap="bootstrap.php"
          colors="true"
          executionOrder="random"
          beStrictAboutChangesToGlobalState="true"
@@ -13,8 +13,8 @@
         <env name="IS_CI" value="false"/>
     </php>
     <testsuites>
-        <testsuite name="Integration">
-            <directory>Integration</directory>
+        <testsuite name="Unit">
+            <directory>Unit</directory>
         </testsuite>
     </testsuites>
     <filter>

@@ -30,6 +30,9 @@ add-header-stamp:
 
 lint: php-cs-fixer autoindex add-header-stamp
 
+php-unit-api:
+	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/api/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/api/tests/bootstrap.php"
+
 php-unit-infrastructure:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/infrastructure/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/infrastructure/tests/bootstrap.php"
 
@@ -42,7 +45,7 @@ php-unit-core:
 php-unit-presentation:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/presentation/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/presentation/tests/bootstrap.php"
 
-unit-test: php-unit-utility php-unit-core php-unit-presentation
+unit-test: php-unit-api php-unit-utility php-unit-core php-unit-presentation
 
 php-integration:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/tests/bootstrap-integration.php"

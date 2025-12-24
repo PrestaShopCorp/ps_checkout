@@ -177,6 +177,39 @@ class PayPalOrderResponse
     }
 
     /**
+     * @return array<int, array{
+     *     id: string,
+     *     status: string,
+     *     status_details: array{
+     *         reason: string,
+     *     },
+     *     create_time: string,
+     *     update_time: string,
+     *     expiration_time: string,
+     *     links: array<int, array{
+     *         rel: string,
+     *         href: string,
+     *         method: string,
+     *     }>
+     * }>
+     */
+    public function getAuthorizations(): array
+    {
+        $purchaseUnits = $this->getPurchaseUnits();
+        if (empty($purchaseUnits)) {
+            throw new \RuntimeException('No purchase units found in the order response.');
+        }
+        if (1 < count($purchaseUnits)) {
+            throw new \RuntimeException('More than one purchase unit found in the order response.');
+        }
+        if (!isset($purchaseUnits[0]['payments']['authorizations'])) {
+            return [];
+        }
+
+        return $this->getPurchaseUnits()[0]['payments']['authorizations'];
+    }
+
+    /**
      * @return array|null
      */
     public function getCard()

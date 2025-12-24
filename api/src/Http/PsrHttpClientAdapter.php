@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Api\Http;
 
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Ring\Exception\ConnectException;
 use GuzzleHttp\Ring\Exception\RingException;
 use Http\Client\Exception\HttpException;
@@ -39,10 +40,13 @@ class PsrHttpClientAdapter implements HttpClientInterface
 
     /**
      * @param array $configuration
+     * @param ClientInterface $client
      */
-    public function __construct(array $configuration)
-    {
-        $this->client = (new ClientFactory())->getClient($configuration);
+    public function __construct(
+        array $configuration,
+        ?ClientInterface $client = null
+    ) {
+        $this->client = $client ?? (new ClientFactory())->getClient($configuration);
     }
 
     /**

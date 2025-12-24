@@ -5,5 +5,11 @@
     "psr-4": {
       "PsCheckout\\Api\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PsCheckout\\Tests\\Api\\Integration\\": "tests/Integration/",
+      "PsCheckout\\Tests\\Api\\Unit\\": "tests/Unit/"
+    }
   }
 }

@@ -36,8 +36,11 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 class SetDeclinedOrderStateActionTest extends BaseTestCase
 {
     private ?SetDeclinedOrderStateAction $setDeclinedOrderStateAction;
+
     private ?ChangeOrderStateAction $changeOrderStateAction;
+
     private ?OrderStateMapper $orderStateMapper;
+
     private ?PayPalOrderRepository $payPalOrderRepository;
 
     protected function setUp(): void
