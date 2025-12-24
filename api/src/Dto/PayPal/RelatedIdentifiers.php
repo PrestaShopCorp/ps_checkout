@@ -2,8 +2,6 @@
 
 namespace PsCheckout\Api\Dto\PayPal;
 
-use stdClass;
-
 /**
  * Identifiers related to a specific resource.
  */

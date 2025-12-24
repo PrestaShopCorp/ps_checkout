@@ -2,8 +2,6 @@
 
 namespace PsCheckout\Api\Dto\PayPal;
 
-use stdClass;
-
 /**
  * The details for the merchant who receives the funds and fulfills the order. The merchant is also
  * known as the payee.

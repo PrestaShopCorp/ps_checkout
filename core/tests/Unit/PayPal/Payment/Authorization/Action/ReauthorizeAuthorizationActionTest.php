@@ -8,23 +8,16 @@ use PsCheckout\Api\Dto\PayPal\LinkDescription;
 use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationLinkRelation;
 use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
 use PsCheckout\Api\Http\Exception\PayPalException;
-use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
-use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction;
-use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
-use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**

@@ -2,8 +2,6 @@
 
 namespace PsCheckout\Api\Dto\PayPal;
 
-use stdClass;
-
 /**
  * The request-related [HATEOAS link](/api/rest/responses/#hateoas-links) information.
  */

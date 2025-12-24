@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Api\Http;
 
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Ring\Exception\ConnectException;
 use GuzzleHttp\Ring\Exception\RingException;
 use Http\Client\Exception\HttpException;

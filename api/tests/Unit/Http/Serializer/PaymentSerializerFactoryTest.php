@@ -17,6 +17,9 @@ class PaymentSerializerFactoryTest extends TestCase
 {
     /**
      * @dataProvider requestPayloadDataProvider
+     *
+     * @param mixed $object
+     * @param array<string, mixed> $payload
      */
     public function testRequestSerializer($object, array $payload): void
     {
@@ -29,6 +32,9 @@ class PaymentSerializerFactoryTest extends TestCase
         $this->assertEquals(json_encode($payload), $data);
     }
 
+    /**
+     * @return array<string, array{object: mixed, payload: array<string, mixed>}>
+     */
     public function requestPayloadDataProvider(): array
     {
         return [
@@ -50,6 +56,9 @@ class PaymentSerializerFactoryTest extends TestCase
 
     /**
      * @dataProvider responsePayloadDataProvider
+     *
+     * @param class-string $class
+     * @param array<string, mixed> $payload
      */
     public function testResponseSerializer(string $class, array $payload): void
     {
@@ -64,6 +73,9 @@ class PaymentSerializerFactoryTest extends TestCase
         ]), true));
     }
 
+    /**
+     * @return array<string, array{class: class-string, payload: array<string, mixed>}>
+     */
     public function responsePayloadDataProvider(): array
     {
         return [

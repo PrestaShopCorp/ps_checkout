@@ -11,6 +11,7 @@ return (new Config())
     ->setRiskyAllowed(false)
     ->setRules([
         '@PSR2' => true,
+        'no_unused_imports' => true,
         'class_attributes_separation' => true,
         'blank_line_before_statement' => [
             'statements' => ['return', 'throw', 'continue', 'break', 'declare', 'exit'],

@@ -83,6 +83,9 @@ class PaymentAuthorizationResponseDto
      */
     private $payee;
 
+    /**
+     * @param LinkDescription[]|null $links
+     */
     public function __construct(
         string $id,
         string $status,

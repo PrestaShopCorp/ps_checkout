@@ -119,7 +119,32 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array
+     * @return array<int, array{
+     *     reference_id?: string,
+     *     amount?: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     *     payments?: array{
+     *         authorizations?: array<int, array{
+     *             id: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             create_time?: string,
+     *             update_time?: string,
+     *             expiration_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *         captures?: array<int, array<string, mixed>>,
+     *         refunds?: array<int, array<string, mixed>>,
+     *     },
+     * }>
      */
     public function getPurchaseUnits(): array
     {
@@ -169,9 +194,23 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array|null
+     * @return array{
+     *     id: string,
+     *     status: string,
+     *     status_details?: array{
+     *         reason: string,
+     *     },
+     *     create_time?: string,
+     *     update_time?: string,
+     *     expiration_time?: string,
+     *     links?: array<int, array{
+     *         rel: string,
+     *         href: string,
+     *         method: string,
+     *     }>
+     * }|null
      */
-    public function getAuthorization()
+    public function getAuthorization(): ?array
     {
         return $this->getPurchaseUnits()[0]['payments']['authorizations'][0] ?? null;
     }
@@ -180,13 +219,13 @@ class PayPalOrderResponse
      * @return array<int, array{
      *     id: string,
      *     status: string,
-     *     status_details: array{
+     *     status_details?: array{
      *         reason: string,
      *     },
-     *     create_time: string,
-     *     update_time: string,
-     *     expiration_time: string,
-     *     links: array<int, array{
+     *     create_time?: string,
+     *     update_time?: string,
+     *     expiration_time?: string,
+     *     links?: array<int, array{
      *         rel: string,
      *         href: string,
      *         method: string,

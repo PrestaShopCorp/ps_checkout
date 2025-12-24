@@ -3,27 +3,25 @@
 namespace PsCheckout\Tests\Api\Unit\Http;
 
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Dto\PayPal\Money;
-use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationStatus;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
 use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder;
 use PsCheckout\Api\Http\Exception\PayPalException;
-use Psr\Http\Message\ResponseInterface;
 use PsCheckout\Api\Http\PaymentHttpClient;
+use PsCheckout\Api\Http\PaymentHttpClientInterface;
+use Psr\Http\Message\ResponseInterface;
 use PsCheckout\Api\Http\Serializer\PaymentSerializerFactory;
 use Psr\Http\Client\ClientInterface;
 
 /**
- * @coversDefaultClass PaymentHttpClient
+ * @coversDefaultClass PaymentHttpClientInterface
  */
 class PaymentHttpClientTest extends TestCase
 {
     /**
-     * @var PaymentHttpClient
+     * @var PaymentHttpClientInterface
      */
     private $paymentHttpClient;
 
