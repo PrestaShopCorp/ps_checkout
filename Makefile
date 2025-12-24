@@ -20,7 +20,7 @@ down:
 	docker compose down --remove-orphans --volumes
 
 php-cs-fixer:
-	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/php-cs-fixer fix"
+	composer cs:fix
 
 autoindex:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout/vendor"

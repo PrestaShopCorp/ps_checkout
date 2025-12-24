@@ -1,15 +1,26 @@
 <?php
 
-$config = new PhpCsFixer\Config();
+declare(strict_types=1);
 
-$finder = $config->getFinder();
-$finder->in([__DIR__]); // This includes everything in the current directory (the root directory)
-$finder->notName('index.php');
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
-return $config->setRules([
-    '@PSR2' => true,
-    'class_attributes_separation' => true,
-    'blank_line_before_statement' => [
-        'statements' => ['return', 'throw', 'continue', 'break', 'declare', 'exit'],
-    ],
-]);
+return (new Config())
+    ->setParallelConfig(ParallelConfigFactory::detect())
+    ->setRiskyAllowed(false)
+    ->setRules([
+        '@PSR2' => true,
+        'class_attributes_separation' => true,
+        'blank_line_before_statement' => [
+            'statements' => ['return', 'throw', 'continue', 'break', 'declare', 'exit'],
+        ],
+    ])
+    // 💡 by default, Fixer looks for `*.php` files excluding `./vendor/` - here, you can groom this config
+    ->setFinder(
+        (new Finder())
+            // 💡 root folder to check
+            ->in(['api', 'core', 'infrastructure', 'presentation', 'utility'])
+            ->notName(['index.php'])
+    )
+;

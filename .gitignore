@@ -6,8 +6,10 @@ mysql
 vendor
 */vendor
 */.phpunit.result.cache
+.php-cs-fixer.cache
 */.php-cs-fixer.cache
 */.php_cs.cache
 **/.phpunit.result.cache
 .cloudflared.yml
 docker-compose.local.yml
+composer2.2.phar
