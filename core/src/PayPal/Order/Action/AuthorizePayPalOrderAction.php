@@ -30,6 +30,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
 {
@@ -63,13 +64,19 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
      */
     private $payPalOrderAuthorizationRepository;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         OrderHttpClientInterface $orderHttpClient,
         PayPalOrderCacheInterface $payPalOrderCache,
         EventHandlerInterface $paymentPendingEventHandler,
         EventHandlerInterface $paymentDeniedEventHandler,
         PayPalOrderProviderInterface $payPalOrderProvider,
-        PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository
+        PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository,
+        LoggerInterface $logger
     ) {
         $this->orderHttpClient = $orderHttpClient;
         $this->payPalOrderCache = $payPalOrderCache;
@@ -77,6 +84,7 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $this->paymentDeniedEventHandler = $paymentDeniedEventHandler;
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -100,6 +108,8 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $authorization = $payPalOrderResponse->getAuthorization();
 
         if (!$authorization) {
+            $this->logger->warning("Authorize response doesn't contain authorization info for order: " . $orderPayPal['id']);
+
             return $payPalOrderResponse;
         }
 
