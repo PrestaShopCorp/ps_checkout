@@ -28,7 +28,7 @@ autoindex:
 add-header-stamp:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt"
 
-lint: php-cs-fixer autoindex add-header-stamp
+lint: php-cs-fixer autoindex
 
 php-unit-api:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/api/tests/phpunit.xml --bootstrap=modules/ps_checkout/vendor/invertus/api/tests/bootstrap.php"
