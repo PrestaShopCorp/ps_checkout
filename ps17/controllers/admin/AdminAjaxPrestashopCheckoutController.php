@@ -1042,6 +1042,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
             $captureAuthorizationAction->execute($payPalOrderResponse);
         } catch (\Exception $e) {
+            \Sentry\captureException($e);
+
             $logger->error('Failed to capture authorization: ' . $e->getMessage());
 
             $this->exitWithResponse([

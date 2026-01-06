@@ -953,6 +953,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $loggerFileReader = $this->module->getService(LoggerFileReader::class);
             $loggerFileReader->validateFilename($filename);
         } catch (InvalidArgumentException $exception) {
+            \Sentry\captureException($exception);
+
             $this->exitWithResponse([
                 'status' => false,
                 'httpCode' => 400,
@@ -993,6 +995,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $applePayInstaller->setup();
         } catch (ApplePayInstallerException $e) {
+            \Sentry\captureException($e);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -1033,6 +1037,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
             $captureAuthorizationAction->execute($payPalOrderResponse);
         } catch (\Exception $e) {
+            \Sentry\captureException($e);
+
             $logger->error('Failed to capture authorization: ' . $e->getMessage());
 
             $this->exitWithResponse([
