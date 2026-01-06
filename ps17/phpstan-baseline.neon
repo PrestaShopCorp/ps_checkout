@@ -703,7 +703,7 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -2557,13 +2557,7 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_merge expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2575,7 +2569,13 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2779,7 +2779,7 @@ parameters:
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
@@ -3007,7 +3007,7 @@ parameters:
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
 
 		-
-			message: '#^Parameter \#1 \$number of function round expects float, float\|null given\.$#'
+			message: '#^Parameter \#1 \$num of function round expects float\|int, float\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
@@ -3229,13 +3229,13 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
@@ -3301,7 +3301,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
@@ -3331,13 +3331,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#2 \$cardType of class PsCheckout\\Core\\PayPal\\Order\\Response\\PayPalProcessorResponse constructor expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#2 \$cardType of class PsCheckout\\Core\\PayPal\\Order\\Response\\PayPalProcessorResponse constructor expects string\|null, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
@@ -3559,7 +3559,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Parameter \#1 \$str of function crc32 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function crc32 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
@@ -4315,7 +4315,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function crc32 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function crc32 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
@@ -4471,7 +4471,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
@@ -4489,13 +4489,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, array\|null given\.$#'
+			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
@@ -5119,7 +5119,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strip_tags expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strip_tags expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
@@ -5329,7 +5329,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
@@ -5509,7 +5509,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
@@ -5713,7 +5713,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
@@ -6253,15 +6253,15 @@ parameters:
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
-			message: '#^Parameter \#1 \$id of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
-			message: '#^Parameter \#1 \$input of function array_keys expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$id of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
@@ -6421,7 +6421,7 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strtoupper expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
@@ -6433,7 +6433,7 @@ parameters:
 			path: ../core/src/Util/CountryResolver.php
 
 		-
-			message: '#^Parameter \#2 \$property_name of function property_exists expects string, string\|null given\.$#'
+			message: '#^Parameter \#2 \$property of function property_exists expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Util/CountryResolver.php
@@ -7999,7 +7999,7 @@ parameters:
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
@@ -9751,7 +9751,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$input of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
+			message: '#^Parameter \#1 \$array of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
@@ -9811,7 +9811,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$str of function mb_strtolower expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function mb_strtolower expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
@@ -10489,7 +10489,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource given\.$#'
+			message: '#^Parameter \#1 \$array of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
@@ -10537,7 +10537,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#2 \$str of function explode expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
@@ -10687,7 +10687,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PsAccountRepository.php
 
 		-
-			message: '#^Parameter \#1 \$object of function method_exists expects object\|string, mixed given\.$#'
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PsAccountRepository.php
@@ -11155,7 +11155,7 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
@@ -12013,7 +12013,7 @@ parameters:
 			path: ../utility/src/Common/ArrayUtility.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strtoupper expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../utility/src/Common/ArrayUtility.php
