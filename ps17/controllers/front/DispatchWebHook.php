@@ -81,6 +81,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             return $dispatchWebHookProcessor->process($dispatchWebhookRequest);
         } catch (WebhookException $e) {
+            \Sentry\captureException($e);
+
             // Handle the exception
             $logger->error('Webhook Dispatcher error: ' . $e->getMessage());
             http_response_code($e->getCode());

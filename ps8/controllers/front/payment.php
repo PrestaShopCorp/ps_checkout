@@ -137,6 +137,8 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderResponse = $payPalOrderProvider->getById($this->paypalOrderId);
             $this->handleOrderStatus($payPalOrderResponse, $payPalOrder);
         } catch (Exception $exception) {
+            \Sentry\captureException($exception);
+
             $logger->error('Error processing PayPal Order: ' . $exception->getMessage());
             $this->context->smarty->assign('error', $exception->getMessage());
         }
