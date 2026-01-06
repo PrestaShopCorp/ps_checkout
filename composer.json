@@ -8,16 +8,18 @@
         "email": "contact@prestashop.com"
     },
     "require-dev": {
+        "php": "^8.1",
         "beberlei/composer-monorepo-plugin": "dev-master@dev",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0"
     },
     "config": {
         "prepend-autoloader": false,
         "allow-plugins": {
-            "beberlei/composer-monorepo-plugin": true
-        },
-        "platform": {
-            "php": "8.4"
+            "beberlei/composer-monorepo-plugin": true,
+            "phpstan/extension-installer": true
         }
     }
 }
