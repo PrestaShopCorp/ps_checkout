@@ -176,7 +176,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      *
      * @throws PsCheckoutException
      */
-    private function createPayPalOrder(array $payload, string $paypalRequestId = null, string $clientMetadataId = null): CreatePayPalOrderResponse
+    private function createPayPalOrder(array $payload, ?string $paypalRequestId = null, ?string $clientMetadataId = null): CreatePayPalOrderResponse
     {
         try {
             $response = $this->orderHttpClient->createOrder($payload, $paypalRequestId, $clientMetadataId);
