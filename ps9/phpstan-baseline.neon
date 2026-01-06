@@ -3235,31 +3235,7 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
 			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$id of method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:getById\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:getValue\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:set\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
