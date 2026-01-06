@@ -178,7 +178,7 @@ class PayPalOrderResponse
      *     status_details: array{
      *         reason: string
      *     },
-     *     expiration_time: string,
+     *     expiration_time: ?string,
      *     create_time: string,
      *     update_time: string
      * }|null

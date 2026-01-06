@@ -553,7 +553,7 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getAuthorization\(\) should return array\{status\: string, id\: string, invoice_id\: string, custom_id\: string, status_details\: array\{reason\: string\}, expiration_time\: string, create_time\: string, update_time\: string\}\|null but returns mixed\.$#'
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getAuthorization\(\) should return array\{status\: string, id\: string, invoice_id\: string, custom_id\: string, status_details\: array\{reason\: string\}, expiration_time\: string\|null, create_time\: string, update_time\: string\}\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -3251,12 +3251,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
-
-		-
-			message: '#^Offset ''expiration_time'' on array\{status\: string, id\: string, invoice_id\: string, custom_id\: string, status_details\: array\{reason\: string\}, expiration_time\: string, create_time\: string, update_time\: string\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
