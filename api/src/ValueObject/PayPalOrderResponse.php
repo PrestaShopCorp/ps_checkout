@@ -249,7 +249,19 @@ class PayPalOrderResponse
      */
     public function getVault()
     {
-        return $this->getPaymentSource()[key($this->getPaymentSource())]['attributes']['vault'] ?? null;
+        $paymentSourceArray = $this->getPaymentSource();
+
+        if (!is_array($paymentSourceArray)) {
+            return null;
+        }
+
+        $paymentSource = key($paymentSourceArray);
+
+        if ($paymentSource) {
+            return $paymentSourceArray[$paymentSource]['attributes']['vault'] ?? null;
+        }
+
+        return null;
     }
 
     /**
@@ -257,7 +269,19 @@ class PayPalOrderResponse
      */
     public function getCustomerId()
     {
-        return $this->getPaymentSource()[key($this->getPaymentSource())]['attributes']['vault']['customer']['id'] ?? null;
+        $paymentSourceArray = $this->getPaymentSource();
+
+        if (!is_array($paymentSourceArray)) {
+            return null;
+        }
+
+        $paymentSource = key($paymentSourceArray);
+
+        if ($paymentSource) {
+            return $paymentSourceArray[$paymentSource]['attributes']['vault']['customer']['id'] ?? null;
+        }
+
+        return null;
     }
 
     /**
