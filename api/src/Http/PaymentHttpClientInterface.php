@@ -50,6 +50,9 @@ interface PaymentHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
+
+    /**
+     * @param string $authorizationId
      *
      * @return PaymentAuthorizationResponseDto
      *
