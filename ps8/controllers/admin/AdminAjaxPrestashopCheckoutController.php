@@ -1004,11 +1004,16 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         /** @var PayPalOrderProviderInterface $payPalOrderProvider */
         $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $payPalOrderResponse = $payPalOrderProvider->getById($orderId);
 
             $captureAuthorizationAction->execute($payPalOrderResponse);
         } catch (\Exception $e) {
+            $logger->error('Failed to capture authorization: ' . $e->getMessage());
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
