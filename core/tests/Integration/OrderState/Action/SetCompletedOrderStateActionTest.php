@@ -40,7 +40,9 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 class SetCompletedOrderStateActionTest extends BaseTestCase
 {
     private ?SetCompletedOrderStateAction $setCompletedOrderStateAction;
+
     private ?OrderStateMapper $orderStateMapper;
+
     private ?PayPalOrderRepository $payPalOrderRepository;
 
     protected function setUp(): void

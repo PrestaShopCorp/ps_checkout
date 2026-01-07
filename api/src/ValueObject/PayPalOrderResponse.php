@@ -119,7 +119,32 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array
+     * @return array<int, array{
+     *     reference_id?: string,
+     *     amount?: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     *     payments?: array{
+     *         authorizations?: array<int, array{
+     *             id: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             create_time?: string,
+     *             update_time?: string,
+     *             expiration_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *         captures?: array<int, array<string, mixed>>,
+     *         refunds?: array<int, array<string, mixed>>,
+     *     },
+     * }>
      */
     public function getPurchaseUnits(): array
     {
@@ -170,22 +195,57 @@ class PayPalOrderResponse
 
     /**
      * @return array{
-     *     status: string,
      *     id: string,
-     *     invoice_id: string,
-     *     custom_id: string,
-     *     custom_id: string,
-     *     status_details: array{
-     *         reason: string
+     *     status: string,
+     *     status_details?: array{
+     *         reason: string,
      *     },
-     *     expiration_time: ?string,
-     *     create_time: string,
-     *     update_time: string
+     *     create_time?: string,
+     *     update_time?: string,
+     *     expiration_time?: string,
+     *     links?: array<int, array{
+     *         rel: string,
+     *         href: string,
+     *         method: string,
+     *     }>
      * }|null
      */
-    public function getAuthorization()
+    public function getAuthorization(): ?array
     {
         return $this->getPurchaseUnits()[0]['payments']['authorizations'][0] ?? null;
+    }
+
+    /**
+     * @return array<int, array{
+     *     id: string,
+     *     status: string,
+     *     status_details?: array{
+     *         reason: string,
+     *     },
+     *     create_time?: string,
+     *     update_time?: string,
+     *     expiration_time?: string,
+     *     links?: array<int, array{
+     *         rel: string,
+     *         href: string,
+     *         method: string,
+     *     }>
+     * }>
+     */
+    public function getAuthorizations(): array
+    {
+        $purchaseUnits = $this->getPurchaseUnits();
+        if (empty($purchaseUnits)) {
+            throw new \RuntimeException('No purchase units found in the order response.');
+        }
+        if (1 < count($purchaseUnits)) {
+            throw new \RuntimeException('More than one purchase unit found in the order response.');
+        }
+        if (!isset($purchaseUnits[0]['payments']['authorizations'])) {
+            return [];
+        }
+
+        return $this->getPurchaseUnits()[0]['payments']['authorizations'];
     }
 
     /**

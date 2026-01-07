@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Api\Http;
 
+use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\HttpException;
@@ -48,4 +50,20 @@ interface PaymentHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
+     *
+     * @return PaymentAuthorizationResponseDto
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto;
+
+    /**
+     * @param string $authorizationId
+     * @param ReauthorizeAuthorizationRequestDto $requestDto
+     *
+     * @return PaymentAuthorizationResponseDto
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto;
 }

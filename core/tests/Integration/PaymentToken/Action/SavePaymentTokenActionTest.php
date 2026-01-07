@@ -33,7 +33,9 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 class SavePaymentTokenActionTest extends BaseTestCase
 {
     private ?SavePaymentTokenAction $savePaymentTokenAction;
+
     private ?PayPalCustomerRepository $paypalCustomerRepository;
+
     private ?PaymentTokenRepository $paymentTokenRepository;
 
     protected function setUp(): void
