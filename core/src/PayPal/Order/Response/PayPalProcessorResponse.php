@@ -334,7 +334,11 @@ class PayPalProcessorResponse
     {
         $responseCode = self::PROCESSOR_RESPONSE_CODE;
 
-        return isset($responseCode[$this->responseCode]) ? $responseCode[$this->responseCode] : $this->responseCode;
+        if (!$this->responseCode) {
+            return null;
+        }
+
+        return $responseCode[$this->responseCode] ?? $this->responseCode;
     }
 
     /**

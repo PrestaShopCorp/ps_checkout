@@ -7,3 +7,6 @@ services:
     arguments:
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
       - '@PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter'
+
+  PsCheckout\Api\Http\Serializer\PaymentSerializerFactory:
+    class: PsCheckout\Api\Http\Serializer\PaymentSerializerFactory

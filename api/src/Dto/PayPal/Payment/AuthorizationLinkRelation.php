@@ -18,23 +18,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+namespace PsCheckout\Api\Dto\PayPal\Payment;
 
-if (!getenv('IS_CI')) {
-    define('_PS_IN_TEST_', true);
-}
+/**
+ * The status for the authorized payment.
+ */
+class AuthorizationLinkRelation
+{
+    public const SELF = 'self';
 
-require_once $projectDir . 'vendor/autoload.php';
+    public const CAPTURE = 'capture';
 
-if (file_exists($rootDirectory . 'vendor/autoload.php')) {
-    require_once $rootDirectory . 'vendor/autoload.php';
-}
+    public const VOID = 'void';
 
-if (file_exists($rootDirectory . 'autoload.php')) {
-    require_once $rootDirectory . 'autoload.php';
-}
-
-if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+    public const REAUTHORIZE = 'reauthorize';
 }

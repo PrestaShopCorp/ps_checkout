@@ -42,7 +42,7 @@ class PayPalError
      *
      * @throws PayPalException
      */
-    public function throwException(HttpException $previous = null)
+    public function throwException(?HttpException $previous)
     {
         switch ($this->message) {
             case 'ACTION_DOES_NOT_MATCH_INTENT':

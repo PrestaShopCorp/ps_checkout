@@ -2,6 +2,10 @@ services:
   _defaults:
     public: true
 
+  ps_checkout.payment.serializer:
+    class: Symfony\Component\Serializer\Serializer
+    factory: ['@PsCheckout\Api\Http\Serializer\PaymentSerializerFactory', 'create']
+
   PsCheckout\Api\Http\CheckoutHttpClient:
     class: PsCheckout\Api\Http\CheckoutHttpClient
     arguments:
@@ -21,6 +25,7 @@ services:
     class: PsCheckout\Api\Http\PaymentHttpClient
     arguments:
       - '@PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder'
+      - '@ps_checkout.payment.serializer'
 
   PsCheckout\Api\Http\WebhookHttpClient:
     class: PsCheckout\Api\Http\WebhookHttpClient

@@ -235,6 +235,12 @@ parameters:
 			path: ../api/src/Http/OrderShipmentTrackingHttpClientInterface.php
 
 		-
+			message: '#^Access to undefined constant Symfony\\Component\\Serializer\\Normalizer\\AbstractObjectNormalizer\:\:SKIP_NULL_VALUES\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
 			message: '#^Cannot access offset ''issue'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -269,6 +275,24 @@ parameters:
 			identifier: argument.type
 			count: 4
 			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
+			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
+			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClientInterface\:\:refundOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/PaymentHttpClientInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\PsrHttpClientAdapter\:\:__construct\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
@@ -367,12 +391,6 @@ parameters:
 			path: ../api/src/Http/WebhookHttpClientInterface.php
 
 		-
-			message: '#^Cannot access offset ''amount'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -382,18 +400,6 @@ parameters:
 			message: '#^Cannot access offset ''authentication_result'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset ''authorizations'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset ''captures'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
@@ -417,24 +423,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset ''items'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset ''payments'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -445,27 +433,15 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Cannot access offset ''status'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Cannot access offset ''value'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
 			message: '#^Cannot access offset ''vault'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Cannot access offset 0 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
@@ -535,20 +511,8 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getAuthorization\(\) should return array\{status\: string, id\: string, invoice_id\: string, custom_id\: string, status_details\: array\{reason\: string\}, expiration_time\: string, create_time\: string, update_time\: string\}\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getCapture\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getCapture\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -589,12 +553,6 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getItems\(\) should return array but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getLiabilityShift\(\) should return string\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -613,18 +571,6 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getOrderAmount\(\) should return array but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getOrderAmountValue\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPayerActionLink\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -637,20 +583,14 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPurchaseUnits\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPurchaseUnits\(\) should return array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> but returns array\.$#'
+			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getRefunds\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getRefunds\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -685,7 +625,25 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Offset ''authorizations'' might not exist on array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Offset ''items'' on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\} on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Offset ''payments'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -833,6 +791,30 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/ValueObject/TrackingResponse.php
+
+		-
+			message: '#^@coversDefaultClass references an invalid class PaymentHttpClientInterface\.$#'
+			identifier: phpunit.coversClass
+			count: 1
+			path: ../api/tests/Unit/Http/PaymentHttpClientTest.php
+
+		-
+			message: '#^@coversDefaultClass references an invalid class PaymentSerializerFactory\.$#'
+			identifier: phpunit.coversClass
+			count: 1
+			path: ../api/tests/Unit/Http/Serializer/PaymentSerializerFactoryTest.php
+
+		-
+			message: '#^Access to undefined constant Symfony\\Component\\Serializer\\Normalizer\\AbstractObjectNormalizer\:\:SKIP_NULL_VALUES\.$#'
+			identifier: classConstant.notFound
+			count: 2
+			path: ../api/tests/Unit/Http/Serializer/PaymentSerializerFactoryTest.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 2
+			path: ../api/tests/Unit/Http/Serializer/PaymentSerializerFactoryTest.php
 
 		-
 			message: '#^Binary operation "\." between int\<1, max\> and mixed results in an error\.$#'
@@ -2539,13 +2521,7 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_merge expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2557,7 +2533,13 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2761,7 +2743,7 @@ parameters:
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
@@ -2989,7 +2971,7 @@ parameters:
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
 
 		-
-			message: '#^Parameter \#1 \$number of function round expects float, float\|null given\.$#'
+			message: '#^Parameter \#1 \$num of function round expects float\|int, float\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
@@ -3211,37 +3193,31 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Offset ''expiration_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Offset ''update_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$id of method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:getById\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:getValue\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:set\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
@@ -3259,8 +3235,8 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
 
 		-
-			message: '#^Offset ''expiration_time'' on array\{status\: string, id\: string, invoice_id\: string, custom_id\: string, status_details\: array\{reason\: string\}, expiration_time\: string, create_time\: string, update_time\: string\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
 
@@ -3313,7 +3289,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
@@ -3343,13 +3319,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#2 \$cardType of class PsCheckout\\Core\\PayPal\\Order\\Response\\PayPalProcessorResponse constructor expects string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Parameter \#2 \$cardType of class PsCheckout\\Core\\PayPal\\Order\\Response\\PayPalProcessorResponse constructor expects string\|null, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
@@ -3511,18 +3487,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Cannot access offset ''items'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
-
-		-
-			message: '#^Cannot access offset ''reference_id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
-
-		-
 			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -3565,13 +3529,19 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Parameter \#1 \$purchaseUnit of method PsCheckout\\Core\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitAction\:\:updatePayments\(\) expects array, mixed given\.$#'
-			identifier: argument.type
+			message: '#^Offset ''items'' does not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Parameter \#1 \$str of function crc32 expects string, string\|false given\.$#'
+			message: '#^Offset ''reference_id'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
+
+		-
+			message: '#^Parameter \#1 \$string of function crc32 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
@@ -4327,7 +4297,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function crc32 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function crc32 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/CreatePayPalOrderProcessor.php
@@ -4417,6 +4387,18 @@ parameters:
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
+			message: '#^Offset ''purchase_units'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Offset ''shipping'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
 			message: '#^Parameter \#1 \$array1 of static method PsCheckout\\Utility\\Common\\ArrayUtility\:\:arrayRecursiveDiff\(\) expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4444,12 +4426,6 @@ parameters:
 			message: '#^Parameter \#2 \$array2 of static method PsCheckout\\Utility\\Common\\ArrayUtility\:\:arrayRecursiveDiff\(\) expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 2
-			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
-
-		-
-			message: '#^Part \$purchaseUnitReferenceId \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
@@ -4483,7 +4459,7 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#1 \$arr1 of function array_replace_recursive expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
@@ -4501,13 +4477,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#2 \$arr2 of function array_replace_recursive expects array, array\|null given\.$#'
+			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
@@ -5131,7 +5107,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strip_tags expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strip_tags expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Builder/Node/TrackingItemsNodeBuilder.php
@@ -5341,7 +5317,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../core/src/PayPal/ShippingTracking/Cache/ShippingTrackingCache.php
@@ -5521,7 +5497,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ExternalShipmentProcessor.php
@@ -5725,7 +5701,7 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
 
 		-
-			message: '#^Parameter \#1 \$str of function md5 expects string, string\|false given\.$#'
+			message: '#^Parameter \#1 \$string of function md5 expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/ShippingTracking/Processor/ShipmentProcessor.php
@@ -6265,15 +6241,15 @@ parameters:
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
-			message: '#^Parameter \#1 \$id of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
-			message: '#^Parameter \#1 \$input of function array_keys expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$id of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 
 		-
@@ -6433,7 +6409,7 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strtoupper expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
@@ -6445,7 +6421,7 @@ parameters:
 			path: ../core/src/Util/CountryResolver.php
 
 		-
-			message: '#^Parameter \#2 \$property_name of function property_exists expects string, string\|null given\.$#'
+			message: '#^Parameter \#2 \$property of function property_exists expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Util/CountryResolver.php
@@ -8011,7 +7987,7 @@ parameters:
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, mixed given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
@@ -8061,6 +8037,12 @@ parameters:
 		-
 			message: '#^Method AmountBreakdownNodeTest\:\:testBuild\(\) has parameter \$expected with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/AmountBreakdownNodeTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/AmountBreakdownNodeTest.php
 
@@ -8857,6 +8839,12 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
 
 		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
+			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 3
@@ -9076,6 +9064,12 @@ parameters:
 			message: '#^Method PsCheckout\\Tests\\Unit\\WebhookDispatcher\\Validator\\BodyValuesValidatorTest\:\:testItThrowsExceptionForMissingRequiredFields\(\) has parameter \$bodyValues with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
+			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
 			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
 
 		-
@@ -9763,7 +9757,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$input of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
+			message: '#^Parameter \#1 \$array of function array_filter expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
@@ -9823,7 +9817,7 @@ parameters:
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
 
 		-
-			message: '#^Parameter \#1 \$str of function mb_strtolower expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function mb_strtolower expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
@@ -10501,7 +10495,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource given\.$#'
+			message: '#^Parameter \#1 \$array of function end expects array\|object, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
@@ -10549,7 +10543,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#2 \$str of function explode expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
@@ -10699,7 +10693,7 @@ parameters:
 			path: ../infrastructure/src/Repository/PsAccountRepository.php
 
 		-
-			message: '#^Parameter \#1 \$object of function method_exists expects object\|string, mixed given\.$#'
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Repository/PsAccountRepository.php
@@ -11167,7 +11161,7 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
 
 		-
-			message: '#^Parameter \#1 \$array_arg of function key expects array\|object, array\|null given\.$#'
+			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
@@ -11191,12 +11185,6 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenterInterface.php
 
 		-
-			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 2
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
 			message: '#^Binary operation "\+\=" between float and mixed results in an error\.$#'
 			identifier: assignOp.invalid
 			count: 2
@@ -11209,43 +11197,7 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
 
 		-
-			message: '#^Cannot access offset ''amount'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Cannot access offset ''captures'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Cannot access offset ''payments'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
 			message: '#^Cannot access offset ''paypal_fee'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
@@ -11263,16 +11215,10 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
 
 		-
-			message: '#^Part \$currency \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 3
+			message: '#^Offset ''amount'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\: non\-empty\-array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 2
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
 			message: '#^Binary operation "\+\=" between \(float\|int\) and mixed results in an error\.$#'
@@ -11284,24 +11230,6 @@ parameters:
 			message: '#^Binary operation "\-" between mixed and \(float\|int\) results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''amount'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''captures'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''create_time'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
@@ -11323,21 +11251,9 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
 			message: '#^Cannot access offset ''net_amount'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''payments'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
@@ -11347,27 +11263,9 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
-			message: '#^Cannot access offset ''refunds'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''seller_payable_breakdown'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Cannot access offset ''seller_receivable_breakdown'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
 			message: '#^Cannot access offset ''status'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
@@ -11426,12 +11324,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$dispute_categories of method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderTransactionPresenter\:\:getDisputeCategoriesValues\(\) expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Parameter \#1 \$payment of method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderTransactionPresenter\:\:getSellerProtection\(\) expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
@@ -12025,7 +11917,7 @@ parameters:
 			path: ../utility/src/Common/ArrayUtility.php
 
 		-
-			message: '#^Parameter \#1 \$str of function strtoupper expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../utility/src/Common/ArrayUtility.php

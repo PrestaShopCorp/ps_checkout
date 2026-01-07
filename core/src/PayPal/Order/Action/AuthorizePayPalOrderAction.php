@@ -30,6 +30,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
 {
@@ -63,13 +64,19 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
      */
     private $payPalOrderAuthorizationRepository;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         OrderHttpClientInterface $orderHttpClient,
         PayPalOrderCacheInterface $payPalOrderCache,
         EventHandlerInterface $paymentPendingEventHandler,
         EventHandlerInterface $paymentDeniedEventHandler,
         PayPalOrderProviderInterface $payPalOrderProvider,
-        PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository
+        PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository,
+        LoggerInterface $logger
     ) {
         $this->orderHttpClient = $orderHttpClient;
         $this->payPalOrderCache = $payPalOrderCache;
@@ -77,6 +84,7 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $this->paymentDeniedEventHandler = $paymentDeniedEventHandler;
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -88,24 +96,28 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
             throw new PsCheckoutException(sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()), PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
         }
 
-        $response = $this->orderHttpClient->authorizeOrder($payPalOrder->getId(), []);
+        $orderId = $payPalOrder->getId();
+
+        $response = $this->orderHttpClient->authorizeOrder($orderId, []);
 
         $orderPayPal = json_decode($response->getBody(), true);
-        $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);
+        $cachedOrder = $this->payPalOrderCache->getValue($orderId);
 
-        $this->payPalOrderCache->set($orderPayPal['id'], array_replace_recursive($cachedOrder, $orderPayPal));
+        $this->payPalOrderCache->set($orderId, array_replace_recursive($cachedOrder, $orderPayPal));
 
-        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderPayPal['id']);
+        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
 
         $authorization = $payPalOrderResponse->getAuthorization();
 
         if (!$authorization) {
+            $this->logger->warning("Authorize response doesn't contain authorization info for order: " . $orderId);
+
             return $payPalOrderResponse;
         }
 
         $payPalAuthorization = new PayPalOrderAuthorization(
             $authorization['id'],
-            $orderPayPal['id'],
+            $orderId,
             $authorization['status'],
             $authorization['expiration_time'],
             $authorization['create_time'],

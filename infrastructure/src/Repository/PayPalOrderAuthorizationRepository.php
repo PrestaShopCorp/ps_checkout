@@ -70,7 +70,7 @@ class PayPalOrderAuthorizationRepository implements PayPalOrderAuthorizationRepo
     public function getById(string $payPalOrderAuthorizationId): ?PayPalOrderAuthorization
     {
         $query = new \DbQuery();
-        $query->select('*')
+        $query->select('id, id_order, status, expiration_time, create_time, update_time')
             ->from(self::TABLE_NAME)
             ->where('id = "' . pSQL($payPalOrderAuthorizationId) . '"');
 

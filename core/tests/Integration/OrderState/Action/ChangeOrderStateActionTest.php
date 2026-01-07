@@ -32,7 +32,9 @@ use PsCheckout\Infrastructure\Repository\OrderStateRepository;
 class ChangeOrderStateActionTest extends BaseTestCase
 {
     private ?OrderStateMapper $orderStateMapper;
+
     private ?OrderStateRepository $orderStateRepository;
+
     private ?ChangeOrderStateAction $changeOrderStateAction;
 
     protected function setUp(): void
