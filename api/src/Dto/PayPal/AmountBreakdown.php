@@ -75,10 +75,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps item_total
+     * @return self
      */
-    public function setItemTotal(?Money $itemTotal): void
+    public function setItemTotal(?Money $itemTotal): self
     {
         $this->itemTotal = $itemTotal;
+
+        return $this;
     }
 
     /**
@@ -95,10 +98,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps shipping
+     * @return self
      */
-    public function setShipping(?Money $shipping): void
+    public function setShipping(?Money $shipping): self
     {
         $this->shipping = $shipping;
+
+        return $this;
     }
 
     /**
@@ -115,10 +121,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps handling
+     * @return self
      */
-    public function setHandling(?Money $handling): void
+    public function setHandling(?Money $handling): self
     {
         $this->handling = $handling;
+
+        return $this;
     }
 
     /**
@@ -135,10 +144,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps tax_total
+     * @return self
      */
-    public function setTaxTotal(?Money $taxTotal): void
+    public function setTaxTotal(?Money $taxTotal): self
     {
         $this->taxTotal = $taxTotal;
+
+        return $this;
     }
 
     /**
@@ -155,10 +167,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps insurance
+     * @return self
      */
-    public function setInsurance(?Money $insurance): void
+    public function setInsurance(?Money $insurance): self
     {
         $this->insurance = $insurance;
+
+        return $this;
     }
 
     /**
@@ -175,10 +190,13 @@ class AmountBreakdown
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps shipping_discount
+     * @return self
      */
-    public function setShippingDiscount(?Money $shippingDiscount): void
+    public function setShippingDiscount(?Money $shippingDiscount): self
     {
         $this->shippingDiscount = $shippingDiscount;
+
+        return $this;
     }
 
     /**
@@ -197,9 +215,12 @@ class AmountBreakdown
      * the PayPal REST APIs Currency Codes.
      *
      * @maps discount
+     * @return self
      */
-    public function setDiscount(?Money $discount): void
+    public function setDiscount(?Money $discount): self
     {
         $this->discount = $discount;
+
+        return $this;
     }
 }

@@ -53,9 +53,12 @@ class BlikLevel0PaymentObject
      *
      * @required
      * @maps auth_code
+     * @return self
      */
-    public function setAuthCode(string $authCode): void
+    public function setAuthCode(string $authCode): self
     {
         $this->authCode = $authCode;
+
+        return $this;
     }
 }

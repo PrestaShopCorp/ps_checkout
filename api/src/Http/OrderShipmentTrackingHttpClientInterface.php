@@ -20,11 +20,23 @@
 
 namespace PsCheckout\Api\Http;
 
+use PsCheckout\Api\Dto\PayPal\Order\OrderTrackerRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderTrackerResponseDto;
 use Psr\Http\Message\ResponseInterface;
 
 interface OrderShipmentTrackingHttpClientInterface
 {
-    public function addTracking(array $payload): ResponseInterface;
-    
+    /**
+     * @param OrderTrackerRequestDto $payload
+     * @return OrderTrackerResponseDto
+     */
+    public function addTracking(OrderTrackerRequestDto $payload): OrderTrackerResponseDto;
+
+    /**
+     * @param string $trackerId
+     * @param array<string, mixed> $payload
+     *
+     * @return ResponseInterface
+     */
     public function updateTracking(string $trackerId, array $payload): ResponseInterface;
 }

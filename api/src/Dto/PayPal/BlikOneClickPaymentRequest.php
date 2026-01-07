@@ -67,10 +67,13 @@ class BlikOneClickPaymentRequest
      * The 6-digit code used to authenticate a consumer within BLIK.
      *
      * @maps auth_code
+     * @return self
      */
-    public function setAuthCode(?string $authCode): void
+    public function setAuthCode(?string $authCode): self
     {
         $this->authCode = $authCode;
+
+        return $this;
     }
 
     /**
@@ -90,10 +93,13 @@ class BlikOneClickPaymentRequest
      *
      * @required
      * @maps consumer_reference
+     * @return self
      */
-    public function setConsumerReference(string $consumerReference): void
+    public function setConsumerReference(string $consumerReference): self
     {
         $this->consumerReference = $consumerReference;
+
+        return $this;
     }
 
     /**
@@ -112,10 +118,13 @@ class BlikOneClickPaymentRequest
      * multiple registered bank accounts.
      *
      * @maps alias_label
+     * @return self
      */
-    public function setAliasLabel(?string $aliasLabel): void
+    public function setAliasLabel(?string $aliasLabel): self
     {
         $this->aliasLabel = $aliasLabel;
+
+        return $this;
     }
 
     /**
@@ -134,9 +143,12 @@ class BlikOneClickPaymentRequest
      * merchant. Used only in conjunction with a Consumer Reference.
      *
      * @maps alias_key
+     * @return self
      */
-    public function setAliasKey(?string $aliasKey): void
+    public function setAliasKey(?string $aliasKey): self
     {
         $this->aliasKey = $aliasKey;
+
+        return $this;
     }
 }

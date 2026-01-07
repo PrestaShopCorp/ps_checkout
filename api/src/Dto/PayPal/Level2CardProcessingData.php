@@ -55,10 +55,13 @@ class Level2CardProcessingData
      * for Amex), and the original invoice ID will still be displayed in your existing reports.
      *
      * @maps invoice_id
+     * @return self
      */
-    public function setInvoiceId(?string $invoiceId): void
+    public function setInvoiceId(?string $invoiceId): self
     {
         $this->invoiceId = $invoiceId;
+
+        return $this;
     }
 
     /**
@@ -75,9 +78,12 @@ class Level2CardProcessingData
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps tax_total
+     * @return self
      */
-    public function setTaxTotal(?Money $taxTotal): void
+    public function setTaxTotal(?Money $taxTotal): self
     {
         $this->taxTotal = $taxTotal;
+
+        return $this;
     }
 }

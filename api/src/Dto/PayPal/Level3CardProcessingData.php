@@ -71,10 +71,13 @@ class Level3CardProcessingData
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps shipping_amount
+     * @return self
      */
-    public function setShippingAmount(?Money $shippingAmount): void
+    public function setShippingAmount(?Money $shippingAmount): self
     {
         $this->shippingAmount = $shippingAmount;
+
+        return $this;
     }
 
     /**
@@ -91,10 +94,13 @@ class Level3CardProcessingData
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps duty_amount
+     * @return self
      */
-    public function setDutyAmount(?Money $dutyAmount): void
+    public function setDutyAmount(?Money $dutyAmount): self
     {
         $this->dutyAmount = $dutyAmount;
+
+        return $this;
     }
 
     /**
@@ -111,10 +117,13 @@ class Level3CardProcessingData
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps discount_amount
+     * @return self
      */
-    public function setDiscountAmount(?Money $discountAmount): void
+    public function setDiscountAmount(?Money $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
+
+        return $this;
     }
 
     /**
@@ -137,10 +146,13 @@ class Level3CardProcessingData
      * controls-the-autocomplete-attribute).
      *
      * @maps shipping_address
+     * @return self
      */
-    public function setShippingAddress(?Address $shippingAddress): void
+    public function setShippingAddress(?Address $shippingAddress): self
     {
         $this->shippingAddress = $shippingAddress;
+
+        return $this;
     }
 
     /**
@@ -157,10 +169,13 @@ class Level3CardProcessingData
      * Use this field to specify the postal code of the shipping location.
      *
      * @maps ships_from_postal_code
+     * @return self
      */
-    public function setShipsFromPostalCode(?string $shipsFromPostalCode): void
+    public function setShipsFromPostalCode(?string $shipsFromPostalCode): self
     {
         $this->shipsFromPostalCode = $shipsFromPostalCode;
+
+        return $this;
     }
 
     /**
@@ -183,9 +198,12 @@ class Level3CardProcessingData
      * @maps line_items
      *
      * @param LineItem[]|null $lineItems
+     * @return self
      */
-    public function setLineItems(?array $lineItems): void
+    public function setLineItems(?array $lineItems): self
     {
         $this->lineItems = $lineItems;
+
+        return $this;
     }
 }

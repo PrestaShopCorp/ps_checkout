@@ -1,0 +1,28 @@
+<?php
+
+namespace PsCheckout\Api\Dto\PayPal;
+
+/**
+ * Indicates whether the transaction is eligible for seller protection. For information, see [PayPal
+ * Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
+ */
+class SellerProtectionStatus
+{
+    /**
+     * Your PayPal balance remains intact if the customer claims that they did not receive an item or the
+     * account holder claims that they did not authorize the payment.
+     */
+    public const ELIGIBLE = 'ELIGIBLE';
+
+    /**
+     * Your PayPal balance remains intact if the customer claims that they did not receive an item.
+     */
+    public const PARTIALLY_ELIGIBLE = 'PARTIALLY_ELIGIBLE';
+
+    /**
+     * This transaction is not eligible for seller protection.
+     */
+    public const NOT_ELIGIBLE = 'NOT_ELIGIBLE';
+
+    public const STATUSES = [self::ELIGIBLE, self::PARTIALLY_ELIGIBLE, self::NOT_ELIGIBLE];
+}

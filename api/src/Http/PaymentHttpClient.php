@@ -22,8 +22,15 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
+use PsCheckout\Api\Dto\PayPal\ErrorResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\CaptureRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\CaptureResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\GetAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\RefundRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\RefundResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\VoidAuthorizationResponseDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Client\ClientInterface;
@@ -58,8 +65,8 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
             return parent::sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body);
+            $body = $this->serializer->deserialize($response->getBody(), ErrorResponseDto::class, JsonEncoder::FORMAT);
+            $message = $body->extractMessage();
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
@@ -72,102 +79,62 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     /**
      * {@inheritdoc}
      */
-    public function refundOrder(string $captureId, array $payload): ResponseInterface
+    public function refundOrder(string $captureId, RefundRequestDto $payload): RefundResponseDto
     {
-        $body = $this->generatePayloadString($payload);
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
 
-        return $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], $body));
+        $response = $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], $body));
+
+        return $this->serializer->deserialize($response->getBody(), RefundResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface
+    public function captureAuthorization(string $authorizationId, ?CaptureRequestDto $payload = null): CaptureResponseDto
     {
-        $payloadString = !empty($payload) && json_encode($payload) ? json_encode($payload) : '{}';
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
 
-        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $payloadString));
+        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $body));
+
+        return $this->serializer->deserialize($response->getBody(), CaptureResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function voidAuthorization(string $authorizationId, array $payload = []): ResponseInterface
+    public function voidAuthorization(string $authorizationId): VoidAuthorizationResponseDto
     {
-        $body = $this->generatePayloadString($payload);
+        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/void"));
 
-        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/void", [], $body));
+        return $this->serializer->deserialize($response->getBody(), VoidAuthorizationResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * @inheritDoc
      */
-    public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto
+    public function getAuthorization(string $authorizationId): GetAuthorizationResponseDto
     {
         $response = $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
+        return $this->serializer->deserialize($response->getBody(), GetAuthorizationResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * @inheritDoc
      */
-    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto
+    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeRequestDto $requestDto = null): ReauthorizeResponseDto
     {
-        $payload = $this->serializer->serialize($requestDto ?? [], JsonEncoder::FORMAT, [
+        $payload = $this->serializer->serialize($requestDto, JsonEncoder::FORMAT, [
             AbstractObjectNormalizer::SKIP_NULL_VALUES => true
         ]);
 
         $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], $payload));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
-    }
-
-    /**
-     * @param array $body
-     *
-     * @return string
-     */
-    private function extractMessage(array $body): string
-    {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
-            return $body['details'][0]['issue'];
-        }
-
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
-            return $body['error'];
-        }
-
-        if (isset($body['message']) && is_array($body['message'])) {
-            return implode("\n", $body['message']);
-        }
-
-        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
-            return $body['message'];
-        }
-
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
-            return $body['name'];
-        }
-
-        return '';
-    }
-
-    /**
-     * @param array<mixed> $payload
-     * @return string
-     */
-    private function generatePayloadString(array $payload): string
-    {
-        $body = '{}';
-        if (!empty($payload)) {
-            $encoded = json_encode($payload);
-            if ($encoded === false) {
-                throw new \RuntimeException('Failed to encode payload to JSON');
-            }
-            $body = $encoded;
-        }
-
-        return $body;
+        return $this->serializer->deserialize($response->getBody(), ReauthorizeResponseDto::class, JsonEncoder::FORMAT);
     }
 }

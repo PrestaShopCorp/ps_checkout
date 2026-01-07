@@ -21,7 +21,11 @@
 namespace PsCheckout\Api\Dto\PayPal\Order;
 
 use PsCheckout\Api\Dto\PayPal\LinkDescription;
+use PsCheckout\Api\Dto\PayPal\OrderIntent;
+use PsCheckout\Api\Dto\PayPal\OrderStatus;
 use PsCheckout\Api\Dto\PayPal\Payer;
+use PsCheckout\Api\Dto\PayPal\PaymentSourceResponse;
+use PsCheckout\Api\Dto\PayPal\PurchaseUnit;
 
 /**
  * The order details.
@@ -49,7 +53,7 @@ class CreateOrderResponseDto
     private $paymentSource;
 
     /**
-     * @var string|null
+     * @var value-of<OrderIntent::INTENTS>|null
      */
     private $intent;
 
@@ -64,7 +68,7 @@ class CreateOrderResponseDto
     private $purchaseUnits;
 
     /**
-     * @var string|null
+     * @var value-of<OrderStatus::STATUSES>|null
      */
     private $status;
 
@@ -91,10 +95,13 @@ class CreateOrderResponseDto
      * provides guidance but does not reject all invalid dates.
      *
      * @maps create_time
+     * @return self
      */
-    public function setCreateTime(?string $createTime): void
+    public function setCreateTime(?string $createTime): self
     {
         $this->createTime = $createTime;
+
+        return $this;
     }
 
     /**
@@ -115,10 +122,13 @@ class CreateOrderResponseDto
      * provides guidance but does not reject all invalid dates.
      *
      * @maps update_time
+     * @return self
      */
-    public function setUpdateTime(?string $updateTime): void
+    public function setUpdateTime(?string $updateTime): self
     {
         $this->updateTime = $updateTime;
+
+        return $this;
     }
 
     /**
@@ -135,10 +145,13 @@ class CreateOrderResponseDto
      * The ID of the order.
      *
      * @maps id
+     * @return self
      */
-    public function setId(?string $id): void
+    public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -155,16 +168,21 @@ class CreateOrderResponseDto
      * The payment source used to fund the payment.
      *
      * @maps payment_source
+     * @return self
      */
-    public function setPaymentSource(?PaymentSourceResponse $paymentSource): void
+    public function setPaymentSource(?PaymentSourceResponse $paymentSource): self
     {
         $this->paymentSource = $paymentSource;
+
+        return $this;
     }
 
     /**
      * Returns Intent.
      * The intent to either capture payment immediately or authorize a payment for an order after order
      * creation.
+     *
+     * @return value-of<OrderIntent::INTENTS>|null
      */
     public function getIntent(): ?string
     {
@@ -176,11 +194,16 @@ class CreateOrderResponseDto
      * The intent to either capture payment immediately or authorize a payment for an order after order
      * creation.
      *
+     * @param value-of<OrderIntent::INTENTS>|null $intent
+     *
      * @maps intent
+     * @return self
      */
-    public function setIntent(?string $intent): void
+    public function setIntent(?string $intent): self
     {
         $this->intent = $intent;
+
+        return $this;
     }
 
     /**
@@ -205,10 +228,13 @@ class CreateOrderResponseDto
      * @deprecated
      *
      * @maps payer
+     * @return self
      */
-    public function setPayer(?Payer $payer): void
+    public function setPayer(?Payer $payer): self
     {
         $this->payer = $payer;
+
+        return $this;
     }
 
     /**
@@ -233,15 +259,20 @@ class CreateOrderResponseDto
      * @maps purchase_units
      *
      * @param PurchaseUnit[]|null $purchaseUnits
+     * @return self
      */
-    public function setPurchaseUnits(?array $purchaseUnits): void
+    public function setPurchaseUnits(?array $purchaseUnits): self
     {
         $this->purchaseUnits = $purchaseUnits;
+
+        return $this;
     }
 
     /**
      * Returns Status.
      * The order status.
+     *
+     * @return value-of<OrderStatus::STATUSES>|null
      */
     public function getStatus(): ?string
     {
@@ -252,11 +283,16 @@ class CreateOrderResponseDto
      * Sets Status.
      * The order status.
      *
+     * @param value-of<OrderStatus::STATUSES>|null $status
+     *
      * @maps status
+     * @return self
      */
-    public function setStatus(?string $status): void
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -291,9 +327,12 @@ class CreateOrderResponseDto
      * @maps links
      *
      * @param LinkDescription[]|null $links
+     * @return self
      */
-    public function setLinks(?array $links): void
+    public function setLinks(?array $links): self
     {
         $this->links = $links;
+
+        return $this;
     }
 }

@@ -70,10 +70,13 @@ class OrderBillingPlan
      * @maps billing_cycles
      *
      * @param BillingCycle[] $billingCycles
+     * @return self
      */
-    public function setBillingCycles(array $billingCycles): void
+    public function setBillingCycles(array $billingCycles): self
     {
         $this->billingCycles = $billingCycles;
+
+        return $this;
     }
 
     /**
@@ -90,10 +93,13 @@ class OrderBillingPlan
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps setup_fee
+     * @return self
      */
-    public function setSetupFee(?Money $setupFee): void
+    public function setSetupFee(?Money $setupFee): self
     {
         $this->setupFee = $setupFee;
+
+        return $this;
     }
 
     /**
@@ -110,9 +116,12 @@ class OrderBillingPlan
      * Name of the recurring plan.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 }

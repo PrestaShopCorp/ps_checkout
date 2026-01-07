@@ -62,10 +62,13 @@ class PricingScheme
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps price
+     * @return self
      */
-    public function setPrice(?Money $price): void
+    public function setPrice(?Money $price): self
     {
         $this->price = $price;
+
+        return $this;
     }
 
     /**
@@ -83,10 +86,13 @@ class PricingScheme
      *
      * @required
      * @maps pricing_model
+     * @return self
      */
-    public function setPricingModel(string $pricingModel): void
+    public function setPricingModel(string $pricingModel): self
     {
         $this->pricingModel = $pricingModel;
+
+        return $this;
     }
 
     /**
@@ -103,9 +109,12 @@ class PricingScheme
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps reload_threshold_amount
+     * @return self
      */
-    public function setReloadThresholdAmount(?Money $reloadThresholdAmount): void
+    public function setReloadThresholdAmount(?Money $reloadThresholdAmount): self
     {
         $this->reloadThresholdAmount = $reloadThresholdAmount;
+
+        return $this;
     }
 }

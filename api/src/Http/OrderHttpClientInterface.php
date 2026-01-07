@@ -20,6 +20,14 @@
 
 namespace PsCheckout\Api\Http;
 
+use PsCheckout\Api\Dto\PayPal\Order\CreateOrderRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\CreateOrderResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\GetOrderResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderAuthorizeRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderAuthorizeResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderCaptureRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderCaptureResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\UpdateOrderResponseDto;
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\HttpException;
@@ -30,55 +38,55 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 interface OrderHttpClientInterface
 {
     /**
-     * @param array $payload
+     * @param CreateOrderRequestDto $payload
      * @param string|null $requestId
      * @param string|null $clientMetadataId
      *
-     * @return ResponseInterface
+     * @return CreateOrderResponseDto
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function createOrder(array $payload, ?string $requestId, ?string $clientMetadataId): ResponseInterface;
+    public function createOrder(CreateOrderRequestDto $payload, ?string $requestId, ?string $clientMetadataId): CreateOrderResponseDto;
 
     /**
      * @param string $orderId
      *
-     * @return ResponseInterface
+     * @return GetOrderResponseDto
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function fetchOrder(string $orderId): ResponseInterface;
+    public function fetchOrder(string $orderId): GetOrderResponseDto;
 
     /**
-     * @param array $payload
+     * @param OrderCaptureRequestDto $payload
      * @param string $orderId
      * @param string|null $requestId
      * @param string|null $clientMetadataId
 
      *
-     * @return ResponseInterface
+     * @return OrderCaptureResponseDto
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function captureOrder(string $orderId, array $payload, ?string $requestId = null, ?string $clientMetadataId = null): ResponseInterface;
+    public function captureOrder(string $orderId, ?OrderCaptureRequestDto $payload = null, ?string $requestId = null, ?string $clientMetadataId = null): OrderCaptureResponseDto;
 
     /**
      * @param array $payload
      * @param string $orderId
      *
-     * @return ResponseInterface
+     * @return UpdateOrderResponseDto
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function updateOrder(string $orderId, array $payload): ResponseInterface;
+    public function updateOrder(string $orderId, array $payload): UpdateOrderResponseDto;
 
     /**
-     * @param array $payload
+     * @param OrderAuthorizeRequestDto $payload
      * @param string $orderId
      *
-     * @return ResponseInterface
+     * @return OrderAuthorizeResponseDto
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function authorizeOrder(string $orderId, array $payload): ResponseInterface;
+    public function authorizeOrder(string $orderId, OrderAuthorizeRequestDto $payload): OrderAuthorizeResponseDto;
 }

@@ -49,10 +49,13 @@ class Name
      * When the party is a person, the party's given, or first, name.
      *
      * @maps given_name
+     * @return self
      */
-    public function setGivenName(?string $givenName): void
+    public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
+
+        return $this;
     }
 
     /**
@@ -73,9 +76,12 @@ class Name
      * or mother's, surname.
      *
      * @maps surname
+     * @return self
      */
-    public function setSurname(?string $surname): void
+    public function setSurname(?string $surname): self
     {
         $this->surname = $surname;
+
+        return $this;
     }
 }

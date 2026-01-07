@@ -120,10 +120,14 @@ class PaymentSource
      * Integration Guide*.
      *
      * @maps card
+     *
+     * @return self
      */
-    public function setCard(?CardRequest $card): void
+    public function setCard(?CardRequest $card): self
     {
         $this->card = $card;
+
+        return $this;
     }
 
     /**
@@ -140,10 +144,13 @@ class PaymentSource
      * The tokenized payment source to fund a payment.
      *
      * @maps token
+     * @return self
      */
-    public function setToken(?Token $token): void
+    public function setToken(?Token $token): self
     {
         $this->token = $token;
+
+        return $this;
     }
 
     /**
@@ -160,10 +167,13 @@ class PaymentSource
      * A resource that identifies a PayPal Wallet is used for payment.
      *
      * @maps paypal
+     * @return self
      */
-    public function setPaypal(?PaypalWallet $paypal): void
+    public function setPaypal(?PaypalWallet $paypal): self
     {
         $this->paypal = $paypal;
+
+        return $this;
     }
 
     /**
@@ -180,10 +190,13 @@ class PaymentSource
      * Information needed to pay using Bancontact.
      *
      * @maps bancontact
+     * @return self
      */
-    public function setBancontact(?BancontactPaymentRequest $bancontact): void
+    public function setBancontact(?BancontactPaymentRequest $bancontact): self
     {
         $this->bancontact = $bancontact;
+
+        return $this;
     }
 
     /**
@@ -200,10 +213,13 @@ class PaymentSource
      * Information needed to pay using BLIK.
      *
      * @maps blik
+     * @return self
      */
-    public function setBlik(?BlikPaymentRequest $blik): void
+    public function setBlik(?BlikPaymentRequest $blik): self
     {
         $this->blik = $blik;
+
+        return $this;
     }
 
     /**
@@ -220,10 +236,13 @@ class PaymentSource
      * Information needed to pay using eps.
      *
      * @maps eps
+     * @return self
      */
-    public function setEps(?EpsPaymentRequest $eps): void
+    public function setEps(?EpsPaymentRequest $eps): self
     {
         $this->eps = $eps;
+
+        return $this;
     }
 
     /**
@@ -240,10 +259,13 @@ class PaymentSource
      * Information needed to pay using giropay.
      *
      * @maps giropay
+     * @return self
      */
-    public function setGiropay(?GiropayPaymentRequest $giropay): void
+    public function setGiropay(?GiropayPaymentRequest $giropay): self
     {
         $this->giropay = $giropay;
+
+        return $this;
     }
 
     /**
@@ -260,10 +282,13 @@ class PaymentSource
      * Information needed to pay using iDEAL.
      *
      * @maps ideal
+     * @return self
      */
-    public function setIdeal(?IdealPaymentRequest $ideal): void
+    public function setIdeal(?IdealPaymentRequest $ideal): self
     {
         $this->ideal = $ideal;
+
+        return $this;
     }
 
     /**
@@ -280,10 +305,13 @@ class PaymentSource
      * Information needed to pay using MyBank.
      *
      * @maps mybank
+     * @return self
      */
-    public function setMybank(?MybankPaymentRequest $mybank): void
+    public function setMybank(?MybankPaymentRequest $mybank): self
     {
         $this->mybank = $mybank;
+
+        return $this;
     }
 
     /**
@@ -300,10 +328,13 @@ class PaymentSource
      * Information needed to pay using P24 (Przelewy24).
      *
      * @maps p24
+     * @return self
      */
-    public function setP24(?P24PaymentRequest $p24): void
+    public function setP24(?P24PaymentRequest $p24): self
     {
         $this->p24 = $p24;
+
+        return $this;
     }
 
     /**
@@ -320,10 +351,13 @@ class PaymentSource
      * Information needed to pay using Sofort.
      *
      * @maps sofort
+     * @return self
      */
-    public function setSofort(?SofortPaymentRequest $sofort): void
+    public function setSofort(?SofortPaymentRequest $sofort): self
     {
         $this->sofort = $sofort;
+
+        return $this;
     }
 
     /**
@@ -340,10 +374,13 @@ class PaymentSource
      * Information needed to pay using Trustly.
      *
      * @maps trustly
+     * @return self
      */
-    public function setTrustly(?TrustlyPaymentRequest $trustly): void
+    public function setTrustly(?TrustlyPaymentRequest $trustly): self
     {
         $this->trustly = $trustly;
+
+        return $this;
     }
 
     /**
@@ -360,10 +397,13 @@ class PaymentSource
      * Information needed to pay using ApplePay.
      *
      * @maps apple_pay
+     * @return self
      */
-    public function setApplePay(?ApplePayRequest $applePay): void
+    public function setApplePay(?ApplePayRequest $applePay): self
     {
         $this->applePay = $applePay;
+
+        return $this;
     }
 
     /**
@@ -380,10 +420,13 @@ class PaymentSource
      * Information needed to pay using Google Pay.
      *
      * @maps google_pay
+     * @return self
      */
-    public function setGooglePay(?GooglePayRequest $googlePay): void
+    public function setGooglePay(?GooglePayRequest $googlePay): self
     {
         $this->googlePay = $googlePay;
+
+        return $this;
     }
 
     /**
@@ -400,9 +443,12 @@ class PaymentSource
      * Information needed to pay using Venmo.
      *
      * @maps venmo
+     * @return self
      */
-    public function setVenmo(?VenmoWalletRequest $venmo): void
+    public function setVenmo(?VenmoWalletRequest $venmo): self
     {
         $this->venmo = $venmo;
+
+        return $this;
     }
 }

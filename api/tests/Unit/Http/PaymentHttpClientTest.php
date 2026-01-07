@@ -24,7 +24,7 @@ use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Dto\PayPal\Money;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeRequestDto;
 use PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\PaymentHttpClient;
@@ -186,7 +186,7 @@ class PaymentHttpClientTest extends TestCase
 
         $this->httpClient->expects($this->once())->method('sendRequest')->willReturn($response);
 
-        $authorization = $this->paymentHttpClient->reauthorizeAuthorization($authorizationId, new ReauthorizeAuthorizationRequestDto(
+        $authorization = $this->paymentHttpClient->reauthorizeAuthorization($authorizationId, new ReauthorizeRequestDto(
             new Money('USD', '10.99')
         ));
 

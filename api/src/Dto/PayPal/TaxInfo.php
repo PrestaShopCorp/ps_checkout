@@ -61,10 +61,13 @@ class TaxInfo
      *
      * @required
      * @maps tax_id
+     * @return self
      */
-    public function setTaxId(string $taxId): void
+    public function setTaxId(string $taxId): self
     {
         $this->taxId = $taxId;
+
+        return $this;
     }
 
     /**
@@ -82,9 +85,12 @@ class TaxInfo
      *
      * @required
      * @maps tax_id_type
+     * @return self
      */
-    public function setTaxIdType(string $taxIdType): void
+    public function setTaxIdType(string $taxIdType): self
     {
         $this->taxIdType = $taxIdType;
+
+        return $this;
     }
 }

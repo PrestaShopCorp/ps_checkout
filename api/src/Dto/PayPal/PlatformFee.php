@@ -60,10 +60,13 @@ class PlatformFee
      *
      * @required
      * @maps amount
+     * @return self
      */
-    public function setAmount(Money $amount): void
+    public function setAmount(Money $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**
@@ -82,9 +85,12 @@ class PlatformFee
      * known as the payee.
      *
      * @maps payee
+     * @return self
      */
-    public function setPayee(?PayeeBase $payee): void
+    public function setPayee(?PayeeBase $payee): self
     {
         $this->payee = $payee;
+
+        return $this;
     }
 }

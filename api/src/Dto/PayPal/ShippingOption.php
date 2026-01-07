@@ -77,10 +77,13 @@ class ShippingOption
      *
      * @required
      * @maps id
+     * @return self
      */
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -102,10 +105,13 @@ class ShippingOption
      *
      * @required
      * @maps label
+     * @return self
      */
-    public function setLabel(string $label): void
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
     }
 
     /**
@@ -122,10 +128,13 @@ class ShippingOption
      * A classification for the method of purchase fulfillment.
      *
      * @maps type
+     * @return self
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -142,10 +151,13 @@ class ShippingOption
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps amount
+     * @return self
      */
-    public function setAmount(?Money $amount): void
+    public function setAmount(?Money $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**
@@ -171,9 +183,12 @@ class ShippingOption
      *
      * @required
      * @maps selected
+     * @return self
      */
-    public function setSelected(bool $selected): void
+    public function setSelected(bool $selected): self
     {
         $this->selected = $selected;
+
+        return $this;
     }
 }

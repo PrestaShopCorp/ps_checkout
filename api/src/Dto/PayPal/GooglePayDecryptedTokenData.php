@@ -87,10 +87,13 @@ class GooglePayDecryptedTokenData
      * A unique ID that identifies the message in case it needs to be revoked or located at a later time.
      *
      * @maps message_id
+     * @return self
      */
-    public function setMessageId(?string $messageId): void
+    public function setMessageId(?string $messageId): self
     {
         $this->messageId = $messageId;
+
+        return $this;
     }
 
     /**
@@ -109,10 +112,13 @@ class GooglePayDecryptedTokenData
      * reject any message that's expired.
      *
      * @maps message_expiration
+     * @return self
      */
-    public function setMessageExpiration(?string $messageExpiration): void
+    public function setMessageExpiration(?string $messageExpiration): self
     {
         $this->messageExpiration = $messageExpiration;
+
+        return $this;
     }
 
     /**
@@ -130,10 +136,13 @@ class GooglePayDecryptedTokenData
      *
      * @required
      * @maps payment_method
+     * @return self
      */
-    public function setPaymentMethod(string $paymentMethod): void
+    public function setPaymentMethod(string $paymentMethod): self
     {
         $this->paymentMethod = $paymentMethod;
+
+        return $this;
     }
 
     /**
@@ -151,10 +160,13 @@ class GooglePayDecryptedTokenData
      *
      * @required
      * @maps card
+     * @return self
      */
-    public function setCard(GooglePayCard $card): void
+    public function setCard(GooglePayCard $card): self
     {
         $this->card = $card;
+
+        return $this;
     }
 
     /**
@@ -172,10 +184,13 @@ class GooglePayDecryptedTokenData
      *
      * @required
      * @maps authentication_method
+     * @return self
      */
-    public function setAuthenticationMethod(string $authenticationMethod): void
+    public function setAuthenticationMethod(string $authenticationMethod): self
     {
         $this->authenticationMethod = $authenticationMethod;
+
+        return $this;
     }
 
     /**
@@ -194,10 +209,13 @@ class GooglePayDecryptedTokenData
      * This is a conditionally required field if authentication_method is CRYPTOGRAM_3DS.
      *
      * @maps cryptogram
+     * @return self
      */
-    public function setCryptogram(?string $cryptogram): void
+    public function setCryptogram(?string $cryptogram): self
     {
         $this->cryptogram = $cryptogram;
+
+        return $this;
     }
 
     /**
@@ -216,9 +234,12 @@ class GooglePayDecryptedTokenData
      * card network. This value is passed through in the payment authorization request.
      *
      * @maps eci_indicator
+     * @return self
      */
-    public function setEciIndicator(?string $eciIndicator): void
+    public function setEciIndicator(?string $eciIndicator): self
     {
         $this->eciIndicator = $eciIndicator;
+
+        return $this;
     }
 }

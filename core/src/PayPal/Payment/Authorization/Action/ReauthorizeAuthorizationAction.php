@@ -21,8 +21,8 @@
 namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
 
 use PsCheckout\Api\Dto\PayPal\LinkDescription;
-use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationLinkRelation;
-use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationStatus;
+use PsCheckout\Api\Dto\PayPal\AuthorizationLinkRelation;
+use PsCheckout\Api\Dto\PayPal\AuthorizationStatus;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;

@@ -36,6 +36,14 @@ class PayeeBase
      */
     private $merchantId;
 
+    public function __construct(
+        ?string $emailAddress = null,
+        ?string $merchantId = null
+    ) {
+        $this->emailAddress = $emailAddress;
+        $this->merchantId = $merchantId;
+    }
+
     /**
      * Returns Email Address.
      * The internationalized email address. Note: Up to 64 characters are allowed before and 255 characters
@@ -54,10 +62,13 @@ class PayeeBase
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -74,9 +85,12 @@ class PayeeBase
      * The account identifier for a PayPal account.
      *
      * @maps merchant_id
+     * @return self
      */
-    public function setMerchantId(?string $merchantId): void
+    public function setMerchantId(?string $merchantId): self
     {
         $this->merchantId = $merchantId;
+
+        return $this;
     }
 }

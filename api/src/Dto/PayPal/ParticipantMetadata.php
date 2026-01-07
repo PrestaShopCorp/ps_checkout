@@ -48,9 +48,12 @@ class ParticipantMetadata
      * addresses.
      *
      * @maps ip_address
+     * @return self
      */
-    public function setIpAddress(?string $ipAddress): void
+    public function setIpAddress(?string $ipAddress): self
     {
         $this->ipAddress = $ipAddress;
+
+        return $this;
     }
 }

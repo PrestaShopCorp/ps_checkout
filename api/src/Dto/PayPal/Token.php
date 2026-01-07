@@ -60,10 +60,13 @@ class Token
      *
      * @required
      * @maps id
+     * @return self
      */
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -81,9 +84,12 @@ class Token
      *
      * @required
      * @maps type
+     * @return self
      */
-    public function setType(string $type): void
+    public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 }

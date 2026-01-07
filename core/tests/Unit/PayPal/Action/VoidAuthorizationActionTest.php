@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PsCheckout\Api\Dto\PayPal\Payment\VoidAuthorizationResponseDto;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -72,16 +73,13 @@ class VoidAuthorizationActionTest extends TestCase
             ]
         );
 
-        $voidedAuthData = [
-            'id' => 'AUTH-456',
-            'status' => PayPalAuthorizationStatus::VOIDED,
-            'update_time' => '2025-12-16T10:00:00Z'
-        ];
-
         $this->paymentHttpClient->expects($this->once())
             ->method('voidAuthorization')
             ->with('AUTH-456')
-            ->willReturn($this->createHttpResponse($voidedAuthData));
+            ->willReturn((new VoidAuthorizationResponseDto(
+                'AUTH-456',
+                PayPalAuthorizationStatus::VOIDED
+            ))->setUpdateTime('2025-12-16T10:00:00Z'));
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -124,11 +122,10 @@ class VoidAuthorizationActionTest extends TestCase
 
         $this->paymentHttpClient->expects($this->once())
             ->method('voidAuthorization')
-            ->willReturn($this->createHttpResponse([
-                'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::VOIDED,
-                'update_time' => '2025-12-16T10:00:00Z'
-            ]));
+            ->willReturn((new VoidAuthorizationResponseDto(
+                'AUTH-456',
+                PayPalAuthorizationStatus::VOIDED
+            ))->setUpdateTime('2025-12-16T10:00:00Z'));
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -160,11 +157,10 @@ class VoidAuthorizationActionTest extends TestCase
 
         $this->paymentHttpClient->expects($this->once())
             ->method('voidAuthorization')
-            ->willReturn($this->createHttpResponse([
-                'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::VOIDED,
-                'update_time' => '2025-12-16T10:00:00Z'
-            ]));
+            ->willReturn((new VoidAuthorizationResponseDto(
+                'AUTH-456',
+                PayPalAuthorizationStatus::VOIDED
+            ))->setUpdateTime('2025-12-16T10:00:00Z'));
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -276,20 +272,5 @@ class VoidAuthorizationActionTest extends TestCase
                 ]
             ]
         ]);
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function createHttpResponse(array $data): ResponseInterface
-    {
-        $body = $this->createMock(StreamInterface::class);
-        $body->method('__toString')->willReturn(json_encode($data));
-        $body->method('getContents')->willReturn(json_encode($data));
-
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getBody')->willReturn($body);
-
-        return $response;
     }
 }

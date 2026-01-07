@@ -1,0 +1,407 @@
+<?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+
+namespace PsCheckout\Api\Dto\PayPal;
+
+/**
+ * Customizes the payer experience during the approval process for the payment with PayPal. Note:
+ * Partners and Marketplaces might configure brand_name and shipping_preference during partner account
+ * setup, which overrides the request values.
+ */
+class OrderApplicationContext
+{
+    /**
+     * @var string|null
+     */
+    private $brandName;
+
+    /**
+     * @var string|null
+     */
+    private $locale;
+
+    /**
+     * @var string|null
+     *
+     * @deprecated
+     */
+    private $landingPage = OrderApplicationContextLandingPage::NO_PREFERENCE;
+
+    /**
+     * @var string|null
+     *
+     * @deprecated
+     */
+    private $shippingPreference = OrderApplicationContextShippingPreference::GET_FROM_FILE;
+
+    /**
+     * @var string|null
+     *
+     * @deprecated
+     */
+    private $userAction = OrderApplicationContextUserAction::CONTINUE_;
+
+    /**
+     * @var PaymentMethodPreference|null
+     */
+    private $paymentMethod;
+
+    /**
+     * @var string|null
+     */
+    private $returnUrl;
+
+    /**
+     * @var string|null
+     */
+    private $cancelUrl;
+
+    /**
+     * @var StoredPaymentSource|null
+     */
+    private $storedPaymentSource;
+
+    /**
+     * Returns Brand Name.
+     * DEPRECATED. The label that overrides the business name in the PayPal account on the PayPal site. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.brand_name`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     */
+    public function getBrandName(): ?string
+    {
+        return $this->brandName;
+    }
+
+    /**
+     * Sets Brand Name.
+     * DEPRECATED. The label that overrides the business name in the PayPal account on the PayPal site. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.brand_name`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     *
+     * @maps brand_name
+     * @return self
+     */
+    public function setBrandName(?string $brandName): self
+    {
+        $this->brandName = $brandName;
+
+        return $this;
+    }
+
+    /**
+     * Returns Locale.
+     * DEPRECATED. The BCP 47-formatted locale of pages that the PayPal payment experience shows. PayPal
+     * supports a five-character code. For example, `da-DK`, `he-IL`, `id-ID`, `ja-JP`, `no-NO`, `pt-BR`,
+     * `ru-RU`, `sv-SE`, `th-TH`, `zh-CN`, `zh-HK`, or `zh-TW`.  The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.locale`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     */
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    /**
+     * Sets Locale.
+     * DEPRECATED. The BCP 47-formatted locale of pages that the PayPal payment experience shows. PayPal
+     * supports a five-character code. For example, `da-DK`, `he-IL`, `id-ID`, `ja-JP`, `no-NO`, `pt-BR`,
+     * `ru-RU`, `sv-SE`, `th-TH`, `zh-CN`, `zh-HK`, or `zh-TW`.  The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.locale`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     *
+     * @maps locale
+     * @return self
+     */
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * Returns Landing Page.
+     * DEPRECATED. DEPRECATED. The type of landing page to show on the PayPal site for customer checkout.
+     * The fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.landing_page`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     */
+    public function getLandingPage(): ?string
+    {
+        return $this->landingPage;
+    }
+
+    /**
+     * Sets Landing Page.
+     * DEPRECATED. DEPRECATED. The type of landing page to show on the PayPal site for customer checkout.
+     * The fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.landing_page`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     *
+     * @maps landing_page
+     * @return self
+     */
+    public function setLandingPage(?string $landingPage): self
+    {
+        $this->landingPage = $landingPage;
+
+        return $this;
+    }
+
+    /**
+     * Returns Shipping Preference.
+     * DEPRECATED. DEPRECATED. The shipping preference: Displays the shipping address to the customer.
+     * Enables the customer to choose an address on the PayPal site. Restricts the customer from changing
+     * the address during the payment-approval process. .  The fields in `application_context` are now
+     * available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.shipping_preference`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     */
+    public function getShippingPreference(): ?string
+    {
+        return $this->shippingPreference;
+    }
+
+    /**
+     * Sets Shipping Preference.
+     * DEPRECATED. DEPRECATED. The shipping preference: Displays the shipping address to the customer.
+     * Enables the customer to choose an address on the PayPal site. Restricts the customer from changing
+     * the address during the payment-approval process. .  The fields in `application_context` are now
+     * available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.shipping_preference`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     *
+     * @maps shipping_preference
+     * @return self
+     */
+    public function setShippingPreference(?string $shippingPreference): self
+    {
+        $this->shippingPreference = $shippingPreference;
+
+        return $this;
+    }
+
+    /**
+     * Returns User Action.
+     * DEPRECATED. Configures a Continue or Pay Now checkout flow.  The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.user_action`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     */
+    public function getUserAction(): ?string
+    {
+        return $this->userAction;
+    }
+
+    /**
+     * Sets User Action.
+     * DEPRECATED. Configures a Continue or Pay Now checkout flow.  The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.user_action`). Please specify this field in the
+     * `experience_context` object instead of the `application_context` object.
+     *
+     * @deprecated
+     *
+     * @maps user_action
+     * @return self
+     */
+    public function setUserAction(?string $userAction): self
+    {
+        $this->userAction = $userAction;
+
+        return $this;
+    }
+
+    /**
+     * Returns Payment Method.
+     * DEPRECATED. The customer and merchant payment preferences. The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.payment_method_selected`). Please specify this field in
+     * the `experience_context` object instead of the `application_context` object..
+     *
+     * @deprecated
+     */
+    public function getPaymentMethod(): ?PaymentMethodPreference
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * Sets Payment Method.
+     * DEPRECATED. The customer and merchant payment preferences. The fields in `application_context` are
+     * now available in the `experience_context` object under the `payment_source` which supports them (eg.
+     * `payment_source.paypal.experience_context.payment_method_selected`). Please specify this field in
+     * the `experience_context` object instead of the `application_context` object..
+     *
+     * @deprecated
+     *
+     * @maps payment_method
+     * @return self
+     */
+    public function setPaymentMethod(?PaymentMethodPreference $paymentMethod): self
+    {
+        $this->paymentMethod = $paymentMethod;
+
+        return $this;
+    }
+
+    /**
+     * Returns Return Url.
+     * DEPRECATED. The URL where the customer is redirected after the customer approves the payment. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.return_url`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     */
+    public function getReturnUrl(): ?string
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * Sets Return Url.
+     * DEPRECATED. The URL where the customer is redirected after the customer approves the payment. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.return_url`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     *
+     * @maps return_url
+     * @return self
+     */
+    public function setReturnUrl(?string $returnUrl): self
+    {
+        $this->returnUrl = $returnUrl;
+
+        return $this;
+    }
+
+    /**
+     * Returns Cancel Url.
+     * DEPRECATED. The URL where the customer is redirected after the customer cancels the payment. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.cancel_url`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     */
+    public function getCancelUrl(): ?string
+    {
+        return $this->cancelUrl;
+    }
+
+    /**
+     * Sets Cancel Url.
+     * DEPRECATED. The URL where the customer is redirected after the customer cancels the payment. The
+     * fields in `application_context` are now available in the `experience_context` object under the
+     * `payment_source` which supports them (eg. `payment_source.paypal.experience_context.cancel_url`).
+     * Please specify this field in the `experience_context` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     *
+     * @maps cancel_url
+     * @return self
+     */
+    public function setCancelUrl(?string $cancelUrl): self
+    {
+        $this->cancelUrl = $cancelUrl;
+
+        return $this;
+    }
+
+    /**
+     * Returns Stored Payment Source.
+     * DEPRECATED. Provides additional details to process a payment using a `payment_source` that has been
+     * stored or is intended to be stored (also referred to as stored_credential or card-on-file).
+     * Parameter compatibility: `payment_type=ONE_TIME` is compatible only with
+     * `payment_initiator=CUSTOMER`. `usage=FIRST` is compatible only with `payment_initiator=CUSTOMER`.
+     * `previous_transaction_reference` or `previous_network_transaction_reference` is compatible only with
+     * `payment_initiator=MERCHANT`. Only one of the parameters - `previous_transaction_reference` and
+     * `previous_network_transaction_reference` - can be present in the request. .  The fields in
+     * `stored_payment_source` are now available in the `stored_credential` object under the
+     * `payment_source` which supports them (eg. `payment_source.card.stored_credential.payment_initiator`).
+     * Please specify this field in the `payment_source` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     */
+    public function getStoredPaymentSource(): ?StoredPaymentSource
+    {
+        return $this->storedPaymentSource;
+    }
+
+    /**
+     * Sets Stored Payment Source.
+     * DEPRECATED. Provides additional details to process a payment using a `payment_source` that has been
+     * stored or is intended to be stored (also referred to as stored_credential or card-on-file).
+     * Parameter compatibility: `payment_type=ONE_TIME` is compatible only with
+     * `payment_initiator=CUSTOMER`. `usage=FIRST` is compatible only with `payment_initiator=CUSTOMER`.
+     * `previous_transaction_reference` or `previous_network_transaction_reference` is compatible only with
+     * `payment_initiator=MERCHANT`. Only one of the parameters - `previous_transaction_reference` and
+     * `previous_network_transaction_reference` - can be present in the request. .  The fields in
+     * `stored_payment_source` are now available in the `stored_credential` object under the
+     * `payment_source` which supports them (eg. `payment_source.card.stored_credential.payment_initiator`).
+     * Please specify this field in the `payment_source` object instead of the `application_context`
+     * object.
+     *
+     * @deprecated
+     *
+     * @maps stored_payment_source
+     * @return self
+     */
+    public function setStoredPaymentSource(?StoredPaymentSource $storedPaymentSource): self
+    {
+        $this->storedPaymentSource = $storedPaymentSource;
+
+        return $this;
+    }
+}

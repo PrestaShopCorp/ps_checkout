@@ -49,10 +49,13 @@ class VenmoWalletAdditionalAttributes
      * The details about a customer in PayPal's system of record.
      *
      * @maps customer
+     * @return self
      */
-    public function setCustomer(?VenmoWalletCustomerInformation $customer): void
+    public function setCustomer(?VenmoWalletCustomerInformation $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
     }
 
     /**
@@ -69,9 +72,12 @@ class VenmoWalletAdditionalAttributes
      * Resource consolidating common request and response attirbutes for vaulting Venmo Wallet.
      *
      * @maps vault
+     * @return self
      */
-    public function setVault(?VenmoWalletVaultAttributes $vault): void
+    public function setVault(?VenmoWalletVaultAttributes $vault): self
     {
         $this->vault = $vault;
+
+        return $this;
     }
 }

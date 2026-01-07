@@ -69,10 +69,13 @@ class PhoneNumberWithCountryCode
      *
      * @required
      * @maps country_code
+     * @return self
      */
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(string $countryCode): self
     {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 
     /**
@@ -96,9 +99,12 @@ class PhoneNumberWithCountryCode
      *
      * @required
      * @maps national_number
+     * @return self
      */
-    public function setNationalNumber(string $nationalNumber): void
+    public function setNationalNumber(string $nationalNumber): self
     {
         $this->nationalNumber = $nationalNumber;
+
+        return $this;
     }
 }

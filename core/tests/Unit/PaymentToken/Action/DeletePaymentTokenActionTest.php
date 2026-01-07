@@ -29,7 +29,6 @@ use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
 use PsCheckout\Core\PaymentToken\ValueObject\PaymentToken;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class DeletePaymentTokenActionTest extends TestCase
 {
@@ -69,9 +68,6 @@ class DeletePaymentTokenActionTest extends TestCase
         $token = $this->createMock(PaymentToken::class);
         $token->method('getId')->willReturn($vaultId);
 
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getStatusCode')->willReturn(204);
-
         $this->paymentTokenRepository->expects($this->once())
             ->method('getAllByCustomerId')
             ->with($customerId)
@@ -84,8 +80,7 @@ class DeletePaymentTokenActionTest extends TestCase
 
         $this->checkoutHttpClient->expects($this->once())
             ->method('deletePaymentToken')
-            ->with($merchantId, $vaultId)
-            ->willReturn($response);
+            ->with($merchantId, $vaultId);
 
         $this->paymentTokenRepository->expects($this->once())
             ->method('delete')
@@ -201,12 +196,8 @@ class DeletePaymentTokenActionTest extends TestCase
                 ->method('deletePaymentToken')
                 ->willThrowException(new Exception($clientException));
         } else {
-            $response = $this->createMock(ResponseInterface::class);
-            $response->method('getStatusCode')->willReturn($statusCode);
-
             $this->checkoutHttpClient->expects($this->once())
-                ->method('deletePaymentToken')
-                ->willReturn($response);
+                ->method('deletePaymentToken');
         }
 
         // Assert

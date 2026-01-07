@@ -65,10 +65,13 @@ class MybankPaymentRequest
      *
      * @required
      * @maps name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -92,10 +95,13 @@ class MybankPaymentRequest
      *
      * @required
      * @maps country_code
+     * @return self
      */
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(string $countryCode): self
     {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 
     /**
@@ -112,9 +118,12 @@ class MybankPaymentRequest
      * Customizes the payer experience during the approval process for the payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?ExperienceContext $experienceContext): void
+    public function setExperienceContext(?ExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 }

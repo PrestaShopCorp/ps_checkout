@@ -43,4 +43,6 @@ class StoredPaymentSourceUsageType
      * PayPal.
      */
     public const DERIVED = 'DERIVED';
+
+    public const TYPES = [self::FIRST, self::SUBSEQUENT, self::DERIVED];
 }

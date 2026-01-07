@@ -61,10 +61,13 @@ class VenmoWalletExperienceContext
      * The business name of the merchant. The pattern is defined by an external party and supports Unicode.
      *
      * @maps brand_name
+     * @return self
      */
-    public function setBrandName(?string $brandName): void
+    public function setBrandName(?string $brandName): self
     {
         $this->brandName = $brandName;
+
+        return $this;
     }
 
     /**
@@ -81,10 +84,13 @@ class VenmoWalletExperienceContext
      * The location from which the shipping address is derived.
      *
      * @maps shipping_preference
+     * @return self
      */
-    public function setShippingPreference(?string $shippingPreference): void
+    public function setShippingPreference(?string $shippingPreference): self
     {
         $this->shippingPreference = $shippingPreference;
+
+        return $this;
     }
 
     /**
@@ -101,10 +107,13 @@ class VenmoWalletExperienceContext
      * CallBack Configuration that the merchant can provide to PayPal/Venmo.
      *
      * @maps order_update_callback_config
+     * @return self
      */
-    public function setOrderUpdateCallbackConfig(?CallbackConfiguration $orderUpdateCallbackConfig): void
+    public function setOrderUpdateCallbackConfig(?CallbackConfiguration $orderUpdateCallbackConfig): self
     {
         $this->orderUpdateCallbackConfig = $orderUpdateCallbackConfig;
+
+        return $this;
     }
 
     /**
@@ -121,9 +130,12 @@ class VenmoWalletExperienceContext
      * Configures a Continue or Pay Now checkout flow.
      *
      * @maps user_action
+     * @return self
      */
-    public function setUserAction(?string $userAction): void
+    public function setUserAction(?string $userAction): self
     {
         $this->userAction = $userAction;
+
+        return $this;
     }
 }

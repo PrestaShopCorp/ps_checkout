@@ -20,6 +20,9 @@
 
 namespace PsCheckout\Api\Dto\PayPal;
 
+use PsCheckout\Api\Dto\PayPal\SellerProtectionStatus;
+use PsCheckout\Api\Dto\PayPal\DisputeCategory;
+
 /**
  * The level of protection offered as defined by [PayPal Seller Protection for Merchants](https://www.
  * paypal.com/us/webapps/mpp/security/seller-protection).
@@ -27,12 +30,12 @@ namespace PsCheckout\Api\Dto\PayPal;
 class SellerProtection
 {
     /**
-     * @var string|null
+     * @var value-of<SellerProtectionStatus::STATUSES>|null
      */
     private $status;
 
     /**
-     * @var string[]|null
+     * @var value-of<DisputeCategory::CATEGORIES>[]|null
      */
     private $disputeCategories;
 
@@ -40,6 +43,8 @@ class SellerProtection
      * Returns Status.
      * Indicates whether the transaction is eligible for seller protection. For information, see [PayPal
      * Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
+     *
+     * @return value-of<SellerProtectionStatus::STATUSES>|null
      */
     public function getStatus(): ?string
     {
@@ -52,17 +57,23 @@ class SellerProtection
      * Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
      *
      * @maps status
+     *
+     * @param value-of<SellerProtectionStatus::STATUSES>|null $status
+     *
+     * @return self
      */
-    public function setStatus(?string $status): void
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
      * Returns Dispute Categories.
      * An array of conditions that are covered for the transaction.
      *
-     * @return string[]|null
+     * @return value-of<DisputeCategory::CATEGORIES>[]|null
      */
     public function getDisputeCategories(): ?array
     {
@@ -75,10 +86,14 @@ class SellerProtection
      *
      * @maps dispute_categories
      *
-     * @param string[]|null $disputeCategories
+     * @param value-of<DisputeCategory::CATEGORIES>[]|null $disputeCategories
+     *
+     * @return self
      */
-    public function setDisputeCategories(?array $disputeCategories): void
+    public function setDisputeCategories(?array $disputeCategories): self
     {
         $this->disputeCategories = $disputeCategories;
+
+        return $this;
     }
 }

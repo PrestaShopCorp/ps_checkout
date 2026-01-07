@@ -80,10 +80,13 @@ class VenmoWalletVaultAttributes
      *
      * @required
      * @maps store_in_vault
+     * @return self
      */
-    public function setStoreInVault(string $storeInVault): void
+    public function setStoreInVault(string $storeInVault): self
     {
         $this->storeInVault = $storeInVault;
+
+        return $this;
     }
 
     /**
@@ -102,10 +105,13 @@ class VenmoWalletVaultAttributes
      * payment token management experience on Venmo.com.
      *
      * @maps description
+     * @return self
      */
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -122,10 +128,13 @@ class VenmoWalletVaultAttributes
      * Expected business/pricing model for the billing agreement.
      *
      * @maps usage_pattern
+     * @return self
      */
-    public function setUsagePattern(?string $usagePattern): void
+    public function setUsagePattern(?string $usagePattern): self
     {
         $this->usagePattern = $usagePattern;
+
+        return $this;
     }
 
     /**
@@ -143,10 +152,13 @@ class VenmoWalletVaultAttributes
      *
      * @required
      * @maps usage_type
+     * @return self
      */
-    public function setUsageType(string $usageType): void
+    public function setUsageType(string $usageType): self
     {
         $this->usageType = $usageType;
+
+        return $this;
     }
 
     /**
@@ -165,10 +177,13 @@ class VenmoWalletVaultAttributes
      * acting on the merchant / platform is either a business or a consumer.
      *
      * @maps customer_type
+     * @return self
      */
-    public function setCustomerType(?string $customerType): void
+    public function setCustomerType(?string $customerType): self
     {
         $this->customerType = $customerType;
+
+        return $this;
     }
 
     /**
@@ -193,9 +208,12 @@ class VenmoWalletVaultAttributes
      * customers distinctly even though they may share the same Venmo account.
      *
      * @maps permit_multiple_payment_tokens
+     * @return self
      */
-    public function setPermitMultiplePaymentTokens(?bool $permitMultiplePaymentTokens): void
+    public function setPermitMultiplePaymentTokens(?bool $permitMultiplePaymentTokens): self
     {
         $this->permitMultiplePaymentTokens = $permitMultiplePaymentTokens;
+
+        return $this;
     }
 }

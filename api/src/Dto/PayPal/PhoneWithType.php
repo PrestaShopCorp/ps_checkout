@@ -57,10 +57,13 @@ class PhoneWithType
      * The phone type.
      *
      * @maps phone_type
+     * @return self
      */
-    public function setPhoneType(?string $phoneType): void
+    public function setPhoneType(?string $phoneType): self
     {
         $this->phoneType = $phoneType;
+
+        return $this;
     }
 
     /**
@@ -80,9 +83,12 @@ class PhoneWithType
      *
      * @required
      * @maps phone_number
+     * @return self
      */
-    public function setPhoneNumber(PhoneNumber $phoneNumber): void
+    public function setPhoneNumber(PhoneNumber $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 }

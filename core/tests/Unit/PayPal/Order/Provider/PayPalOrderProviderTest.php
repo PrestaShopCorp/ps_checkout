@@ -22,6 +22,9 @@ namespace PsCheckout\Tests\Unit\PayPal\Order\Provider;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Dto\PayPal\Order\GetOrderResponseDto;
+use PsCheckout\Api\Dto\PayPal\OrderIntent;
+use PsCheckout\Api\Dto\PayPal\OrderStatus;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -124,17 +127,18 @@ class PayPalOrderProviderTest extends TestCase
             ->with($orderId)
             ->willReturn(false);
 
-        $response = $this->createMock(ResponseInterface::class);
-        $stream = $this->createMock(StreamInterface::class);
-
-        $response->method('getStatusCode')->willReturn(200);
-        $response->method('getBody')->willReturn($stream);
-        $stream->method('__toString')->willReturn(json_encode($orderData));
-
         $this->orderHttpClient->expects($this->once())
             ->method('fetchOrder')
             ->with($orderId)
-            ->willReturn($response);
+            ->willReturn(
+                (new GetOrderResponseDto())
+                ->setId($orderId)
+                ->setStatus(OrderStatus::CREATED)
+                ->setIntent(OrderIntent::CAPTURE)
+                ->setPurchaseUnits([])
+                ->setLinks([])
+                ->setCreateTime('2024-01-01T00:00:00Z')
+            );
 
         $this->orderPayPalCache->expects($this->once())
             ->method('set')
@@ -165,26 +169,18 @@ class PayPalOrderProviderTest extends TestCase
             ->with(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
             ->willReturn($merchantId);
 
-        $orderData = [
-            'id' => $orderId,
-            'status' => 'PENDING',
-            'intent' => PayPalOrderIntent::CAPTURE,
-            'purchase_units' => [],
-            'links' => [],
-            'create_time' => '2024-01-01T00:00:00Z',
-        ];
-
-        $response = $this->createMock(ResponseInterface::class);
-        $stream = $this->createMock(StreamInterface::class);
-
-        $response->method('getStatusCode')->willReturn(200);
-        $response->method('getBody')->willReturn($stream);
-        $stream->method('__toString')->willReturn(json_encode($orderData));
-
         $this->orderHttpClient->expects($this->once())
             ->method('fetchOrder')
             ->with($orderId)
-            ->willReturn($response);
+            ->willReturn(
+                (new GetOrderResponseDto())
+                ->setId($orderId)
+                ->setStatus(OrderStatus::CREATED)
+                ->setIntent(OrderIntent::CAPTURE)
+                ->setPurchaseUnits([])
+                ->setLinks([])
+                ->setCreateTime('2024-01-01T00:00:00Z')
+            );
 
         $result = $this->provider->getById($orderId);
 
@@ -198,12 +194,12 @@ class PayPalOrderProviderTest extends TestCase
 
         $this->orderPayPalCache->method('has')->willReturn(false);
 
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getStatusCode')->willReturn(404);
-        $response->method('getBody')->willReturn('');
+//        $response = $this->createMock(ResponseInterface::class);
+//        $response->method('getStatusCode')->willReturn(404);
+//        $response->method('getBody')->willReturn('');
 
         $this->orderHttpClient->method('fetchOrder')
-            ->willReturn($response);
+            ->willReturn(new GetOrderResponseDto());
 
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionMessage('PayPal Order not found');

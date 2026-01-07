@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+
+namespace PsCheckout\Api\Dto\PayPal;
+
+/**
+ * The customer type associated with the PayPal payment token. This is to indicate whether the customer
+ * acting on the merchant / platform is either a business or a consumer., The customer type associated
+ * with a digital wallet payment token. This is to indicate whether the customer acting on the merchant
+ * / platform is either a business or a consumer.
+ */
+class PaypalPaymentTokenCustomerType
+{
+    /**
+     * The customer vaulting the PayPal payment token is a consumer on the merchant / platform.
+     */
+    public const CONSUMER = 'CONSUMER';
+
+    /**
+     * The customer vaulting the PayPal payment token is a business on merchant / platform.
+     */
+    public const BUSINESS = 'BUSINESS';
+}

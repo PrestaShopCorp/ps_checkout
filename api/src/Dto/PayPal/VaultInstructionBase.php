@@ -46,9 +46,12 @@ class VaultInstructionBase
      * Defines how and when the payment source gets vaulted.
      *
      * @maps store_in_vault
+     * @return self
      */
-    public function setStoreInVault(?string $storeInVault): void
+    public function setStoreInVault(?string $storeInVault): self
     {
         $this->storeInVault = $storeInVault;
+
+        return $this;
     }
 }

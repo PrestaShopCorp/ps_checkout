@@ -54,9 +54,12 @@ class VaultInstruction
      *
      * @required
      * @maps store_in_vault
+     * @return self
      */
-    public function setStoreInVault(string $storeInVault): void
+    public function setStoreInVault(string $storeInVault): self
     {
         $this->storeInVault = $storeInVault;
+
+        return $this;
     }
 }

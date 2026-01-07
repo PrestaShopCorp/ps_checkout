@@ -22,16 +22,32 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
+use PsCheckout\Api\Dto\PayPal\ErrorResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderTrackerRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderTrackerResponseDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements OrderShipmentTrackingHttpClientInterface
 {
-    public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
-    {
-        parent::__construct($configurationBuilder->build());
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    public function __construct(
+        HttpClientConfigurationBuilderInterface $configurationBuilder,
+        SerializerInterface $serializer,
+        ?ClientInterface $client = null
+    ) {
+        parent::__construct($configurationBuilder->build(), $client);
+        $this->serializer = $serializer;
     }
 
     /**
@@ -43,8 +59,8 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
             return parent::sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body ?? []);
+            $body = $this->serializer->deserialize($response->getBody(), ErrorResponseDto::class, JsonEncoder::FORMAT);
+            $message = $body->extractMessage();
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
@@ -57,9 +73,15 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
     /**
      * {@inheritdoc}
      */
-    public function addTracking(array $payload): ResponseInterface
+    public function addTracking(OrderTrackerRequestDto $payload): OrderTrackerResponseDto
     {
-        return $this->sendRequest(new Request('POST', "trackers", [], json_encode($payload)));
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
+
+        $response = $this->sendRequest(new Request('POST', "trackers", [], $body));
+
+        return $this->serializer->deserialize($response->getBody(), OrderTrackerResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
@@ -68,35 +90,5 @@ class OrderShipmentTrackingHttpClient extends PsrHttpClientAdapter implements Or
     public function updateTracking(string $trackerId, array $payload): ResponseInterface
     {
         return $this->sendRequest(new Request('PATCH', "trackers/{$trackerId}", [], json_encode($payload)));
-    }
-
-    /**
-     * @param array $body
-     *
-     * @return string
-     */
-    private function extractMessage(array $body): string
-    {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
-            return $body['details'][0]['issue'];
-        }
-
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
-            return $body['error'];
-        }
-
-        if (isset($body['message'])) {
-            $message = is_array($body['message']) ? reset($body['message']) : $body['message'];
-
-            if (is_string($message) && preg_match('/^[a-zA-Z0-9_-]+$/', $message) === 1) {
-                return $message;
-            }
-        }
-
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
-            return $body['name'];
-        }
-
-        return '';
     }
 }

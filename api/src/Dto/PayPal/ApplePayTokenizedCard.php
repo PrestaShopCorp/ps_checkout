@@ -74,10 +74,13 @@ class ApplePayTokenizedCard
      * The card holder's name as it appears on the card.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -94,10 +97,13 @@ class ApplePayTokenizedCard
      * The primary account number (PAN) for the payment card.
      *
      * @maps number
+     * @return self
      */
-    public function setNumber(?string $number): void
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
+
+        return $this;
     }
 
     /**
@@ -116,10 +122,13 @@ class ApplePayTokenizedCard
      * //tools.ietf.org/html/rfc3339#section-5.6).
      *
      * @maps expiry
+     * @return self
      */
-    public function setExpiry(?string $expiry): void
+    public function setExpiry(?string $expiry): self
     {
         $this->expiry = $expiry;
+
+        return $this;
     }
 
     /**
@@ -136,10 +145,13 @@ class ApplePayTokenizedCard
      * The card brand or network. Typically used in the response.
      *
      * @maps card_type
+     * @return self
      */
-    public function setCardType(?string $cardType): void
+    public function setCardType(?string $cardType): self
     {
         $this->cardType = $cardType;
+
+        return $this;
     }
 
     /**
@@ -156,10 +168,13 @@ class ApplePayTokenizedCard
      * Type of card. i.e Credit, Debit and so on.
      *
      * @maps type
+     * @return self
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -176,10 +191,13 @@ class ApplePayTokenizedCard
      * The card network or brand. Applies to credit, debit, gift, and payment cards.
      *
      * @maps brand
+     * @return self
      */
-    public function setBrand(?string $brand): void
+    public function setBrand(?string $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
     }
 
     /**
@@ -202,9 +220,12 @@ class ApplePayTokenizedCard
      * controls-the-autocomplete-attribute).
      *
      * @maps billing_address
+     * @return self
      */
-    public function setBillingAddress(?Address $billingAddress): void
+    public function setBillingAddress(?Address $billingAddress): self
     {
         $this->billingAddress = $billingAddress;
+
+        return $this;
     }
 }

@@ -121,10 +121,13 @@ class LineItem
      *
      * @required
      * @maps name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -142,10 +145,13 @@ class LineItem
      *
      * @required
      * @maps quantity
+     * @return self
      */
-    public function setQuantity(string $quantity): void
+    public function setQuantity(string $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -162,10 +168,13 @@ class LineItem
      * The detailed item description.
      *
      * @maps description
+     * @return self
      */
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -182,10 +191,13 @@ class LineItem
      * The stock keeping unit (SKU) for the item.
      *
      * @maps sku
+     * @return self
      */
-    public function setSku(?string $sku): void
+    public function setSku(?string $sku): self
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
@@ -202,10 +214,13 @@ class LineItem
      * The URL to the item being purchased. Visible to buyer and used in buyer experiences.
      *
      * @maps url
+     * @return self
      */
-    public function setUrl(?string $url): void
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
+
+        return $this;
     }
 
     /**
@@ -224,10 +239,13 @@ class LineItem
      * restrictions will not be honored.
      *
      * @maps image_url
+     * @return self
      */
-    public function setImageUrl(?string $imageUrl): void
+    public function setImageUrl(?string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
     }
 
     /**
@@ -244,10 +262,13 @@ class LineItem
      * The Universal Product Code of the item.
      *
      * @maps upc
+     * @return self
      */
-    public function setUpc(?UniversalProductCode $upc): void
+    public function setUpc(?UniversalProductCode $upc): self
     {
         $this->upc = $upc;
+
+        return $this;
     }
 
     /**
@@ -266,10 +287,13 @@ class LineItem
      * token or billing agreement creation.
      *
      * @maps billing_plan
+     * @return self
      */
-    public function setBillingPlan(?OrderBillingPlan $billingPlan): void
+    public function setBillingPlan(?OrderBillingPlan $billingPlan): self
     {
         $this->billingPlan = $billingPlan;
+
+        return $this;
     }
 
     /**
@@ -286,10 +310,13 @@ class LineItem
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps unit_amount
+     * @return self
      */
-    public function setUnitAmount(?Money $unitAmount): void
+    public function setUnitAmount(?Money $unitAmount): self
     {
         $this->unitAmount = $unitAmount;
+
+        return $this;
     }
 
     /**
@@ -306,10 +333,13 @@ class LineItem
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps tax
+     * @return self
      */
-    public function setTax(?Money $tax): void
+    public function setTax(?Money $tax): self
     {
         $this->tax = $tax;
+
+        return $this;
     }
 
     /**
@@ -330,10 +360,13 @@ class LineItem
      * the United Nations Standard Products and Services Code (UNSPSC) is frequently used.
      *
      * @maps commodity_code
+     * @return self
      */
-    public function setCommodityCode(?string $commodityCode): void
+    public function setCommodityCode(?string $commodityCode): self
     {
         $this->commodityCode = $commodityCode;
+
+        return $this;
     }
 
     /**
@@ -350,10 +383,13 @@ class LineItem
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps discount_amount
+     * @return self
      */
-    public function setDiscountAmount(?Money $discountAmount): void
+    public function setDiscountAmount(?Money $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
+
+        return $this;
     }
 
     /**
@@ -370,10 +406,13 @@ class LineItem
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps total_amount
+     * @return self
      */
-    public function setTotalAmount(?Money $totalAmount): void
+    public function setTotalAmount(?Money $totalAmount): self
     {
         $this->totalAmount = $totalAmount;
+
+        return $this;
     }
 
     /**
@@ -398,9 +437,12 @@ class LineItem
      * Pounds (LBS), Square foot (FTK).
      *
      * @maps unit_of_measure
+     * @return self
      */
-    public function setUnitOfMeasure(?string $unitOfMeasure): void
+    public function setUnitOfMeasure(?string $unitOfMeasure): self
     {
         $this->unitOfMeasure = $unitOfMeasure;
+
+        return $this;
     }
 }

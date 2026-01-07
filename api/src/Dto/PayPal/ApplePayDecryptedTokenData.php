@@ -72,10 +72,13 @@ class ApplePayDecryptedTokenData
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps transaction_amount
+     * @return self
      */
-    public function setTransactionAmount(?Money $transactionAmount): void
+    public function setTransactionAmount(?Money $transactionAmount): self
     {
         $this->transactionAmount = $transactionAmount;
+
+        return $this;
     }
 
     /**
@@ -93,10 +96,13 @@ class ApplePayDecryptedTokenData
      *
      * @required
      * @maps tokenized_card
+     * @return self
      */
-    public function setTokenizedCard(ApplePayTokenizedCard $tokenizedCard): void
+    public function setTokenizedCard(ApplePayTokenizedCard $tokenizedCard): self
     {
         $this->tokenizedCard = $tokenizedCard;
+
+        return $this;
     }
 
     /**
@@ -115,10 +121,13 @@ class ApplePayDecryptedTokenData
      * and supports Unicode.
      *
      * @maps device_manufacturer_id
+     * @return self
      */
-    public function setDeviceManufacturerId(?string $deviceManufacturerId): void
+    public function setDeviceManufacturerId(?string $deviceManufacturerId): self
     {
         $this->deviceManufacturerId = $deviceManufacturerId;
+
+        return $this;
     }
 
     /**
@@ -137,10 +146,13 @@ class ApplePayDecryptedTokenData
      * China it is EMV.
      *
      * @maps payment_data_type
+     * @return self
      */
-    public function setPaymentDataType(?string $paymentDataType): void
+    public function setPaymentDataType(?string $paymentDataType): self
     {
         $this->paymentDataType = $paymentDataType;
+
+        return $this;
     }
 
     /**
@@ -157,9 +169,12 @@ class ApplePayDecryptedTokenData
      * Information about the decrypted apple pay payment data for the token like cryptogram, eci indicator.
      *
      * @maps payment_data
+     * @return self
      */
-    public function setPaymentData(?ApplePayPaymentData $paymentData): void
+    public function setPaymentData(?ApplePayPaymentData $paymentData): self
     {
         $this->paymentData = $paymentData;
+
+        return $this;
     }
 }

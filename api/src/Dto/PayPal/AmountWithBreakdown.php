@@ -71,10 +71,13 @@ class AmountWithBreakdown
      *
      * @required
      * @maps currency_code
+     * @return self
      */
-    public function setCurrencyCode(string $currencyCode): void
+    public function setCurrencyCode(string $currencyCode): self
     {
         $this->currencyCode = $currencyCode;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class AmountWithBreakdown
      *
      * @required
      * @maps value
+     * @return self
      */
-    public function setValue(string $value): void
+    public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
     }
 
     /**
@@ -120,9 +126,12 @@ class AmountWithBreakdown
      * shipping, handling, insurance, and discounts, if any.
      *
      * @maps breakdown
+     * @return self
      */
-    public function setBreakdown(?AmountBreakdown $breakdown): void
+    public function setBreakdown(?AmountBreakdown $breakdown): self
     {
         $this->breakdown = $breakdown;
+
+        return $this;
     }
 }

@@ -22,6 +22,9 @@ namespace PsCheckout\Tests\Unit\WebhookDispatcher\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookRequestDto;
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookRequestHeadersDto;
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookResponseDto;
 use PsCheckout\Api\Http\WebhookHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
 use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
@@ -48,11 +51,14 @@ class VerifyWebhookActionTest extends TestCase
         $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
-            ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-                'message' => 'VERIFIED',
-            ]);
+            ->with(
+                new VerifyWebhookRequestDto(['test' => 'value']),
+                new VerifyWebhookRequestHeadersDto()
+            )
+            ->willReturn(new VerifyWebhookResponseDto(
+                200,
+                'VERIFIED'
+            ));
 
         // Act
         $result = $this->action->execute($rawBody, []);
@@ -67,11 +73,14 @@ class VerifyWebhookActionTest extends TestCase
         $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
-            ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 401,
-                'message' => 'INVALID',
-            ]);
+            ->with(
+                new VerifyWebhookRequestDto(['test' => 'value']),
+                new VerifyWebhookRequestHeadersDto()
+            )
+            ->willReturn(new VerifyWebhookResponseDto(
+                401,
+                'INVALID'
+            ));
 
         // Assert
         $this->expectException(WebhookException::class);
@@ -88,11 +97,14 @@ class VerifyWebhookActionTest extends TestCase
         $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
-            ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-                'message' => 'INVALID',
-            ]);
+            ->with(
+                new VerifyWebhookRequestDto(['test' => 'value']),
+                new VerifyWebhookRequestHeadersDto()
+            )
+            ->willReturn(new VerifyWebhookResponseDto(
+                200,
+                'INVALID'
+            ));
 
         // Assert
         $this->expectException(WebhookException::class);
@@ -109,10 +121,13 @@ class VerifyWebhookActionTest extends TestCase
         $rawBody = json_encode(['test' => 'value']);
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
-            ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-            ]);
+            ->with(
+                new VerifyWebhookRequestDto(['test' => 'value']),
+                new VerifyWebhookRequestHeadersDto()
+            )
+            ->willReturn(new VerifyWebhookResponseDto(
+                200,
+            ));
 
         // Assert
         $this->expectException(WebhookException::class);

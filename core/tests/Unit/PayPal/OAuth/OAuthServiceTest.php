@@ -23,6 +23,7 @@ namespace PsCheckout\Tests\Unit\PayPal\OAuth;
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Dto\Checkout\Identity\UserTokenResponseDto;
 use PsCheckout\Api\Http\CheckoutHttpClientInterface;
 use PsCheckout\Core\PayPal\OAuth\OAuthService;
 use Psr\Http\Message\ResponseInterface;
@@ -60,16 +61,10 @@ class OAuthServiceTest extends TestCase
         $payPalCustomerId = 'test-customer-id';
         $expectedToken = 'test-id-token';
 
-        $this->stream->method('__toString')
-            ->willReturn(json_encode(['id_token' => $expectedToken]));
-
-        $this->response->method('getBody')
-            ->willReturn($this->stream);
-
         $this->httpClient->expects($this->once())
             ->method('getUserIdToken')
             ->with($merchantId, $payPalCustomerId)
-            ->willReturn($this->response);
+            ->willReturn(new UserTokenResponseDto($expectedToken));
 
         // Act
         $result = $this->oauthService->getUserIdToken($merchantId, $payPalCustomerId);
@@ -83,16 +78,10 @@ class OAuthServiceTest extends TestCase
         // Arrange
         $merchantId = 'test-merchant-id';
 
-        $this->stream->method('__toString')
-            ->willReturn(json_encode(['other_field' => 'value']));
-
-        $this->response->method('getBody')
-            ->willReturn($this->stream);
-
         $this->httpClient->expects($this->once())
             ->method('getUserIdToken')
             ->with($merchantId)
-            ->willReturn($this->response);
+            ->willReturn(new UserTokenResponseDto());
 
         // Assert
         $this->expectException(Exception::class);

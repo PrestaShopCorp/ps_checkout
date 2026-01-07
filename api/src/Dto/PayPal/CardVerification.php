@@ -45,9 +45,12 @@ class CardVerification
      * The method used for card verification.
      *
      * @maps method
+     * @return self
      */
-    public function setMethod(?string $method): void
+    public function setMethod(?string $method): self
     {
         $this->method = $method;
+
+        return $this;
     }
 }

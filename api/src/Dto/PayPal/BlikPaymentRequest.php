@@ -80,10 +80,13 @@ class BlikPaymentRequest
      *
      * @required
      * @maps name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -107,10 +110,13 @@ class BlikPaymentRequest
      *
      * @required
      * @maps country_code
+     * @return self
      */
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(string $countryCode): self
     {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 
     /**
@@ -131,10 +137,13 @@ class BlikPaymentRequest
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email
+     * @return self
      */
-    public function setEmail(?string $email): void
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
     }
 
     /**
@@ -151,10 +160,13 @@ class BlikPaymentRequest
      * Customizes the payer experience during the approval process for the BLIK payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?BlikExperienceContext $experienceContext): void
+    public function setExperienceContext(?BlikExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 
     /**
@@ -171,10 +183,13 @@ class BlikPaymentRequest
      * Information used to pay using BLIK level_0 flow.
      *
      * @maps level_0
+     * @return self
      */
-    public function setLevel0(?BlikLevel0PaymentObject $level0): void
+    public function setLevel0(?BlikLevel0PaymentObject $level0): self
     {
         $this->level0 = $level0;
+
+        return $this;
     }
 
     /**
@@ -191,9 +206,12 @@ class BlikPaymentRequest
      * Information used to pay using BLIK one-click flow.
      *
      * @maps one_click
+     * @return self
      */
-    public function setOneClick(?BlikOneClickPaymentRequest $oneClick): void
+    public function setOneClick(?BlikOneClickPaymentRequest $oneClick): self
     {
         $this->oneClick = $oneClick;
+
+        return $this;
     }
 }

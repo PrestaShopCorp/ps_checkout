@@ -76,10 +76,13 @@ class CardStoredCredential
      *
      * @required
      * @maps payment_initiator
+     * @return self
      */
-    public function setPaymentInitiator(string $paymentInitiator): void
+    public function setPaymentInitiator(string $paymentInitiator): self
     {
         $this->paymentInitiator = $paymentInitiator;
+
+        return $this;
     }
 
     /**
@@ -97,10 +100,13 @@ class CardStoredCredential
      *
      * @required
      * @maps payment_type
+     * @return self
      */
-    public function setPaymentType(string $paymentType): void
+    public function setPaymentType(string $paymentType): self
     {
         $this->paymentType = $paymentType;
+
+        return $this;
     }
 
     /**
@@ -119,10 +125,13 @@ class CardStoredCredential
      * to as stored credential or card on file).
      *
      * @maps usage
+     * @return self
      */
-    public function setUsage(?string $usage): void
+    public function setUsage(?string $usage): self
     {
         $this->usage = $usage;
+
+        return $this;
     }
 
     /**

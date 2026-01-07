@@ -61,10 +61,13 @@ class VenmoWalletRequest
      * server so the saved payment source can be used for future transactions.
      *
      * @maps vault_id
+     * @return self
      */
-    public function setVaultId(?string $vaultId): void
+    public function setVaultId(?string $vaultId): self
     {
         $this->vaultId = $vaultId;
+
+        return $this;
     }
 
     /**
@@ -85,10 +88,13 @@ class VenmoWalletRequest
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -109,10 +115,13 @@ class VenmoWalletRequest
      * the request values.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?VenmoWalletExperienceContext $experienceContext): void
+    public function setExperienceContext(?VenmoWalletExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 
     /**
@@ -129,9 +138,12 @@ class VenmoWalletRequest
      * Additional attributes associated with the use of this Venmo Wallet.
      *
      * @maps attributes
+     * @return self
      */
-    public function setAttributes(?VenmoWalletAdditionalAttributes $attributes): void
+    public function setAttributes(?VenmoWalletAdditionalAttributes $attributes): self
     {
         $this->attributes = $attributes;
+
+        return $this;
     }
 }

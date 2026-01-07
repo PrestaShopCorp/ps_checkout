@@ -18,11 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Api\Dto\PayPal\Order;
-
-use PsCheckout\Api\Dto\PayPal\Address;
-use PsCheckout\Api\Dto\PayPal\ShippingName;
-use PsCheckout\Api\Dto\PayPal\ShippingOption;
+namespace PsCheckout\Api\Dto\PayPal;
 
 class ShippingWithTrackingDetails
 {
@@ -79,10 +75,13 @@ class ShippingWithTrackingDetails
      * @maps trackers
      *
      * @param OrderTrackerResponse[]|null $trackers
+     * @return self
      */
-    public function setTrackers(?array $trackers): void
+    public function setTrackers(?array $trackers): self
     {
         $this->trackers = $trackers;
+
+        return $this;
     }
 
     /**
@@ -99,10 +98,13 @@ class ShippingWithTrackingDetails
      * The name of the party.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?ShippingName $name): void
+    public function setName(?ShippingName $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -123,10 +125,13 @@ class ShippingWithTrackingDetails
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -145,10 +150,13 @@ class ShippingWithTrackingDetails
      * int/rec/T-REC-E.164/en).
      *
      * @maps phone_number
+     * @return self
      */
-    public function setPhoneNumber(?PhoneNumberWithOptionalCountryCode $phoneNumber): void
+    public function setPhoneNumber(?PhoneNumberWithOptionalCountryCode $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 
     /**
@@ -167,10 +175,13 @@ class ShippingWithTrackingDetails
      * `type` or `options` may be present, but not both.
      *
      * @maps type
+     * @return self
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -193,10 +204,13 @@ class ShippingWithTrackingDetails
      * @maps options
      *
      * @param ShippingOption[]|null $options
+     * @return self
      */
-    public function setOptions(?array $options): void
+    public function setOptions(?array $options): self
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -219,9 +233,12 @@ class ShippingWithTrackingDetails
      * controls-the-autocomplete-attribute).
      *
      * @maps address
+     * @return self
      */
-    public function setAddress(?Address $address): void
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
 }

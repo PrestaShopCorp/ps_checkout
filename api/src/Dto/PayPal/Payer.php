@@ -78,10 +78,13 @@ class Payer
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class Payer
      * The account identifier for a PayPal account.
      *
      * @maps payer_id
+     * @return self
      */
-    public function setPayerId(?string $payerId): void
+    public function setPayerId(?string $payerId): self
     {
         $this->payerId = $payerId;
+
+        return $this;
     }
 
     /**
@@ -118,10 +124,13 @@ class Payer
      * The name of the party.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?Name $name): void
+    public function setName(?Name $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -138,10 +147,13 @@ class Payer
      * The phone information.
      *
      * @maps phone
+     * @return self
      */
-    public function setPhone(?PhoneWithType $phone): void
+    public function setPhone(?PhoneWithType $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
     /**
@@ -166,10 +178,13 @@ class Payer
      * known about leap years.
      *
      * @maps birth_date
+     * @return self
      */
-    public function setBirthDate(?string $birthDate): void
+    public function setBirthDate(?string $birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
     }
 
     /**
@@ -188,10 +203,13 @@ class Payer
      * are required.
      *
      * @maps tax_info
+     * @return self
      */
-    public function setTaxInfo(?TaxInfo $taxInfo): void
+    public function setTaxInfo(?TaxInfo $taxInfo): self
     {
         $this->taxInfo = $taxInfo;
+
+        return $this;
     }
 
     /**
@@ -214,9 +232,12 @@ class Payer
      * controls-the-autocomplete-attribute).
      *
      * @maps address
+     * @return self
      */
-    public function setAddress(?Address $address): void
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
 }

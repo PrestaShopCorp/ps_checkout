@@ -22,16 +22,38 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
+use PsCheckout\Api\Dto\PayPal\ErrorResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\CreateOrderRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\CreateOrderResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\GetOrderResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderAuthorizeRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderAuthorizeResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderCaptureRequestDto;
+use PsCheckout\Api\Dto\PayPal\Order\OrderCaptureResponseDto;
+use PsCheckout\Api\Dto\PayPal\Order\UpdateOrderResponseDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInterface
 {
-    public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
-    {
-        parent::__construct($configurationBuilder->build());
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    public function __construct(
+        HttpClientConfigurationBuilderInterface $configurationBuilder,
+        SerializerInterface $serializer,
+        ?ClientInterface $client = null
+    ) {
+        parent::__construct($configurationBuilder->build(), $client);
+        $this->serializer = $serializer;
     }
 
     /**
@@ -43,8 +65,8 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
             return parent::sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body);
+            $body = $this->serializer->deserialize($response->getBody(), ErrorResponseDto::class, JsonEncoder::FORMAT);
+            $message = $body->extractMessage();
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
@@ -57,7 +79,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function createOrder(array $payload, ?string $requestId, ?string $clientMetadataId): ResponseInterface
+    public function createOrder(CreateOrderRequestDto $payload, ?string $requestId, ?string $clientMetadataId): CreateOrderResponseDto
     {
         $headers = [];
 
@@ -69,21 +91,29 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
             $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
         }
 
-        return $this->sendRequest(new Request('POST', 'orders', $headers, json_encode($payload)));
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
+
+        $response = $this->sendRequest(new Request('POST', 'orders', $headers, $body));
+
+        return $this->serializer->deserialize($response->getBody(), CreateOrderResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function fetchOrder(string $orderId): ResponseInterface
+    public function fetchOrder(string $orderId): GetOrderResponseDto
     {
-        return $this->sendRequest(new Request('GET', "orders/$orderId"));
+        $response = $this->sendRequest(new Request('GET', "orders/$orderId"));
+
+        return $this->serializer->deserialize($response->getBody(), GetOrderResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function captureOrder(string $orderId, array $payload, ?string $requestId = null, ?string $clientMetadataId = null): ResponseInterface
+    public function captureOrder(string $orderId, ?OrderCaptureRequestDto $payload = null, ?string $requestId = null, ?string $clientMetadataId = null): OrderCaptureResponseDto
     {
         $headers = [];
 
@@ -95,52 +125,36 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
             $headers['PayPal-Client-Metadata-Id'] = $clientMetadataId;
         }
 
-        return $this->sendRequest(new Request('POST', "orders/$orderId/capture", $headers, !empty($payload) ? json_encode($payload) : '{}'));
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
+
+        $response = $this->sendRequest(new Request('POST', "orders/$orderId/capture", $headers, $body));
+
+        return $this->serializer->deserialize($response->getBody(), OrderCaptureResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * @inheritDoc
      */
-    public function updateOrder(string $orderId, array $payload): ResponseInterface
+    public function updateOrder(string $orderId, array $payload): UpdateOrderResponseDto
     {
-        return $this->sendRequest(new Request('PATCH', "orders/$orderId", [], json_encode($payload)));
+        $response = $this->sendRequest(new Request('PATCH', "orders/$orderId", [], json_encode($payload)));
+
+        return $this->serializer->deserialize($response->getBody(), UpdateOrderResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * @inheritDoc
      */
-    public function authorizeOrder(string $orderId, array $payload): ResponseInterface
+    public function authorizeOrder(string $orderId, OrderAuthorizeRequestDto $payload): OrderAuthorizeResponseDto
     {
-        return $this->sendRequest(new Request('POST', "orders/$orderId/authorize", [], json_encode($payload)));
-    }
+        $body = $this->serializer->serialize($payload, JsonEncoder::FORMAT, [
+            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+        ]);
 
-    /**
-     * @param array $body
-     *
-     * @return string
-     */
-    private function extractMessage(array $body): string
-    {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
-            return $body['details'][0]['issue'];
-        }
+        $response = $this->sendRequest(new Request('POST', "orders/$orderId/authorize", [], $body));
 
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
-            return $body['error'];
-        }
-
-        if (isset($body['message']) && is_array($body['message'])) {
-            return implode("\n", $body['message']);
-        }
-
-        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
-            return $body['message'];
-        }
-
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
-            return $body['name'];
-        }
-
-        return '';
+        return $this->serializer->deserialize($response->getBody(), OrderAuthorizeResponseDto::class, JsonEncoder::FORMAT);
     }
 }

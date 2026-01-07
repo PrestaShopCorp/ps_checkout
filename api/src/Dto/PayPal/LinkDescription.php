@@ -70,10 +70,13 @@ class LinkDescription
      *
      * @required
      * @maps href
+     * @return self
      */
-    public function setHref(string $href): void
+    public function setHref(string $href): self
     {
         $this->href = $href;
+
+        return $this;
     }
 
     /**
@@ -95,10 +98,13 @@ class LinkDescription
      *
      * @required
      * @maps rel
+     * @return self
      */
-    public function setRel(string $rel): void
+    public function setRel(string $rel): self
     {
         $this->rel = $rel;
+
+        return $this;
     }
 
     /**
@@ -115,9 +121,12 @@ class LinkDescription
      * The HTTP method required to make the related call.
      *
      * @maps method
+     * @return self
      */
-    public function setMethod(?string $method): void
+    public function setMethod(?string $method): self
     {
         $this->method = $method;
+
+        return $this;
     }
 }

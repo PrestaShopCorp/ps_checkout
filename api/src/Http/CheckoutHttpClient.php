@@ -25,9 +25,14 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
+use PsCheckout\Api\Dto\Checkout\Identity\UserTokenResponseDto;
+use PsCheckout\Api\Dto\Checkout\VaultMerchant\DeletePaymentTokenResponseDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpClientInterface
 {
@@ -35,9 +40,18 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
 
     const SUFFIX_VAULT = '/v1/vault-merchant';
 
-    public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
-    {
-        parent::__construct($configurationBuilder->build());
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    public function __construct(
+        HttpClientConfigurationBuilderInterface $configurationBuilder,
+        SerializerInterface $serializer,
+        ?ClientInterface $client = null
+    ) {
+        parent::__construct($configurationBuilder->build(), $client);
+        $this->serializer = $serializer;
     }
 
     /**
@@ -71,7 +85,7 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
     /**
      * {@inheritdoc}
      */
-    public function getUserIdToken(string $merchantId, $payPalCustomerId = null): ResponseInterface
+    public function getUserIdToken(string $merchantId, ?string $payPalCustomerId = null): UserTokenResponseDto
     {
         $payload = [
             'payer_id' => $merchantId,
@@ -81,7 +95,7 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
             $payload['customer_id'] = $payPalCustomerId;
         }
 
-        return $this->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'POST',
                 self::SUFFIX_IDENTITY . '/oauth2/token',
@@ -89,13 +103,15 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
                 json_encode($payload)
             )
         );
+
+        return $this->serializer->deserialize($response->getBody(), UserTokenResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function deletePaymentToken(string $merchantId, string $vaultId): ResponseInterface
+    public function deletePaymentToken(string $merchantId, string $vaultId): void
     {
-        return $this->sendRequest(new Request('DELETE', self::SUFFIX_VAULT . "/payment-token/$merchantId/$vaultId"));
+        $this->sendRequest(new Request('DELETE', self::SUFFIX_VAULT . "/payment-token/$merchantId/$vaultId"));
     }
 }

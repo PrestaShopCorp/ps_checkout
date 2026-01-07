@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Dto\PayPal\Order\OrderCaptureResponseDto;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -97,16 +98,11 @@ class CapturePayPalOrderActionTest extends TestCase
         // Create initial PayPalOrderResponse
         $initialResponse = PayPalOrderResponseFactory::create();
 
-        // Setup HTTP client response
-        $responseBody = $this->createMock(StreamInterface::class);
-        $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-
-        $httpResponse = $this->createMock(ResponseInterface::class);
-        $httpResponse->method('getBody')->willReturn($responseBody);
+        // CaptureOrderResponse::getSuccessResponse()
 
         $this->orderHttpClient->expects($this->once())
             ->method('captureOrder')
-            ->willReturn($httpResponse);
+            ->willReturn(new OrderCaptureResponseDto());
 
         // Setup cache expectations
         $this->payPalOrderCache->expects($this->once())
@@ -149,13 +145,9 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
         $this->configuration->method('get')->willReturn('TEST_MERCHANT_ID');
 
-        $responseBody = $this->createMock(StreamInterface::class);
-        $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
+        // CaptureOrderResponse::getSuccessResponse()
 
-        $httpResponse = $this->createMock(ResponseInterface::class);
-        $httpResponse->method('getBody')->willReturn($responseBody);
-
-        $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
+        $this->orderHttpClient->method('captureOrder')->willReturn(new OrderCaptureResponseDto());
 
         $this->payPalOrderCache->method('getValue')->willReturn([]);
 
@@ -204,13 +196,9 @@ class CapturePayPalOrderActionTest extends TestCase
             ],
         ]);
 
-        $responseBody = $this->createMock(StreamInterface::class);
-        $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
+        // CaptureOrderResponse::getSuccessResponse()
 
-        $httpResponse = $this->createMock(ResponseInterface::class);
-        $httpResponse->method('getBody')->willReturn($responseBody);
-
-        $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
+        $this->orderHttpClient->method('captureOrder')->willReturn(new OrderCaptureResponseDto());
 
         // Fix: Return empty array instead of null for cache->getValue()
         $this->payPalOrderCache->method('getValue')->willReturn([]);

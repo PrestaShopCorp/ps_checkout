@@ -68,10 +68,13 @@ class PaymentInstruction
      * @maps platform_fees
      *
      * @param PlatformFee[]|null $platformFees
+     * @return self
      */
-    public function setPlatformFees(?array $platformFees): void
+    public function setPlatformFees(?array $platformFees): self
     {
         $this->platformFees = $platformFees;
+
+        return $this;
     }
 
     /**
@@ -88,10 +91,13 @@ class PaymentInstruction
      * The funds that are held on behalf of the merchant.
      *
      * @maps disbursement_mode
+     * @return self
      */
-    public function setDisbursementMode(?string $disbursementMode): void
+    public function setDisbursementMode(?string $disbursementMode): self
     {
         $this->disbursementMode = $disbursementMode;
+
+        return $this;
     }
 
     /**
@@ -114,10 +120,13 @@ class PaymentInstruction
      * than the one provided to you by your account manager would result in an error.
      *
      * @maps payee_pricing_tier_id
+     * @return self
      */
-    public function setPayeePricingTierId(?string $payeePricingTierId): void
+    public function setPayeePricingTierId(?string $payeePricingTierId): self
     {
         $this->payeePricingTierId = $payeePricingTierId;
+
+        return $this;
     }
 
     /**
@@ -136,9 +145,12 @@ class PaymentInstruction
      * rate (for eligible integrations) to be used when amount is settled/received into the payee account.
      *
      * @maps payee_receivable_fx_rate_id
+     * @return self
      */
-    public function setPayeeReceivableFxRateId(?string $payeeReceivableFxRateId): void
+    public function setPayeeReceivableFxRateId(?string $payeeReceivableFxRateId): self
     {
         $this->payeeReceivableFxRateId = $payeeReceivableFxRateId;
+
+        return $this;
     }
 }

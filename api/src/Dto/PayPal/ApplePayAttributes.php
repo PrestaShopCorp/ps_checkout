@@ -51,10 +51,13 @@ class ApplePayAttributes
      * payments associated with the same customer.
      *
      * @maps customer
+     * @return self
      */
-    public function setCustomer(?CustomerInformation $customer): void
+    public function setCustomer(?CustomerInformation $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
     }
 
     /**
@@ -73,9 +76,12 @@ class ApplePayAttributes
      * payment_source that supports vaulting.
      *
      * @maps vault
+     * @return self
      */
-    public function setVault(?VaultInstruction $vault): void
+    public function setVault(?VaultInstruction $vault): self
     {
         $this->vault = $vault;
+
+        return $this;
     }
 }

@@ -96,10 +96,13 @@ class PaypalWallet
      * server so the saved payment source can be used for future transactions.
      *
      * @maps vault_id
+     * @return self
      */
-    public function setVaultId(?string $vaultId): void
+    public function setVaultId(?string $vaultId): self
     {
         $this->vaultId = $vaultId;
+
+        return $this;
     }
 
     /**
@@ -120,10 +123,13 @@ class PaypalWallet
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -140,10 +146,13 @@ class PaypalWallet
      * The name of the party.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?Name $name): void
+    public function setName(?Name $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -160,10 +169,13 @@ class PaypalWallet
      * The phone information.
      *
      * @maps phone
+     * @return self
      */
-    public function setPhone(?PhoneWithType $phone): void
+    public function setPhone(?PhoneWithType $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
     /**
@@ -188,10 +200,13 @@ class PaypalWallet
      * known about leap years.
      *
      * @maps birth_date
+     * @return self
      */
-    public function setBirthDate(?string $birthDate): void
+    public function setBirthDate(?string $birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
     }
 
     /**
@@ -210,10 +225,13 @@ class PaypalWallet
      * are required.
      *
      * @maps tax_info
+     * @return self
      */
-    public function setTaxInfo(?TaxInfo $taxInfo): void
+    public function setTaxInfo(?TaxInfo $taxInfo): self
     {
         $this->taxInfo = $taxInfo;
+
+        return $this;
     }
 
     /**
@@ -236,10 +254,13 @@ class PaypalWallet
      * controls-the-autocomplete-attribute).
      *
      * @maps address
+     * @return self
      */
-    public function setAddress(?Address $address): void
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
 
     /**
@@ -256,10 +277,13 @@ class PaypalWallet
      * Additional attributes associated with the use of this PayPal Wallet.
      *
      * @maps attributes
+     * @return self
      */
-    public function setAttributes(?PaypalWalletAttributes $attributes): void
+    public function setAttributes(?PaypalWalletAttributes $attributes): self
     {
         $this->attributes = $attributes;
+
+        return $this;
     }
 
     /**
@@ -280,10 +304,13 @@ class PaypalWallet
      * which overrides the request values.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?PaypalWalletExperienceContext $experienceContext): void
+    public function setExperienceContext(?PaypalWalletExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 
     /**
@@ -300,10 +327,13 @@ class PaypalWallet
      * The PayPal billing agreement ID. References an approved recurring payment for goods or services.
      *
      * @maps billing_agreement_id
+     * @return self
      */
-    public function setBillingAgreementId(?string $billingAgreementId): void
+    public function setBillingAgreementId(?string $billingAgreementId): self
     {
         $this->billingAgreementId = $billingAgreementId;
+
+        return $this;
     }
 
     /**
@@ -322,9 +352,12 @@ class PaypalWallet
      * vaulted payment method that has been stored or is intended to be stored.
      *
      * @maps stored_credential
+     * @return self
      */
-    public function setStoredCredential(?PaypalWalletStoredCredential $storedCredential): void
+    public function setStoredCredential(?PaypalWalletStoredCredential $storedCredential): self
     {
         $this->storedCredential = $storedCredential;
+
+        return $this;
     }
 }

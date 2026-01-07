@@ -86,10 +86,13 @@ class ApplePayRequest
      * Apple. The pattern is defined by an external party and supports Unicode.
      *
      * @maps id
+     * @return self
      */
-    public function setId(?string $id): void
+    public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -106,10 +109,13 @@ class ApplePayRequest
      * The full name representation like Mr J Smith.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -130,10 +136,13 @@ class ApplePayRequest
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -152,10 +161,13 @@ class ApplePayRequest
      * int/rec/T-REC-E.164/en).
      *
      * @maps phone_number
+     * @return self
      */
-    public function setPhoneNumber(?PhoneNumber $phoneNumber): void
+    public function setPhoneNumber(?PhoneNumber $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 
     /**
@@ -172,10 +184,13 @@ class ApplePayRequest
      * Information about the Payment data obtained by decrypting Apple Pay token.
      *
      * @maps decrypted_token
+     * @return self
      */
-    public function setDecryptedToken(?ApplePayDecryptedTokenData $decryptedToken): void
+    public function setDecryptedToken(?ApplePayDecryptedTokenData $decryptedToken): self
     {
         $this->decryptedToken = $decryptedToken;
+
+        return $this;
     }
 
     /**
@@ -204,10 +219,13 @@ class ApplePayRequest
      * `previous_network_transaction_reference` - can be present in the request.
      *
      * @maps stored_credential
+     * @return self
      */
-    public function setStoredCredential(?CardStoredCredential $storedCredential): void
+    public function setStoredCredential(?CardStoredCredential $storedCredential): self
     {
         $this->storedCredential = $storedCredential;
+
+        return $this;
     }
 
     /**
@@ -226,10 +244,13 @@ class ApplePayRequest
      * server so the saved payment source can be used for future transactions.
      *
      * @maps vault_id
+     * @return self
      */
-    public function setVaultId(?string $vaultId): void
+    public function setVaultId(?string $vaultId): self
     {
         $this->vaultId = $vaultId;
+
+        return $this;
     }
 
     /**
@@ -246,10 +267,13 @@ class ApplePayRequest
      * Additional attributes associated with apple pay.
      *
      * @maps attributes
+     * @return self
      */
-    public function setAttributes(?ApplePayAttributes $attributes): void
+    public function setAttributes(?ApplePayAttributes $attributes): self
     {
         $this->attributes = $attributes;
+
+        return $this;
     }
 
     /**
@@ -266,9 +290,12 @@ class ApplePayRequest
      * Customizes the payer experience during the approval process for the payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?ApplePayExperienceContext $experienceContext): void
+    public function setExperienceContext(?ApplePayExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 }

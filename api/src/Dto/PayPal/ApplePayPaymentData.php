@@ -61,10 +61,13 @@ class ApplePayPaymentData
      * supports Unicode.
      *
      * @maps cryptogram
+     * @return self
      */
-    public function setCryptogram(?string $cryptogram): void
+    public function setCryptogram(?string $cryptogram): self
     {
         $this->cryptogram = $cryptogram;
+
+        return $this;
     }
 
     /**
@@ -83,10 +86,13 @@ class ApplePayPaymentData
      * Unicode.
      *
      * @maps eci_indicator
+     * @return self
      */
-    public function setEciIndicator(?string $eciIndicator): void
+    public function setEciIndicator(?string $eciIndicator): self
     {
         $this->eciIndicator = $eciIndicator;
+
+        return $this;
     }
 
     /**
@@ -105,10 +111,13 @@ class ApplePayPaymentData
      * external party and supports Unicode.
      *
      * @maps emv_data
+     * @return self
      */
-    public function setEmvData(?string $emvData): void
+    public function setEmvData(?string $emvData): self
     {
         $this->emvData = $emvData;
+
+        return $this;
     }
 
     /**
@@ -125,9 +134,12 @@ class ApplePayPaymentData
      * Bank Key encrypted Apple Pay PIN. The pattern is defined by an external party and supports Unicode.
      *
      * @maps pin
+     * @return self
      */
-    public function setPin(?string $pin): void
+    public function setPin(?string $pin): self
     {
         $this->pin = $pin;
+
+        return $this;
     }
 }

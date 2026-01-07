@@ -22,8 +22,9 @@ namespace PsCheckout\Tests\Api\Unit\Http\Serializer;
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Dto\PayPal\Money;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\GetAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeRequestDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeResponseDto;
 use PsCheckout\Api\Http\Serializer\PaymentSerializerFactory;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
@@ -57,11 +58,11 @@ class PaymentSerializerFactoryTest extends TestCase
     {
         return [
             'Sample 1 - 201 - Reauthorize Authorized Payment with an empty request' => [
-                'object' => new ReauthorizeAuthorizationRequestDto(),
+                'object' => new ReauthorizeRequestDto(),
                 'payload' => [],
             ],
             'Sample 3 - 201 - Reauthorize Authorized Payment' => [
-                'object' => new ReauthorizeAuthorizationRequestDto(new Money('USD', '10.99')),
+                'object' => new ReauthorizeRequestDto(new Money('USD', '10.99')),
                 'payload' => [
                     'amount' => [
                         'currency_code' => 'USD',
@@ -98,7 +99,7 @@ class PaymentSerializerFactoryTest extends TestCase
     {
         return [
             'Sample 1 - 200 - Show Authorized Payment Details' => [
-                'class' => PaymentAuthorizationResponseDto::class,
+                'class' => GetAuthorizationResponseDto::class,
                 'payload' => [
                     'id' => '0VF52814937998046',
                     'status' => 'CREATED',
@@ -146,7 +147,7 @@ class PaymentSerializerFactoryTest extends TestCase
                 ],
             ],
             'Sample 2 - 200 - Show Authorized Payment Details' => [
-                'class' => PaymentAuthorizationResponseDto::class,
+                'class' => GetAuthorizationResponseDto::class,
                 'payload' => [
                     'id' => '0T620041CK889853A',
                     'status' => 'CREATED',
@@ -204,7 +205,7 @@ class PaymentSerializerFactoryTest extends TestCase
                 ],
             ],
             'Sample 3 - 201 - Reauthorize Authorized Payment' => [
-                'class' => PaymentAuthorizationResponseDto::class,
+                'class' => ReauthorizeResponseDto::class,
                 'payload' => [
                     'id' => '8AA831015G517922L',
                     'status' => 'CREATED',

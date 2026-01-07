@@ -52,10 +52,13 @@ class SupplementaryData
      * costs. For more information about processing payments, see checkout or multiparty checkout.
      *
      * @maps card
+     * @return self
      */
-    public function setCard(?CardSupplementaryData $card): void
+    public function setCard(?CardSupplementaryData $card): self
     {
         $this->card = $card;
+
+        return $this;
     }
 
     /**
@@ -72,9 +75,12 @@ class SupplementaryData
      * Additional information necessary to evaluate the risk profile of a transaction.
      *
      * @maps risk
+     * @return self
      */
-    public function setRisk(?RiskSupplementaryData $risk): void
+    public function setRisk(?RiskSupplementaryData $risk): self
     {
         $this->risk = $risk;
+
+        return $this;
     }
 }

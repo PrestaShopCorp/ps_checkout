@@ -75,10 +75,13 @@ class NetworkToken
      *
      * @required
      * @maps number
+     * @return self
      */
-    public function setNumber(string $number): void
+    public function setNumber(string $number): self
     {
         $this->number = $number;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class NetworkToken
      *
      * @required
      * @maps expiry
+     * @return self
      */
-    public function setExpiry(string $expiry): void
+    public function setExpiry(string $expiry): self
     {
         $this->expiry = $expiry;
+
+        return $this;
     }
 
     /**
@@ -120,10 +126,13 @@ class NetworkToken
      * be present for recurring transactions.
      *
      * @maps cryptogram
+     * @return self
      */
-    public function setCryptogram(?string $cryptogram): void
+    public function setCryptogram(?string $cryptogram): self
     {
         $this->cryptogram = $cryptogram;
+
+        return $this;
     }
 
     /**
@@ -144,10 +153,13 @@ class NetworkToken
      * the Gateway/Processor.
      *
      * @maps eci_flag
+     * @return self
      */
-    public function setEciFlag(?string $eciFlag): void
+    public function setEciFlag(?string $eciFlag): self
     {
         $this->eciFlag = $eciFlag;
+
+        return $this;
     }
 
     /**
@@ -168,9 +180,12 @@ class NetworkToken
      * number (PAN), and will aid in enabling secure card on file (COF) payments and reducing fraud.
      *
      * @maps token_requestor_id
+     * @return self
      */
-    public function setTokenRequestorId(?string $tokenRequestorId): void
+    public function setTokenRequestorId(?string $tokenRequestorId): self
     {
         $this->tokenRequestorId = $tokenRequestorId;
+
+        return $this;
     }
 }

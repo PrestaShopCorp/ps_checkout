@@ -391,35 +391,4 @@ class AuthorizePayPalOrderActionTest extends TestCase
             'intent' => 'AUTHORIZE',
         ]);
     }
-
-    /**
-     * @param array{
-     *     id: string,
-     *     status: string,
-     *     purchase_units: array<array{
-     *         payments: array{
-     *             authorizations: array<array{
-     *                 id: string,
-     *                 status: string,
-     *                 expiration_time: string,
-     *                 create_time: string,
-     *                 update_time: string
-     *             }>
-     *         }
-     *     }>
-     * } $data
-     *
-     * @return ResponseInterface
-     */
-    private function createHttpResponse(array $data): ResponseInterface
-    {
-        $body = $this->createMock(StreamInterface::class);
-        $body->method('__toString')->willReturn(json_encode($data));
-        $body->method('getContents')->willReturn(json_encode($data));
-
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getBody')->willReturn($body);
-
-        return $response;
-    }
 }

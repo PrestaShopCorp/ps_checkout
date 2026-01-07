@@ -59,10 +59,13 @@ class Money
      *
      * @required
      * @maps currency_code
+     * @return self
      */
-    public function setCurrencyCode(string $currencyCode): void
+    public function setCurrencyCode(string $currencyCode): self
     {
         $this->currencyCode = $currencyCode;
+
+        return $this;
     }
 
     /**
@@ -86,9 +89,12 @@ class Money
      *
      * @required
      * @maps value
+     * @return self
      */
-    public function setValue(string $value): void
+    public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
     }
 }

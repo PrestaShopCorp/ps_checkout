@@ -23,8 +23,9 @@ namespace PsCheckout\Core\Tests\Unit\PayPal\Payment\Authorization\Action;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Dto\PayPal\LinkDescription;
-use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationLinkRelation;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\AuthorizationLinkRelation;
+use PsCheckout\Api\Dto\PayPal\Payment\GetAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeResponseDto;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -172,7 +173,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
 
     public function testOrderAuthorizationStatusInvalid(): void
     {
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::VOIDED
         ));
@@ -200,7 +201,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
 
     public function testOrderAuthorizationMissingLinkRel(): void
     {
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::VOIDED,
             [
@@ -235,7 +236,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
 
     public function testOrderAuthorizationReauthorizationFailure(): void
     {
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::CREATED,
             [
@@ -295,7 +296,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ],
         ]);
 
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::CREATED,
             [
@@ -307,7 +308,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ]
         ));
 
-        $reauthorization = new PaymentAuthorizationResponseDto(
+        $reauthorization = new ReauthorizeResponseDto(
             'AUTH-456',
             PayPalAuthorizationStatus::PENDING
         );
@@ -352,7 +353,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ],
         ]);
 
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::CREATED,
             [
@@ -364,7 +365,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ]
         ));
 
-        $reauthorization = new PaymentAuthorizationResponseDto(
+        $reauthorization = new ReauthorizeResponseDto(
             'AUTH-456',
             PayPalAuthorizationStatus::PENDING
         );
@@ -409,7 +410,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ],
         ]);
 
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::CREATED,
             [
@@ -421,7 +422,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ]
         ));
 
-        $reauthorization = new PaymentAuthorizationResponseDto(
+        $reauthorization = new ReauthorizeResponseDto(
             'AUTH-456',
             PayPalAuthorizationStatus::CREATED
         );
@@ -466,7 +467,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ],
         ]);
 
-        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new PaymentAuthorizationResponseDto(
+        $this->paymentHttpClient->method('getAuthorization')->with('AUTH-123')->willReturn(new GetAuthorizationResponseDto(
             'AUTH-123',
             PayPalAuthorizationStatus::CREATED,
             [
@@ -478,7 +479,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             ]
         ));
 
-        $reauthorization = new PaymentAuthorizationResponseDto(
+        $reauthorization = new ReauthorizeResponseDto(
             'AUTH-456',
             PayPalAuthorizationStatus::DENIED
         );

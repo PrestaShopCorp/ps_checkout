@@ -65,10 +65,13 @@ class NetworkTransaction
      * numeric, Mastercard/BNPP is alphanumeric and Paysecure is alphanumeric with special character -.
      *
      * @maps id
+     * @return self
      */
-    public function setId(?string $id): void
+    public function setId(?string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -91,10 +94,13 @@ class NetworkTransaction
      * `previous_network_transaction_reference_id` is passed.
      *
      * @maps date
+     * @return self
      */
-    public function setDate(?string $date): void
+    public function setDate(?string $date): self
     {
         $this->date = $date;
+
+        return $this;
     }
 
     /**
@@ -111,10 +117,13 @@ class NetworkTransaction
      * The card network or brand. Applies to credit, debit, gift, and payment cards.
      *
      * @maps network
+     * @return self
      */
-    public function setNetwork(?string $network): void
+    public function setNetwork(?string $network): self
     {
         $this->network = $network;
+
+        return $this;
     }
 
     /**
@@ -133,9 +142,12 @@ class NetworkTransaction
      * processors, card brands and issuing banks.
      *
      * @maps acquirer_reference_number
+     * @return self
      */
-    public function setAcquirerReferenceNumber(?string $acquirerReferenceNumber): void
+    public function setAcquirerReferenceNumber(?string $acquirerReferenceNumber): self
     {
         $this->acquirerReferenceNumber = $acquirerReferenceNumber;
+
+        return $this;
     }
 }

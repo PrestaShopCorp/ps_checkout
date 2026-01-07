@@ -44,9 +44,12 @@ class ShippingName
      * When the party is a person, the party's full name.
      *
      * @maps full_name
+     * @return self
      */
-    public function setFullName(?string $fullName): void
+    public function setFullName(?string $fullName): self
     {
         $this->fullName = $fullName;
+
+        return $this;
     }
 }

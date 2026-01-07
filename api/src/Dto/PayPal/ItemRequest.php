@@ -107,10 +107,13 @@ class ItemRequest
      *
      * @required
      * @maps name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -128,10 +131,13 @@ class ItemRequest
      *
      * @required
      * @maps unit_amount
+     * @return self
      */
-    public function setUnitAmount(Money $unitAmount): void
+    public function setUnitAmount(Money $unitAmount): self
     {
         $this->unitAmount = $unitAmount;
+
+        return $this;
     }
 
     /**
@@ -148,10 +154,13 @@ class ItemRequest
      * The currency and amount for a financial transaction, such as a balance or payment due.
      *
      * @maps tax
+     * @return self
      */
-    public function setTax(?Money $tax): void
+    public function setTax(?Money $tax): self
     {
         $this->tax = $tax;
+
+        return $this;
     }
 
     /**
@@ -169,10 +178,13 @@ class ItemRequest
      *
      * @required
      * @maps quantity
+     * @return self
      */
-    public function setQuantity(string $quantity): void
+    public function setQuantity(string $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -193,10 +205,13 @@ class ItemRequest
      * field.
      *
      * @maps description
+     * @return self
      */
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -213,10 +228,13 @@ class ItemRequest
      * The stock keeping unit (SKU) for the item.
      *
      * @maps sku
+     * @return self
      */
-    public function setSku(?string $sku): void
+    public function setSku(?string $sku): self
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
@@ -233,10 +251,13 @@ class ItemRequest
      * The URL to the item being purchased. Visible to buyer and used in buyer experiences.
      *
      * @maps url
+     * @return self
      */
-    public function setUrl(?string $url): void
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
+
+        return $this;
     }
 
     /**
@@ -253,10 +274,13 @@ class ItemRequest
      * The item category type.
      *
      * @maps category
+     * @return self
      */
-    public function setCategory(?string $category): void
+    public function setCategory(?string $category): self
     {
         $this->category = $category;
+
+        return $this;
     }
 
     /**
@@ -275,10 +299,13 @@ class ItemRequest
      * restrictions will not be honored.
      *
      * @maps image_url
+     * @return self
      */
-    public function setImageUrl(?string $imageUrl): void
+    public function setImageUrl(?string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
     }
 
     /**
@@ -295,10 +322,13 @@ class ItemRequest
      * The Universal Product Code of the item.
      *
      * @maps upc
+     * @return self
      */
-    public function setUpc(?UniversalProductCode $upc): void
+    public function setUpc(?UniversalProductCode $upc): self
     {
         $this->upc = $upc;
+
+        return $this;
     }
 
     /**
@@ -317,9 +347,12 @@ class ItemRequest
      * token or billing agreement creation.
      *
      * @maps billing_plan
+     * @return self
      */
-    public function setBillingPlan(?OrderBillingPlan $billingPlan): void
+    public function setBillingPlan(?OrderBillingPlan $billingPlan): self
     {
         $this->billingPlan = $billingPlan;
+
+        return $this;
     }
 }

@@ -20,15 +20,19 @@
 
 namespace PsCheckout\Api\Http;
 
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookRequestDto;
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookRequestHeadersDto;
+use PsCheckout\Api\Dto\Checkout\Webhook\VerifyWebhookResponseDto;
+
 interface WebhookHttpClientInterface
 {
     /**
      * Verifies webhook authenticity
      *
-     * @param string $rawBody
-     * @param array $headers
+     * @param VerifyWebhookRequestDto $body
+     * @param VerifyWebhookRequestHeadersDto $headers
      *
-     * @return array
+     * @return VerifyWebhookResponseDto
      */
-    public function verifyWebhook(string $rawBody, array $headers): array;
+    public function verifyWebhook(VerifyWebhookRequestDto $body, VerifyWebhookRequestHeadersDto $headers): VerifyWebhookResponseDto;
 }

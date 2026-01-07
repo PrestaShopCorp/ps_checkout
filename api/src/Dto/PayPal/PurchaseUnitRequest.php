@@ -83,8 +83,9 @@ class PurchaseUnitRequest
     /**
      * @param AmountWithBreakdown $amount
      */
-    public function __construct(AmountWithBreakdown $amount)
-    {
+    public function __construct(
+        AmountWithBreakdown $amount
+    ) {
         $this->amount = $amount;
     }
 
@@ -106,10 +107,13 @@ class PurchaseUnitRequest
      * purchase unit, PayPal sets this value to `default`.
      *
      * @maps reference_id
+     * @return self
      */
-    public function setReferenceId(?string $referenceId): void
+    public function setReferenceId(?string $referenceId): self
     {
         $this->referenceId = $referenceId;
+
+        return $this;
     }
 
     /**
@@ -135,10 +139,13 @@ class PurchaseUnitRequest
      *
      * @required
      * @maps amount
+     * @return self
      */
-    public function setAmount(AmountWithBreakdown $amount): void
+    public function setAmount(AmountWithBreakdown $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**
@@ -155,10 +162,13 @@ class PurchaseUnitRequest
      * The merchant who receives the funds and fulfills the order. The merchant is also known as the payee.
      *
      * @maps payee
+     * @return self
      */
-    public function setPayee(?PayeeBase $payee): void
+    public function setPayee(?PayeeBase $payee): self
     {
         $this->payee = $payee;
+
+        return $this;
     }
 
     /**
@@ -177,10 +187,13 @@ class PurchaseUnitRequest
      * instruction is applicable for Capturing an order or Authorizing an Order.
      *
      * @maps payment_instruction
+     * @return self
      */
-    public function setPaymentInstruction(?PaymentInstruction $paymentInstruction): void
+    public function setPaymentInstruction(?PaymentInstruction $paymentInstruction): self
     {
         $this->paymentInstruction = $paymentInstruction;
+
+        return $this;
     }
 
     /**
@@ -207,10 +220,13 @@ class PurchaseUnitRequest
      * be specified as input might not equal the permissible max length.
      *
      * @maps description
+     * @return self
      */
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -229,10 +245,13 @@ class PurchaseUnitRequest
      * Appears in transaction and settlement reports but is not visible to the payer.
      *
      * @maps custom_id
+     * @return self
      */
-    public function setCustomId(?string $customId): void
+    public function setCustomId(?string $customId): self
     {
         $this->customId = $customId;
+
+        return $this;
     }
 
     /**
@@ -257,10 +276,13 @@ class PurchaseUnitRequest
      * identifier. It is highly recommended to keep a unique invoice_id for each Order.
      *
      * @maps invoice_id
+     * @return self
      */
-    public function setInvoiceId(?string $invoiceId): void
+    public function setInvoiceId(?string $invoiceId): self
     {
         $this->invoiceId = $invoiceId;
+
+        return $this;
     }
 
     /**
@@ -297,10 +319,13 @@ class PurchaseUnitRequest
      * descriptor is 800-123-1234. Then, the statement descriptor on the card is PAYPAL * Janes Gift 80.
      *
      * @maps soft_descriptor
+     * @return self
      */
-    public function setSoftDescriptor(?string $softDescriptor): void
+    public function setSoftDescriptor(?string $softDescriptor): self
     {
         $this->softDescriptor = $softDescriptor;
+
+        return $this;
     }
 
     /**
@@ -321,10 +346,26 @@ class PurchaseUnitRequest
      * @maps items
      *
      * @param ItemRequest[]|null $items
+     * @return self
      */
-    public function setItems(?array $items): void
+    public function setItems(?array $items): self
     {
         $this->items = $items;
+
+        return $this;
+    }
+
+    /**
+     * Adds an Item to the purchase unit.
+     *
+     * @param ItemRequest $item
+     * @return self
+     */
+    public function addItem(ItemRequest $item): self
+    {
+        $this->items[] = $item;
+
+        return $this;
     }
 
     /**
@@ -341,10 +382,13 @@ class PurchaseUnitRequest
      * The shipping details.
      *
      * @maps shipping
+     * @return self
      */
-    public function setShipping(?ShippingDetails $shipping): void
+    public function setShipping(?ShippingDetails $shipping): self
     {
         $this->shipping = $shipping;
+
+        return $this;
     }
 
     /**
@@ -363,9 +407,12 @@ class PurchaseUnitRequest
      * assessments and processing costs, for example, by providing Level 2 and Level 3 payment data.
      *
      * @maps supplementary_data
+     * @return self
      */
-    public function setSupplementaryData(?SupplementaryData $supplementaryData): void
+    public function setSupplementaryData(?SupplementaryData $supplementaryData): self
     {
         $this->supplementaryData = $supplementaryData;
+
+        return $this;
     }
 }

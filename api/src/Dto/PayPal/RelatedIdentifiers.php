@@ -54,10 +54,13 @@ class RelatedIdentifiers
      * Order ID related to the resource.
      *
      * @maps order_id
+     * @return self
      */
-    public function setOrderId(?string $orderId): void
+    public function setOrderId(?string $orderId): self
     {
         $this->orderId = $orderId;
+
+        return $this;
     }
 
     /**
@@ -74,10 +77,13 @@ class RelatedIdentifiers
      * Authorization ID related to the resource.
      *
      * @maps authorization_id
+     * @return self
      */
-    public function setAuthorizationId(?string $authorizationId): void
+    public function setAuthorizationId(?string $authorizationId): self
     {
         $this->authorizationId = $authorizationId;
+
+        return $this;
     }
 
     /**
@@ -94,9 +100,12 @@ class RelatedIdentifiers
      * Capture ID related to the resource.
      *
      * @maps capture_id
+     * @return self
      */
-    public function setCaptureId(?string $captureId): void
+    public function setCaptureId(?string $captureId): self
     {
         $this->captureId = $captureId;
+
+        return $this;
     }
 }

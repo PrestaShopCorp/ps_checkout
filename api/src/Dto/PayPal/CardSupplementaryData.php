@@ -54,10 +54,13 @@ class CardSupplementaryData
      * Technical Account Manager to define level 2 data for your business.
      *
      * @maps level_2
+     * @return self
      */
-    public function setLevel2(?Level2CardProcessingData $level2): void
+    public function setLevel2(?Level2CardProcessingData $level2): self
     {
         $this->level2 = $level2;
+
+        return $this;
     }
 
     /**
@@ -78,9 +81,12 @@ class CardSupplementaryData
      * Technical Account Manager to define level 3 data for your business.
      *
      * @maps level_3
+     * @return self
      */
-    public function setLevel3(?Level3CardProcessingData $level3): void
+    public function setLevel3(?Level3CardProcessingData $level3): self
     {
         $this->level3 = $level3;
+
+        return $this;
     }
 }

@@ -44,9 +44,12 @@ class RiskSupplementaryData
      * Profile information of the sender or receiver.
      *
      * @maps customer
+     * @return self
      */
-    public function setCustomer(?ParticipantMetadata $customer): void
+    public function setCustomer(?ParticipantMetadata $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
     }
 }

@@ -60,10 +60,13 @@ class UniversalProductCode
      *
      * @required
      * @maps type
+     * @return self
      */
-    public function setType(string $type): void
+    public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -81,9 +84,12 @@ class UniversalProductCode
      *
      * @required
      * @maps code
+     * @return self
      */
-    public function setCode(string $code): void
+    public function setCode(string $code): self
     {
         $this->code = $code;
+
+        return $this;
     }
 }

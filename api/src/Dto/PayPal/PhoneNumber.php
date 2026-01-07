@@ -61,9 +61,12 @@ class PhoneNumber
      *
      * @required
      * @maps national_number
+     * @return self
      */
-    public function setNationalNumber(string $nationalNumber): void
+    public function setNationalNumber(string $nationalNumber): self
     {
         $this->nationalNumber = $nationalNumber;
+
+        return $this;
     }
 }

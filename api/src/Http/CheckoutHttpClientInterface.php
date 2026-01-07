@@ -20,7 +20,8 @@
 
 namespace PsCheckout\Api\Http;
 
-use Psr\Http\Message\ResponseInterface;
+use PsCheckout\Api\Dto\Checkout\Identity\UserTokenResponseDto;
+use PsCheckout\Api\Dto\Checkout\VaultMerchant\DeletePaymentTokenResponseDto;
 
 interface CheckoutHttpClientInterface
 {
@@ -28,15 +29,15 @@ interface CheckoutHttpClientInterface
      * @param string $merchantId
      * @param string|null $payPalCustomerId
      *
-     * @return ResponseInterface
+     * @return UserTokenResponseDto
      */
-    public function getUserIdToken(string $merchantId, $payPalCustomerId = null): ResponseInterface;
+    public function getUserIdToken(string $merchantId, ?string $payPalCustomerId = null): UserTokenResponseDto;
 
     /**
      * @param string $merchantId
      * @param string $vaultId
      *
-     * @return ResponseInterface
+     * @return void
      */
-    public function deletePaymentToken(string $merchantId, string $vaultId): ResponseInterface;
+    public function deletePaymentToken(string $merchantId, string $vaultId): void;
 }

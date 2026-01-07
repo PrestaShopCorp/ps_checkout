@@ -72,10 +72,13 @@ class TrustlyPaymentRequest
      *
      * @required
      * @maps name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -99,10 +102,13 @@ class TrustlyPaymentRequest
      *
      * @required
      * @maps country_code
+     * @return self
      */
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(string $countryCode): self
     {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 
     /**
@@ -124,10 +130,13 @@ class TrustlyPaymentRequest
      *
      * @required
      * @maps email
+     * @return self
      */
-    public function setEmail(string $email): void
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
     }
 
     /**
@@ -144,9 +153,12 @@ class TrustlyPaymentRequest
      * Customizes the payer experience during the approval process for the payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?ExperienceContext $experienceContext): void
+    public function setExperienceContext(?ExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 }

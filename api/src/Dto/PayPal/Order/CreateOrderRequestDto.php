@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Api\Dto\PayPal\Order;
 
+use PsCheckout\Api\Dto\PayPal\OrderIntent;
+use PsCheckout\Api\Dto\PayPal\OrderApplicationContext;
 use PsCheckout\Api\Dto\PayPal\Payer;
 use PsCheckout\Api\Dto\PayPal\PaymentSource;
 use PsCheckout\Api\Dto\PayPal\PurchaseUnitRequest;
@@ -27,7 +29,7 @@ use PsCheckout\Api\Dto\PayPal\PurchaseUnitRequest;
 class CreateOrderRequestDto
 {
     /**
-     * @var string
+     * @var value-of<OrderIntent::INTENTS>
      */
     private $intent;
 
@@ -54,11 +56,13 @@ class CreateOrderRequestDto
     private $applicationContext;
 
     /**
-     * @param string $intent
+     * @param value-of<OrderIntent::INTENTS> $intent
      * @param PurchaseUnitRequest[] $purchaseUnits
      */
-    public function __construct(string $intent, array $purchaseUnits)
-    {
+    public function __construct(
+        string $intent,
+        array $purchaseUnits
+    ) {
         $this->intent = $intent;
         $this->purchaseUnits = $purchaseUnits;
     }
@@ -67,6 +71,8 @@ class CreateOrderRequestDto
      * Returns Intent.
      * The intent to either capture payment immediately or authorize a payment for an order after order
      * creation.
+     *
+     * @return value-of<OrderIntent::INTENTS>
      */
     public function getIntent(): string
     {
@@ -78,12 +84,17 @@ class CreateOrderRequestDto
      * The intent to either capture payment immediately or authorize a payment for an order after order
      * creation.
      *
+     * @param value-of<OrderIntent::INTENTS> $intent
+     *
      * @required
      * @maps intent
+     * @return self
      */
-    public function setIntent(string $intent): void
+    public function setIntent(string $intent): self
     {
         $this->intent = $intent;
+
+        return $this;
     }
 
     /**
@@ -108,10 +119,13 @@ class CreateOrderRequestDto
      * @deprecated
      *
      * @maps payer
+     * @return self
      */
-    public function setPayer(?Payer $payer): void
+    public function setPayer(?Payer $payer): self
     {
         $this->payer = $payer;
+
+        return $this;
     }
 
     /**
@@ -137,10 +151,26 @@ class CreateOrderRequestDto
      * @maps purchase_units
      *
      * @param PurchaseUnitRequest[] $purchaseUnits
+     * @return self
      */
-    public function setPurchaseUnits(array $purchaseUnits): void
+    public function setPurchaseUnits(array $purchaseUnits): self
     {
         $this->purchaseUnits = $purchaseUnits;
+
+        return $this;
+    }
+
+    /**
+     * Adds a Purchase Unit to the request.
+     *
+     * @param PurchaseUnitRequest $purchaseUnit
+     * @return self
+     */
+    public function addPurchaseUnit(PurchaseUnitRequest $purchaseUnit): self
+    {
+        $this->purchaseUnits[] = $purchaseUnit;
+
+        return $this;
     }
 
     /**
@@ -157,10 +187,13 @@ class CreateOrderRequestDto
      * The payment source definition.
      *
      * @maps payment_source
+     * @return self
      */
-    public function setPaymentSource(?PaymentSource $paymentSource): void
+    public function setPaymentSource(?PaymentSource $paymentSource): self
     {
         $this->paymentSource = $paymentSource;
+
+        return $this;
     }
 
     /**
@@ -185,9 +218,12 @@ class CreateOrderRequestDto
      * @deprecated
      *
      * @maps application_context
+     * @return self
      */
-    public function setApplicationContext(?OrderApplicationContext $applicationContext): void
+    public function setApplicationContext(?OrderApplicationContext $applicationContext): self
     {
         $this->applicationContext = $applicationContext;
+
+        return $this;
     }
 }

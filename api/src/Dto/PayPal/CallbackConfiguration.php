@@ -64,10 +64,13 @@ class CallbackConfiguration
      * @maps callback_events
      *
      * @param string[] $callbackEvents
+     * @return self
      */
-    public function setCallbackEvents(array $callbackEvents): void
+    public function setCallbackEvents(array $callbackEvents): self
     {
         $this->callbackEvents = $callbackEvents;
+
+        return $this;
     }
 
     /**
@@ -89,9 +92,12 @@ class CallbackConfiguration
      *
      * @required
      * @maps callback_url
+     * @return self
      */
-    public function setCallbackUrl(string $callbackUrl): void
+    public function setCallbackUrl(string $callbackUrl): self
     {
         $this->callbackUrl = $callbackUrl;
+
+        return $this;
     }
 }

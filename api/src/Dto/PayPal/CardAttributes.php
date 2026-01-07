@@ -54,10 +54,13 @@ class CardAttributes
      * The details about a customer in PayPal's system of record.
      *
      * @maps customer
+     * @return self
      */
-    public function setCustomer(?CardCustomerInformation $customer): void
+    public function setCustomer(?CardCustomerInformation $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
     }
 
     /**
@@ -76,10 +79,13 @@ class CardAttributes
      * vaulting.
      *
      * @maps vault
+     * @return self
      */
-    public function setVault(?VaultInstructionBase $vault): void
+    public function setVault(?VaultInstructionBase $vault): self
     {
         $this->vault = $vault;
+
+        return $this;
     }
 
     /**
@@ -98,9 +104,12 @@ class CardAttributes
      * Smart Dollar Auth, 3DS).
      *
      * @maps verification
+     * @return self
      */
-    public function setVerification(?CardVerification $verification): void
+    public function setVerification(?CardVerification $verification): self
     {
         $this->verification = $verification;
+
+        return $this;
     }
 }

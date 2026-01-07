@@ -52,10 +52,13 @@ class AssuranceDetails
      * credential.
      *
      * @maps account_verified
+     * @return self
      */
-    public function setAccountVerified(?bool $accountVerified): void
+    public function setAccountVerified(?bool $accountVerified): self
     {
         $this->accountVerified = $accountVerified;
+
+        return $this;
     }
 
     /**
@@ -78,9 +81,12 @@ class AssuranceDetails
      * Secure protocol if applicable.
      *
      * @maps card_holder_authenticated
+     * @return self
      */
-    public function setCardHolderAuthenticated(?bool $cardHolderAuthenticated): void
+    public function setCardHolderAuthenticated(?bool $cardHolderAuthenticated): self
     {
         $this->cardHolderAuthenticated = $cardHolderAuthenticated;
+
+        return $this;
     }
 }

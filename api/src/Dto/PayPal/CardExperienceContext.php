@@ -49,10 +49,13 @@ class CardExperienceContext
      * Describes the URL.
      *
      * @maps return_url
+     * @return self
      */
-    public function setReturnUrl(?string $returnUrl): void
+    public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
+
+        return $this;
     }
 
     /**
@@ -69,9 +72,12 @@ class CardExperienceContext
      * Describes the URL.
      *
      * @maps cancel_url
+     * @return self
      */
-    public function setCancelUrl(?string $cancelUrl): void
+    public function setCancelUrl(?string $cancelUrl): self
     {
         $this->cancelUrl = $cancelUrl;
+
+        return $this;
     }
 }

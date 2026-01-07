@@ -59,10 +59,13 @@ class GooglePayRequestCard
      * The card holder's name as it appears on the card.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -79,10 +82,13 @@ class GooglePayRequestCard
      * Type of card. i.e Credit, Debit and so on.
      *
      * @maps type
+     * @return self
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -99,10 +105,13 @@ class GooglePayRequestCard
      * The card network or brand. Applies to credit, debit, gift, and payment cards.
      *
      * @maps brand
+     * @return self
      */
-    public function setBrand(?string $brand): void
+    public function setBrand(?string $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
     }
 
     /**
@@ -125,9 +134,12 @@ class GooglePayRequestCard
      * controls-the-autocomplete-attribute).
      *
      * @maps billing_address
+     * @return self
      */
-    public function setBillingAddress(?Address $billingAddress): void
+    public function setBillingAddress(?Address $billingAddress): self
     {
         $this->billingAddress = $billingAddress;
+
+        return $this;
     }
 }

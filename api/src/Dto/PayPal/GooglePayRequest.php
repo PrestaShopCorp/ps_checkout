@@ -74,10 +74,13 @@ class GooglePayRequest
      * The full name representation like Mr J Smith.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class GooglePayRequest
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -120,10 +126,13 @@ class GooglePayRequest
      * int/rec/T-REC-E.164/en).
      *
      * @maps phone_number
+     * @return self
      */
-    public function setPhoneNumber(?PhoneNumberWithCountryCode $phoneNumber): void
+    public function setPhoneNumber(?PhoneNumberWithCountryCode $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 
     /**
@@ -140,10 +149,13 @@ class GooglePayRequest
      * The payment card used to fund a Google Pay payment. Can be a credit or debit card.
      *
      * @maps card
+     * @return self
      */
-    public function setCard(?GooglePayRequestCard $card): void
+    public function setCard(?GooglePayRequestCard $card): self
     {
         $this->card = $card;
+
+        return $this;
     }
 
     /**
@@ -162,10 +174,13 @@ class GooglePayRequest
      * transaction using the Google Pay payment method.
      *
      * @maps decrypted_token
+     * @return self
      */
-    public function setDecryptedToken(?GooglePayDecryptedTokenData $decryptedToken): void
+    public function setDecryptedToken(?GooglePayDecryptedTokenData $decryptedToken): self
     {
         $this->decryptedToken = $decryptedToken;
+
+        return $this;
     }
 
     /**
@@ -184,10 +199,13 @@ class GooglePayRequest
      * (ID&V).
      *
      * @maps assurance_details
+     * @return self
      */
-    public function setAssuranceDetails(?AssuranceDetails $assuranceDetails): void
+    public function setAssuranceDetails(?AssuranceDetails $assuranceDetails): self
     {
         $this->assuranceDetails = $assuranceDetails;
+
+        return $this;
     }
 
     /**
@@ -204,9 +222,12 @@ class GooglePayRequest
      * Customizes the payer experience during the approval process for the payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?GooglePayExperienceContext $experienceContext): void
+    public function setExperienceContext(?GooglePayExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
+
+        return $this;
     }
 }

@@ -66,10 +66,13 @@ class ExperienceContext
      * defined by an external party and supports Unicode.
      *
      * @maps brand_name
+     * @return self
      */
-    public function setBrandName(?string $brandName): void
+    public function setBrandName(?string $brandName): self
     {
         $this->brandName = $brandName;
+
+        return $this;
     }
 
     /**
@@ -96,10 +99,13 @@ class ExperienceContext
      * org/unsd/methodology/m49/).
      *
      * @maps locale
+     * @return self
      */
-    public function setLocale(?string $locale): void
+    public function setLocale(?string $locale): self
     {
         $this->locale = $locale;
+
+        return $this;
     }
 
     /**
@@ -116,10 +122,13 @@ class ExperienceContext
      * The location from which the shipping address is derived.
      *
      * @maps shipping_preference
+     * @return self
      */
-    public function setShippingPreference(?string $shippingPreference): void
+    public function setShippingPreference(?string $shippingPreference): self
     {
         $this->shippingPreference = $shippingPreference;
+
+        return $this;
     }
 
     /**
@@ -136,10 +145,13 @@ class ExperienceContext
      * Describes the URL.
      *
      * @maps return_url
+     * @return self
      */
-    public function setReturnUrl(?string $returnUrl): void
+    public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
+
+        return $this;
     }
 
     /**
@@ -156,9 +168,12 @@ class ExperienceContext
      * Describes the URL.
      *
      * @maps cancel_url
+     * @return self
      */
-    public function setCancelUrl(?string $cancelUrl): void
+    public function setCancelUrl(?string $cancelUrl): self
     {
         $this->cancelUrl = $cancelUrl;
+
+        return $this;
     }
 }

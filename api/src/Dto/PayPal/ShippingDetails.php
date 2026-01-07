@@ -41,7 +41,7 @@ class ShippingDetails
     private $phoneNumber;
 
     /**
-     * @var string|null
+     * @var value-of<ShippingType::TYPES>|null
      */
     private $type;
 
@@ -54,6 +54,30 @@ class ShippingDetails
      * @var Address|null
      */
     private $address;
+
+    /**
+     * @param ShippingName|null $name
+     * @param string|null $emailAddress
+     * @param PhoneNumberWithCountryCode|null $phoneNumber
+     * @param value-of<ShippingType::TYPES>|null $type
+     * @param ShippingOption[]|null $options
+     * @param Address|null $address
+     */
+    public function __construct(
+        ?ShippingName $name = null,
+        ?string $emailAddress = null,
+        ?PhoneNumberWithCountryCode $phoneNumber = null,
+        ?string $type = null,
+        ?array $options = null,
+        ?Address $address = null
+    ) {
+        $this->name = $name;
+        $this->emailAddress = $emailAddress;
+        $this->phoneNumber = $phoneNumber;
+        $this->type = $type;
+        $this->options = $options;
+        $this->address = $address;
+    }
 
     /**
      * Returns Name.
@@ -69,10 +93,13 @@ class ShippingDetails
      * The name of the party.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?ShippingName $name): void
+    public function setName(?ShippingName $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -93,10 +120,13 @@ class ShippingDetails
      * 254 characters. The pattern verifies that an unquoted @ sign exists.
      *
      * @maps email_address
+     * @return self
      */
-    public function setEmailAddress(?string $emailAddress): void
+    public function setEmailAddress(?string $emailAddress): self
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
     }
 
     /**
@@ -115,16 +145,21 @@ class ShippingDetails
      * int/rec/T-REC-E.164/en).
      *
      * @maps phone_number
+     * @return self
      */
-    public function setPhoneNumber(?PhoneNumberWithCountryCode $phoneNumber): void
+    public function setPhoneNumber(?PhoneNumberWithCountryCode $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 
     /**
      * Returns Type.
      * A classification for the method of purchase fulfillment (e.g shipping, in-store pickup, etc). Either
      * `type` or `options` may be present, but not both.
+     *
+     * @return value-of<ShippingType::TYPES>|null
      */
     public function getType(): ?string
     {
@@ -136,11 +171,16 @@ class ShippingDetails
      * A classification for the method of purchase fulfillment (e.g shipping, in-store pickup, etc). Either
      * `type` or `options` may be present, but not both.
      *
+     * @param value-of<ShippingType::TYPES>|null $type
+     *
      * @maps type
+     * @return self
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -163,10 +203,13 @@ class ShippingDetails
      * @maps options
      *
      * @param ShippingOption[]|null $options
+     * @return self
      */
-    public function setOptions(?array $options): void
+    public function setOptions(?array $options): self
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -189,9 +232,12 @@ class ShippingDetails
      * controls-the-autocomplete-attribute).
      *
      * @maps address
+     * @return self
      */
-    public function setAddress(?Address $address): void
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
 }

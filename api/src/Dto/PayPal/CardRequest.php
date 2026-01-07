@@ -97,10 +97,13 @@ class CardRequest
      * The card holder's name as it appears on the card.
      *
      * @maps name
+     * @return self
      */
-    public function setName(?string $name): void
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -117,10 +120,13 @@ class CardRequest
      * The primary account number (PAN) for the payment card.
      *
      * @maps number
+     * @return self
      */
-    public function setNumber(?string $number): void
+    public function setNumber(?string $number): self
     {
         $this->number = $number;
+
+        return $this;
     }
 
     /**
@@ -139,10 +145,13 @@ class CardRequest
      * //tools.ietf.org/html/rfc3339#section-5.6).
      *
      * @maps expiry
+     * @return self
      */
-    public function setExpiry(?string $expiry): void
+    public function setExpiry(?string $expiry): self
     {
         $this->expiry = $expiry;
+
+        return $this;
     }
 
     /**
@@ -161,10 +170,13 @@ class CardRequest
      * This parameter cannot be present in the request when `payment_initiator=MERCHANT`.
      *
      * @maps security_code
+     * @return self
      */
-    public function setSecurityCode(?string $securityCode): void
+    public function setSecurityCode(?string $securityCode): self
     {
         $this->securityCode = $securityCode;
+
+        return $this;
     }
 
     /**
@@ -187,10 +199,13 @@ class CardRequest
      * controls-the-autocomplete-attribute).
      *
      * @maps billing_address
+     * @return self
      */
-    public function setBillingAddress(?Address $billingAddress): void
+    public function setBillingAddress(?Address $billingAddress): self
     {
         $this->billingAddress = $billingAddress;
+
+        return $this;
     }
 
     /**
@@ -207,10 +222,13 @@ class CardRequest
      * Additional attributes associated with the use of this card.
      *
      * @maps attributes
+     * @return self
      */
-    public function setAttributes(?CardAttributes $attributes): void
+    public function setAttributes(?CardAttributes $attributes): self
     {
         $this->attributes = $attributes;
+
+        return $this;
     }
 
     /**
@@ -229,10 +247,13 @@ class CardRequest
      * server so the saved payment source can be used for future transactions.
      *
      * @maps vault_id
+     * @return self
      */
-    public function setVaultId(?string $vaultId): void
+    public function setVaultId(?string $vaultId): self
     {
         $this->vaultId = $vaultId;
+
+        return $this;
     }
 
     /**
@@ -251,10 +272,13 @@ class CardRequest
      * PayPal for transaction processing.
      *
      * @maps single_use_token
+     * @return self
      */
-    public function setSingleUseToken(?string $singleUseToken): void
+    public function setSingleUseToken(?string $singleUseToken): self
     {
         $this->singleUseToken = $singleUseToken;
+
+        return $this;
     }
 
     /**
@@ -283,10 +307,13 @@ class CardRequest
      * `previous_network_transaction_reference` - can be present in the request.
      *
      * @maps stored_credential
+     * @return self
      */
-    public function setStoredCredential(?CardStoredCredential $storedCredential): void
+    public function setStoredCredential(?CardStoredCredential $storedCredential): self
     {
         $this->storedCredential = $storedCredential;
+
+        return $this;
     }
 
     /**
@@ -303,10 +330,13 @@ class CardRequest
      * The Third Party Network token used to fund a payment.
      *
      * @maps network_token
+     * @return self
      */
-    public function setNetworkToken(?NetworkToken $networkToken): void
+    public function setNetworkToken(?NetworkToken $networkToken): self
     {
         $this->networkToken = $networkToken;
+
+        return $this;
     }
 
     /**
@@ -323,83 +353,12 @@ class CardRequest
      * Customizes the payer experience during the 3DS Approval for payment.
      *
      * @maps experience_context
+     * @return self
      */
-    public function setExperienceContext(?CardExperienceContext $experienceContext): void
+    public function setExperienceContext(?CardExperienceContext $experienceContext): self
     {
         $this->experienceContext = $experienceContext;
-    }
 
-    /**
-     * Converts the CardRequest object to a human-readable string representation.
-     *
-     * @return string The string representation of the CardRequest object.
-     */
-    public function __toString(): string
-    {
-        return ApiHelper::stringify(
-            'CardRequest',
-            [
-                'name' => $this->name,
-                'number' => $this->number,
-                'expiry' => $this->expiry,
-                'securityCode' => $this->securityCode,
-                'billingAddress' => $this->billingAddress,
-                'attributes' => $this->attributes,
-                'vaultId' => $this->vaultId,
-                'singleUseToken' => $this->singleUseToken,
-                'storedCredential' => $this->storedCredential,
-                'networkToken' => $this->networkToken,
-                'experienceContext' => $this->experienceContext
-            ]
-        );
-    }
-
-    /**
-     * Encode this object to JSON
-     *
-     * @param bool $asArrayWhenEmpty Whether to serialize this model as an array whenever no fields
-     *        are set. (default: false)
-     *
-     * @return array|stdClass
-     */
-    #[\ReturnTypeWillChange] // @phan-suppress-current-line PhanUndeclaredClassAttribute for (php < 8.1)
-    public function jsonSerialize(bool $asArrayWhenEmpty = false)
-    {
-        $json = [];
-        if (isset($this->name)) {
-            $json['name']               = $this->name;
-        }
-        if (isset($this->number)) {
-            $json['number']             = $this->number;
-        }
-        if (isset($this->expiry)) {
-            $json['expiry']             = $this->expiry;
-        }
-        if (isset($this->securityCode)) {
-            $json['security_code']      = $this->securityCode;
-        }
-        if (isset($this->billingAddress)) {
-            $json['billing_address']    = $this->billingAddress;
-        }
-        if (isset($this->attributes)) {
-            $json['attributes']         = $this->attributes;
-        }
-        if (isset($this->vaultId)) {
-            $json['vault_id']           = $this->vaultId;
-        }
-        if (isset($this->singleUseToken)) {
-            $json['single_use_token']   = $this->singleUseToken;
-        }
-        if (isset($this->storedCredential)) {
-            $json['stored_credential']  = $this->storedCredential;
-        }
-        if (isset($this->networkToken)) {
-            $json['network_token']      = $this->networkToken;
-        }
-        if (isset($this->experienceContext)) {
-            $json['experience_context'] = $this->experienceContext;
-        }
-
-        return (!$asArrayWhenEmpty && empty($json)) ? new stdClass() : $json;
+        return $this;
     }
 }

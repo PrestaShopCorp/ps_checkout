@@ -78,10 +78,13 @@ class BillingCycle
      *
      * @required
      * @maps tenure_type
+     * @return self
      */
-    public function setTenureType(string $tenureType): void
+    public function setTenureType(string $tenureType): self
     {
         $this->tenureType = $tenureType;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class BillingCycle
      * The pricing scheme details.
      *
      * @maps pricing_scheme
+     * @return self
      */
-    public function setPricingScheme(?PricingScheme $pricingScheme): void
+    public function setPricingScheme(?PricingScheme $pricingScheme): self
     {
         $this->pricingScheme = $pricingScheme;
+
+        return $this;
     }
 
     /**
@@ -124,10 +130,13 @@ class BillingCycle
      * and 999 for total_cycles).
      *
      * @maps total_cycles
+     * @return self
      */
-    public function setTotalCycles(?int $totalCycles): void
+    public function setTotalCycles(?int $totalCycles): self
     {
         $this->totalCycles = $totalCycles;
+
+        return $this;
     }
 
     /**
@@ -148,10 +157,13 @@ class BillingCycle
      * cycle runs before the regular cycle.
      *
      * @maps sequence
+     * @return self
      */
-    public function setSequence(?int $sequence): void
+    public function setSequence(?int $sequence): self
     {
         $this->sequence = $sequence;
+
+        return $this;
     }
 
     /**
@@ -176,9 +188,12 @@ class BillingCycle
      * known about leap years.
      *
      * @maps start_date
+     * @return self
      */
-    public function setStartDate(?string $startDate): void
+    public function setStartDate(?string $startDate): self
     {
         $this->startDate = $startDate;
+
+        return $this;
     }
 }

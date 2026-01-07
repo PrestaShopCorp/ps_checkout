@@ -22,6 +22,9 @@ namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Dto\PayPal\Payment\CaptureResponseDto;
+use PsCheckout\Api\Dto\PayPal\SellerProtection;
+use PsCheckout\Api\Dto\PayPal\SellerProtectionStatus;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -75,17 +78,16 @@ class CaptureAuthorizationActionTest extends TestCase
             ]
         );
 
-        $capturedAuthData = [
-            'id' => 'AUTH-456',
-            'status' => PayPalAuthorizationStatus::CAPTURED,
-            'expiration_time' => '2099-12-31T23:59:59Z',
-            'seller_protection' => ['status' => 'ELIGIBLE']
-        ];
-
         $this->paymentHttpClient->expects($this->once())
             ->method('captureAuthorization')
             ->with('AUTH-456')
-            ->willReturn($this->createHttpResponse($capturedAuthData));
+            ->willReturn((new CaptureResponseDto())
+                ->setId('AUTH-456')
+                ->setStatus(PayPalAuthorizationStatus::CAPTURED)
+                ->setSellerProtection((new SellerProtection())->setStatus(
+                    SellerProtectionStatus::ELIGIBLE
+                ))
+            );
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -131,17 +133,15 @@ class CaptureAuthorizationActionTest extends TestCase
             ]
         );
 
-        $capturedAuthData = [
-            'id' => 'AUTH-456',
-            'status' => PayPalAuthorizationStatus::CAPTURED,
-            'expiration_time' => '2099-12-31T23:59:59Z',
-            'seller_protection' => []
-        ];
-
         $this->paymentHttpClient->expects($this->once())
             ->method('captureAuthorization')
             ->with('AUTH-456')
-            ->willReturn($this->createHttpResponse($capturedAuthData));
+            ->willReturn(
+                (new CaptureResponseDto())
+                ->setId('AUTH-456')
+                ->setStatus(PayPalAuthorizationStatus::CAPTURED)
+                ->setSellerProtection(null)
+            );
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -184,10 +184,11 @@ class CaptureAuthorizationActionTest extends TestCase
 
         $this->paymentHttpClient->expects($this->once())
             ->method('captureAuthorization')
-            ->willReturn($this->createHttpResponse([
-                'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::CAPTURED
-            ]));
+            ->willReturn((new CaptureResponseDto())
+                ->setId('AUTH-456')
+                ->setStatus(PayPalAuthorizationStatus::CAPTURED)
+                ->setSellerProtection(null)
+            );
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -352,10 +353,11 @@ class CaptureAuthorizationActionTest extends TestCase
 
         $this->paymentHttpClient->expects($this->once())
             ->method('captureAuthorization')
-            ->willReturn($this->createHttpResponse([
-                'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::CAPTURED
-            ]));
+            ->willReturn(
+                (new CaptureResponseDto())
+                ->setId('AUTH-456')
+                ->setStatus(PayPalAuthorizationStatus::CAPTURED)
+            );
 
         $existingEntity = new PayPalOrderAuthorization(
             'AUTH-456',
@@ -404,21 +406,5 @@ class CaptureAuthorizationActionTest extends TestCase
                 ]
             ]
         ]);
-    }
-
-    /**
-     * @param array<mixed> $data
-     * @return ResponseInterface
-     */
-    private function createHttpResponse(array $data): ResponseInterface
-    {
-        $body = $this->createMock(StreamInterface::class);
-        $body->method('__toString')->willReturn(json_encode($data));
-        $body->method('getContents')->willReturn(json_encode($data));
-
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('getBody')->willReturn($body);
-
-        return $response;
     }
 }

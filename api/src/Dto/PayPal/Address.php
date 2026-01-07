@@ -61,9 +61,20 @@ class Address
     /**
      * @param string $countryCode
      */
-    public function __construct(string $countryCode)
-    {
+    public function __construct(
+        string $countryCode,
+        ?string $addressLine1 = null,
+        ?string $addressLine2 = null,
+        ?string $adminArea2 = null,
+        ?string $adminArea1 = null,
+        ?string $postalCode = null
+    ) {
         $this->countryCode = $countryCode;
+        $this->addressLine1 = $addressLine1;
+        $this->addressLine2 = $addressLine2;
+        $this->adminArea2 = $adminArea2;
+        $this->adminArea1 = $adminArea1;
+        $this->postalCode = $postalCode;
     }
 
     /**
@@ -82,10 +93,13 @@ class Address
      * data entry, and Compliance and Risk checks. This field needs to pass the full address.
      *
      * @maps address_line_1
+     * @return self
      */
-    public function setAddressLine1(?string $addressLine1): void
+    public function setAddressLine1(?string $addressLine1): self
     {
         $this->addressLine1 = $addressLine1;
+
+        return $this;
     }
 
     /**
@@ -102,10 +116,13 @@ class Address
      * The second line of the address, for example, a suite or apartment number.
      *
      * @maps address_line_2
+     * @return self
      */
-    public function setAddressLine2(?string $addressLine2): void
+    public function setAddressLine2(?string $addressLine2): self
     {
         $this->addressLine2 = $addressLine2;
+
+        return $this;
     }
 
     /**
@@ -122,10 +139,13 @@ class Address
      * A city, town, or village. Smaller than `admin_area_level_1`.
      *
      * @maps admin_area_2
+     * @return self
      */
-    public function setAdminArea2(?string $adminArea2): void
+    public function setAdminArea2(?string $adminArea2): self
     {
         $this->adminArea2 = $adminArea2;
+
+        return $this;
     }
 
     /**
@@ -148,10 +168,13 @@ class Address
      * Switzerland. A *kanton*.
      *
      * @maps admin_area_1
+     * @return self
      */
-    public function setAdminArea1(?string $adminArea1): void
+    public function setAdminArea1(?string $adminArea1): self
     {
         $this->adminArea1 = $adminArea1;
+
+        return $this;
     }
 
     /**
@@ -170,10 +193,13 @@ class Address
      * code or an equivalent. See [postal code](https://en.wikipedia.org/wiki/Postal_code).
      *
      * @maps postal_code
+     * @return self
      */
-    public function setPostalCode(?string $postalCode): void
+    public function setPostalCode(?string $postalCode): self
     {
         $this->postalCode = $postalCode;
+
+        return $this;
     }
 
     /**
@@ -197,9 +223,12 @@ class Address
      *
      * @required
      * @maps country_code
+     * @return self
      */
-    public function setCountryCode(string $countryCode): void
+    public function setCountryCode(string $countryCode): self
     {
         $this->countryCode = $countryCode;
+
+        return $this;
     }
 }
