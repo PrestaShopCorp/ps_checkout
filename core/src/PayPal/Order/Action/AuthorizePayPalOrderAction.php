@@ -119,9 +119,9 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
             $authorization['id'],
             $orderId,
             $authorization['status'],
-            $authorization['expiration_time'],
-            $authorization['create_time'],
-            $authorization['update_time']
+            $authorization['expiration_time'] ?? '',
+            $authorization['create_time'] ?? '',
+            $authorization['update_time'] ?? ''
         );
 
         $this->payPalOrderAuthorizationRepository->save($payPalAuthorization);
