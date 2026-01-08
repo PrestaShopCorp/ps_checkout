@@ -22,11 +22,15 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
+use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction;
+use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
+use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
@@ -165,7 +169,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $paymentMode = Tools::getValue('paymentMode');
 
         if (!in_array($paymentMode, [PayPalConfiguration::MODE_LIVE, PayPalConfiguration::MODE_SANDBOX])) {
-            throw new \UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
+            throw new UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
         }
 
         $this->setConfiguration(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE, $paymentMode);
@@ -709,7 +713,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 if ($migrationSuccessful) {
                     $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(
                     'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
@@ -968,6 +972,48 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $applePayInstaller->setup();
         } catch (ApplePayInstallerException $e) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                ],
+            ]);
+        }
+
+        $this->exitWithResponse([
+            'status' => true,
+        ]);
+    }
+
+    public function ajaxProcessCaptureAuthorization()
+    {
+        $orderId = Tools::getValue('orderId');
+
+        if (!$orderId) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+            ]);
+        }
+
+        /** @var CaptureAuthorizationActionInterface $captureAuthorizationAction */
+        $captureAuthorizationAction = $this->module->getService(CaptureAuthorizationAction::class);
+
+        /** @var PayPalOrderProviderInterface $payPalOrderProvider */
+        $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        try {
+            $payPalOrderResponse = $payPalOrderProvider->getById($orderId);
+
+            $captureAuthorizationAction->execute($payPalOrderResponse);
+        } catch (\Exception $e) {
+            $logger->error('Failed to capture authorization: ' . $e->getMessage());
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,

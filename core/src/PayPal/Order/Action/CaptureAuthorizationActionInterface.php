@@ -21,12 +21,14 @@
 namespace PsCheckout\Core\PayPal\Order\Action;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 
 interface CaptureAuthorizationActionInterface
 {
     /**
      * @param PayPalOrderResponse $payPalOrder
+     * @throws PsCheckoutException
      *
      * @return PayPalOrderAuthorization
      */
