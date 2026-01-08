@@ -43,12 +43,6 @@ parameters:
 			path: ../api/src/Http/Configuration/WebhookHttpClientConfigurationBuilder.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$previous \(Http\\Client\\Exception\\HttpException\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/Exception/PayPalError.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\Http\\Exception\\PayPalError\:\:throwException\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -63,30 +57,6 @@ parameters:
 		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$requestId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$clientMetadataId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$requestId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#4 \$clientMetadataId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
 			count: 1
 			path: ../api/src/Http/OrderHttpClient.php
 
@@ -143,30 +113,6 @@ parameters:
 			identifier: argument.type
 			count: 4
 			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$requestId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClientInterface.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$clientMetadataId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClientInterface.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$requestId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClientInterface.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#4 \$clientMetadataId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../api/src/Http/OrderHttpClientInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:authorizeOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
@@ -705,12 +651,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
-			count: 2
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Possibly invalid array key type int\|string\|null\.$#'
-			identifier: offsetAccess.invalidOffset
 			count: 2
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -3253,61 +3193,7 @@ parameters:
 			path: ../core/src/PayPal/OAuth/OAuthService.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''expiration_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''id'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''status'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Offset ''update_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
 			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$id of method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProviderInterface\:\:getById\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:getValue\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
-
-		-
-			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:set\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/AuthorizePayPalOrderAction.php
@@ -3329,6 +3215,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
+
+		-
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
@@ -3489,18 +3381,6 @@ parameters:
 		-
 			message: '#^Cannot call method setSavePaymentMethod\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$paypalRequestId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#3 \$clientMetadataId \(string\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
 
@@ -4701,12 +4581,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Response\\PayPalProcessorResponse\:\:getResponseVisa\(\) should return string but returns string\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: ../core/src/PayPal/Order/Response/PayPalProcessorResponse.php
-
-		-
-			message: '#^Possibly invalid array key type string\|null\.$#'
-			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../core/src/PayPal/Order/Response/PayPalProcessorResponse.php
 
@@ -6393,12 +6267,6 @@ parameters:
 		-
 			message: '#^Parameter \#6 \$status of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
-
-		-
-			message: '#^Possibly invalid array key type string\|null\.$#'
-			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../core/src/PaymentToken/Action/SavePaymentTokenAction.php
 

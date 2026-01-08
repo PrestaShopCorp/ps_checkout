@@ -28,6 +28,8 @@ class PayPalAuthorizationStatus
 
     const DENIED = 'DENIED';
 
+    const EXPIRED = 'EXPIRED';
+
     const PARTIALLY_CAPTURED = 'PARTIALLY_CAPTURED';
 
     const VOIDED = 'VOIDED';

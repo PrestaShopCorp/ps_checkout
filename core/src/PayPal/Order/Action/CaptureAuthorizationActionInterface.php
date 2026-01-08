@@ -18,23 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Repository;
+namespace PsCheckout\Core\PayPal\Order\Action;
 
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 
-interface PayPalOrderAuthorizationRepositoryInterface
+interface CaptureAuthorizationActionInterface
 {
     /**
-     * @param PayPalOrderAuthorization $payPalOrderAuthorization
+     * @param PayPalOrderResponse $payPalOrder
      *
-     * @return void
+     * @return PayPalOrderAuthorization
      */
-    public function save(PayPalOrderAuthorization $payPalOrderAuthorization);
-
-    /**
-     * @param string $payPalOrderAuthorizationId
-     *
-     * @return PayPalOrderAuthorization|null
-     */
-    public function getById(string $payPalOrderAuthorizationId): ?PayPalOrderAuthorization;
+    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization;
 }

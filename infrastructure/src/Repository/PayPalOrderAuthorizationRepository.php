@@ -63,4 +63,40 @@ class PayPalOrderAuthorizationRepository implements PayPalOrderAuthorizationRepo
             throw new PsCheckoutException('Error while saving PayPal Order Authorization', 0, $exception);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getById(string $payPalOrderAuthorizationId): ?PayPalOrderAuthorization
+    {
+        $query = new \DbQuery();
+        $query->select('id, id_order, status, expiration_time, create_time, update_time')
+            ->from(self::TABLE_NAME)
+            ->where('id = "' . pSQL($payPalOrderAuthorizationId) . '"');
+
+        /**
+         * @var array{
+         *     id: string,
+         *     id_order: string,
+         *     status: string,
+         *     expiration_time: string,
+         *     create_time: string,
+         *     update_time: string
+         * }|false $authorization
+         */
+        $authorization = $this->db->getRow($query);
+
+        if (empty($authorization)) {
+            return null;
+        }
+
+        return new PayPalOrderAuthorization(
+            $authorization['id'],
+            $authorization['id_order'],
+            $authorization['status'],
+            $authorization['expiration_time'],
+            $authorization['create_time'],
+            $authorization['update_time']
+        );
+    }
 }

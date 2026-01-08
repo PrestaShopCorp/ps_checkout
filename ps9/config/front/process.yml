@@ -270,6 +270,7 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction:
     class: PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction

@@ -78,6 +78,16 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface
+    {
+        $payloadString = !empty($payload) && json_encode($payload) ? json_encode($payload) : '{}';
+
+        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $payloadString));
+    }
+
+    /**
      * @inheritDoc
      */
     public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto
