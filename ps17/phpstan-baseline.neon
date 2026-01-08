@@ -265,12 +265,6 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClient\:\:refundOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/Http/PaymentHttpClient.php
-
-		-
 			message: '#^Parameter \#1 \$body of method PsCheckout\\Api\\Http\\PaymentHttpClient\:\:extractMessage\(\) expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -283,22 +277,10 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
-			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects Psr\\Http\\Message\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/PaymentHttpClient.php
-
-		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: array.invalidKey
 			count: 1
 			path: ../api/src/Http/PaymentHttpClient.php
-
-		-
-			message: '#^Method PsCheckout\\Api\\Http\\PaymentHttpClientInterface\:\:refundOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/Http/PaymentHttpClientInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\PsrHttpClientAdapter\:\:__construct\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
