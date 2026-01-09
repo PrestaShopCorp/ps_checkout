@@ -147,3 +147,12 @@ services:
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+
+  PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction'
+      - '@PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction'
+      - '@PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@Psr\Log\LoggerInterface'
