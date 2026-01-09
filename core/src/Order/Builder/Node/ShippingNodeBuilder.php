@@ -29,11 +29,6 @@ use PsCheckout\Utility\Payload\OrderPayloadUtility;
 class ShippingNodeBuilder implements ShippingNodeBuilderInterface
 {
     /**
-     * @var GenderRepositoryInterface
-     */
-    private $gender;
-
-    /**
      * @var CountryRepositoryInterface
      */
     private $countryRepository;
@@ -49,11 +44,9 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
     private $cart;
 
     public function __construct(
-        GenderRepositoryInterface $gender,
         CountryRepositoryInterface $countryRepository,
         StateRepositoryInterface $stateRepository
     ) {
-        $this->gender = $gender;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
     }
@@ -79,12 +72,10 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
             $this->stateRepository->getIsoById($address->id_state)
             : $this->stateRepository->getNameById($address->id_state);
 
-        $gender = $this->gender->getGenderNameById($this->cart['customer']->id_gender, $this->cart['language']->id);
-
         return [
             'shipping' => [
                 'name' => [
-                    'full_name' => (!empty($gender) ? "$gender " : "") . $this->cart['addresses']['shipping']->firstname  . ' ' . $this->cart['addresses']['shipping']->lastname,
+                    'full_name' => $this->cart['addresses']['shipping']->firstname  . ' ' . $this->cart['addresses']['shipping']->lastname,
                 ],
                 'address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
             ],
