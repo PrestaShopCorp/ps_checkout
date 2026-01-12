@@ -993,43 +993,31 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessCaptureAuthorization()
     {
-        $orderId = Tools::getValue('orderId');
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        if (!$orderId) {
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-            ]);
-        }
+        $this->exitWithResponse($processor->process('capture', Tools::getValue('orderId')));
+    }
 
-        /** @var CaptureAuthorizationActionInterface $captureAuthorizationAction */
-        $captureAuthorizationAction = $this->module->getService(CaptureAuthorizationAction::class);
+    public function ajaxProcessVoidAuthorization()
+    {
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        /** @var PayPalOrderProviderInterface $payPalOrderProvider */
-        $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+        $this->exitWithResponse($processor->process('void', Tools::getValue('orderId')));
+    }
 
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
+    public function ajaxProcessReauthorizeAuthorization()
+    {
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        try {
-            $payPalOrderResponse = $payPalOrderProvider->getById($orderId);
-
-            $captureAuthorizationAction->execute($payPalOrderResponse);
-        } catch (\Exception $e) {
-            $logger->error('Failed to capture authorization: ' . $e->getMessage());
-
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'error' => [
-                    'message' => $e->getMessage(),
-                    'code' => $e->getCode(),
-                ],
-            ]);
-        }
-
-        $this->exitWithResponse([
-            'status' => true,
-        ]);
+        $this->exitWithResponse($processor->process('reauthorize', Tools::getValue('orderId')));
     }
 }
