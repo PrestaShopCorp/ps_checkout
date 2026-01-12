@@ -95,6 +95,10 @@ class OrderStateMapper implements OrderStateMapperInterface
                 'default' => '0',
                 'value' => (string) $this->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED),
             ],
+            OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED),
+            ],
         ];
     }
 
@@ -117,6 +121,7 @@ class OrderStateMapper implements OrderStateMapperInterface
             OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED),
             OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID => $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID),
             OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED => $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED),
+            OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED => $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED),
         ];
     }
 }
