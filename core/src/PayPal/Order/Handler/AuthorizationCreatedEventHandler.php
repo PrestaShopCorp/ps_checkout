@@ -21,15 +21,10 @@
 namespace PsCheckout\Core\PayPal\Order\Handler;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
-use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
-use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
-use PsCheckout\Infrastructure\Adapter\ContextInterface;
 
 class AuthorizationCreatedEventHandler implements EventHandlerInterface
 {
-
     /**
      * @var SetOrderStateActionInterface
      */

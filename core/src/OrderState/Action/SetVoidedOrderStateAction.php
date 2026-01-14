@@ -26,7 +26,7 @@ use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\OrderRepository;
 
 class SetVoidedOrderStateAction implements SetOrderStateActionInterface
 {
@@ -36,7 +36,7 @@ class SetVoidedOrderStateAction implements SetOrderStateActionInterface
     private $payPalOrderRepository;
 
     /**
-     * @var OrderRepositoryInterface
+     * @var OrderRepository
      */
     private $orderRepository;
 
@@ -57,7 +57,7 @@ class SetVoidedOrderStateAction implements SetOrderStateActionInterface
 
     public function __construct(
         PayPalOrderRepositoryInterface $payPalOrderRepository,
-        OrderRepositoryInterface $orderRepository,
+        OrderRepository $orderRepository,
         ConfigurationInterface $configuration,
         OrderStateMapperInterface $orderStateMapper,
         ChangeOrderStateActionInterface $changeOrderStateAction
@@ -82,13 +82,13 @@ class SetVoidedOrderStateAction implements SetOrderStateActionInterface
 
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if ($this->hasBeenVoided($order)) {
+        if (!$order || !$order->id || $this->hasBeenVoided($order)) {
             return;
         }
 
         $this->changeOrderStateAction->execute(
             $order->id,
-            $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED)
+            (string) $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED)
         );
     }
 
