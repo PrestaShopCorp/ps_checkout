@@ -35,7 +35,9 @@ class PayPalEventDispatcher implements PayPalEventDispatcherInterface
         EventHandlerInterface $paymentReversedHandler,
         EventHandlerInterface $orderApprovedHandler,
         EventHandlerInterface $orderCompletedHandler,
-        EventHandlerInterface $orderApprovalReversedHandler
+        EventHandlerInterface $orderApprovalReversedHandler,
+        EventHandlerInterface $paymentAuthorizationCreatedHandler,
+        EventHandlerInterface $paymentAuthorizationVoidedHandler,
     ) {
         $this->handlers = [
             'PaymentCaptureCompleted' => $paymentCompletedHandler,
@@ -46,6 +48,8 @@ class PayPalEventDispatcher implements PayPalEventDispatcherInterface
             'CheckoutOrderApproved' => $orderApprovedHandler,
             'CheckoutOrderCompleted' => $orderCompletedHandler,
             'CheckoutPaymentApprovalReversed' => $orderApprovalReversedHandler,
+            'PaymentAuthorizationCreated' => $paymentAuthorizationCreatedHandler,
+            'PaymentAuthorizationVoided' => $paymentAuthorizationVoidedHandler,
         ];
     }
 
