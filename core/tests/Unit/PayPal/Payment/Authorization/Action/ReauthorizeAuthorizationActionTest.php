@@ -28,6 +28,7 @@ use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
@@ -49,9 +50,9 @@ class ReauthorizeAuthorizationActionTest extends TestCase
     private $paymentHttpClient;
 
     /**
-     * @var MockObject|EventHandlerInterface
+     * @var MockObject|SetOrderStateActionInterface
      */
-    private $paymentPendingEventHandler;
+    private $setPendingOrderStateAction;
 
     /**
      * @var MockObject|EventHandlerInterface
@@ -73,7 +74,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
         parent::setUp();
 
         $this->paymentHttpClient = $this->createMock(PaymentHttpClientInterface::class);
-        $this->paymentPendingEventHandler = $this->createMock(EventHandlerInterface::class);
+        $this->setPendingOrderStateAction = $this->createMock(SetOrderStateActionInterface::class);
         $this->paymentDeniedEventHandler = $this->createMock(EventHandlerInterface::class);
         $this->payPalOrderAuthorizationRepository = $this->createMock(PayPalOrderAuthorizationRepositoryInterface::class);
 
@@ -81,7 +82,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             $this->createMock(LoggerInterface::class),
             $this->paymentHttpClient,
             $this->payPalOrderAuthorizationRepository,
-            $this->paymentPendingEventHandler,
+            $this->setPendingOrderStateAction,
             $this->paymentDeniedEventHandler
         );
     }
@@ -384,7 +385,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             $reauthorization->getUpdateTime()
         ));
 
-        $this->paymentPendingEventHandler->expects($this->once())->method('handle')->with($paypalOrderResponse);
+        $this->setPendingOrderStateAction->expects($this->once())->method('execute')->with($paypalOrderResponse->getId());
         $this->action->execute($paypalOrderResponse);
     }
 
@@ -441,7 +442,7 @@ class ReauthorizeAuthorizationActionTest extends TestCase
             $reauthorization->getUpdateTime()
         ));
 
-        $this->paymentPendingEventHandler->expects($this->once())->method('handle')->with($paypalOrderResponse);
+        $this->setPendingOrderStateAction->expects($this->once())->method('execute')->with($paypalOrderResponse->getId());
         $this->action->execute($paypalOrderResponse);
     }
 
