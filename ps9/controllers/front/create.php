@@ -94,6 +94,24 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]);
             }
 
+            // Validate PUI amount limits (5 EUR < amount < 2500 EUR)
+            if ($createPayPalOrderRequest->getFundingSource() === 'pay_upon_invoice') {
+                $cart = $context->getCart();
+                $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
+
+                if ($cartTotal <= 5.00 || $cartTotal >= 2500.00) {
+                    $this->exitWithResponse([
+                        'status' => false,
+                        'httpCode' => 400,
+                        'body' => [
+                            'error' => [
+                                'message' => $this->module->l('The payment is not valid: the amount is not eligible.', 'create'),
+                            ],
+                        ],
+                    ]);
+                }
+            }
+
             if ($createPayPalOrderRequest->isExpressCheckout() || empty($context->getCart()->id_address_delivery)) {
                 /** @var PayPalOrderRepository $payPalOrderRepository */
                 $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
