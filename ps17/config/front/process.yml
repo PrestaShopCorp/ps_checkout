@@ -102,6 +102,7 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
+      - '@PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction'
 
   PsCheckout\Infrastructure\Action\CustomerNotifyAction:
     class: PsCheckout\Infrastructure\Action\CustomerNotifyAction

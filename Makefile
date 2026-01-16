@@ -66,6 +66,11 @@ phpstan:
 phpstan-baseline:
 	cd $${MODULE_VERSION} && composer phpstan:baseline
 
+phpstan-baseline-all:
+	cd ps17 && composer phpstan:baseline
+	cd ps8 && composer phpstan:baseline
+	cd ps9 && composer phpstan:baseline
+
 ssh:
 	docker exec -it $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash
 
