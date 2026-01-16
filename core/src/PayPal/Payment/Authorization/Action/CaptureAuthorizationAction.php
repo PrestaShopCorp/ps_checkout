@@ -28,8 +28,9 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
-final class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
+final class CaptureAuthorizationAction implements AuthorizationActionInterface
 {
     /**
      * @var PaymentHttpClientInterface
@@ -60,7 +61,7 @@ final class CaptureAuthorizationAction implements CaptureAuthorizationActionInte
     /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder)
     {
         // Check PayPal order status must be APPROVED
         if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {

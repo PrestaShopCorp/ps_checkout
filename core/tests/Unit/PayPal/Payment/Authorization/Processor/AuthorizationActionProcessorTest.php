@@ -29,6 +29,7 @@ use PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationActionI
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use Psr\Log\LoggerInterface;
 
@@ -38,17 +39,17 @@ use Psr\Log\LoggerInterface;
 class AuthorizationActionProcessorTest extends TestCase
 {
     /**
-     * @var MockObject|CaptureAuthorizationActionInterface
+     * @var MockObject|AuthorizationActionInterface
      */
     private $captureAction;
 
     /**
-     * @var MockObject|VoidAuthorizationActionInterface
+     * @var MockObject|AuthorizationActionInterface
      */
     private $voidAction;
 
     /**
-     * @var MockObject|ReauthorizeAuthorizationActionInterface
+     * @var MockObject|AuthorizationActionInterface
      */
     private $reauthorizeAction;
 
@@ -71,17 +72,17 @@ class AuthorizationActionProcessorTest extends TestCase
     {
         parent::setUp();
 
-        $this->captureAction = $this->createMock(CaptureAuthorizationActionInterface::class);
+        $this->captureAction = $this->createMock(AuthorizationActionInterface::class);
         $this->captureAction->method('supports')->willReturnCallback(function ($action) {
             return $action === AuthorizationAction::CAPTURE;
         });
 
-        $this->voidAction = $this->createMock(VoidAuthorizationActionInterface::class);
+        $this->voidAction = $this->createMock(AuthorizationActionInterface::class);
         $this->voidAction->method('supports')->willReturnCallback(function ($action) {
             return $action === AuthorizationAction::VOID;
         });
 
-        $this->reauthorizeAction = $this->createMock(ReauthorizeAuthorizationActionInterface::class);
+        $this->reauthorizeAction = $this->createMock(AuthorizationActionInterface::class);
         $this->reauthorizeAction->method('supports')->willReturnCallback(function ($action) {
             return $action === AuthorizationAction::REAUTHORIZE;
         });

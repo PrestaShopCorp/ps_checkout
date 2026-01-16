@@ -33,9 +33,10 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 use Psr\Log\LoggerInterface;
 
-final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationActionInterface
+final class ReauthorizeAuthorizationAction implements AuthorizationActionInterface
 {
     /**
      * @var LoggerInterface
@@ -87,7 +88,7 @@ final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationAc
     /**
      * @inheritDoc
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder)
     {
         if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             $this->logger->error('PayPal Order intent must be AUTHORIZE', ['order_id' => $payPalOrder->getId()]);

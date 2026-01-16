@@ -26,11 +26,11 @@ use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction;
-use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -43,7 +43,7 @@ class CaptureAuthorizationActionTest extends TestCase
     /** @var PayPalOrderAuthorizationRepositoryInterface|MockObject  */
     private $authorizationRepository;
 
-    /** @var CaptureAuthorizationActionInterface  */
+    /** @var CaptureAuthorizationAction  */
     private $action;
 
     protected function setUp(): void
