@@ -24,10 +24,11 @@ use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
-use PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
 use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use Psr\Log\LoggerInterface;
 
@@ -37,19 +38,19 @@ use Psr\Log\LoggerInterface;
 class AuthorizationActionProcessorTest extends TestCase
 {
     /**
+     * @var MockObject|CaptureAuthorizationActionInterface
+     */
+    private $captureAction;
+
+    /**
      * @var MockObject|VoidAuthorizationActionInterface
      */
-    private $voidAuthorizationAction;
+    private $voidAction;
 
     /**
      * @var MockObject|ReauthorizeAuthorizationActionInterface
      */
-    private $reauthorizeAuthorizationAction;
-
-    /**
-     * @var MockObject|CaptureAuthorizationActionInterface
-     */
-    private $captureAuthorizationAction;
+    private $reauthorizeAction;
 
     /**
      * @var MockObject|PayPalOrderProviderInterface
@@ -70,16 +71,26 @@ class AuthorizationActionProcessorTest extends TestCase
     {
         parent::setUp();
 
-        $this->voidAuthorizationAction = $this->createMock(VoidAuthorizationActionInterface::class);
-        $this->reauthorizeAuthorizationAction = $this->createMock(ReauthorizeAuthorizationActionInterface::class);
-        $this->captureAuthorizationAction = $this->createMock(CaptureAuthorizationActionInterface::class);
+        $this->captureAction = $this->createMock(CaptureAuthorizationActionInterface::class);
+        $this->captureAction->method('supports')->willReturnCallback(function ($action) {
+            return $action === AuthorizationAction::CAPTURE;
+        });
+
+        $this->voidAction = $this->createMock(VoidAuthorizationActionInterface::class);
+        $this->voidAction->method('supports')->willReturnCallback(function ($action) {
+            return $action === AuthorizationAction::VOID;
+        });
+
+        $this->reauthorizeAction = $this->createMock(ReauthorizeAuthorizationActionInterface::class);
+        $this->reauthorizeAction->method('supports')->willReturnCallback(function ($action) {
+            return $action === AuthorizationAction::REAUTHORIZE;
+        });
+
         $this->payPalOrderProvider = $this->createMock(PayPalOrderProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new AuthorizationActionProcessor(
-            $this->voidAuthorizationAction,
-            $this->reauthorizeAuthorizationAction,
-            $this->captureAuthorizationAction,
+            [$this->captureAction, $this->voidAction, $this->reauthorizeAction],
             $this->payPalOrderProvider,
             $this->logger
         );
@@ -123,16 +134,16 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse);
 
-        $this->voidAuthorizationAction
+        $this->voidAction
             ->expects($this->never())
             ->method('execute');
 
-        $this->reauthorizeAuthorizationAction
+        $this->reauthorizeAction
             ->expects($this->never())
             ->method('execute');
 
@@ -154,16 +165,16 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->voidAuthorizationAction
+        $this->voidAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->never())
             ->method('execute');
 
-        $this->reauthorizeAuthorizationAction
+        $this->reauthorizeAction
             ->expects($this->never())
             ->method('execute');
 
@@ -185,16 +196,16 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->reauthorizeAuthorizationAction
+        $this->reauthorizeAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->never())
             ->method('execute');
 
-        $this->voidAuthorizationAction
+        $this->voidAction
             ->expects($this->never())
             ->method('execute');
 
@@ -220,9 +231,9 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('error')
-            ->with('Failed to void authorization: ' . $exceptionMessage);
+            ->with('Failed to execute authorization action: ' . $exceptionMessage);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->never())
             ->method('execute');
 
@@ -249,7 +260,7 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse)
@@ -258,7 +269,7 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('error')
-            ->with('Failed to void authorization: ' . $exceptionMessage);
+            ->with('Failed to execute authorization action: ' . $exceptionMessage);
 
         $result = $this->processor->process('capture', $orderId);
 
@@ -283,7 +294,7 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->voidAuthorizationAction
+        $this->voidAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse)
@@ -292,7 +303,7 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('error')
-            ->with('Failed to void authorization: ' . $exceptionMessage);
+            ->with('Failed to execute authorization action: ' . $exceptionMessage);
 
         $result = $this->processor->process('void', $orderId);
 
@@ -317,7 +328,7 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->reauthorizeAuthorizationAction
+        $this->reauthorizeAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse)
@@ -326,7 +337,7 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('error')
-            ->with('Failed to void authorization: ' . $exceptionMessage);
+            ->with('Failed to execute authorization action: ' . $exceptionMessage);
 
         $result = $this->processor->process('reauthorize', $orderId);
 
@@ -350,7 +361,7 @@ class AuthorizationActionProcessorTest extends TestCase
             ->with($orderId)
             ->willReturn($payPalOrderResponse);
 
-        $this->captureAuthorizationAction
+        $this->captureAction
             ->expects($this->once())
             ->method('execute')
             ->with($payPalOrderResponse)
@@ -359,7 +370,7 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('error')
-            ->with('Failed to void authorization: ' . $exceptionMessage);
+            ->with('Failed to execute authorization action: ' . $exceptionMessage);
 
         $result = $this->processor->process('capture', $orderId);
 

@@ -18,18 +18,27 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Processor;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
-use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
-interface ReauthorizeAuthorizationActionInterface extends AuthorizationActionInterface
+interface AuthorizationActionInterface
 {
     /**
+     * Whether this handler supports the given action.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    public function supports(string $action): bool;
+
+    /**
+     * Execute the authorization action.
+     *
      * @param PayPalOrderResponse $payPalOrder
      *
-     * @return PayPalOrderAuthorization
+     * @return mixed
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization;
+    public function execute(PayPalOrderResponse $payPalOrder);
 }

@@ -31,6 +31,7 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
 use Psr\Log\LoggerInterface;
 
 final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationActionInterface
@@ -72,6 +73,14 @@ final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationAc
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
         $this->paymentPendingEventHandler = $paymentPendingEventHandler;
         $this->paymentDeniedEventHandler = $paymentDeniedEventHandler;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $action): bool
+    {
+        return $action === AuthorizationAction::REAUTHORIZE;
     }
 
     /**

@@ -18,12 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
-interface VoidAuthorizationActionInterface
+interface VoidAuthorizationActionInterface extends AuthorizationActionInterface
 {
     /**
      * @param PayPalOrderResponse $payPalOrder

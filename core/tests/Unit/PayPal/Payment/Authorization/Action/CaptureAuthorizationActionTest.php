@@ -18,15 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
+namespace PsCheckout\Core\Tests\Unit\PayPal\Payment\Authorization\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;

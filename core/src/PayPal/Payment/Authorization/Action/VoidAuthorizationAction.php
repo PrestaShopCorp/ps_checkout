@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
 
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
@@ -26,8 +26,9 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
 
-class VoidAuthorizationAction implements VoidAuthorizationActionInterface
+final class VoidAuthorizationAction implements VoidAuthorizationActionInterface
 {
     /**
      * @var PaymentHttpClientInterface
@@ -45,6 +46,14 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
     ) {
         $this->paymentHttpClient = $paymentHttpClient;
         $this->authorizationRepository = $authorizationRepository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $action): bool
+    {
+        return $action === AuthorizationAction::VOID;
     }
 
     /**

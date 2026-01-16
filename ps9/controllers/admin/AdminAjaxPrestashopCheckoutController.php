@@ -23,15 +23,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
-use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
-use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
@@ -995,7 +993,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
          */
         $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        $this->exitWithResponse($processor->process('capture', Tools::getValue('orderId')));
+        $this->exitWithResponse($processor->process(AuthorizationAction::CAPTURE, Tools::getValue('orderId')));
     }
 
     public function ajaxProcessVoidAuthorization()
@@ -1005,7 +1003,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
          */
         $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        $this->exitWithResponse($processor->process('void', Tools::getValue('orderId')));
+        $this->exitWithResponse($processor->process(AuthorizationAction::VOID, Tools::getValue('orderId')));
     }
 
     public function ajaxProcessReauthorizeAuthorization()
@@ -1015,6 +1013,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
          */
         $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        $this->exitWithResponse($processor->process('reauthorize', Tools::getValue('orderId')));
+        $this->exitWithResponse($processor->process(AuthorizationAction::REAUTHORIZE, Tools::getValue('orderId')));
     }
 }
