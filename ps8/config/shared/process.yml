@@ -135,6 +135,14 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor'
       - '@Psr\Log\LoggerInterface'
 
+  PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Api\Http\PaymentHttpClient'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
 
   PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction:
     class: PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction
