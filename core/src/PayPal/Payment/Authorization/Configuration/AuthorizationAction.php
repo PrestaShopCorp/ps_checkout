@@ -23,6 +23,8 @@ namespace PsCheckout\Core\PayPal\Payment\Authorization\Configuration;
 class AuthorizationAction
 {
     const CAPTURE = 'capture';
+
     const VOID = 'void';
+
     const REAUTHORIZE = 'reauthorize';
 }
