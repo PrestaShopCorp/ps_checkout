@@ -3,4 +3,8 @@ credentials-file: /credentials.json
 ingress:
   - hostname: ${PS_DOMAIN}
     service: http://${MODULE_VERSION}-ps-prestashop-${PS_VERSION_TAG}:80
+  - hostname: logs.${CLOUDFLARED_DOMAIN}
+    service: http://dozzle:8080
+  - hostname: glitchtip.${CLOUDFLARED_DOMAIN}
+    service: http://glitchtip:8000
   - service: http_status:404

@@ -78,6 +78,8 @@ function upgrade_module_7_5_2_0(Ps_checkout $module)
             }
         }
     } catch (Exception $exception) {
+        \Sentry\captureException($exception);
+
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
         return false;
