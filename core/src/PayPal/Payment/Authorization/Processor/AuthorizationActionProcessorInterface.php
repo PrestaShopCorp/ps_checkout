@@ -18,17 +18,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Processor;
 
-use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
-
-interface ReauthorizeAuthorizationActionInterface
+interface AuthorizationActionProcessorInterface
 {
     /**
-     * @param PayPalOrderResponse $payPalOrder
+     * @param string $action
+     * @param string|null $orderId
      *
-     * @return PayPalOrderAuthorization
+     * @return array{
+     *     status: bool,
+     *     httpCode?: int,
+     *     error?: array{message: string, code: int}
+     * }
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization;
+    public function process(string $action, ?string $orderId): array;
 }

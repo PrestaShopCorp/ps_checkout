@@ -17,20 +17,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
-
-interface CaptureAuthorizationActionInterface
-{
-    /**
-     * @param PayPalOrderResponse $payPalOrder
-     * @throws PsCheckoutException
-     *
-     * @return PayPalOrderAuthorization
-     */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization;
-}
+header('Location: ../');
+exit;

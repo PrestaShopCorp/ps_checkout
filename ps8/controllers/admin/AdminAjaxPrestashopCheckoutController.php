@@ -22,15 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
-use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction;
-use PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
-use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
@@ -989,43 +987,31 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessCaptureAuthorization()
     {
-        $orderId = Tools::getValue('orderId');
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        if (!$orderId) {
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-            ]);
-        }
+        $this->exitWithResponse($processor->process(AuthorizationAction::CAPTURE, Tools::getValue('orderId')));
+    }
 
-        /** @var CaptureAuthorizationActionInterface $captureAuthorizationAction */
-        $captureAuthorizationAction = $this->module->getService(CaptureAuthorizationAction::class);
+    public function ajaxProcessVoidAuthorization()
+    {
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        /** @var PayPalOrderProviderInterface $payPalOrderProvider */
-        $payPalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+        $this->exitWithResponse($processor->process(AuthorizationAction::VOID, Tools::getValue('orderId')));
+    }
 
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
+    public function ajaxProcessReauthorizeAuthorization()
+    {
+        /**
+         * @var AuthorizationActionProcessor $processor
+         */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
 
-        try {
-            $payPalOrderResponse = $payPalOrderProvider->getById($orderId);
-
-            $captureAuthorizationAction->execute($payPalOrderResponse);
-        } catch (\Exception $e) {
-            $logger->error('Failed to capture authorization: ' . $e->getMessage());
-
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'error' => [
-                    'message' => $e->getMessage(),
-                    'code' => $e->getCode(),
-                ],
-            ]);
-        }
-
-        $this->exitWithResponse([
-            'status' => true,
-        ]);
+        $this->exitWithResponse($processor->process(AuthorizationAction::REAUTHORIZE, Tools::getValue('orderId')));
     }
 }

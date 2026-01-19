@@ -18,16 +18,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
 
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
-class VoidAuthorizationAction implements VoidAuthorizationActionInterface
+final class CaptureAuthorizationAction implements AuthorizationActionInterface
 {
     /**
      * @var PaymentHttpClientInterface
@@ -48,10 +51,26 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function supports(string $action): bool
+    {
+        return $action === AuthorizationAction::CAPTURE;
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder)
     {
+        // Check PayPal order status must be APPROVED
+        if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {
+            throw new PsCheckoutException(
+                sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
+                PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID
+            );
+        }
+
         // Check intent must be AUTHORIZE
         if ($payPalOrder->getIntent() !== 'AUTHORIZE') {
             throw new PsCheckoutException(
@@ -73,53 +92,64 @@ class VoidAuthorizationAction implements VoidAuthorizationActionInterface
         $authorizationId = $authorization['id'];
         $authorizationStatus = $authorization['status'];
 
-        // Check PayPal order status must be APPROVED
-        if (!in_array(
-            $authorizationStatus,
-            [
-                PayPalAuthorizationStatus::PENDING,
-                PayPalAuthorizationStatus::CREATED,
-                PayPalAuthorizationStatus::PARTIALLY_CAPTURED
-            ]
-        )) {
+        // Check if status is VOIDED
+        if ($authorizationStatus === PayPalAuthorizationStatus::VOIDED) {
             throw new PsCheckoutException(
-                sprintf('PayPal Order Authorization %s status must be PENDING, CREATED or PARTIALLY_CAPTURED , current status: %s', $authorizationId, $authorizationStatus),
+                "Authorization $authorizationId is voided and cannot be captured",
+                PsCheckoutException::PAYPAL_AUTHORIZATION_VOIDED
+            );
+        }
+
+        // Validate authorization status must be CREATED or PARTIALLY_CAPTURED
+        if (!in_array($authorizationStatus, [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PARTIALLY_CAPTURED], true)) {
+            throw new PsCheckoutException(
+                "Authorization $authorizationId status must be CREATED or PARTIALLY_CAPTURED, current status: $authorizationStatus",
                 PsCheckoutException::PAYPAL_AUTHORIZATION_STATUS_INVALID
             );
         }
 
-        // Call captureAuthorization in PaymentHttpClient
-        $voidResponse = $this->paymentHttpClient->voidAuthorization($authorizationId);
+        if (isset($authorization['expiration_time'])) {
+            $expirationTime = new \DateTime((string) $authorization['expiration_time']);
+        } else {
+            $expirationTime = new \DateTime((string) $authorization['create_time']);
+            $expirationTime->modify('+30 days');
+        }
+
+        $currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if ($expirationTime < $currentTime) {
+            throw new PsCheckoutException(
+                "Authorization $authorizationId has expired",
+                PsCheckoutException::PAYPAL_AUTHORIZATION_EXPIRED
+            );
+        }
+
+        $captureResponse = $this->paymentHttpClient->captureAuthorization($authorizationId);
 
         /**
          * @var array{
-         *      id: string,
-         *      status: string,
-         *      expiration_time: string,
-         *      create_time: string,
-         *      update_time: string
-         *  }|empty $voidedAuthorization
+         *     id: string,
+         *     status: string,
+         *     create_time: string,
+         *     update_time: string
+         * } $capturedAuthorization
          */
-        $voidedAuthorization = json_decode($voidResponse->getBody(), true);
-
-        if (empty($voidedAuthorization)) {
-            throw new PsCheckoutException(
-                sprintf('Invalid void response for authorization %s', $authorizationId),
-                PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
-            );
-        }
+        $capturedAuthorization = json_decode($captureResponse->getBody(), true);
 
         $authorizationEntity = $this->authorizationRepository->getById($authorizationId);
 
-        if (!$authorizationEntity) {
-            throw new PsCheckoutException(
-                sprintf('Authorization entity %s not found in repository', $authorizationId),
-                PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
+        if ($authorizationEntity) {
+            $authorizationEntity->setStatus($capturedAuthorization['status']);
+        } else {
+            $authorizationEntity = new PayPalOrderAuthorization(
+                $authorizationId,
+                $payPalOrder->getId(),
+                $capturedAuthorization['status'],
+                '',
+                $capturedAuthorization['create_time'],
+                $capturedAuthorization['update_time'],
             );
         }
-
-        $authorizationEntity->setStatus($voidedAuthorization['status'])
-        ->setUpdateTime($voidedAuthorization['update_time']);
 
         $this->authorizationRepository->save($authorizationEntity);
 

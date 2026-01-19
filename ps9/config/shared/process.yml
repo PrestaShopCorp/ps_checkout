@@ -135,8 +135,8 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor'
       - '@Psr\Log\LoggerInterface'
 
-  PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction:
-    class: PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction
+  PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
@@ -155,3 +155,14 @@ services:
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+
+  PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor
+    arguments:
+      - [
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction',
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction',
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction',
+        ]
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@Psr\Log\LoggerInterface'
