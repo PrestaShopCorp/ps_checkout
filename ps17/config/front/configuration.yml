@@ -14,14 +14,14 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
       - [
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker',
-        '@PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker',
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker'
+        '@PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker'
         '@PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker'
       ]
 
