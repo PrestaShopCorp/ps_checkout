@@ -63,4 +63,5 @@ services:
       timeout: 10s
       retries: 5
     post_start:
+      - command: cd /var/www/html/modules/ps_checkout && composer install
       - command: chmod -R 777 /var/www/html

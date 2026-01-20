@@ -22,9 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
+use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
+use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
+use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction;
@@ -61,7 +65,7 @@ require_once __DIR__ . '/sentry.php';
 class Ps_Checkout extends PaymentModule
 {
     /**
-     * @var PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     * @var ServiceContainer
      */
     private $serviceContainer;
 
@@ -86,6 +90,7 @@ class Ps_Checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'actionObjectOrderCarrierUpdateAfter',
         'actionGetOrderShipments',
+        'actionOrderCaptureAuthorizationStatusPostUpdate',
         'paymentOptions',
         'displayPaymentTop',
         'displayPaymentByBinaries',
@@ -1013,6 +1018,25 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
+    public function hookActionOrderCaptureAuthorizationStatusPostUpdate(array $params)
+    {
+        /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
+        $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
+
+        $result = $handler->handle(new OrderCaptureAuthorizationStatusPostUpdateHookParams(
+            $params['newOrderStatus'],
+            (int) $params['id_order']
+        ));
+
+        if ($result instanceof HookHandlerResult) {
+            if ($result->isError()) {
+                $this->context->controller->errors[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
+            } else {
+                $this->context->controller->confirmations[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
+            }
+        }
+    }
+
     public function hookModuleRoutes()
     {
         return [
@@ -1112,9 +1136,11 @@ class Ps_Checkout extends PaymentModule
     }
 
     /**
-     * @param string $serviceName
+     * @template T
      *
-     * @return object|null
+     * @param class-string<T> $serviceName
+     *
+     * @return T|null
      */
     public function getService(string $serviceName)
     {
