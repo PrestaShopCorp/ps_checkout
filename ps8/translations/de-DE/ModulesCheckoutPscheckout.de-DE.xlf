@@ -539,7 +539,7 @@
       </trans-unit>
       <trans-unit id="fc9b4762660906602b63bcd99e5e9747">
         <source>Pay in installments with PayPal Pay Later</source>
-        <target>Bezahlen ratenzahlung mit PayPal Pay Later</target>
+        <target>Bezahlen ratenzahlung mit PayPal Später Bezahlen</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="34ace703adbf14df140d3c02234f67bd">
@@ -2462,6 +2462,14 @@
       <trans-unit id="f2a6c498fb90ee345d997f888fce3b18">
         <source>Delete</source>
         <target>Löschen</target>
+      </trans-unit>
+      <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
+        <source>The payment is not valid: the amount is not eligible.</source>
+        <target>Die Zahlung ist ungültig: Der Betrag ist nicht zulässig.</target>
+      </trans-unit>
+      <trans-unit id="ab9b4762660906602b63bcd99e5e9747">
+        <source>Pay later with invoice</source>
+        <target>Kauf auf Rechnung</target>
       </trans-unit>
     </body>
   </file>
