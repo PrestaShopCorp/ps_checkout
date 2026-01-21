@@ -2466,7 +2466,14 @@
       <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
         <source>The payment is not valid: the amount is not eligible.</source>
         <target>The payment is not valid: the amount is not eligible.</target>
-        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ab9b4762660906602b63bcd99e5e9747">
+        <source>Pay later with invoice</source>
+        <target>Pay later with invoice</target>
+      </trans-unit>
+      <trans-unit id="ab9b4762660906602b63bcd99e5e9767">
+        <source>Date of Birth</source>
+        <target>Date of Birth</target>
       </trans-unit>
     </body>
   </file>

@@ -124,7 +124,7 @@ function upgrade_module_8_5_1_0(Ps_checkout $module)
                 if (!$paymentExists) {
                     $db->insert('pscheckout_funding_source', [
                         'name' => pSQL($paymentOption),
-                        'active' => 0,
+                        'active' => 1,
                         'position' => (int) ($maxPosition + 1),
                         'id_shop' => (int) $shopId,
                     ]);

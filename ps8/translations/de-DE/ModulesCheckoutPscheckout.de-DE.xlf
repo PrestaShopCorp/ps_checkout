@@ -2471,6 +2471,10 @@
         <source>Pay later with invoice</source>
         <target>Kauf auf Rechnung</target>
       </trans-unit>
+      <trans-unit id="ab9b4762660906602b63bcd99e5e9767">
+        <source>Date of Birth</source>
+        <target>Geburtsdatum</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
