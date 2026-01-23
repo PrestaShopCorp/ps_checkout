@@ -83,7 +83,7 @@ function upgrade_module_9_5_2_0(Ps_checkout $module)
         return false;
     }
 
-    $module->registerHook('actionOrderCaptureAuthorizationStatusPostUpdate');
+    $module->registerHook('actionOrderStatusPostUpdate');
 
     return true;
 }

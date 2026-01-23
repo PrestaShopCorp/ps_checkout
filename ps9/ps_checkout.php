@@ -92,7 +92,7 @@ class Ps_Checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'actionObjectOrderCarrierUpdateAfter',
         'actionGetOrderShipments',
-        'actionOrderCaptureAuthorizationStatusPostUpdate',
+        'actionOrderStatusPostUpdate',
         'paymentOptions',
         'displayPaymentTop',
         'displayPaymentByBinaries',
@@ -1199,7 +1199,7 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
-    public function hookActionOrderCaptureAuthorizationStatusPostUpdate(array $params)
+    public function hookActionOrderStatusPostUpdate(array $params)
     {
         /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
         $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
