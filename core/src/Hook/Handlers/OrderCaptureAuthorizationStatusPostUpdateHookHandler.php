@@ -88,7 +88,7 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
 
         $order = new Order($params->getOrderId());
         if ($order->module !== 'ps_checkout') {
-            $this->logger->error('Order status post update hook is not supported for this module');
+            $this->logger->info('Order status post update hook is not supported for this module');
 
             return null;
         }
@@ -111,7 +111,7 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
             return null;
         }
 
-        $statuses = $this->configuration->get(OrderStateConfiguration::PS_CHECKOUT_ORDER_STATUS_AUTH_CAPTURE);
+        $statuses = $this->configuration->get(OrderStateConfiguration::PS_CHECKOUT_AUTHORIZE_STATES);
         if (empty($statuses)) {
             return null;
         }
