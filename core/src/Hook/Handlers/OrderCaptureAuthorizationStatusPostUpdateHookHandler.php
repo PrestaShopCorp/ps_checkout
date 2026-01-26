@@ -102,9 +102,9 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
             }
             $payPalOrderResponse = $this->paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
-            $this->logger->error('Failed to fetch PayPal order for order ID: ' . $params->getOrderId());
+            $this->logger->error('Failed to fetch PayPal order for order ID: ' . $params->getOrderId(), ['exception' => $exception]);
 
-            return new HookHandlerResult(true, 'An error occurred while getting the PayPal order.');
+            return new HookHandlerResult(true, 'There was an error during the payment. Please try again or contact the support.');
         }
 
         if ($payPalOrderResponse->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
@@ -126,7 +126,9 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
 
             return new HookHandlerResult(false, 'The authorization has been successfully captured.');
         } catch (Exception $exception) {
-            return new HookHandlerResult(true, 'An error occurred during capture: ' . $exception->getMessage());
+            $this->logger->error('Failed to capture authorization for order ID: ' . $params->getOrderId(), ['exception' => $exception]);
+
+            return new HookHandlerResult(true, 'An error occurred during the capture of the authorization.');
         }
     }
 }
