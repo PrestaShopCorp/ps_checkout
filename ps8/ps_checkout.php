@@ -603,6 +603,20 @@ class Ps_Checkout extends PaymentModule
                 )
             ) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/cardFields.tpl'));
+            } elseif ($fundingSource->getName() === 'pay_upon_invoice') {
+                $customerBirthday = null;
+                if (
+                    !empty($this->context->customer->birthday)
+                    && $this->context->customer->birthday !== '0000-00-00'
+                ) {
+                    $customerBirthday = $this->context->customer->birthday;
+                }
+                $this->context->smarty->assign([
+                    'customerBirthday' => $customerBirthday,
+                    'min_date' => '1900-01-01',
+                    'max_date' => date('Y-m-d', strtotime('-18 years')),
+                ]);
+                $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/payUponInvoiceFields.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && empty($vaultedPayPal)) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/vaultPaymentForm.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && $vaultedPayPal) {

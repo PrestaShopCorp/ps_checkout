@@ -42,6 +42,7 @@ class FundingSourceConstraint
             'google_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             'apple_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             'venmo' => ['US'],
+            'pay_upon_invoice' => ['DE'],
         ];
 
         return isset($countries[$fundingSourceName]) ? $countries[$fundingSourceName] : [];
@@ -61,6 +62,7 @@ class FundingSourceConstraint
             'apple_pay' => ['AUD', 'BRL', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'],
             'paylater' => ['EUR', 'USD', 'AUD', 'GBP'],
             'venmo' => ['USD'],
+            'pay_upon_invoice' => ['EUR'],
         ];
 
         return isset($currencies[$fundingSourceName]) ? $currencies[$fundingSourceName] : [];

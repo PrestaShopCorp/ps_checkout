@@ -54,3 +54,11 @@ services:
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Adapter\Cart'
       - '@=service("ps_checkout.module").id'
+
+  PsCheckout\Core\PayPal\Order\Validator\CreatedPayUponInvoiceOrderValidator:
+    class: PsCheckout\Core\PayPal\Order\Validator\CreatedPayUponInvoiceOrderValidator
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@=service("ps_checkout.module").id'

@@ -31,12 +31,13 @@ interface OrderHttpClientInterface
 {
     /**
      * @param array $payload
+     * @param array $headers
      *
      * @return ResponseInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function createOrder(array $payload): ResponseInterface;
+    public function createOrder(array $payload, array $headers = []): ResponseInterface;
 
     /**
      * @param array $payload
