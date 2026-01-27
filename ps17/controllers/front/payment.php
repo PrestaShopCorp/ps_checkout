@@ -68,7 +68,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     public function initContent()
     {
-        $this->orderPageUrl = $this->context->link->getPageLink('order');
         parent::initContent();
         $this->setTemplate('module:' . $this->module->name . '/views/templates/front/payment.tpl');
 
@@ -92,6 +91,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     public function postProcess()
     {
+        $this->orderPageUrl = $this->context->link->getPageLink('order');
         /** @var Tools $tools */
         $tools = $this->module->getService(Tools::class);
         /** @var LoggerInterface $logger */

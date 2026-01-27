@@ -680,7 +680,7 @@ class Ps_Checkout extends PaymentModule
 
         $paymentOptions = [];
 
-        foreach ($fundingSourceTokenPresenter->getFundingSourceTokens($cart->id_customer) as $fundingSource) {
+        foreach ($fundingSourceTokenPresenter->getFundingSourceTokens((int) $cart->id_customer) as $fundingSource) {
             $paymentOptions[] = $fundingSource->getName();
         }
 

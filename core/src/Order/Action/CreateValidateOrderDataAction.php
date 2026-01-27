@@ -27,6 +27,7 @@ use PsCheckout\Core\Order\ValueObject\ValidateOrderData;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\CurrencyRepositoryInterface;
 
@@ -52,24 +53,32 @@ class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInte
      */
     private $orderAmountValidator;
 
+    /**
+     * @var PayPalOrderRepositoryInterface
+     */
+    private $payPalOrderRepository;
+
     public function __construct(
         ContextInterface $context,
         OrderStateMapperInterface $orderStateMapper,
         CurrencyRepositoryInterface $currencyRepository,
-        OrderAmountValidatorInterface $orderAmountValidator
+        OrderAmountValidatorInterface $orderAmountValidator,
+        PayPalOrderRepositoryInterface $payPalOrderRepository
     ) {
         $this->context = $context;
         $this->orderStateMapper = $orderStateMapper;
         $this->currencyRepository = $currencyRepository;
         $this->orderAmountValidator = $orderAmountValidator;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $paypalOrder): ValidateOrderData
+    public function execute(PayPalOrderResponse $payPalOrderResponse): ValidateOrderData
     {
-        $fundingSource = $paypalOrder->getFundingSource();
+        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrderResponse->getId()]);
+        $fundingSource = $payPalOrder->getFundingSource();
         $cart = $this->context->getCart();
 
         $paidAmount = '';
@@ -78,7 +87,7 @@ class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInte
 
         $currencyId = (int) $this->context->getCart()->id_currency;
 
-        $capture = $paypalOrder->getCapture();
+        $capture = $payPalOrderResponse->getCapture();
 
         if ($capture) {
             $transactionId = $capture['id'];

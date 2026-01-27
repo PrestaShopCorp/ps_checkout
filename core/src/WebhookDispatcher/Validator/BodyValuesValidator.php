@@ -68,7 +68,7 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
      */
     private function validateBody(array $bodyValues)
     {
-        $requiredFields = ['resource', 'eventType', 'category'];
+        $requiredFields = ['resource', 'eventType', 'category', 'eventStream', 'eventNumber', 'webhookId'];
 
         foreach ($requiredFields as $field) {
             if (empty($bodyValues[$field])) {
@@ -87,8 +87,11 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     private function transformBody(array $bodyValues): array
     {
         return [
+            'webhookId' => (string) $bodyValues['webhookId'],
             'resource' => json_decode($bodyValues['resource'], true),
             'eventType' => (string) $bodyValues['eventType'],
+            'eventStream' => (string) $bodyValues['eventStream'],
+            'eventNumber' => (string) $bodyValues['eventNumber'],
             'category' => (string) $bodyValues['category'],
             'summary' => $bodyValues['summary'] ?? null,
             'orderId' => $bodyValues['orderId'] ?? null,

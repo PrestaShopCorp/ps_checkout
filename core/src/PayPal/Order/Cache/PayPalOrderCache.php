@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\PayPal\Order\Cache;
 
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -43,13 +44,13 @@ class PayPalOrderCache extends ChainAdapter implements PayPalOrderCacheInterface
     }
 
     const CACHE_TTL = [
-        PayPalOrderStatusConfiguration::STATUS_CREATED => 600,
-        PayPalOrderStatusConfiguration::STATUS_PAYER_ACTION_REQUIRED => 600,
-        PayPalOrderStatusConfiguration::STATUS_APPROVED => 600,
-        PayPalOrderStatusConfiguration::STATUS_VOIDED => 3600,
-        PayPalOrderStatusConfiguration::STATUS_SAVED => 3600,
-        PayPalOrderStatusConfiguration::STATUS_CANCELED => 3600,
-        PayPalOrderStatusConfiguration::STATUS_COMPLETED => 3600,
+        PayPalOrderStatus::CREATED => 600,
+        PayPalOrderStatus::PAYER_ACTION_REQUIRED => 600,
+        PayPalOrderStatus::APPROVED => 600,
+        PayPalOrderStatus::VOIDED => 3600,
+        PayPalOrderStatus::SAVED => 3600,
+        PayPalOrderStatus::CANCELED => 3600,
+        PayPalOrderStatus::COMPLETED => 3600,
     ];
 
     /**

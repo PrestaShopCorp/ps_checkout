@@ -129,6 +129,7 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
                 'Error processing webhook',
                 [
                     'payload' => $dispatchWebhookRequest->toArray(),
+                    'exception' => $e->getMessage(),
                 ]
             );
 
