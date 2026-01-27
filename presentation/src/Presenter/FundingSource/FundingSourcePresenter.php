@@ -92,6 +92,14 @@ class FundingSourcePresenter implements FundingSourcePresenterInterface
             $fundingSources[] = $this->buildFundingSourceObject($fundingSource);
         }
 
+        $fundingSources[] =  new FundingSource(
+        'pay_upon_invoice',
+        'PUI',
+        13,
+        true,
+        $this->modulePathUri . 'views/img/venmo.svg'
+        );
+
         return $fundingSources;
     }
 
