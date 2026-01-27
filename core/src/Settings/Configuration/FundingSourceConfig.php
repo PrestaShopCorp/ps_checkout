@@ -34,5 +34,6 @@ class FundingSourceConfig
         'blik',
         'google_pay',
         'apple_pay',
+        'venmo',
     ];
 }

@@ -126,6 +126,7 @@ class PayPalSdkConfiguration
     public function buildConfiguration(): array
     {
         $components = [
+            'legal',
             'marks',
             'funding-eligibility',
         ];
@@ -350,6 +351,7 @@ class PayPalSdkConfiguration
                 case $fundingSource->getName() === 'ideal' && $countryIso === 'NL' && $currencyIso === 'EUR':
                 case $fundingSource->getName() === 'mybank' && $countryIso === 'IT' && $currencyIso === 'EUR':
                 case $fundingSource->getName() === 'p24' && $countryIso === 'PL' && in_array($currencyIso, ['EUR', 'PLN'], true):
+                case $fundingSource->getName() === 'venmo' && $countryIso === 'US' && $currencyIso === 'USD':
                     $fundingSourcesEnabled[] = $fundingSource->getName();
 
                     break;

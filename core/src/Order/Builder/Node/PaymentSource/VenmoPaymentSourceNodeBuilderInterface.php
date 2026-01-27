@@ -18,21 +18,40 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Infrastructure\Repository;
+namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-interface StateRepositoryInterface
+interface VenmoPaymentSourceNodeBuilderInterface
 {
     /**
-     * @param int $idState
-     *
-     * @return string
+     * @return array
      */
-    public function getNameById($idState);
+    public function build(): array;
 
     /**
-     * @param int $idState
+     * @param string|null $paypalVaultId
      *
-     * @return string
+     * @return VenmoPaymentSourceNodeBuilder
      */
-    public function getIsoById($idState);
+    public function setPaypalVaultId($paypalVaultId): VenmoPaymentSourceNodeBuilder;
+
+    /**
+     * @param string|null $paypalCustomerId
+     *
+     * @return VenmoPaymentSourceNodeBuilder
+     */
+    public function setPaypalCustomerId($paypalCustomerId): VenmoPaymentSourceNodeBuilder;
+
+    /**
+     * @param bool $savePaymentMethod
+     *
+     * @return VenmoPaymentSourceNodeBuilder
+     */
+    public function setSavePaymentMethod(bool $savePaymentMethod): VenmoPaymentSourceNodeBuilder;
+
+    /**
+     * @param array $cart
+     *
+     * @return $this
+     */
+    public function setCart(array $cart);
 }
