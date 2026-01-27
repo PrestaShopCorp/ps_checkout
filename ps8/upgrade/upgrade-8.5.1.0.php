@@ -109,13 +109,15 @@ function upgrade_module_8_5_1_0(Ps_checkout $module)
             Configuration::updateValue('PS_CHECKOUT_PAY_LATER_CONFIG', $configuration, false, null, (int) $shopId);
 
             foreach (['venmo', 'pay_upon_invoice'] as $paymentOption) {
-                $maxPosition = (int) $db->getValue('
+                $maxPosition = (int) $db->getValue(
+                    '
                 SELECT MAX(position)
                 FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
                 WHERE `id_shop` = ' . (int) $shopId
                 );
 
-                $paymentExists = $db->getValue('
+                $paymentExists = $db->getValue(
+                    '
                 SELECT COUNT(*)
                 FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
                 WHERE `name` = "' . pSQL($paymentOption) . '" AND `id_shop` = ' . (int) $shopId

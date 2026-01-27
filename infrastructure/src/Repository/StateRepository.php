@@ -38,6 +38,7 @@ class StateRepository implements StateRepositoryInterface
         if (!$idState) {
             return false;
         }
+
         return (new \State($idState))->iso_code;
     }
 }
