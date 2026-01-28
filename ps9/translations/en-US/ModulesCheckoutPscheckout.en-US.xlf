@@ -2471,6 +2471,10 @@
         <source>Pay later with invoice</source>
         <target>Pay later with invoice</target>
       </trans-unit>
+      <trans-unit id="ab9b4762660906602b63bcd99e5e9748">
+        <source>Pay upon Invoice</source>
+        <target>Pay upon Invoice</target>
+      </trans-unit>
       <trans-unit id="ab9b4762660906602b63bcd99e5e9767">
         <source>Date of Birth</source>
         <target>Date of Birth</target>
