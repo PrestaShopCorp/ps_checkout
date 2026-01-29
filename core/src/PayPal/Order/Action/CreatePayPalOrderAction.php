@@ -118,7 +118,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             ->setIsExpressCheckout($request->isExpressCheckout())
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
-            ->setIsVault($request->getVaultId() || $request->isVault());
+            ->setIsVault($request->getVaultId() || $request->isVault())
+            ->setCustomerBirthDay($request->getBirthDate());
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());
@@ -137,7 +138,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $payload = $this->orderPayloadBuilder->build();
 
         try {
-            $orderResponse = $this->createPayPalOrder($payload);
+            $orderResponse = $this->createPayPalOrder($payload, $request);
         } catch (PayPalException $exception) {
             if ($request->getVaultId() && $exception->getCode() === PayPalException::CARD_CLOSED) {
                 $this->deletePaymentTokenAction->execute(
@@ -170,15 +171,22 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
     /**
      * @param array $payload
+     * @param CreatePayPalOrderRequest $request
      *
      * @return CreatePayPalOrderResponse
      *
      * @throws PsCheckoutException
      */
-    private function createPayPalOrder(array $payload): CreatePayPalOrderResponse
+    private function createPayPalOrder(array $payload, CreatePayPalOrderRequest $request): CreatePayPalOrderResponse
     {
         try {
-            $response = $this->orderHttpClient->createOrder($payload);
+            $headers = [];
+
+            if ($request->getFundingSource() === 'pay_upon_invoice' && $request->getMetaDataId()) {
+                $headers['PayPal-Client-Metadata-Id'] = $request->getMetaDataId();
+            }
+
+            $response = $this->orderHttpClient->createOrder($payload, $headers);
 
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {

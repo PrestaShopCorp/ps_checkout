@@ -193,6 +193,6 @@ class Translator implements TranslatorInterface
             'The payer did not authorize the payment.' => $this->module->l('The payer did not authorize the payment.', 'Translator'),
         ];
 
-        return $map[$key] ?: $key;
+        return isset($map[$key]) && $map[$key] ? $map[$key] : $key;
     }
 }

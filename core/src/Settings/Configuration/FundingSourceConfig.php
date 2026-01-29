@@ -32,7 +32,9 @@ class FundingSourceConfig
         'mybank',
         'p24',
         'blik',
+        'pay_upon_invoice',
         'google_pay',
         'apple_pay',
+        'venmo',
     ];
 }

@@ -37,10 +37,10 @@ class PayPalSdkConfiguration
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
     /**
-     * google_pay and apple_pay are not considered funding sources
+     * google_pay, apple_pay and pui are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK
      */
-    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay', 'pay_upon_invoice'];
 
     /**
      * @var ContextInterface
@@ -83,6 +83,11 @@ class PayPalSdkConfiguration
     private $logger;
 
     /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
@@ -91,6 +96,7 @@ class PayPalSdkConfiguration
      * @param PayPalCustomerRepositoryInterface $payPalCustomerRepository
      * @param OAuthServiceInterface $oAuthService
      * @param LoggerInterface $logger
+     * @param PayPalPayLaterConfiguration $payPalPayLaterConfiguration
      */
     public function __construct(
         ContextInterface $context,
@@ -100,7 +106,8 @@ class PayPalSdkConfiguration
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
@@ -110,6 +117,7 @@ class PayPalSdkConfiguration
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -118,6 +126,7 @@ class PayPalSdkConfiguration
     public function buildConfiguration(): array
     {
         $components = [
+            'legal',
             'marks',
             'funding-eligibility',
         ];
@@ -140,6 +149,10 @@ class PayPalSdkConfiguration
 
         if ($this->shouldIncludeApplePayComponent()) {
             $components[] = 'applepay';
+        }
+
+        if ($this->shouldIncludePayUponInvoiceComponent()) {
+            $components[] = 'legal';
         }
 
         $params = [
@@ -261,35 +274,18 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        if ('index' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER)) {
-            return true;
+        switch ($pageName) {
+            case 'cart':
+            case 'category':
+            case 'product':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled($pageName);
+            case 'order':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('checkout');
+            case 'index':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
+            default:
+                return false;
         }
-
-        if ('category' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER)) {
-            return true;
-        }
-
-        if (
-            in_array($pageName, ['cart', 'order']) &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        if (
-            'product' === $pageName &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     private function shouldIncludeGooglePayComponent(): bool
@@ -316,6 +312,20 @@ class PayPalSdkConfiguration
             $this->isApplePayDomainRegistered() &&
             in_array($countryIso, FundingSourceConstraint::getCountries('apple_pay'), true) &&
             in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('apple_pay'), true);
+    }
+
+    private function shouldIncludePayUponInvoiceComponent(): bool
+    {
+        $countryIso = $this->getCountryIsoCode();
+        $fundingSource = $this->fundingSourcePresenter->getOneBy(['name' => 'pay_upon_invoice', 'id_shop' => $this->context->getShop()->id]);
+
+        return $fundingSource &&
+            $fundingSource->getIsEnabled() &&
+            in_array($countryIso, FundingSourceConstraint::getCountries('pay_upon_invoice'), true) &&
+            in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('pay_upon_invoice'), true) &&
+            !$this->hasVirtualProducts() &&
+            $this->hasPhoneNumber()
+        ;
     }
 
     /**
@@ -359,6 +369,7 @@ class PayPalSdkConfiguration
                 case $fundingSource->getName() === 'ideal' && $countryIso === 'NL' && $currencyIso === 'EUR':
                 case $fundingSource->getName() === 'mybank' && $countryIso === 'IT' && $currencyIso === 'EUR':
                 case $fundingSource->getName() === 'p24' && $countryIso === 'PL' && in_array($currencyIso, ['EUR', 'PLN'], true):
+                case $fundingSource->getName() === 'venmo' && $countryIso === 'US' && $currencyIso === 'USD':
                     $fundingSourcesEnabled[] = $fundingSource->getName();
 
                     break;
@@ -467,5 +478,58 @@ class PayPalSdkConfiguration
             default:
                 return '';
         }
+    }
+
+    /**
+     * Check if the cart contains any virtual or downloadable products.
+     * PUI (Pay upon Invoice) cannot be used for virtual products according to PayPal's Acceptable Use Policy.
+     *
+     * @return bool true if cart contains any virtual products, false otherwise
+     */
+    private function hasVirtualProducts(): bool
+    {
+        $cart = $this->context->getCart();
+
+        if (!$cart || !$cart->id) {
+            return false;
+        }
+
+        $products = $cart->getProducts();
+
+        if (empty($products)) {
+            return false;
+        }
+
+        foreach ($products as $product) {
+            if (isset($product['is_virtual']) && $product['is_virtual'] == '1') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the customer has entered a phone number in their address.
+     *
+     * @return bool true if a valid phone number exists, false otherwise
+     */
+    private function hasPhoneNumber(): bool
+    {
+        $cart = $this->context->getCart();
+
+        if (!$cart || !$cart->id) {
+            return false;
+        }
+
+        $taxAddressType = $this->configuration->get('PS_TAX_ADDRESS_TYPE');
+        $taxAddressId = property_exists($cart, $taxAddressType) ? $cart->{$taxAddressType} : $cart->id_address_delivery;
+        $address = new \Address($taxAddressId);
+
+        if (!\Validate::isLoadedObject($address)) {
+            return false;
+        }
+
+        return !empty($address->phone) || !empty($address->phone_mobile);
     }
 }

@@ -121,7 +121,7 @@ class ShippingNodeBuilderTest extends TestCase
                 'expectedResult' => [
                     'shipping' => [
                         'name' => [
-                            'full_name' => 'Mr. Doe John',
+                            'full_name' => 'John Doe',
                         ],
                         'address' => [
                             'address_line_1' => '123 Main St',
@@ -164,7 +164,7 @@ class ShippingNodeBuilderTest extends TestCase
                 'expectedResult' => [
                     'shipping' => [
                         'name' => [
-                            'full_name' => 'Mrs. Dubois Marie',
+                            'full_name' => 'Marie Dubois',
                         ],
                         'address' => [
                             'address_line_1' => '15 Rue de la Paix',
