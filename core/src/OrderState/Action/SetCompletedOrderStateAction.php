@@ -90,6 +90,7 @@ class SetCompletedOrderStateAction implements SetOrderStateActionInterface
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($payPalOrderId);
 
+        /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
         if (!$order || $order->hasBeenPaid()) {
