@@ -3199,12 +3199,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
 
 		-
-			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Payment/Authorization/Action/CaptureAuthorizationAction.php
-
-		-
 			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -4829,6 +4823,12 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../core/src/PayPal/OrderStatus/Action/PayPalCheckOrderStatusAction.php
+
+		-
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Payment/Authorization/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'

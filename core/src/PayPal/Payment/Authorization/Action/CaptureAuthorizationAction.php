@@ -24,6 +24,7 @@ use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
@@ -72,7 +73,7 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
         }
 
         // Check intent must be AUTHORIZE
-        if ($payPalOrder->getIntent() !== 'AUTHORIZE') {
+        if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             throw new PsCheckoutException(
                 sprintf('PayPal Order %s intent must be AUTHORIZE, current intent: %s', $payPalOrder->getId(), $payPalOrder->getIntent()),
                 PsCheckoutException::PAYPAL_ORDER_INTENT_INVALID
@@ -147,7 +148,7 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
                 $capturedAuthorization['status'],
                 '',
                 $capturedAuthorization['create_time'],
-                $capturedAuthorization['update_time'],
+                $capturedAuthorization['update_time']
             );
         }
 

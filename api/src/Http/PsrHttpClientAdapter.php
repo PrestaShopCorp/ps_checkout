@@ -56,10 +56,10 @@ class PsrHttpClientAdapter implements HttpClientInterface
     {
         try {
             // TODO: Fix package cannibalism with ps_mbo (sentry ^3.3)
-//            \Sentry\addBreadcrumb('http.request', "{$request->getMethod()} - {$request->getUri()}", [
-//                'headers' => $request->getHeaders(),
-//                'payload' => json_decode($request->getBody()->getContents(), true),
-//            ]);
+            //            \Sentry\addBreadcrumb('http.request', "{$request->getMethod()} - {$request->getUri()}", [
+            //                'headers' => $request->getHeaders(),
+            //                'payload' => json_decode($request->getBody()->getContents(), true),
+            //            ]);
             $response = $this->client->sendRequest($request);
         } catch (ConnectException $exception) {
             // Guzzle 5.3 use RingPHP for the low level connection
@@ -69,22 +69,22 @@ class PsrHttpClientAdapter implements HttpClientInterface
             throw new TransferException($exception->getMessage(), 0, $exception);
         } catch (ClientException $exception) {
             // TODO: Fix package cannibalism with ps_mbo (sentry ^3.3)
-//            $response = $exception->getResponse();
-//            \Sentry\addBreadcrumb('http.exception', "{$request->getMethod()} - {$request->getUri()}", [
-//                'headers' => $response->getHeaders(),
-//                'status' => $response->getStatusCode(),
-//                'body' => json_decode($response->getBody()->getContents(), true),
-//            ]);
+            //            $response = $exception->getResponse();
+            //            \Sentry\addBreadcrumb('http.exception', "{$request->getMethod()} - {$request->getUri()}", [
+            //                'headers' => $response->getHeaders(),
+            //                'status' => $response->getStatusCode(),
+            //                'body' => json_decode($response->getBody()->getContents(), true),
+            //            ]);
 
             throw $exception;
         }
 
         // TODO: Fix package cannibalism with ps_mbo (sentry ^3.3)
-//        \Sentry\addBreadcrumb('http.response', "{$request->getMethod()} - {$request->getUri()}", [
-//            'headers' => $response->getHeaders(),
-//            'status' => $response->getStatusCode(),
-//            'body' => json_decode($response->getBody()->getContents(), true),
-//        ]);
+        //        \Sentry\addBreadcrumb('http.response', "{$request->getMethod()} - {$request->getUri()}", [
+        //            'headers' => $response->getHeaders(),
+        //            'status' => $response->getStatusCode(),
+        //            'body' => json_decode($response->getBody()->getContents(), true),
+        //        ]);
 
         // Guzzle 5.3 does not throw exceptions on 4xx and 5xx status codes
         if ($response->getStatusCode() >= 400) {

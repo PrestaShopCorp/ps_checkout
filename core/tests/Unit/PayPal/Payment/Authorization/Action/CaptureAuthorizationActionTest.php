@@ -36,13 +36,13 @@ use Psr\Http\Message\StreamInterface;
 
 class CaptureAuthorizationActionTest extends TestCase
 {
-    /** @var PaymentHttpClientInterface|MockObject  */
+    /** @var PaymentHttpClientInterface|MockObject */
     private $paymentHttpClient;
 
-    /** @var PayPalOrderAuthorizationRepositoryInterface|MockObject  */
+    /** @var PayPalOrderAuthorizationRepositoryInterface|MockObject */
     private $authorizationRepository;
 
-    /** @var CaptureAuthorizationAction  */
+    /** @var CaptureAuthorizationAction */
     private $action;
 
     protected function setUp(): void
@@ -78,7 +78,7 @@ class CaptureAuthorizationActionTest extends TestCase
             'id' => 'AUTH-456',
             'status' => PayPalAuthorizationStatus::CAPTURED,
             'expiration_time' => '2099-12-31T23:59:59Z',
-            'seller_protection' => ['status' => 'ELIGIBLE']
+            'seller_protection' => ['status' => 'ELIGIBLE'],
         ];
 
         $this->paymentHttpClient->expects($this->once())
@@ -134,7 +134,7 @@ class CaptureAuthorizationActionTest extends TestCase
             'id' => 'AUTH-456',
             'status' => PayPalAuthorizationStatus::CAPTURED,
             'expiration_time' => '2099-12-31T23:59:59Z',
-            'seller_protection' => []
+            'seller_protection' => [],
         ];
 
         $this->paymentHttpClient->expects($this->once())
@@ -185,7 +185,7 @@ class CaptureAuthorizationActionTest extends TestCase
             ->method('captureAuthorization')
             ->willReturn($this->createHttpResponse([
                 'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::CAPTURED
+                'status' => PayPalAuthorizationStatus::CAPTURED,
             ]));
 
         $existingEntity = new PayPalOrderAuthorization(
@@ -256,9 +256,9 @@ class CaptureAuthorizationActionTest extends TestCase
             'intent' => 'AUTHORIZE',
             'purchase_units' => [
                 [
-                    'payments' => []
-                ]
-            ]
+                    'payments' => [],
+                ],
+            ],
         ]);
 
         $this->expectException(PsCheckoutException::class);
@@ -353,7 +353,7 @@ class CaptureAuthorizationActionTest extends TestCase
             ->method('captureAuthorization')
             ->willReturn($this->createHttpResponse([
                 'id' => 'AUTH-456',
-                'status' => PayPalAuthorizationStatus::CAPTURED
+                'status' => PayPalAuthorizationStatus::CAPTURED,
             ]));
 
         $existingEntity = new PayPalOrderAuthorization(
@@ -383,6 +383,7 @@ class CaptureAuthorizationActionTest extends TestCase
      *      create_time: string,
      *      update_time: string
      *  } $authorization
+     *
      * @return PayPalOrderResponse
      */
     private function createPayPalOrder(
@@ -398,15 +399,16 @@ class CaptureAuthorizationActionTest extends TestCase
             'purchase_units' => [
                 [
                     'payments' => [
-                        'authorizations' => [$authorization]
-                    ]
-                ]
-            ]
+                        'authorizations' => [$authorization],
+                    ],
+                ],
+            ],
         ]);
     }
 
     /**
      * @param array<mixed> $data
+     *
      * @return ResponseInterface
      */
     private function createHttpResponse(array $data): ResponseInterface
