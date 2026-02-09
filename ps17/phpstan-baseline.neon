@@ -2821,6 +2821,12 @@ parameters:
 			path: ../core/src/OrderState/Action/SetApprovalReversedOrderStateAction.php
 
 		-
+			message: '#^Parameter \#1 \$order of method PsCheckout\\Core\\OrderState\\Action\\SetAuthorizedOrderStateAction\:\:hasBeenPaid\(\) expects Order, ObjectModel given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/OrderState/Action/SetAuthorizedOrderStateAction.php
+
+		-
 			message: '#^Call to an undefined method PsCheckout\\Infrastructure\\Repository\\OrderRepositoryInterface\:\:getOneBy\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -3011,6 +3017,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/OrderState/Action/SetReversedOrderStateAction.php
+
+		-
+			message: '#^Parameter \#1 \$order of method PsCheckout\\Core\\OrderState\\Action\\SetVoidedOrderStateAction\:\:hasBeenVoided\(\) expects Order, ObjectModel given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/OrderState/Action/SetVoidedOrderStateAction.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\:\:getIdByKey\(\) should return int but returns mixed\.$#'
