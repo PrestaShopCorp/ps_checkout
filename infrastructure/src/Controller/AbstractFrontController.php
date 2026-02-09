@@ -92,6 +92,8 @@ class AbstractFrontController extends \ModuleFrontController
      */
     protected function exitWithExceptionMessage(Exception $exception)
     {
+        \Sentry\captureException($exception);
+
         $this->exitWithResponse([
             'status' => false,
             'httpCode' => 500,

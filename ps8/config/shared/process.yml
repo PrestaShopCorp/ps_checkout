@@ -28,6 +28,24 @@ services:
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
 
+  PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+
+  PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
   PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction
     arguments:
@@ -42,6 +60,11 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository'
+
+  PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler
+    arguments:
+      - '@PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction'
 
   PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator:
     class: PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator
@@ -135,15 +158,34 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor'
       - '@Psr\Log\LoggerInterface'
 
+  PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Api\Http\PaymentHttpClient'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
 
-  PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction:
-    class: PsCheckout\Core\PayPal\Order\Action\CaptureAuthorizationAction
+  PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
 
-  PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction:
-    class: PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction
+  PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction
     arguments:
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+
+  PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor:
+    class: PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor
+    arguments:
+      - [
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction',
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction',
+          '@PsCheckout\Core\PayPal\Payment\Authorization\Action\ReauthorizeAuthorizationAction',
+        ]
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@Psr\Log\LoggerInterface'

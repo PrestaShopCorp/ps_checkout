@@ -2427,7 +2427,7 @@ parameters:
 		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 6
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
@@ -2511,7 +2511,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
@@ -3209,12 +3209,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CancelPayPalOrderAction.php
-
-		-
-			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Cannot access offset ''avs_code'' on mixed\.$#'
@@ -4841,6 +4835,12 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../core/src/PayPal/OrderStatus/Action/PayPalCheckOrderStatusAction.php
+
+		-
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/PayPal/Payment/Authorization/Action/CaptureAuthorizationAction.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'

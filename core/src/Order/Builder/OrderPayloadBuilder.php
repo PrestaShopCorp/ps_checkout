@@ -166,18 +166,11 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         if (!$this->expressCheckout || $this->isUpdate) {
-            $optionalPayload[] = $this->shippingNodeBuilder->setCart($this->cart)->build();
+            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
         }
 
         if (!$this->expressCheckout && !$this->isUpdate) {
             $optionalPayload[] = $this->payerNodeBuilder->setCart($this->cart)->build();
-        }
-
-        if (!$this->isUpdate) {
-            $optionalPayload[] = $this->applicationContextNodeBuilder
-                ->setIsExpressCheckout($this->expressCheckout)
-                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
-                ->build();
         }
 
         if ($this->isCard) {
@@ -187,12 +180,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($isFullPayload) {
             $paymentSource = $this->buildPaymentSource();
-            if (empty($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
+            $optionalPayload[] = $this->buildPaymentSource();
+
+            if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
                 $optionalPayload[] = $this->applicationContextNodeBuilder
                     ->setIsExpressCheckout($this->expressCheckout)
+                    ->setIsVirtualCart($this->cart['cart']['is_virtual'])
                     ->build();
             }
-            $optionalPayload[] = $paymentSource;
         }
 
         return $optionalPayload;

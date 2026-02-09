@@ -63,6 +63,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                     throw new Exception('Invalid request', 400);
             }
         } catch (Exception $exception) {
+            \Sentry\captureException($exception);
             $this->exitWithExceptionMessage($exception);
         }
     }

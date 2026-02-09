@@ -18,15 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
+namespace PsCheckout\Core\Tests\Unit\PayPal\Payment\Authorization\Action;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationAction;
-use PsCheckout\Core\PayPal\Order\Action\VoidAuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
@@ -43,7 +42,7 @@ class VoidAuthorizationActionTest extends TestCase
     /** @var MockObject|PayPalOrderAuthorizationRepositoryInterface  */
     private $authorizationRepository;
 
-    /** @var VoidAuthorizationActionInterface  */
+    /** @var VoidAuthorizationAction  */
     private $action;
 
     protected function setUp(): void

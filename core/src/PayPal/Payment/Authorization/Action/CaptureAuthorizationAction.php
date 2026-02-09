@@ -18,17 +18,20 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+namespace PsCheckout\Core\PayPal\Payment\Authorization\Action;
 
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
-class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
+final class CaptureAuthorizationAction implements AuthorizationActionInterface
 {
     /**
      * @var PaymentHttpClientInterface
@@ -49,9 +52,17 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function supports(string $action): bool
+    {
+        return $action === AuthorizationAction::CAPTURE;
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder)
     {
         // Check PayPal order status must be APPROVED
         if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {
@@ -62,7 +73,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
         }
 
         // Check intent must be AUTHORIZE
-        if ($payPalOrder->getIntent() !== 'AUTHORIZE') {
+        if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             throw new PsCheckoutException(
                 sprintf('PayPal Order %s intent must be AUTHORIZE, current intent: %s', $payPalOrder->getId(), $payPalOrder->getIntent()),
                 PsCheckoutException::PAYPAL_ORDER_INTENT_INVALID
@@ -137,7 +148,7 @@ class CaptureAuthorizationAction implements CaptureAuthorizationActionInterface
                 $capturedAuthorization['status'],
                 '',
                 $capturedAuthorization['create_time'],
-                $capturedAuthorization['update_time'],
+                $capturedAuthorization['update_time']
             );
         }
 

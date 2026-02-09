@@ -40,6 +40,7 @@ services:
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
       PS_ENABLE_SSL: ${SSL_ENABLED}
+      SENTRY_DSN: ${SENTRY_DSN}
     depends_on:
       - mysql
     ports:
@@ -62,4 +63,5 @@ services:
       timeout: 10s
       retries: 5
     post_start:
+      - command: cd /var/www/html/modules/ps_checkout && composer install
       - command: chmod -R 777 /var/www/html

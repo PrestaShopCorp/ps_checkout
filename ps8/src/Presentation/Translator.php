@@ -191,6 +191,9 @@ class Translator implements TranslatorInterface
             'For more information, please go to the official PayPal website.' => $this->translator->trans('For more information, please go to the official PayPal website.', $parameters, 'Modules.Checkout.Pscheckout'),
             'The payer paid for an item that they did not receive.' => $this->translator->trans('The payer paid for an item that they did not receive.', $parameters, 'Modules.Checkout.Pscheckout'),
             'The payer did not authorize the payment.' => $this->translator->trans('The payer did not authorize the payment.', $parameters, 'Modules.Checkout.Pscheckout'),
+
+            'The authorization has been successfully captured.' => $this->translator->trans('The authorization has been successfully captured.', $parameters, 'Modules.Checkout.Pscheckout'),
+            'An error occurred during the capture of the authorization.' => $this->translator->trans('An error occurred during the capture of the authorization.', $parameters, 'Modules.Checkout.Pscheckout')
         ];
 
         return $map[$key] ?? $key;

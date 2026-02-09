@@ -18,19 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Action;
+namespace PsCheckout\src\Hook\Handlers;
 
-use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
-
-interface CaptureAuthorizationActionInterface
+interface HookParamsInterface
 {
-    /**
-     * @param PayPalOrderResponse $payPalOrder
-     * @throws PsCheckoutException
-     *
-     * @return PayPalOrderAuthorization
-     */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization;
+
 }

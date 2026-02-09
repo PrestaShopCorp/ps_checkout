@@ -26,14 +26,17 @@ use PsCheckout\Api\Dto\PayPal\Payment\AuthorizationStatus;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 use Psr\Log\LoggerInterface;
 
-final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationActionInterface
+final class ReauthorizeAuthorizationAction implements AuthorizationActionInterface
 {
     /**
      * @var LoggerInterface
@@ -51,9 +54,9 @@ final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationAc
     private $payPalOrderAuthorizationRepository;
 
     /**
-     * @var EventHandlerInterface
+     * @var SetOrderStateActionInterface
      */
-    private $paymentPendingEventHandler;
+    private $setPendingOrderStateAction;
 
     /**
      * @var EventHandlerInterface
@@ -64,20 +67,28 @@ final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationAc
         LoggerInterface $logger,
         PaymentHttpClientInterface $paymentHttpClient,
         PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository,
-        EventHandlerInterface $paymentPendingEventHandler,
+        SetOrderStateActionInterface $setPendingOrderStateAction,
         EventHandlerInterface $paymentDeniedEventHandler
     ) {
         $this->logger = $logger;
         $this->paymentHttpClient = $paymentHttpClient;
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
-        $this->paymentPendingEventHandler = $paymentPendingEventHandler;
+        $this->setPendingOrderStateAction = $setPendingOrderStateAction;
         $this->paymentDeniedEventHandler = $paymentDeniedEventHandler;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports(string $action): bool
+    {
+        return $action === AuthorizationAction::REAUTHORIZE;
     }
 
     /**
      * @inheritDoc
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder)
     {
         if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             $this->logger->error('PayPal Order intent must be AUTHORIZE', ['order_id' => $payPalOrder->getId()]);
@@ -167,7 +178,7 @@ final class ReauthorizeAuthorizationAction implements ReauthorizeAuthorizationAc
 
         if (in_array($reauthorization->getStatus(), [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PENDING], true)) {
             $this->logger->info(sprintf('PayPal Order %s re-authorization %s is %s', $payPalOrder->getId(), $reauthorization->getId(), $reauthorization->getStatus()));
-            $this->paymentPendingEventHandler->handle($payPalOrder);
+            $this->setPendingOrderStateAction->execute($payPalOrder->getId());
         }
 
         if ($reauthorization->getStatus() === PayPalAuthorizationStatus::DENIED) {
