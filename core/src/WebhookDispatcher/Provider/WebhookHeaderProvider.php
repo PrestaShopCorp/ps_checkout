@@ -27,22 +27,10 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
      */
     public function getHeaders(): array
     {
-        $headers = [];
-
-        // Use getallheaders() if available (Apache)
-        if (function_exists('getallheaders')) {
-            $headers = getallheaders();
-        }
-
-        // Fallback to $_SERVER for Nginx or other environments
-        if (empty($headers)) {
-            $headers = [
-                'shopId' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-                'merchantId' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-                'firebaseId' => $_SERVER['HTTP_PSX_ID'] ?? null,
-            ];
-        }
-
-        return $headers;
+        return [
+            'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
+            'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
+            'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
+        ];
     }
 }
