@@ -328,12 +328,9 @@
   background: rgba(56, 56, 56, 0.33);
 }
 
-#ps_checkout .balance-info-icon:after,
-#ps_checkout .environment-info-icon:after,
-#ps_checkout .seller-protection-info-icon:after {
-  font-style: normal;
-  font-family: "Material Icons";
-  content: "\E001";
+#ps_checkout .balance-info-icon,
+#ps_checkout .environment-info-icon,
+#ps_checkout .seller-protection-info-icon {
   display: inline-block;
   vertical-align: middle;
   color: #878787;
