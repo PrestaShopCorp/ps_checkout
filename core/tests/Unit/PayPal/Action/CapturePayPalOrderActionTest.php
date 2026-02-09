@@ -175,7 +175,69 @@ class CapturePayPalOrderActionTest extends TestCase
             ->with($declinedResponse);
 
         $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         $this->expectExceptionMessage('PayPal declined the capture');
+
+        $this->action->execute($initialResponse);
+    }
+
+    public function testCardCaptureDeclined(): void
+    {
+        $initialResponse = PayPalOrderResponseFactory::create();
+        $payPalOrder = PayPalOrderFactory::create();
+
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
+        $this->configuration->method('get')->willReturn('TEST_MERCHANT_ID');
+
+        $responseBody = $this->createMock(StreamInterface::class);
+        $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
+
+        $httpResponse = $this->createMock(ResponseInterface::class);
+        $httpResponse->method('getBody')->willReturn($responseBody);
+
+        $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
+
+        $this->payPalOrderCache->method('getValue')->willReturn([]);
+
+        // Create a declined response instead of returning null
+        $declinedResponse = PayPalOrderResponseFactory::create([
+            'status' => PayPalCaptureStatus::DECLINED,
+            'payment_source' => [
+                'card' => [
+                    'name' => 'John Doe',
+                    'last_digits' => '1111',
+                    'brand' => 'VISA',
+                    'type' => 'UNKNOWN',
+                    'bin_details' => [],
+                ]
+            ],
+            'purchase_units' => [
+                [
+                    'payments' => [
+                        'captures' => [
+                            [
+                                'status' => PayPalCaptureStatus::DECLINED,
+                                'processor_response' => [
+                                    'avs_code' => 'N',
+                                    'cvv_code' => 'N',
+                                    'payment_advice_code' => '123',
+                                    'response_code' => '2000',
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
+
+        $this->paymentDeniedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($declinedResponse);
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR);
 
         $this->action->execute($initialResponse);
     }
