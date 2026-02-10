@@ -23,12 +23,12 @@ if (!defined('_PS_VERSION_')) {
 
 use PsCheckout\Core\Customer\Action\ExpressCheckoutAction;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Utility\Common\InputStreamUtility;
-use Psr\Log\LoggerInterface;
 
 /**
  * This controller receive ajax call when customer click on an express checkout button
@@ -37,11 +37,6 @@ use Psr\Log\LoggerInterface;
  */
 class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * {@inheritdoc}
      */
@@ -113,21 +108,13 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $expressCheckoutAction = $this->module->getService(ExpressCheckoutAction::class);
             $expressCheckoutAction->execute($expressCheckoutRequest);
         } catch (Exception $exception) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-            $logger->error(
-                sprintf(
-                    'ExpressCheckoutController - Exception %s : %s',
-                    $exception->getCode(),
-                    $exception->getMessage()
-                ),
-                [
-                    'paypal_order' => $expressCheckoutRequest->getOrderId(),
-                    'exception' => $exception,
-                ]
-            );
-
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the express checkout.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
 
         $this->exitWithResponse([

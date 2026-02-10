@@ -42,8 +42,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
     /**
      * @return bool
-     *
-     * @throws \PsCheckout\Core\Exception\PsCheckoutException
      */
     public function display(): bool
     {
@@ -68,7 +66,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             /** @var CheckPSLSignatureAction $checkPSLSignatureAction */
             $checkPSLSignatureAction = $this->module->getService(CheckPSLSignatureAction::class);
             $checkPSLSignatureAction->execute($bodyValues);
-            $logger->info('PSLS Signature validated', $bodyValues);
+            $logger->info('PSL Signature validated', $bodyValues);
 
             /** @var WebhookShopIdValidator $webhookShopIdValidator */
             $webhookShopIdValidator = $this->module->getService(WebhookShopIdValidator::class);
@@ -79,13 +77,33 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             /** @var DispatchWebhookProcessor $dispatchWebHookProcessor */
             $dispatchWebHookProcessor = $this->module->getService(DispatchWebhookProcessor::class);
 
-            return $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+            $processed = $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+
+            if ($processed) {
+                $logger->info('Webhook dispatch completed successfully');
+            } else {
+                $logger->warning('Webhook dispatch completed with no processing');
+            }
+
+            return $processed;
         } catch (WebhookException $e) {
             // Handle the exception
             $logger->error('Webhook Dispatcher error: ' . $e->getMessage());
             http_response_code($e->getCode());
 
             echo json_encode(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $logger->error(
+                sprintf(
+                    'DispatchWebHookController - Exception %s : %s',
+                    $e->getCode(),
+                    $e->getMessage()
+                ),
+                ['exception' => $e]
+            );
+            http_response_code(500);
+
+            echo json_encode(['error' => 'An unexpected error occurred.']);
         }
 
         return false;

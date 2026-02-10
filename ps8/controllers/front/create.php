@@ -24,26 +24,18 @@ if (!defined('_PS_VERSION_')) {
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
-use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
 use PsCheckout\Infrastructure\Action\AddProductToCartAction;
 use PsCheckout\Infrastructure\Adapter\Context;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Utility\Common\InputStreamUtility;
-use Psr\Log\LoggerInterface;
 
 /**
  * This controller receives ajax call to create a PayPal Order
  */
 class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      */
@@ -164,14 +156,13 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->module->getService(LoggerInterface::class)->error(
-                'CreateController - Exception ' . $exception->getCode(),
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-            $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error ocurred.', $exception->getCode()));
+            $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while creating the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

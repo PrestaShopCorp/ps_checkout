@@ -127,6 +127,12 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $this->handleOrderCreationException($exception, $checkoutRequest->getOrderId());
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while validating the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

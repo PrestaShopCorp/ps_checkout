@@ -37,6 +37,7 @@ use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\OrderRepository;
 use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
+use PsCheckout\Module\Presentation\Translator;
 use Psr\Log\LoggerInterface;
 
 class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
@@ -136,9 +137,18 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             $payPalOrderResponse = $payPalOrderProvider->getById($this->paypalOrderId);
             $this->handleOrderStatus($payPalOrderResponse, $payPalOrder);
-        } catch (Exception $exception) {
-            $logger->error('Error processing PayPal Order: ' . $exception->getMessage());
-            $this->context->smarty->assign('error', $exception->getMessage());
+        } catch (Throwable $exception) {
+            $logger->error(
+                sprintf(
+                    'PaymentController - Exception %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception]
+            );
+            /** @var Translator $translator **/
+            $translator = $this->module->getService(Translator::class);
+            $this->context->smarty->assign('error', $translator->trans('There was an error during the payment. Please try again or contact the support.'));
         }
     }
 
