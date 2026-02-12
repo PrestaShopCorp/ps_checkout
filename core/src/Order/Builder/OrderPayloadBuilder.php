@@ -180,14 +180,17 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($isFullPayload) {
             $paymentSource = $this->buildPaymentSource();
-            $optionalPayload[] = $this->buildPaymentSource();
 
-            if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
-                $optionalPayload[] = $this->applicationContextNodeBuilder
-                    ->setIsExpressCheckout($this->expressCheckout)
-                    ->setIsVirtualCart($this->cart['cart']['is_virtual'])
-                    ->build();
+            if (!empty($paymentSource)) {
+                $optionalPayload[] = $paymentSource;
             }
+        }
+
+        if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
+            $optionalPayload[] = $this->applicationContextNodeBuilder
+                ->setIsExpressCheckout($this->expressCheckout)
+                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
+                ->build();
         }
 
         return $optionalPayload;
@@ -260,7 +263,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'paypal':
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
-                    ->setPaypalVaultId($this->paypalVaultId);
+                    ->setPaypalVaultId($this->paypalVaultId)
+                    ->setExpressCheckout($this->expressCheckout)
+                    ->setIsVirtualCart((bool) $this->cart['cart']['is_virtual']);
 
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
