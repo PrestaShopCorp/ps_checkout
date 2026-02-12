@@ -50,7 +50,6 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
      */
     private $isVirtualCart;
 
-
     /**
      * @var ConfigurationInterface
      */

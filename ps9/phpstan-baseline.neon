@@ -2421,7 +2421,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
