@@ -33,13 +33,13 @@ use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
 class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 {
-    /** @var array * */
+    /** @var array */
     private $cart;
 
-    /** @var string * */
+    /** @var string */
     private $fundingSource;
 
-    /** @var string * */
+    /** @var string */
     private $paypalOrderId;
 
     /** @var string */
@@ -355,6 +355,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
     private function shippingAddressExists(): bool
     {
-        return isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
+        if (isset($this->cart['addresses']['shipping'])) {
+            return $this->cart['addresses']['shipping']->id !== null;
+        }
+
+        return false;
     }
 }

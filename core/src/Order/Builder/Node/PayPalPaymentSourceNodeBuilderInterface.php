@@ -49,7 +49,7 @@ interface PayPalPaymentSourceNodeBuilderInterface
     public function setSavePaymentMethod(bool $savePaymentMethod): PayPalPaymentSourceNodeBuilder;
 
     /**
-     * @param bool $cartAddressExists
+     * @param bool $shippingAddressExists
      *
      * @return PayPalPaymentSourceNodeBuilder
      */

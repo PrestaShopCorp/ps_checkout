@@ -22,17 +22,11 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\GenderRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 
 class ShippingNodeBuilder implements ShippingNodeBuilderInterface
 {
-    /**
-     * @var GenderRepositoryInterface
-     */
-    private $gender;
-
     /**
      * @var CountryRepositoryInterface
      */
@@ -49,11 +43,9 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
     private $cart;
 
     public function __construct(
-        GenderRepositoryInterface $gender,
         CountryRepositoryInterface $countryRepository,
         StateRepositoryInterface $stateRepository
     ) {
-        $this->gender = $gender;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
     }

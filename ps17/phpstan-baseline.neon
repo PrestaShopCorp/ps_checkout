@@ -2161,9 +2161,15 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayerNodeBuilderInterface.php
 
 		-
+			message: '#^Binary operation "\." between mixed and '' '' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
+
+		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 2
+			count: 1
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
 
 		-
@@ -2185,19 +2191,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$id on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
-
-		-
 			message: '#^Cannot access property \$id_country on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
-
-		-
-			message: '#^Cannot access property \$id_gender on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
@@ -2239,19 +2233,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$idGender of method PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\:\:getGenderNameById\(\) expects int, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$idState of method PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\:\:getNameById\(\) expects int, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
-
-		-
-			message: '#^Parameter \#2 \$idLanguage of method PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\:\:getGenderNameById\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/ShippingNodeBuilder.php
@@ -2437,6 +2419,12 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 6
@@ -2445,6 +2433,12 @@ parameters:
 		-
 			message: '#^Cannot access offset string on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
@@ -8425,19 +8419,7 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
 
 		-
-			message: '#^Cannot access property \$id on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access property \$id_country on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access property \$id_gender on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
@@ -8480,12 +8462,6 @@ parameters:
 
 		-
 			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$countryRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\) does not accept null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
-
-		-
-			message: '#^Property Tests\\PsCheckout\\Core\\Order\\Builder\\Node\\ShippingNodeBuilderTest\:\:\$genderRepository \(PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Repository\\GenderRepositoryInterface\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/ShippingNodeBuilderTest.php
