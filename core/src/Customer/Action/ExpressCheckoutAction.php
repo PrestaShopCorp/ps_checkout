@@ -76,8 +76,10 @@ class ExpressCheckoutAction implements ExpressCheckoutActionInterface
 
         $this->context->setPayPalEmail($expressCheckoutRequest->getPayerEmail());
 
-        $this->context->resetContextCartAddresses();
-
-        $this->createOrUpdateAddressAction->execute($expressCheckoutRequest);
+        $deliveryAddressId = $this->context->getCart()->id_address_delivery;
+        // If cart already has a shipping address, no need to fetch it from EC response
+        if ($deliveryAddressId === null || $deliveryAddressId === 0) {
+            $this->createOrUpdateAddressAction->execute($expressCheckoutRequest);
+        }
     }
 }

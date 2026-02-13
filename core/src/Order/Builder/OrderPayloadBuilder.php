@@ -165,7 +165,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             }
         }
 
-        if (!$this->expressCheckout || $this->isUpdate) {
+        if ($this->shippingAddressExists()) {
             $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
         }
 
@@ -188,7 +188,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
             $optionalPayload[] = $this->applicationContextNodeBuilder
-                ->setIsExpressCheckout($this->expressCheckout)
+                ->setShippingAddressExists($this->shippingAddressExists())
                 ->setIsVirtualCart($this->cart['cart']['is_virtual'])
                 ->build();
         }
@@ -264,8 +264,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
-                    ->setExpressCheckout($this->expressCheckout)
-                    ->setIsVirtualCart((bool) $this->cart['cart']['is_virtual']);
+                    ->setShippingAddressExists($this->shippingAddressExists())
+                    ->setVirtualCart((bool) $this->cart['cart']['is_virtual']);
 
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
@@ -351,5 +351,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->isCard = $isCard;
 
         return $this;
+    }
+
+    private function shippingAddressExists(): bool
+    {
+        return isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
     }
 }
