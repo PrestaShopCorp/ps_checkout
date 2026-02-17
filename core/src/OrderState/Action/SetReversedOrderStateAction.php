@@ -80,12 +80,10 @@ class SetReversedOrderStateAction implements SetOrderStateActionInterface
             throw new PsCheckoutException('PayPal order not found.', PsCheckoutException::ORDER_NOT_FOUND);
         }
 
+        /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if (
-            !$this->hasBeenPaid($order)
-            || $this->hasBeenRefunded($order)
-        ) {
+        if (!$order || !$this->hasBeenPaid($order) || $this->hasBeenRefunded($order)) {
             return;
         }
 
