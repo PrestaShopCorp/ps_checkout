@@ -34,7 +34,7 @@ class WebhookHeaderProviderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->provider = $this->createTestableWebhookHeaderProvider();
+        $this->provider = new WebhookHeaderProvider();
         $this->originalServer = $_SERVER;
     }
 
@@ -44,7 +44,7 @@ class WebhookHeaderProviderTest extends TestCase
         parent::tearDown();
     }
 
-    public function testItGetsHeadersFromServerWhenGetallheadersNotAvailable(): void
+    public function testItGetsHeadersFromServer(): void
     {
         // Arrange
         $this->mockServerHeaders([
@@ -99,52 +99,6 @@ class WebhookHeaderProviderTest extends TestCase
             'Merchant-Id' => null,
             'Psx-Id' => null,
         ], $result);
-    }
-
-    public function testItGetsHeadersFromGetallheadersWhenAvailable(): void
-    {
-        // Arrange
-        $expectedHeaders = [
-            'Shop-Id' => 'shop-123',
-            'Merchant-Id' => 'merchant-456',
-            'Psx-Id' => 'psx-789',
-        ];
-
-        // Create a testable provider that simulates getallheaders() being available
-        $provider = new class() extends WebhookHeaderProvider {
-            public function getHeaders(): array
-            {
-                return [
-                    'Shop-Id' => 'shop-123',
-                    'Merchant-Id' => 'merchant-456',
-                    'Psx-Id' => 'psx-789',
-                ];
-            }
-        };
-
-        // Act
-        $result = $provider->getHeaders();
-
-        // Assert
-        $this->assertEquals($expectedHeaders, $result);
-    }
-
-    /**
-     * Creates a testable version of WebhookHeaderProvider that doesn't use getallheaders()
-     */
-    private function createTestableWebhookHeaderProvider(): WebhookHeaderProvider
-    {
-        return new class() extends WebhookHeaderProvider {
-            public function getHeaders(): array
-            {
-                // Always use $_SERVER fallback for testing
-                return [
-                    'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-                    'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-                    'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
-                ];
-            }
-        };
     }
 
     /**
