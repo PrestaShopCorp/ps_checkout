@@ -49,6 +49,13 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
      */
     public function postProcess()
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 405,
+                'body' => 'Method Not Allowed',
+            ]);
+        }
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 

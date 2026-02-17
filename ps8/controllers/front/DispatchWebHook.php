@@ -47,6 +47,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     public function display(): bool
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 405,
+                'body' => 'Method Not Allowed',
+            ]);
+        }
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
