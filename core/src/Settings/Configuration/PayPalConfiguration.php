@@ -125,6 +125,6 @@ class PayPalConfiguration
      */
     public function getMerchantCountry(): string
     {
-        return $this->configuration->get(self::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
+        return $this->configuration->get(self::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT) ?? '';
     }
 }
