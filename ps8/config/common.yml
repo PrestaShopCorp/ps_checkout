@@ -37,6 +37,11 @@ services:
       - '@=service("ps_checkout.module").name'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
+  PsCheckout\Infrastructure\Error\Sentry:
+    class: PsCheckout\Infrastructure\Error\Sentry
+    arguments:
+      - '@PsCheckout\Infrastructure\Environment\Env'
+
   PsCheckout\Core\Webhook\Service\WebhookSecretToken:
     class: PsCheckout\Core\Webhook\Service\WebhookSecretToken
     arguments:

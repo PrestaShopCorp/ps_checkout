@@ -99,7 +99,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $dispatchWebHookProcessor = $this->module->getService(DispatchWebhookProcessor::class);
 
             return $dispatchWebHookProcessor->process($dispatchWebhookRequest);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             \Sentry\captureException($e);
 
             // Handle the exception

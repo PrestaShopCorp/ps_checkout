@@ -41,6 +41,7 @@ use PsCheckout\Infrastructure\Adapter\Link;
 use PsCheckout\Infrastructure\Adapter\ShopContext;
 use PsCheckout\Infrastructure\Bootstrap\Install\Installer;
 use PsCheckout\Infrastructure\Environment\Env;
+use PsCheckout\Infrastructure\Error\Sentry;
 use PsCheckout\Infrastructure\Repository\ConfigurationRepository;
 use PsCheckout\Infrastructure\Repository\CountryRepository;
 use PsCheckout\Infrastructure\Repository\CurrencyRepository;
@@ -123,6 +124,10 @@ class Ps_Checkout extends PaymentModule
         $this->description = $this->trans('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
         $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => '8.999.999'];
+//
+//        /** @var Sentry $sentry */
+//        $sentry = $this->getService(Sentry::class);
+//        $sentry->init();
     }
 
     public function install(): bool

@@ -31,6 +31,7 @@ use PsCheckout\Core\Webhook\Configuration\WebhookCategoryConfiguration;
 use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 {
@@ -130,7 +131,7 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 
         try {
             $this->eventDispatcher->dispatch($dispatchWebhookRequest->getEventType(), $payPalOrderResponse);
-        } catch (PsCheckoutException $e) {
+        } catch (Throwable $e) {
             $this->logger->error(
                 'Error processing webhook',
                 [
