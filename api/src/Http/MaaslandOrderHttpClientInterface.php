@@ -18,35 +18,24 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\WebhookDispatcher\Action;
+namespace PsCheckout\Api\Http;
 
-use PsCheckout\Api\Http\WebhookHttpClientInterface;
-use PsCheckout\Core\Webhook\WebhookException;
+use Psr\Http\Message\ResponseInterface;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
+use PsCheckout\Api\Http\Exception\PayPalException;
 
-class VerifyWebhookAction implements VerifyWebhookActionInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+interface MaaslandOrderHttpClientInterface
 {
     /**
-     * @var WebhookHttpClientInterface
+     * Tells if the webhook came from the PSL
+     *
+     * @param array $payload
+     *
+     * @return array
      */
-    private $webhookHttpClient;
-
-    public function __construct(
-        WebhookHttpClientInterface $webhookHttpClient
-    ) {
-        $this->webhookHttpClient = $webhookHttpClient;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function execute(string $rawBody, array $webhookHeaders): bool
-    {
-        $response = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
-
-        if (isset($response['statusCode']) && 200 === $response['statusCode']) {
-            return true;
-        }
-
-        throw new WebhookException('Invalid Webhook signature', 401);
-    }
+    public function getShopSignature(array $payload): array;
 }

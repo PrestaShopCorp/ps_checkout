@@ -69,16 +69,30 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
      */
     private function validateHeaders(array $headers)
     {
-        if (empty($headers['Shop-Id'])) {
-            throw new \InvalidArgumentException('Shop-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
-        }
+        if (isset($headers['user-agent']) && preg_match('/[S,s]vix/m', $headers['user-agent'])) {
+            if (empty($headers['svix-id'])) {
+                throw new \InvalidArgumentException('svix-id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
+            }
 
-        if (empty($headers['Merchant-Id'])) {
-            throw new \InvalidArgumentException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
-        }
+            if (empty($headers['svix-timestamp'])) {
+                throw new \InvalidArgumentException('svix-timestamp can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
+            }
 
-        if (empty($headers['Psx-Id'])) {
-            throw new \InvalidArgumentException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+            if (empty($headers['svix-signature'])) {
+                throw new \InvalidArgumentException('svix-signature can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+            }
+        } else {
+            if (empty($headers['Shop-Id'])) {
+                throw new \InvalidArgumentException('Shop-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
+            }
+
+            if (empty($headers['Merchant-Id'])) {
+                throw new \InvalidArgumentException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
+            }
+
+            if (empty($headers['Psx-Id'])) {
+                throw new \InvalidArgumentException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+            }
         }
     }
 

@@ -20,33 +20,34 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-use PsCheckout\Api\Http\WebhookHttpClientInterface;
+use PsCheckout\Api\Http\MaaslandOrderHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
 
-class VerifyWebhookAction implements VerifyWebhookActionInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+class CheckPSLSignatureAction implements CheckPSLSignatureActionInterface
 {
     /**
-     * @var WebhookHttpClientInterface
+     * @var MaaslandOrderHttpClientInterface
      */
-    private $webhookHttpClient;
+    private $orderHttpClient;
 
     public function __construct(
-        WebhookHttpClientInterface $webhookHttpClient
+        MaaslandOrderHttpClientInterface $orderHttpClient
     ) {
-        $this->webhookHttpClient = $webhookHttpClient;
+        $this->orderHttpClient = $orderHttpClient;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function execute(string $rawBody, array $webhookHeaders): bool
+    public function execute(array $bodyValues): bool
     {
-        $response = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
+        $response = $this->orderHttpClient->getShopSignature($bodyValues);
 
-        if (isset($response['statusCode']) && 200 === $response['statusCode']) {
+        if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
             return true;
         }
 
-        throw new WebhookException('Invalid Webhook signature', 401);
+        throw new WebhookException('Invalid PSL signature', 401);
     }
 }

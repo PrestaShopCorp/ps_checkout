@@ -27,7 +27,8 @@ use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClientInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+class MaaslandOrderHttpClient extends PsrHttpClientAdapter implements MaaslandOrderHttpClientInterface
 {
     public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
     {
@@ -54,12 +55,15 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
         }
     }
 
+
+
     /**
      * {@inheritdoc}
+     * @inheritDoc
      */
-    public function verifyWebhook(string $rawBody, array $headers): array
+    public function getShopSignature(array $payload): array
     {
-        $response = $this->sendRequest(new Request('POST', 'webhooks/verify', $headers, $rawBody));
+        $response = $this->sendRequest(new Request('POST', '/payments/shop/verify_webhook_signature', [], json_encode($payload)));
 
         return json_decode($response->getBody(), true);
     }

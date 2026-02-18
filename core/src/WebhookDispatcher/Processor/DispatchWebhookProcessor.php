@@ -91,13 +91,17 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
     {
         $this->log('DispatchWebHook', $dispatchWebhookRequest);
 
-        if ('ShopNotificationOrderChange' !== $dispatchWebhookRequest->getCategory()) {
+        if (!in_array($dispatchWebhookRequest->getCategory(), ['ShopNotificationOrderChange', 'Svix'])) {
             $this->log('DispatchWebHook ignored', $dispatchWebhookRequest);
 
             return true;
         }
 
-        if (!$dispatchWebhookRequest->getOrderId()) {
+        $orderId = $dispatchWebhookRequest->getCategory() === 'ShopNotificationOrderChange'
+            ? $dispatchWebhookRequest->getOrderId()
+            : $dispatchWebhookRequest->getResource()['id'];
+
+        if (!$orderId) {
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 

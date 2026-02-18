@@ -38,19 +38,24 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     /**
      * {@inheritDoc}
      */
-    public function validate(): array
+    public function validate($maasland = false): array
     {
         try {
             // Step 1: Get the body from the service
             $bodyValues = $this->webhookBodyProvider->getBody();
 
             // Step 2: Validate the body (additional validation if needed)
-            $this->validateBody($bodyValues);
+            if ($maasland) {
+                $this->validateMaaslandBody($bodyValues);
 
-            // Step 3: Transform the body into a standardized format
-            $transformedBody = $this->transformBody($bodyValues);
+                // Step 3: Transform the body into a standardized format
+                return $this->transformMaaslandBody($bodyValues);
+            } else {
+                $this->validateBody($bodyValues);
 
-            return $transformedBody;
+                // Step 3: Transform the body into a standardized format
+                return $this->transformBody($bodyValues);
+            }
         } catch (\InvalidArgumentException $e) {
             // Wrap the exception in a domain-specific exception
             throw new WebhookException('Body validation failed: ' . $e->getMessage(), 400);
@@ -68,7 +73,7 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
      */
     private function validateBody(array $bodyValues)
     {
-        $requiredFields = ['resource', 'eventType', 'category', 'eventStream', 'eventNumber', 'webhookId'];
+        $requiredFields = ['shopId', 'resource', 'event_type'];
 
         foreach ($requiredFields as $field) {
             if (empty($bodyValues[$field])) {
@@ -85,6 +90,42 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
      * @return array
      */
     private function transformBody(array $bodyValues): array
+    {
+        return [
+            'resource' => json_decode($bodyValues['resource'], true),
+            'eventType' => (string) $bodyValues['event_type'],
+            'shopId' => $bodyValues['shopId'],
+        ];
+    }
+
+    /**
+     * Validate the body (additional validation logic).
+     *
+     * @param array $bodyValues
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function validateMaaslandBody(array $bodyValues)
+    {
+        $requiredFields = ['resource', 'eventType', 'category', 'eventStream', 'eventNumber', 'webhookId'];
+
+        foreach ($requiredFields as $field) {
+            if (empty($bodyValues[$field])) {
+                throw new \InvalidArgumentException(sprintf('Missing required field: %s', $field));
+            }
+        }
+    }
+
+    /**
+     * Transform the body into a standardized format.
+     *
+     * @param array $bodyValues
+     *
+     * @return array
+     */
+    private function transformMaaslandBody(array $bodyValues): array
     {
         return [
             'webhookId' => (string) $bodyValues['webhookId'],

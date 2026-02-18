@@ -22,12 +22,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PsCheckout\Core\Webhook\WebhookException;
+use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
 use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 use PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor;
 use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
+use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use Psr\Log\LoggerInterface;
 
@@ -58,17 +60,33 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $headerValues = $headerValuesValidator->validate();
             $logger->info('Headers validated', $headerValues);
 
+            $isSvixWebhook = isset($headerValues['svix-id']);
+
             /** @var BodyValuesValidator $bodyValuesValidator */
             $bodyValuesValidator = $this->module->getService(BodyValuesValidator::class);
-            $bodyValues = $bodyValuesValidator->validate();
-            $logger->info('Body validated', $bodyValues);
 
-            /** @var VerifyWebhookAction $verifyWebhookAction */
-            $verifyWebhookAction = $this->module->getService(VerifyWebhookAction::class);
-            $verifyWebhookAction->execute(file_get_contents('php://input'), $headerValues);
-            $logger->info('Webhook Signature validated', $bodyValues);
+            if ($isSvixWebhook) {
+                $bodyValues = $bodyValuesValidator->validate();
+                $logger->info('Body validated', $bodyValues);
 
-            $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
+                /** @var VerifyWebhookAction $verifyWebhookAction */
+                $verifyWebhookAction = $this->module->getService(VerifyWebhookAction::class);
+                $verifyWebhookAction->execute(file_get_contents('php://input'), $headerValues);
+                $logger->info('Webhook Signature validated', $bodyValues);
+
+                $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
+
+            } else {
+                $bodyValues = $bodyValuesValidator->validate(true);
+                $logger->info('Body validated', $bodyValues);
+
+                /** @var CheckPSLSignatureAction $checkPSLSignatureAction */
+                $checkPSLSignatureAction = $this->module->getService(CheckPSLSignatureAction::class);
+                $checkPSLSignatureAction->execute($bodyValues);
+                $logger->info('PSL Signature validated', $bodyValues);
+
+                $dispatchWebhookRequest = DispatchWebhookRequest::createFromMaaslandRequest($bodyValues, $headerValues);
+            }
 
             /** @var WebhookShopIdValidator $webhookShopIdValidator */
             $webhookShopIdValidator = $this->module->getService(WebhookShopIdValidator::class);
