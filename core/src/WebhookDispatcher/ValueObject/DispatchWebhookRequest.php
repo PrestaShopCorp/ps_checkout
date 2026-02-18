@@ -100,20 +100,20 @@ class DispatchWebhookRequest
         array $resource,
         string $eventType,
         string $category,
+        ?string $orderId = null,
         ?string $summary = null,
-        ?string$orderId = null,
-        ?string$eventStream = null,
-        ?string$eventNumber = null,
-        ?string$merchantId = null,
-        ?string$firebaseId = null
+        ?string $eventStream = null,
+        ?string $eventNumber = null,
+        ?string $merchantId = null,
+        ?string $firebaseId = null
     ) {
         $this->webhookId = $webhookId;
         $this->shopId = $shopId;
         $this->resource = $resource;
         $this->eventType = $eventType;
         $this->category = $category;
-        $this->summary = $summary;
         $this->orderId = $orderId;
+        $this->summary = $summary;
         $this->eventStream = $eventStream;
         $this->eventNumber = $eventNumber;
         $this->merchantId = $merchantId;
@@ -147,7 +147,7 @@ class DispatchWebhookRequest
     /**
      * @return string|null
      */
-    public function getSummary()
+    public function getSummary(): ?string
     {
         return $this->summary;
     }
@@ -155,7 +155,7 @@ class DispatchWebhookRequest
     /**
      * @return string|null
      */
-    public function getOrderId()
+    public function getOrderId(): ?string
     {
         return $this->orderId;
     }
@@ -169,33 +169,33 @@ class DispatchWebhookRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMerchantId(): string
+    public function getMerchantId(): ?string
     {
         return $this->merchantId;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirebaseId(): string
+    public function getFirebaseId(): ?string
     {
         return $this->firebaseId;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEventStream(): string
+    public function getEventStream(): ?string
     {
         return $this->eventStream;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEventNumber(): string
+    public function getEventNumber(): ?string
     {
         return $this->eventNumber;
     }
@@ -213,11 +213,13 @@ class DispatchWebhookRequest
         $mappedEventType = (string) WebhookEventTypeConfiguration::getMappedEventType($bodyValues['eventType']);
 
         return new self(
-            (string) $headerValues['svix-id'],
+            (string) $bodyValues['id'],
             (string) $bodyValues['shopId'],
             (array) $bodyValues['resource'],
             $mappedEventType,
-            'Svix'
+            'Svix',
+            $bodyValues['resource']['supplementary_data']['related_ids']['order_id'] ?? $bodyValues['resource']['id'],
+        $bodyValues['summary'] ?? null,
         );
     }
 
@@ -237,8 +239,8 @@ class DispatchWebhookRequest
             (array) $bodyValues['resource'],
             (string) $bodyValues['eventType'],
             (string) $bodyValues['category'],
-            $bodyValues['summary'] ?? null,
             $bodyValues['orderId'] ?? null,
+        $bodyValues['summary'] ?? null,
             (string) $bodyValues['eventStream'],
             (string) $bodyValues['eventNumber'],
             (string) $headerValues['merchantId'],

@@ -97,19 +97,17 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
             return true;
         }
 
-        $orderId = $dispatchWebhookRequest->getCategory() === 'ShopNotificationOrderChange'
-            ? $dispatchWebhookRequest->getOrderId()
-            : $dispatchWebhookRequest->getResource()['id'];
+        $orderId = $dispatchWebhookRequest->getOrderId();
 
         if (!$orderId) {
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 
-        if ($this->payPalOrderCache->has($dispatchWebhookRequest->getOrderId())) {
-            $this->payPalOrderCache->delete($dispatchWebhookRequest->getOrderId());
+        if ($this->payPalOrderCache->has($orderId)) {
+            $this->payPalOrderCache->delete($orderId);
         }
 
-        $payPalOrderResponse = $this->payPalOrderProvider->getById($dispatchWebhookRequest->getOrderId());
+        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
 
         if (!$payPalOrderResponse) {
             $this->logger->warning(

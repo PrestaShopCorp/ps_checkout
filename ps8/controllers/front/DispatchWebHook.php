@@ -29,14 +29,11 @@ use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
-use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use Psr\Log\LoggerInterface;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontController
 {
-    const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
-
     /**
      * @var bool If set to true, will be redirected to authentication page
      */
@@ -60,7 +57,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $headerValues = $headerValuesValidator->validate();
             $logger->info('Headers validated', $headerValues);
 
-            $isSvixWebhook = isset($headerValues['svix-id']);
+            $isSvixWebhook = isset($headerValues['Svix-Id']);
 
             /** @var BodyValuesValidator $bodyValuesValidator */
             $bodyValuesValidator = $this->module->getService(BodyValuesValidator::class);

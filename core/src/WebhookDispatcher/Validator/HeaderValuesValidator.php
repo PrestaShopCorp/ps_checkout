@@ -69,17 +69,17 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
      */
     private function validateHeaders(array $headers)
     {
-        if (isset($headers['user-agent']) && preg_match('/[S,s]vix/m', $headers['user-agent'])) {
-            if (empty($headers['svix-id'])) {
-                throw new \InvalidArgumentException('svix-id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
+        if (isset($headers['User-Agent']) && preg_match('/[S,s]vix/m', $headers['User-Agent'])) {
+            if (empty($headers['Svix-Id'])) {
+                throw new \InvalidArgumentException('Svix-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
             }
 
-            if (empty($headers['svix-timestamp'])) {
-                throw new \InvalidArgumentException('svix-timestamp can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
+            if (empty($headers['Svix-Timestamp'])) {
+                throw new \InvalidArgumentException('Svix-Timestamp can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
             }
 
-            if (empty($headers['svix-signature'])) {
-                throw new \InvalidArgumentException('svix-signature can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
+            if (empty($headers['Svix-Signature'])) {
+                throw new \InvalidArgumentException('Svix-Signature can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
             }
         } else {
             if (empty($headers['Shop-Id'])) {
@@ -109,6 +109,9 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
             'shopId' => $headers['Shop-Id'],
             'merchantId' => $headers['Merchant-Id'],
             'firebaseId' => $headers['Psx-Id'],
+            'Svix-Id' => $headers['Svix-Id'],
+            'Svix-Timestamp' => $headers['Svix-Timestamp'],
+            'Svix-Signature' => $headers['Svix-Signature'],
         ];
     }
 }

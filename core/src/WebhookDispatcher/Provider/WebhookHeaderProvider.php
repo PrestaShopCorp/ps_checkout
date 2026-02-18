@@ -42,10 +42,10 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
                 'merchantId' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
                 'firebaseId' => $_SERVER['HTTP_PSX_ID'] ?? null,
                 // END TODO
-                'svix-id' => $_SERVER['HTTP_SVIX_ID'] ?? null,
-                'svix-timestamp' => $_SERVER['HTTP_SVIX_TIMESTAMP'] ?? null,
-                'svix-signature' => $_SERVER['HTTP_SVIX_SIGNATURE'] ?? null,
-                'user-agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'Svix-Id' => $_SERVER['HTTP_SVIX_ID'] ?? null,
+                'Svix-Timestamp' => $_SERVER['HTTP_SVIX_TIMESTAMP'] ?? null,
+                'Svix-Signature' => $_SERVER['HTTP_SVIX_SIGNATURE'] ?? null,
+                'User-Agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
             ];
         }
 

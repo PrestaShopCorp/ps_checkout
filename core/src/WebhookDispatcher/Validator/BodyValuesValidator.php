@@ -92,9 +92,12 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     private function transformBody(array $bodyValues): array
     {
         return [
-            'resource' => json_decode($bodyValues['resource'], true),
+            'resource' => is_array($bodyValues['resource'])
+                ? $bodyValues['resource']
+                : json_decode($bodyValues['resource'], true),
             'eventType' => (string) $bodyValues['event_type'],
             'shopId' => $bodyValues['shopId'],
+            'summary' => (string) $bodyValues['summary'],
         ];
     }
 
