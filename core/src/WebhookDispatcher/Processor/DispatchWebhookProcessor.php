@@ -27,17 +27,12 @@ use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcherInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
 use Psr\Log\LoggerInterface;
 
 class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 {
-    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED = 'VaultPaymentTokenCreated';
-
-    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED = 'VaultPaymentTokenDeleted';
-
-    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED = 'VaultPaymentTokenDeletionInitiated';
-
     /**
      * @var LoggerInterface
      */
@@ -152,17 +147,17 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
     private function handlePaymentTokenEvents(string $eventType, PayPalOrderResponse $payPalOrderResponse): bool
     {
         switch ($eventType) {
-            case self::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED:
+            case WebhookEventTypeConfiguration::VAULT_PAYMENT_TOKEN_CREATED:
                 $this->savePaymentTokenAction->execute($payPalOrderResponse);
 
                 return true;
 
-            case self::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED:
+            case WebhookEventTypeConfiguration::VAULT_PAYMENT_TOKEN_DELETED:
                 $this->paymentTokenRepository->delete($payPalOrderResponse->getVault()['id']);
 
                 return true;
 
-            case self::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED:
+            case WebhookEventTypeConfiguration::VAULT_PAYMENT_TOKEN_DELETION_INITIATED:
                 // NOTE: do nothing but call is valid
                 return true;
 
