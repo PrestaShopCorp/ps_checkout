@@ -30,7 +30,9 @@
     <div class="paypal-order-loader text-center">
       <button class="btn-primary-reverse onclick unbind spinner"></button>
     </div>
+    <div id="ps-checkout-merchant-order-view"></div>
   </div>
 </div>
 
 {include file='./partials/adminOrderView.tpl' orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+{include file='./partials/adminOrderViewSdk.tpl' containerId='ps-checkout-merchant-order-view'}

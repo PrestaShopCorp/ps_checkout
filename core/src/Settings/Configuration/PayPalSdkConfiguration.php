@@ -38,6 +38,8 @@ class PayPalSdkConfiguration
 
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
+    const SDK_MERCHANT_ENDPOINT = '/sdk/ps_checkout-merchant-sdk.umd.js';
+
     /**
      * google_pay and apple_pay are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK

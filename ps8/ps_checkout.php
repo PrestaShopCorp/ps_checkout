@@ -282,6 +282,23 @@ class Ps_Checkout extends PaymentModule
                     false
                 );
 
+                /** @var Env $env */
+                $env = $this->getService(Env::class);
+                $merchantSdkUrl = $env->getEnv('CHECKOUT_MERCHANT_SDK_URL');
+
+                if (substr($merchantSdkUrl, -3) !== '.js') {
+                    $merchantSdkVersion = $env->getEnv('CHECKOUT_MERCHANT_SDK_VERSION');
+                    $merchantSdkUrl = $merchantSdkUrl . $merchantSdkVersion . PayPalSdkConfiguration::SDK_MERCHANT_ENDPOINT;
+                }
+
+                $this->context->controller->addJS($merchantSdkUrl, false);
+                $this->context->controller->addCss(
+                    $this->_path . 'views/css/adminOrderViewSdk.css?version=' . $this->version,
+                    'all',
+                    null,
+                    false
+                );
+
                 break;
         }
     }
@@ -957,6 +974,15 @@ class Ps_Checkout extends PaymentModule
         if ($order->module !== $this->name) {
             return '';
         }
+
+        Media::addJsDef([
+            'store' => [
+                'context' => [
+                    'orderId' => $order->id,
+                    'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+                ],
+            ],
+        ]);
 
         $this->context->smarty->assign([
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',

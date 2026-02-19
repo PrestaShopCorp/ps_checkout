@@ -32,5 +32,7 @@
     </div>
   </div>
 </div>
+<div class="card mt-2" id="ps-checkout-merchant-order-view"></div>
 
 {include file='./partials/adminOrderView.tpl' orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+{include file='./partials/adminOrderViewSdk.tpl' containerId='ps-checkout-merchant-order-view'}

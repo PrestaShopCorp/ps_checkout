@@ -27,6 +27,8 @@
   <div class="paypal-order-loader">
     <i class="process-icon-loading"></i>
   </div>
+  <div id="ps-checkout-merchant-order-view"></div>
 </div>
 
 {include file='./partials/adminOrderView.tpl' legacy=true orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+{include file='./partials/adminOrderViewSdk.tpl' containerId='ps-checkout-merchant-order-view'}
