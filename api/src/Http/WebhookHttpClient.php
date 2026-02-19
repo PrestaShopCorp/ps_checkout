@@ -48,7 +48,7 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
             $message = $this->extractMessage($body);
 
             if ($message) {
-                throw new WebhookException($message, $response->getStatusCode());
+                throw new WebhookException($message, $response->getStatusCode(), $exception);
             }
 
             throw $exception;
