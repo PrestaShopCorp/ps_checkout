@@ -68,7 +68,7 @@ class Translator implements TranslatorInterface
             'This is taking longer than expected. Please wait...' => $this->translator->trans('This is taking longer than expected. Please wait...', $parameters, 'Modules.Checkout.Pscheckout'),
             'Ok' => $this->translator->trans('Ok', $parameters, 'Modules.Checkout.Pscheckout'),
             'Cancel' => $this->translator->trans('Cancel', $parameters, 'Modules.Checkout.Pscheckout'),
-            '100% secure payments' => $this->translator->trans('100% secure payments', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Secure payments' => $this->translator->trans('Secure payments', $parameters, 'Modules.Checkout.Pscheckout'),
             'or' => $this->translator->trans('or', $parameters, 'Modules.Checkout.Pscheckout'),
             'Express Checkout' => $this->translator->trans('Express Checkout', $parameters, 'Modules.Checkout.Pscheckout'),
             'Please wait, loading additional payment methods.' => $this->translator->trans('Please wait, loading additional payment methods.', $parameters, 'Modules.Checkout.Pscheckout'),
@@ -76,7 +76,7 @@ class Translator implements TranslatorInterface
             'Warning' => $this->translator->trans('Warning', $parameters, 'Modules.Checkout.Pscheckout'),
 
             'Card' => $this->translator->trans('Card', $parameters, 'Modules.Checkout.Pscheckout'),
-            'Pay by Card - 100% secure payments' => $this->translator->trans('Pay by Card - 100% secure payments', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Pay by Card - Secure payments' => $this->translator->trans('Pay by Card - Secure payments', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay with a PayPal account' => $this->translator->trans('Pay with a PayPal account', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay in installments with PayPal Pay Later' => $this->translator->trans('Pay in installments with PayPal Pay Later', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay by %s' => $this->translator->trans('Pay by %s', $parameters, 'Modules.Checkout.Pscheckout'),

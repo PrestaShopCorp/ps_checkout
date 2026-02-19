@@ -547,9 +547,9 @@
         <target>Pagar com PayPal</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="983fe12e91079dcb00c74772b50747a3">
-        <source>Pay by Card - 100% secure payments</source>
-        <target>Pay by Card - 100% secure payments</target>
+      <trans-unit id="c5ddac9cef20e114d7fd3e5897125bc4">
+        <source>Pay by Card - secure payments</source>
+        <target>Pay by Card - secure payments</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1d565b9e5303987bb1b1938d5d458bca">
@@ -672,9 +672,9 @@
         <target>Cancelar</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="2f2401d57093e7d31bf2689fb87f72f6">
-        <source>100% secure payments</source>
-        <target>Pagamentos 100% seguros</target>
+      <trans-unit id="90882b25ee7a8a13908647d038ea9420">
+        <source>Secure payments</source>
+        <target>Pagamentos Seguros</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="e81c4e4f2b7b93b481e13a8553c2ae1b">
