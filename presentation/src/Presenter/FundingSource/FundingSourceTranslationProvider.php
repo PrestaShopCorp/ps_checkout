@@ -60,7 +60,7 @@ class FundingSourceTranslationProvider implements FundingSourceTranslationProvid
 
         switch ($fundingSourceName) {
             case 'card':
-                return $this->translator->trans('Pay by Card - 100% secure payments');
+                return $this->translator->trans('Pay by Card - Secure payments');
             case 'paypal':
                 return $this->translator->trans('Pay with a PayPal account');
             case 'paylater':
