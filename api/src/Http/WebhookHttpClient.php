@@ -24,6 +24,7 @@ use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
+use PsCheckout\Core\Webhook\WebhookException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,7 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
             $message = $this->extractMessage($body);
 
             if ($message) {
-                (new PayPalError($message))->throwException($exception);
+                throw new WebhookException($message, $response->getStatusCode());
             }
 
             throw $exception;
@@ -72,24 +73,12 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
      */
     private function extractMessage(array $body): string
     {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
-            return $body['details'][0]['issue'];
+        if (isset($body['message'])) {
+            return is_array($body['message']) ? implode(',', $body['message']) : $body['message'];
         }
 
         if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
-        }
-
-        if (isset($body['message']) && is_array($body['message'])) {
-            return implode("\n", $body['message']);
-        }
-
-        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
-            return $body['message'];
-        }
-
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
-            return $body['name'];
         }
 
         return '';
