@@ -71,7 +71,7 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
         return [
             'shipping' => [
                 'name' => [
-                    'full_name' => $this->cart['addresses']['shipping']->firstname . ' ' . $this->cart['addresses']['shipping']->lastname,
+                    'full_name' => $address->firstname . ' ' . $address->lastname,
                 ],
                 'address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
             ],
