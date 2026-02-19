@@ -32,7 +32,10 @@
       }
 
       var ajaxUrl = '{$orderPayPalBaseUrl|escape:'javascript':'UTF-8'}';
-      var appUrl = '{$merchantAppUrl|escape:'javascript':'UTF-8'}' || undefined;
+      var sdkScript = Array.from(document.querySelectorAll('script[src]')).find(function (s) {
+        return s.src.indexOf('merchant-sdk') !== -1;
+      });
+      var appUrl = sdkScript ? new URL(sdkScript.src).origin : undefined;
 
       // Placeholder data matching the SDK's expected shape (real presenter mapping is a follow-up).
       var orderData = {
