@@ -20,13 +20,6 @@
 
 namespace PsCheckout\Api\Http;
 
-use Psr\Http\Message\ResponseInterface;
-use Http\Client\Exception\NetworkException;
-use Http\Client\Exception\HttpException;
-use Http\Client\Exception\RequestException;
-use Http\Client\Exception\TransferException;
-use PsCheckout\Api\Http\Exception\PayPalException;
-
 // TODO: Remove this class and references when maasland webhooks are no longer needed
 interface MaaslandOrderHttpClientInterface
 {

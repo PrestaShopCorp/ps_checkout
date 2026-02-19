@@ -55,8 +55,6 @@ class MaaslandOrderHttpClient extends PsrHttpClientAdapter implements MaaslandOr
         }
     }
 
-
-
     /**
      * {@inheritdoc}
      * @inheritDoc

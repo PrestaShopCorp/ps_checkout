@@ -219,7 +219,7 @@ class DispatchWebhookRequest
             $mappedEventType,
             'Svix',
             $bodyValues['resource']['supplementary_data']['related_ids']['order_id'] ?? $bodyValues['resource']['id'],
-        $bodyValues['summary'] ?? null,
+            $bodyValues['summary'] ?? null,
         );
     }
 
@@ -240,7 +240,7 @@ class DispatchWebhookRequest
             (string) $bodyValues['eventType'],
             (string) $bodyValues['category'],
             $bodyValues['orderId'] ?? null,
-        $bodyValues['summary'] ?? null,
+            $bodyValues['summary'] ?? null,
             (string) $bodyValues['eventStream'],
             (string) $bodyValues['eventNumber'],
             (string) $headerValues['merchantId'],
