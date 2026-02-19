@@ -984,11 +984,15 @@ class Ps_Checkout extends PaymentModule
             ],
         ]);
 
+        /** @var Env $env */
+        $env = $this->getService(Env::class);
+
         $this->context->smarty->assign([
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'merchantAppUrl' => $env->getEnv('CHECKOUT_MERCHANT_APP_URL') ?: '',
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderMainBottom.tpl');

@@ -31,20 +31,20 @@
         throw new Error('PrestaShopCheckout SDK not available on window.');
       }
 
-      var context = (window.store && window.store.context) ? window.store.context : {};
-      var ajaxUrl = context.prestashopCheckoutAjax || '';
+      var ajaxUrl = '{$orderPayPalBaseUrl|escape:'javascript':'UTF-8'}';
+      var appUrl = '{$merchantAppUrl|escape:'javascript':'UTF-8'}' || undefined;
 
       // Placeholder data matching the SDK's expected shape (real presenter mapping is a follow-up).
       var orderData = {
-        reference: 'ORDER-' + (context.orderId || ''),
+        reference: 'ORDER-{$orderPrestaShopId|intval}',
         total: 125.5,
-        currency: 'EUR',
-        status: 'PENDING',
+        currency: "EUR",
+        status: "Pending",
         balance: 0,
-        paymentMode: 'PAYPAL',
+        paymentMode: "PayPal",
         isTestMode: true,
-        threeDSecure: 'SUCCESS',
-        liabilityShift: 'BANK',
+        threeDSecure: "Success",
+        liabilityShift: "Bank",
         financials: {
           gross: 125.5,
           fees: 0,
@@ -56,16 +56,16 @@
 
       var transactionList = [
         {
-          id: 'TX-PLACEHOLDER',
-          type: 'AUTHORIZATION',
-          status: 'PENDING',
+          id: "p1",
+          type: "Authorization",
+          status: "Pending",
           date: new Date().toISOString(),
           amount: 125.5,
-          currency: 'EUR',
-          reference: 'TX-PLACEHOLDER',
+          currency: "EUR",
+          reference: "PLAYGROUND-TX-001",
           details: {
             total: 125.5,
-            sellerProtection: 'ELIGIBLE',
+            sellerProtection: "Eligible",
           },
         },
       ];
@@ -96,6 +96,7 @@
       }
 
       var checkoutComponent = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
+        url: appUrl,
         orderData: orderData,
         transactionList: transactionList,
         onSubmit: onSubmit,
