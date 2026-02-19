@@ -213,7 +213,7 @@ class DispatchWebhookRequest
         $mappedEventType = (string) WebhookEventTypeConfiguration::getMappedEventType($bodyValues['eventType']);
 
         return new self(
-            (string) $bodyValues['id'],
+            (string) $bodyValues['webhookId'],
             (string) $bodyValues['shopId'],
             (array) $bodyValues['resource'],
             $mappedEventType,

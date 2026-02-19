@@ -26,6 +26,7 @@ use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClientInterface
 {
@@ -57,11 +58,11 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
     /**
      * {@inheritdoc}
      */
-    public function verifyWebhook(string $rawBody, array $headers): array
+    public function verifyWebhook(string $rawBody, array $headers): bool
     {
         $response = $this->sendRequest(new Request('POST', 'webhooks/verify', $headers, $rawBody));
 
-        return json_decode($response->getBody(), true);
+        return $response->getStatusCode() === Response::HTTP_OK;
     }
 
     /**

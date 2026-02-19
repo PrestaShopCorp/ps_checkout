@@ -28,7 +28,7 @@ interface WebhookHttpClientInterface
      * @param string $rawBody
      * @param array $headers
      *
-     * @return array
+     * @return bool
      */
-    public function verifyWebhook(string $rawBody, array $headers): array;
+    public function verifyWebhook(string $rawBody, array $headers): bool;
 }

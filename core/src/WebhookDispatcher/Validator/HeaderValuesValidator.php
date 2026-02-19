@@ -106,12 +106,12 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
     private function transformHeaders(array $headers): array
     {
         return [
-            'shopId' => $headers['Shop-Id'],
-            'merchantId' => $headers['Merchant-Id'],
-            'firebaseId' => $headers['Psx-Id'],
-            'Svix-Id' => $headers['Svix-Id'],
-            'Svix-Timestamp' => $headers['Svix-Timestamp'],
-            'Svix-Signature' => $headers['Svix-Signature'],
+            'shopId' => $headers['Shop-Id'] ?? null,
+            'merchantId' => $headers['Merchant-Id'] ?? null,
+            'firebaseId' => $headers['Psx-Id'] ?? null,
+            'Svix-Id' => $headers['Svix-Id'] ?? null,
+            'Svix-Timestamp' => $headers['Svix-Timestamp'] ?? null,
+            'Svix-Signature' => $headers['Svix-Signature'] ?? null,
         ];
     }
 }

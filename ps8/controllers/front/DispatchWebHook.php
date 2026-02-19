@@ -72,7 +72,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 $logger->info('Webhook Signature validated', $bodyValues);
 
                 $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues, $headerValues);
-
             } else {
                 $bodyValues = $bodyValuesValidator->validate(true);
                 $logger->info('Body validated', $bodyValues);

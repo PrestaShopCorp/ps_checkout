@@ -98,6 +98,7 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
             'eventType' => (string) $bodyValues['event_type'],
             'shopId' => $bodyValues['shopId'],
             'summary' => (string) $bodyValues['summary'],
+            'webhookId' => $bodyValues['id'],
         ];
     }
 

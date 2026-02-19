@@ -39,14 +39,12 @@ class VerifyWebhookAction implements VerifyWebhookActionInterface
     /**
      * {@inheritDoc}
      */
-    public function execute(string $rawBody, array $webhookHeaders): bool
+    public function execute(string $rawBody, array $webhookHeaders): void
     {
-        $response = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
+        $verificationResult = $this->webhookHttpClient->verifyWebhook($rawBody, $webhookHeaders);
 
-        if (isset($response['statusCode']) && 200 === $response['statusCode']) {
-            return true;
+        if (!$verificationResult) {
+            throw new WebhookException('Invalid Webhook signature', 401);
         }
-
-        throw new WebhookException('Invalid Webhook signature', 401);
     }
 }
