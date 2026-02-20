@@ -35,11 +35,6 @@ use Psr\Log\LoggerInterface;
 class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_Checkout
-     */
-    public $module;
-
-    /**
      * @var bool If set to true, will be redirected to authentication page
      */
     public $auth = false;
@@ -98,17 +93,13 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 
             exit;
         } catch (Exception $exception) {
-            $logger->error(
-                'Webhook cannot be handled',
-                [
-                    'exception' => $exception,
-                ]
-            );
-            $this->exitWithResponse([
-                'httpCode' => 500,
-            ]);
-
-            exit;
+            $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the webhook.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

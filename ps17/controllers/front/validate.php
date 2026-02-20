@@ -57,9 +57,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         /** @var Validate $validate */
         $validate = $this->module->getService(Validate::class);
 
-        /** @var CreatedPayPalOrderValidator $createdPayPalOrderValidator */
-        $createdPayPalOrderValidator = $this->module->getService(CreatedPayPalOrderValidator::class);
-
         $checkoutRequest = null;
 
         try {
@@ -130,6 +127,12 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $this->handleOrderCreationException($exception, $checkoutRequest->getOrderId());
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while validating the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 
