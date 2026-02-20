@@ -93,9 +93,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         })
-          .then(function (res) { return res.json(); })
-          .then(function (json) { console.log('[ps_checkout] AJAX response:', json); })
-          .catch(function (err) { console.error('[ps_checkout] AJAX error:', err); });
+                .then(function (res) { return res.json(); })
+                .then(function (json) { console.log('[ps_checkout] AJAX response:', json); })
+                .catch(function (err) { console.error('[ps_checkout] AJAX error:', err); });
       }
 
       var checkoutComponent = window.PrestaShopCheckoutSDK.PrestaShopCheckout({

@@ -975,15 +975,6 @@ class Ps_Checkout extends PaymentModule
             return '';
         }
 
-        Media::addJsDef([
-            'store' => [
-                'context' => [
-                    'orderId' => $order->id,
-                    'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
-                ],
-            ],
-        ]);
-
         $this->context->smarty->assign([
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',
             'moduleName' => $this->displayName,
