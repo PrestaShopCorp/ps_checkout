@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\ValueObject;
 
+use PsCheckout\Core\Webhook\Configuration\WebhookCategoryConfiguration;
 use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 
 class DispatchWebhookRequest
@@ -212,14 +213,22 @@ class DispatchWebhookRequest
     {
         $mappedEventType = (string) WebhookEventTypeConfiguration::getMappedEventType($bodyValues['eventType']);
 
+        if (isset($bodyValues['resource']['supplementary_data']['related_ids']['order_id'])) {
+            $orderId = $bodyValues['resource']['supplementary_data']['related_ids']['order_id'];
+        } elseif (isset($bodyValues['resource']['id'])) {
+            $orderId = $bodyValues['resource']['id'];
+        } else {
+            $orderId = null;
+        }
+
         return new self(
             (string) $bodyValues['webhookId'],
             (string) $bodyValues['shopId'],
             (array) $bodyValues['resource'],
             $mappedEventType,
-            'Svix',
-            $bodyValues['resource']['supplementary_data']['related_ids']['order_id'] ?? $bodyValues['resource']['id'],
-            $bodyValues['summary'] ?? null,
+            WebhookCategoryConfiguration::SVIX,
+            $orderId,
+            $bodyValues['summary'] ?? null
         );
     }
 

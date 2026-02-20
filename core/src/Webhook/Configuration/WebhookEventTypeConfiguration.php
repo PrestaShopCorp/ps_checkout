@@ -39,6 +39,10 @@ class WebhookEventTypeConfiguration
 
     public const PAYMENT_CAPTURE_REVERSED_PAYPAL = 'PAYMENT.CAPTURE.REVERSED';
 
+    public const PAYMENT_AUTHORIZATION_CREATED_PAYPAL = 'PAYMENT.AUTHORIZATION.CREATED';
+
+    public const PAYMENT_AUTHORIZATION_VOIDED_PAYPAL = 'PAYMENT.AUTHORIZATION.VOIDED';
+
     public const CHECKOUT_ORDER_APPROVED_PAYPAL = 'CHECKOUT.ORDER.APPROVED';
 
     public const CHECKOUT_ORDER_COMPLETED_PAYPAL = 'CHECKOUT.ORDER.COMPLETED';
@@ -62,6 +66,10 @@ class WebhookEventTypeConfiguration
 
     public const PAYMENT_CAPTURE_REVERSED = 'PaymentCaptureReversed';
 
+    public const PAYMENT_AUTHORIZATION_CREATED = 'PaymentAuthorizationCreated';
+
+    public const PAYMENT_AUTHORIZATION_VOIDED = 'PaymentAuthorizationVoided';
+
     public const CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
 
     public const CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
@@ -78,20 +86,12 @@ class WebhookEventTypeConfiguration
         self::PAYMENT_CAPTURE_DENIED_PAYPAL => self::PAYMENT_CAPTURE_DENIED,
         self::PAYMENT_CAPTURE_REFUNDED_PAYPAL => self::PAYMENT_CAPTURE_REFUNDED,
         self::PAYMENT_CAPTURE_REVERSED_PAYPAL => self::PAYMENT_CAPTURE_REVERSED,
+        self::PAYMENT_AUTHORIZATION_CREATED_PAYPAL => self::PAYMENT_AUTHORIZATION_CREATED,
+        self::PAYMENT_AUTHORIZATION_VOIDED_PAYPAL => self::PAYMENT_AUTHORIZATION_VOIDED,
         self::CHECKOUT_ORDER_APPROVED_PAYPAL => self::CHECKOUT_ORDER_APPROVED,
         self::CHECKOUT_ORDER_COMPLETED_PAYPAL => self::CHECKOUT_ORDER_COMPLETED,
         self::CHECKOUT_PAYMENT_APPROVAL_REVERSED_PAYPAL => self::CHECKOUT_PAYMENT_APPROVAL_REVERSED,
     ];
-
-    /**
-     * Get the event type mapping
-     *
-     * @return array<string, string>
-     */
-    public static function getEventTypeMapping()
-    {
-        return self::MAPPING;
-    }
 
     /**
      * Get the PayPal webhook -> Maasland format event type
@@ -103,27 +103,5 @@ class WebhookEventTypeConfiguration
     public static function getMappedEventType(string $eventType): ?string
     {
         return self::MAPPING[$eventType] ?? null;
-    }
-
-    /**
-     * Check if an event type is supported
-     *
-     * @param string $eventType The webhook event type
-     *
-     * @return bool
-     */
-    public static function isEventTypeSupported(string $eventType): bool
-    {
-        return array_key_exists($eventType, self::MAPPING);
-    }
-
-    /**
-     * Get all supported event types
-     *
-     * @return array<string>
-     */
-    public static function getSupportedEventTypes(): array
-    {
-        return array_keys(self::MAPPING);
     }
 }

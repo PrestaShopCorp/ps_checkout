@@ -27,6 +27,7 @@ use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcherInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\Webhook\Configuration\WebhookCategoryConfiguration;
 use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
 use Psr\Log\LoggerInterface;
@@ -86,7 +87,10 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
     {
         $this->log('DispatchWebHook', $dispatchWebhookRequest);
 
-        if (!in_array($dispatchWebhookRequest->getCategory(), ['ShopNotificationOrderChange', 'Svix'])) {
+        if (!in_array(
+            $dispatchWebhookRequest->getCategory(),
+            [WebhookCategoryConfiguration::SHOP_NOTIFCICATION_ORDER_CHANGE, WebhookCategoryConfiguration::SVIX]
+        )) {
             $this->log('DispatchWebHook ignored', $dispatchWebhookRequest);
 
             return true;

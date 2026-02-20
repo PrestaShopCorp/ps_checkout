@@ -69,7 +69,7 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
      */
     private function validateHeaders(array $headers)
     {
-        if (isset($headers['User-Agent']) && preg_match('/[S,s]vix/m', $headers['User-Agent'])) {
+        if (isset($headers['User-Agent']) && preg_match('/[Ss]vix/m', $headers['User-Agent'])) {
             if (empty($headers['Svix-Id'])) {
                 throw new \InvalidArgumentException('Svix-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
             }
