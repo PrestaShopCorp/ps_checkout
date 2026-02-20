@@ -46,7 +46,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout($isExpressCheckout);
+        $builder->setShippingAddressExists($isExpressCheckout);
 
         // Act
         $result = $builder->build();
@@ -89,7 +89,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(false);
+        $builder->setShippingAddressExists(false);
 
         // Act
         $result = $builder->build();
@@ -118,7 +118,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(true);
+        $builder->setShippingAddressExists(true);
 
         // Act
         $result = $builder->build();
@@ -147,7 +147,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(false);
+        $builder->setShippingAddressExists(false);
 
         // Act
         $result = $builder->build();
@@ -169,7 +169,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
 
         // Act
-        $result = $builder->setIsExpressCheckout(true);
+        $result = $builder->setShippingAddressExists(true);
 
         // Assert
         $this->assertInstanceOf(ApplicationContextNodeBuilder::class, $result);

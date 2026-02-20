@@ -26,14 +26,10 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\GenderRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class ShippingNodeBuilderTest extends TestCase
 {
-    /** @var GenderRepositoryInterface|MockObject */
-    private $genderRepository;
-
     /** @var CountryRepositoryInterface|MockObject */
     private $countryRepository;
 
@@ -45,12 +41,10 @@ class ShippingNodeBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->genderRepository = $this->createMock(GenderRepositoryInterface::class);
         $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $this->stateRepository = $this->createMock(StateRepositoryInterface::class);
 
         $this->builder = new ShippingNodeBuilder(
-            $this->genderRepository,
             $this->countryRepository,
             $this->stateRepository
         );
@@ -61,13 +55,6 @@ class ShippingNodeBuilderTest extends TestCase
      */
     public function testBuildReturnsCorrectStructureWithValidData(array $cartData, array $expectedResult): void
     {
-        // Configure mocks
-        $this->genderRepository
-            ->expects($this->once())
-            ->method('getGenderNameById')
-            ->with($cartData['customer']->id_gender, $cartData['language']->id)
-            ->willReturn($cartData['gender_prefix']);
-
         $this->countryRepository
             ->expects($this->once())
             ->method('getCountryIsoCodeById')
@@ -121,7 +108,7 @@ class ShippingNodeBuilderTest extends TestCase
                 'expectedResult' => [
                     'shipping' => [
                         'name' => [
-                            'full_name' => 'Mr. Doe John',
+                            'full_name' => 'John Doe',
                         ],
                         'address' => [
                             'address_line_1' => '123 Main St',
@@ -159,12 +146,12 @@ class ShippingNodeBuilderTest extends TestCase
                     ],
                     'cart' => [
                         'is_virtual' => false,
-                    ],
+                    ]
                 ],
                 'expectedResult' => [
                     'shipping' => [
                         'name' => [
-                            'full_name' => 'Mrs. Dubois Marie',
+                            'full_name' => 'Marie Dubois',
                         ],
                         'address' => [
                             'address_line_1' => '15 Rue de la Paix',
@@ -214,7 +201,6 @@ class ShippingNodeBuilderTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->genderRepository = null;
         $this->countryRepository = null;
         $this->stateRepository = null;
         $this->builder = null;

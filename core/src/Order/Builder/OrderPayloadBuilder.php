@@ -33,13 +33,13 @@ use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
 class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 {
-    /** @var array * */
+    /** @var array */
     private $cart;
 
-    /** @var string * */
+    /** @var string */
     private $fundingSource;
 
-    /** @var string * */
+    /** @var string */
     private $paypalOrderId;
 
     /** @var string */
@@ -165,7 +165,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             }
         }
 
-        if (!$this->expressCheckout || $this->isUpdate) {
+        if ($this->shippingAddressExists()) {
             $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->shippingNodeBuilder->setCart($this->cart)->build());
         }
 
@@ -180,14 +180,17 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
 
         if ($isFullPayload) {
             $paymentSource = $this->buildPaymentSource();
-            $optionalPayload[] = $this->buildPaymentSource();
 
-            if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
-                $optionalPayload[] = $this->applicationContextNodeBuilder
-                    ->setIsExpressCheckout($this->expressCheckout)
-                    ->setIsVirtualCart($this->cart['cart']['is_virtual'])
-                    ->build();
+            if (!empty($paymentSource)) {
+                $optionalPayload[] = $paymentSource;
             }
+        }
+
+        if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
+            $optionalPayload[] = $this->applicationContextNodeBuilder
+                ->setShippingAddressExists($this->shippingAddressExists())
+                ->setIsVirtualCart($this->cart['cart']['is_virtual'])
+                ->build();
         }
 
         return $optionalPayload;
@@ -260,7 +263,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'paypal':
                 $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
-                    ->setPaypalVaultId($this->paypalVaultId);
+                    ->setPaypalVaultId($this->paypalVaultId)
+                    ->setShippingAddressExists($this->shippingAddressExists())
+                    ->setVirtualCart((bool) $this->cart['cart']['is_virtual']);
 
                 return $this->payPalPaymentSourceNodeBuilder->build();
         }
@@ -346,5 +351,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->isCard = $isCard;
 
         return $this;
+    }
+
+    private function shippingAddressExists(): bool
+    {
+        if (isset($this->cart['addresses']['shipping'])) {
+            return $this->cart['addresses']['shipping']->id !== null;
+        }
+
+        return false;
     }
 }
