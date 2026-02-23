@@ -49,9 +49,7 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
             $this->validateHeaders($headers);
 
             // Step 3: Transform headers into a standardized format
-            $transformedHeaders = $this->transformHeaders($headers);
-
-            return $transformedHeaders;
+            return $this->transformHeaders($headers);
         } catch (\InvalidArgumentException $e) {
             // Wrap the exception in a domain-specific exception
             throw new WebhookException('Header validation failed: ' . $e->getMessage(), 400);
@@ -61,7 +59,7 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
     /**
      * Validate headers (additional validation logic).
      *
-     * @param array $headers
+     * @param array<string, string|null> $headers
      *
      * @return void
      *
@@ -99,9 +97,16 @@ class HeaderValuesValidator implements HeaderValuesValidatorInterface
     /**
      * Transform headers into a standardized format.
      *
-     * @param array $headers
+     * @param array<string, string|null> $headers
      *
-     * @return array
+     * @return array{
+     *     shopId: string|null,
+     *     merchantId: string|null,
+     *     firebaseId: string|null,
+     *     Svix-Id: string|null,
+     *     Svix-Timestamp: string|null,
+     *     Svix-Signature: string|null,
+     * }
      */
     private function transformHeaders(array $headers): array
     {

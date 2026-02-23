@@ -38,24 +38,37 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     /**
      * {@inheritDoc}
      */
-    public function validate($maasland = false): array
+    public function validate(): array
     {
         try {
             // Step 1: Get the body from the service
             $bodyValues = $this->webhookBodyProvider->getBody();
 
             // Step 2: Validate the body (additional validation if needed)
-            if ($maasland) {
-                $this->validateMaaslandBody($bodyValues);
+            $this->validateBody($bodyValues);
 
-                // Step 3: Transform the body into a standardized format
-                return $this->transformMaaslandBody($bodyValues);
-            } else {
-                $this->validateBody($bodyValues);
+            // Step 3: Transform the body into a standardized format
+            return $this->transformBody($bodyValues);
+        } catch (\InvalidArgumentException $e) {
+            // Wrap the exception in a domain-specific exception
+            throw new WebhookException('Body validation failed: ' . $e->getMessage(), 400);
+        }
+    }
 
-                // Step 3: Transform the body into a standardized format
-                return $this->transformBody($bodyValues);
-            }
+    /**
+     * {@inheritDoc}
+     */
+    public function validateMaasland(): array
+    {
+        try {
+            // Step 1: Get the body from the service
+            $bodyValues = $this->webhookBodyProvider->getBody();
+
+            // Step 2: Validate the body (additional validation if needed)
+            $this->validateMaaslandBody($bodyValues);
+
+            // Step 3: Transform the body into a standardized format
+            return $this->transformMaaslandBody($bodyValues);
         } catch (\InvalidArgumentException $e) {
             // Wrap the exception in a domain-specific exception
             throw new WebhookException('Body validation failed: ' . $e->getMessage(), 400);
@@ -85,9 +98,21 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     /**
      * Transform the body into a standardized format.
      *
-     * @param array $bodyValues
+     * @param array{
+     *       resource: array<string, mixed>|string,
+     *       event_type: string,
+     *       shopId: string,
+     *       summary: string,
+     *       id: string
+     *   } $bodyValues
      *
-     * @return array
+     * @return array{
+     *      resource: array<string, mixed>,
+     *      eventType: string,
+     *      shopId: string,
+     *      summary: string,
+     *      webhookId: string
+     *  }
      */
     private function transformBody(array $bodyValues): array
     {
@@ -125,15 +150,37 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
     /**
      * Transform the body into a standardized format.
      *
-     * @param array $bodyValues
+     * @param array{
+     *      webhookId: string,
+     *      resource: array<string, mixed>,
+     *      eventType: string,
+     *      shopId: string,
+     *      summary: string|null,
+     *      eventStream: string,
+     *      eventNumber: string,
+     *      category: string,
+     *      orderId: string|null
+     *   } $bodyValues
      *
-     * @return array
+     * @return array{
+     *       webhookId: string,
+     *       resource: array<string, mixed>,
+     *       eventType: string,
+     *       shopId: string,
+     *       summary: string|null,
+     *       eventStream: string,
+     *       eventNumber: string,
+     *       category: string,
+     *       orderId: string|null
+     *    }
      */
     private function transformMaaslandBody(array $bodyValues): array
     {
         return [
             'webhookId' => (string) $bodyValues['webhookId'],
-            'resource' => json_decode($bodyValues['resource'], true),
+            'resource' => is_array($bodyValues['resource'])
+                ? $bodyValues['resource']
+                : json_decode($bodyValues['resource'], true),
             'eventType' => (string) $bodyValues['eventType'],
             'eventStream' => (string) $bodyValues['eventStream'],
             'eventNumber' => (string) $bodyValues['eventNumber'],

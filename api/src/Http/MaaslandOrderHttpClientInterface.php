@@ -26,9 +26,9 @@ interface MaaslandOrderHttpClientInterface
     /**
      * Tells if the webhook came from the PSL
      *
-     * @param array $payload
+     * @param array<string, mixed> $payload
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getShopSignature(array $payload): array;
 }

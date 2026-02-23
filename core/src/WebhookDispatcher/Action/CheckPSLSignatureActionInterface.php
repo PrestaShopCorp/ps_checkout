@@ -24,7 +24,7 @@ namespace PsCheckout\Core\WebhookDispatcher\Action;
 interface CheckPSLSignatureActionInterface
 {
     /**
-     * @param array $bodyValues
+     * @param array<string, mixed> $bodyValues
      *
      * @return bool
      */

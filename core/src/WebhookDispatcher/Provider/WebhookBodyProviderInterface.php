@@ -25,7 +25,23 @@ interface WebhookBodyProviderInterface
     /**
      * Extract and parse the HTTP body.
      *
-     * @return array
+     * @return array{
+     *        resource: array<string, mixed>|string,
+     *        event_type: string,
+     *        shopId: string,
+     *        summary: string,
+     *        id: string
+     *    } | array{
+     *       webhookId: string,
+     *       resource: array<string, mixed>,
+     *       eventType: string,
+     *       shopId: string,
+     *       summary: string|null,
+     *       eventStream: string,
+     *       eventNumber: string,
+     *       category: string,
+     *       orderId: string|null
+     *    }
      *
      * @throws \InvalidArgumentException
      */

@@ -204,19 +204,27 @@ class DispatchWebhookRequest
     /**
      * Creates a new instance of DispatchWebhookRequest from request data.
      *
-     * @param array $bodyValues
-     * @param array $headerValues
+     * @param array{
+     *     webhookId: string,
+     *     shopId: string,
+     *     resource: array<string, mixed>,
+     *     eventType: string,
+     *     summary?: string|null
+     * } $bodyValues
      *
      * @return DispatchWebhookRequest
      */
-    public static function createFromRequest(array $bodyValues, array $headerValues): self
+    public static function createFromRequest(array $bodyValues): self
     {
-        $mappedEventType = (string) WebhookEventTypeConfiguration::getMappedEventType($bodyValues['eventType']);
+        $mappedEventType = (string) WebhookEventTypeConfiguration::getMappedEventType((string) $bodyValues['eventType']);
 
-        if (isset($bodyValues['resource']['supplementary_data']['related_ids']['order_id'])) {
-            $orderId = $bodyValues['resource']['supplementary_data']['related_ids']['order_id'];
-        } elseif (isset($bodyValues['resource']['id'])) {
-            $orderId = $bodyValues['resource']['id'];
+        /** @var array<string, mixed> $resource */
+        $resource = $bodyValues['resource'];
+
+        if (isset($resource['supplementary_data']['related_ids']['order_id'])) {
+            $orderId = (string) $resource['supplementary_data']['related_ids']['order_id'];
+        } elseif (isset($resource['id'])) {
+            $orderId = (string) $resource['id'];
         } else {
             $orderId = null;
         }
@@ -224,7 +232,7 @@ class DispatchWebhookRequest
         return new self(
             (string) $bodyValues['webhookId'],
             (string) $bodyValues['shopId'],
-            (array) $bodyValues['resource'],
+            $resource,
             $mappedEventType,
             WebhookCategoryConfiguration::SVIX,
             $orderId,
@@ -235,8 +243,21 @@ class DispatchWebhookRequest
     /**
      * Creates a new instance of DispatchWebhookRequest from maasland request data.
      *
-     * @param array $bodyValues
-     * @param array $headerValues
+     * @param array{
+     *      webhookId: string,
+     *      resource: array<string, mixed>,
+     *      eventType: string,
+     *      eventStream: string,
+     *      eventNumber: string,
+     *      category: string,
+     *      summary: string|null,
+     *      orderId: string|null
+     *  } $bodyValues
+     * @param array{
+     *     shopId: string,
+     *     merchantId: string,
+     *     firebaseId: string
+     * } $headerValues
      *
      * @return DispatchWebhookRequest
      */

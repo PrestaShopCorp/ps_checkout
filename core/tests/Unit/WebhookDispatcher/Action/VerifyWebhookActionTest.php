@@ -55,10 +55,7 @@ class VerifyWebhookActionTest extends TestCase
             ]);
 
         // Act
-        $result = $this->action->execute($rawBody, []);
-
-        // Assert
-        $this->assertTrue($result);
+        $this->action->execute($rawBody, []);
     }
 
     public function testItThrowsExceptionWhenSignatureIsInvalid(): void
@@ -75,7 +72,7 @@ class VerifyWebhookActionTest extends TestCase
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act
@@ -96,7 +93,7 @@ class VerifyWebhookActionTest extends TestCase
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act
@@ -116,7 +113,7 @@ class VerifyWebhookActionTest extends TestCase
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act

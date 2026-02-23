@@ -84,7 +84,7 @@ class MaaslandOrderHttpClientConfigurationBuilder implements HttpClientConfigura
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function build(): array
     {

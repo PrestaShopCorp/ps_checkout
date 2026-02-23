@@ -57,7 +57,6 @@ class MaaslandOrderHttpClient extends PsrHttpClientAdapter implements MaaslandOr
 
     /**
      * {@inheritdoc}
-     * @inheritDoc
      */
     public function getShopSignature(array $payload): array
     {
