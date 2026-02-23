@@ -78,6 +78,8 @@ class Translator implements TranslatorInterface
             'Pay in installments with PayPal Pay Later' => $this->translator->trans('Pay in installments with PayPal Pay Later', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay by %s' => $this->translator->trans('Pay by %s', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay with %s' => $this->translator->trans('Pay with %s', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Pay later with invoice' => $this->translator->trans('Pay later with invoice', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Pay upon Invoice' => $this->translator->trans('Pay upon Invoice', $parameters, 'Modules.Checkout.Pscheckout'),
 
             'Card holder name' => $this->translator->trans('Card holder name', $parameters, 'Modules.Checkout.Pscheckout'),
             'Card number' => $this->translator->trans('Card number', $parameters, 'Modules.Checkout.Pscheckout'),
