@@ -236,6 +236,7 @@ class SetAuthorizedOrderStateActionTest extends TestCase
         $idCart = 333;
         $orderId = 444;
         $completedStateId = 2;
+        $partiallyPaidStateId = 16;
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
         $payPalOrder->method('getIdCart')->willReturn($idCart);
@@ -248,10 +249,19 @@ class SetAuthorizedOrderStateActionTest extends TestCase
             ->method('hasBeenPaid')
             ->willReturn(false);
 
-        $order->expects($this->once())
+        $order->expects($this->exactly(2))
             ->method('getHistory')
-            ->with(1, $completedStateId)
-            ->willReturn([['id_order_state' => $completedStateId]]);
+            ->willReturnCallback(function ($lang, $stateId) use ($completedStateId, $partiallyPaidStateId) {
+                if ($stateId === $completedStateId) {
+                    return [['id_order_state' => $completedStateId]];
+                }
+                if ($stateId === $partiallyPaidStateId) {
+                    return [['id_order_state' => $partiallyPaidStateId]];
+                }
+
+                return [];
+            });
+
 
         $this->payPalOrderRepository->expects($this->once())
             ->method('getOneBy')
@@ -263,10 +273,17 @@ class SetAuthorizedOrderStateActionTest extends TestCase
             ->with(['id_cart' => $idCart])
             ->willReturn($order);
 
-        $this->configuration->expects($this->once())
+        $this->configuration->expects($this->exactly(2))
             ->method('getInteger')
-            ->with(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED)
-            ->willReturn($completedStateId);
+            ->willReturnCallback(function ($key) use ($completedStateId, $partiallyPaidStateId) {
+                if ($key === OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED) {
+                    return $completedStateId;
+                } elseif ($key === OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID) {
+                    return $partiallyPaidStateId;
+                }
+
+                return 0;
+            });
 
         $this->changeOrderStateAction->expects($this->never())
             ->method('execute');

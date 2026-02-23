@@ -49,10 +49,7 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-                'message' => 'VERIFIED',
-            ]);
+            ->willReturn(true);
 
         // Act
         $this->action->execute($rawBody, []);
@@ -65,10 +62,7 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 401,
-                'message' => 'INVALID',
-            ]);
+            ->willReturn(false);
 
         // Assert
         $this->expectException(WebhookException::class);

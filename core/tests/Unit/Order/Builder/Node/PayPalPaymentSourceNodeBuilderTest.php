@@ -72,7 +72,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                             ],
                             'experience_context' => [
                                 'brand_name' => 'Test Shop',
-                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'shipping_preference' => 'GET_FROM_FILE',
                                 'return_url' => 'https://example.com/validate',
                                 'cancel_url' => 'https://example.com/cancel',
                             ],
@@ -96,7 +96,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                             ],
                             'experience_context' => [
                                 'brand_name' => 'Test Shop',
-                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'shipping_preference' => 'GET_FROM_FILE',
                                 'return_url' => 'https://example.com/validate',
                                 'cancel_url' => 'https://example.com/cancel',
                             ],
@@ -110,7 +110,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                         'paypal' => [
                             'experience_context' => [
                                 'brand_name' => 'Test Shop',
-                                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+                                'shipping_preference' => 'GET_FROM_FILE',
                                 'return_url' => 'https://example.com/validate',
                                 'cancel_url' => 'https://example.com/cancel',
                             ],
