@@ -100,6 +100,7 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
      *
      * @param array{
      *       resource: array<string, mixed>|string,
+     *       resource_type: string,
      *       event_type: string,
      *       shopId: string,
      *       summary: string,

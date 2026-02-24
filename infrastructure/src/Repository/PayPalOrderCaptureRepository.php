@@ -79,7 +79,7 @@ class PayPalOrderCaptureRepository implements PayPalOrderCaptureRepositoryInterf
 
             $captureData = $this->db->executeS($query);
 
-            if (empty($capturesData)) {
+            if (empty($captureData) || !is_array($captureData)) {
                 return null;
             }
 

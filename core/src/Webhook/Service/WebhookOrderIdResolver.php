@@ -44,16 +44,25 @@ class WebhookOrderIdResolver
      */
     public function resolve(array $bodyValues): ?string
     {
-        $resourceType = (string) ($bodyValues['resourceType'] ?? '');
-        $resource = (array) ($bodyValues['resource'] ?? []);
+        $resourceType = $bodyValues['resourceType'];
+        $resource = $bodyValues['resource'];
 
-        if (isset($resource['supplementary_data']['related_ids']['order_id'])) {
-            return (string) $resource['supplementary_data']['related_ids']['order_id'];
+        $supplementaryData = $resource['supplementary_data'] ?? null;
+        if (is_array($supplementaryData)) {
+            $relatedIds = $supplementaryData['related_ids'] ?? null;
+            if (is_array($relatedIds)) {
+                $orderId = $relatedIds['order_id'] ?? null;
+                if (is_string($orderId)) {
+                    return $orderId;
+                }
+            }
         }
 
         switch ($resourceType) {
             case 'checkout-order':
-                return isset($resource['id']) ? (string) $resource['id'] : null;
+                $id = $resource['id'] ?? null;
+
+                return is_string($id) ? $id : null;
 
             case 'capture':
             case 'authorization':
@@ -81,8 +90,9 @@ class WebhookOrderIdResolver
         }
 
         // 2. DB fallback: look up capture record by its own ID to retrieve the stored order ID
-        if (!empty($resource['id'])) {
-            $capture = $this->captureRepository->getById((string) $resource['id']);
+        $captureId = $resource['id'] ?? null;
+        if (is_string($captureId) && $captureId !== '') {
+            $capture = $this->captureRepository->getById($captureId);
             if ($capture !== null) {
                 return $capture->getIdOrder();
             }
@@ -112,7 +122,7 @@ class WebhookOrderIdResolver
     /**
      * Finds the link with rel="up" whose href contains $pathSegment and returns the last path segment (the ID).
      *
-     * @param array<int, array{href: string, rel: string}> $links
+     * @param array<int|string, mixed> $links
      * @param string $pathSegment
      *
      * @return string|null
@@ -120,16 +130,26 @@ class WebhookOrderIdResolver
     private function extractIdFromLinks(array $links, string $pathSegment): ?string
     {
         foreach ($links as $link) {
-            if (($link['rel'] ?? '') !== 'up') {
+            if (!is_array($link)) {
                 continue;
             }
 
-            $href = (string) ($link['href'] ?? '');
-            if (strpos($href, $pathSegment) === false) {
+            $rel = $link['rel'] ?? '';
+            if ($rel !== 'up') {
                 continue;
             }
 
-            $id = basename((string) parse_url($href, PHP_URL_PATH));
+            $href = $link['href'] ?? '';
+            if (!is_string($href) || strpos($href, $pathSegment) === false) {
+                continue;
+            }
+
+            $path = parse_url($href, PHP_URL_PATH);
+            if (!is_string($path)) {
+                continue;
+            }
+
+            $id = basename($path);
             if ($id !== '') {
                 return $id;
             }

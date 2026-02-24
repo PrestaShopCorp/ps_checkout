@@ -6547,7 +6547,7 @@ parameters:
 			path: ../core/src/WebhookDispatcher/Validator/BodyValuesValidator.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Validator\\BodyValuesValidator\:\:transformBody\(\) should return array\{resource\: array\<string, mixed\>, eventType\: string, shopId\: string, summary\: string, webhookId\: string\} but returns array\{resource\: mixed, eventType\: string, shopId\: string, summary\: string, webhookId\: string\}\.$#'
+			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Validator\\BodyValuesValidator\:\:transformBody\(\) should return array\{resource\: array\<string, mixed\>, eventType\: string, shopId\: string, summary\: string, webhookId\: string, resourceType\: string\} but returns array\{resource\: mixed, eventType\: string, shopId\: string, summary\: string, webhookId\: string, resourceType\: string\}\.$#'
 			identifier: return.type
 			count: 1
 			path: ../core/src/WebhookDispatcher/Validator/BodyValuesValidator.php
@@ -6571,7 +6571,7 @@ parameters:
 			path: ../core/src/WebhookDispatcher/Validator/BodyValuesValidator.php
 
 		-
-			message: '#^Parameter \#1 \$bodyValues of method PsCheckout\\Core\\WebhookDispatcher\\Validator\\BodyValuesValidator\:\:transformBody\(\) expects array\{resource\: array\<string, mixed\>\|string, event_type\: string, shopId\: string, summary\: string, id\: string\}, array\{resource\: array\<string, mixed\>\|string, event_type\: string, shopId\: string, summary\: string, id\: string\}\|array\{webhookId\: string, resource\: array\<string, mixed\>, eventType\: string, shopId\: string, summary\: string\|null, eventStream\: string, eventNumber\: string, category\: string, \.\.\.\} given\.$#'
+			message: '#^Parameter \#1 \$bodyValues of method PsCheckout\\Core\\WebhookDispatcher\\Validator\\BodyValuesValidator\:\:transformBody\(\) expects array\{resource\: array\<string, mixed\>\|string, resource_type\: string, event_type\: string, shopId\: string, summary\: string, id\: string\}, array\{resource\: array\<string, mixed\>\|string, event_type\: string, shopId\: string, summary\: string, id\: string\}\|array\{webhookId\: string, resource\: array\<string, mixed\>, eventType\: string, shopId\: string, summary\: string\|null, eventStream\: string, eventNumber\: string, category\: string, \.\.\.\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/WebhookDispatcher/Validator/BodyValuesValidator.php
@@ -6593,24 +6593,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/WebhookDispatcher/Validator/HeaderValuesValidatorInterface.php
-
-		-
-			message: '#^Cannot access offset ''order_id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/WebhookDispatcher/ValueObject/DispatchWebhookRequest.php
-
-		-
-			message: '#^Cannot access offset ''related_ids'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/WebhookDispatcher/ValueObject/DispatchWebhookRequest.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 2
-			path: ../core/src/WebhookDispatcher/ValueObject/DispatchWebhookRequest.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\ValueObject\\DispatchWebhookRequest\:\:__construct\(\) has parameter \$resource with no value type specified in iterable type array\.$#'
