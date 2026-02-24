@@ -69,6 +69,29 @@ class PayPalOrderCaptureRepository implements PayPalOrderCaptureRepositoryInterf
     /**
      * {@inheritDoc}
      */
+    public function getById(string $captureId): ?PayPalOrderCapture
+    {
+        try {
+            $query = new \DbQuery();
+            $query->select('*');
+            $query->from(self::TABLE_NAME);
+            $query->where('id = "' . pSQL($captureId) . '"');
+
+            $captureData = $this->db->executeS($query);
+
+            if (empty($capturesData)) {
+                return null;
+            }
+
+            return $this->buildPayPalOrderCapture($captureData);
+        } catch (Exception $exception) {
+            throw new PsCheckoutException('Error while getting PayPal Order Captures', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getByOrderId(string $payPalOrderId): array
     {
         try {

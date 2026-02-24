@@ -99,22 +99,14 @@ class SetAuthorizedOrderStateAction implements SetOrderStateActionInterface
      */
     private function hasBeenPaid(Order $order): bool
     {
-        $hasBeenPaid = $order->hasBeenPaid();
+        if ($order->hasBeenPaid()) {
+            return true;
+        }
 
-        $hasBeenCompleted = count(
-            $order->getHistory(
-                $order->id_lang,
-                $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED)
-            )
-        );
+        if (count($order->getHistory($order->id_lang, $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED)))) {
+            return true;
+        }
 
-        $hasBeenPartiallyPaid = count(
-            $order->getHistory(
-                $order->id_lang,
-                $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID)
-            )
-        );
-
-        return $hasBeenPaid || $hasBeenCompleted || $hasBeenPartiallyPaid;
+        return (bool) count($order->getHistory($order->id_lang, $this->configuration->getInteger(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
     }
 }

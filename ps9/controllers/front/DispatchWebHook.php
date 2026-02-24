@@ -29,6 +29,7 @@ use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
+use PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use Psr\Log\LoggerInterface;
 
@@ -70,6 +71,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 $verifyWebhookAction = $this->module->getService(VerifyWebhookAction::class);
                 $verifyWebhookAction->execute(file_get_contents('php://input'), $headerValues);
                 $logger->info('Webhook Signature validated', $bodyValues);
+
+                /** @var WebhookOrderIdResolver $orderIdResolver */
+                $orderIdResolver = $this->module->getService(WebhookOrderIdResolver::class);
+                $bodyValues['orderId'] = $orderIdResolver->resolve($bodyValues);
 
                 $dispatchWebhookRequest = DispatchWebhookRequest::createFromRequest($bodyValues);
             } else {

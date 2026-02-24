@@ -259,6 +259,11 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\AuthorizationCreatedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\AuthorizationVoidedEventHandler'
 
+  PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver:
+    class: PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+
   PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor:
     class: PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor
     arguments:

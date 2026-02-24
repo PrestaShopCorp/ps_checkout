@@ -209,6 +209,7 @@ class DispatchWebhookRequest
      *     shopId: string,
      *     resource: array<string, mixed>,
      *     eventType: string,
+     *     orderId?: string|null,
      *     summary?: string|null
      * } $bodyValues
      *
@@ -221,21 +222,13 @@ class DispatchWebhookRequest
         /** @var array<string, mixed> $resource */
         $resource = $bodyValues['resource'];
 
-        if (isset($resource['supplementary_data']['related_ids']['order_id'])) {
-            $orderId = (string) $resource['supplementary_data']['related_ids']['order_id'];
-        } elseif (isset($resource['id'])) {
-            $orderId = (string) $resource['id'];
-        } else {
-            $orderId = null;
-        }
-
         return new self(
             (string) $bodyValues['webhookId'],
             (string) $bodyValues['shopId'],
             $resource,
             $mappedEventType,
             WebhookCategoryConfiguration::SVIX,
-            $orderId,
+            $bodyValues['orderId'] ?? null,
             $bodyValues['summary'] ?? null
         );
     }

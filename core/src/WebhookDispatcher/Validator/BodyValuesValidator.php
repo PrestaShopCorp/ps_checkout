@@ -111,7 +111,8 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
      *      eventType: string,
      *      shopId: string,
      *      summary: string,
-     *      webhookId: string
+     *      webhookId: string,
+     *      resourceType: string
      *  }
      */
     private function transformBody(array $bodyValues): array
@@ -124,6 +125,7 @@ class BodyValuesValidator implements BodyValuesValidatorInterface
             'shopId' => $bodyValues['shopId'],
             'summary' => (string) $bodyValues['summary'],
             'webhookId' => $bodyValues['id'],
+            'resourceType' => $bodyValues['resource_type'],
         ];
     }
 

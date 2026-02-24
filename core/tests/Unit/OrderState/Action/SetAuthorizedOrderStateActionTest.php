@@ -249,19 +249,10 @@ class SetAuthorizedOrderStateActionTest extends TestCase
             ->method('hasBeenPaid')
             ->willReturn(false);
 
-        $order->expects($this->exactly(2))
+        $order->expects($this->once())
             ->method('getHistory')
-            ->willReturnCallback(function ($lang, $stateId) use ($completedStateId, $partiallyPaidStateId) {
-                if ($stateId === $completedStateId) {
-                    return [['id_order_state' => $completedStateId]];
-                }
-                if ($stateId === $partiallyPaidStateId) {
-                    return [['id_order_state' => $partiallyPaidStateId]];
-                }
-
-                return [];
-            });
-
+            ->with(1, $completedStateId)
+            ->willReturn([['id_order_state' => $completedStateId]]);
 
         $this->payPalOrderRepository->expects($this->once())
             ->method('getOneBy')
@@ -273,7 +264,7 @@ class SetAuthorizedOrderStateActionTest extends TestCase
             ->with(['id_cart' => $idCart])
             ->willReturn($order);
 
-        $this->configuration->expects($this->exactly(2))
+        $this->configuration->expects($this->once())
             ->method('getInteger')
             ->willReturnCallback(function ($key) use ($completedStateId, $partiallyPaidStateId) {
                 if ($key === OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED) {

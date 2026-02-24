@@ -18,34 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Repository;
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderCapture;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-interface PayPalOrderCaptureRepositoryInterface
-{
-    /**
-     * @param PayPalOrderCapture $payPalOrderCapture
-     *
-     * @return void
-     */
-    public function save(PayPalOrderCapture $payPalOrderCapture);
+header('Location: ../');
 
-    /**
-     * Get all captures for a PayPal order
-     *
-     * @param string $payPalOrderId
-     *
-     * @return PayPalOrderCapture[]
-     */
-    public function getByOrderId(string $payPalOrderId): array;
-
-    /**
-     * Get a capture by ID
-     *
-     * @param string $captureId
-     *
-     * @return PayPalOrderCapture|null
-     */
-    public function getById(string $captureId): ?PayPalOrderCapture;
-}
+exit;
