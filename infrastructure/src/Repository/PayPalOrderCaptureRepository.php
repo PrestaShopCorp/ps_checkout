@@ -77,7 +77,7 @@ class PayPalOrderCaptureRepository implements PayPalOrderCaptureRepositoryInterf
             $query->from(self::TABLE_NAME);
             $query->where('id = "' . pSQL($captureId) . '"');
 
-            $captureData = $this->db->executeS($query);
+            $captureData = $this->db->getRow($query);
 
             if (empty($captureData) || !is_array($captureData)) {
                 return null;
