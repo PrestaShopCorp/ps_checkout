@@ -20,15 +20,15 @@
 
 namespace PsCheckout\Api\Http;
 
-interface WebhookHttpClientInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+interface MaaslandOrderHttpClientInterface
 {
     /**
-     * Verifies webhook authenticity
+     * Tells if the webhook came from the PSL
      *
-     * @param string $rawBody
-     * @param array $headers
+     * @param array<string, mixed> $payload
      *
-     * @return bool
+     * @return array<string, mixed>
      */
-    public function verifyWebhook(string $rawBody, array $headers): bool;
+    public function getShopSignature(array $payload): array;
 }

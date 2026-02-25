@@ -18,17 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Api\Http;
+namespace PsCheckout\Core\Webhook\Configuration;
 
-interface WebhookHttpClientInterface
+class WebhookCategoryConfiguration
 {
-    /**
-     * Verifies webhook authenticity
-     *
-     * @param string $rawBody
-     * @param array $headers
-     *
-     * @return bool
-     */
-    public function verifyWebhook(string $rawBody, array $headers): bool;
+    public const SVIX = 'Svix';
+
+    public const SHOP_NOTIFCICATION_ORDER_CHANGE = 'ShopNotificationOrderChange';
 }

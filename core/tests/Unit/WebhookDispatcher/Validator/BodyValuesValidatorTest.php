@@ -116,7 +116,7 @@ class BodyValuesValidatorTest extends TestCase
         $this->expectExceptionCode(400);
 
         // Act
-        $this->validator->validate();
+        $this->validator->validateMaasland();
     }
 
     public function provideMissingRequiredFields(): array

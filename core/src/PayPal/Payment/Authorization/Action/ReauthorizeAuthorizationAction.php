@@ -33,7 +33,6 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
-use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 use Psr\Log\LoggerInterface;
 
 final class ReauthorizeAuthorizationAction implements AuthorizationActionInterface

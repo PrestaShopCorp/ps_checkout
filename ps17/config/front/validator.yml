@@ -53,3 +53,8 @@ services:
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Adapter\Cart'
       - '@=service("ps_checkout.module").id'
+
+  PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction:
+    class: PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction
+    arguments:
+      - '@PsCheckout\Api\Http\MaaslandOrderHttpClient'
