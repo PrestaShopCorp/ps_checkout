@@ -20,17 +20,34 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\Action;
 
+use PsCheckout\Api\Http\MaaslandOrderHttpClientInterface;
 use PsCheckout\Core\Webhook\WebhookException;
 
-interface VerifyWebhookActionInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+class CheckPSLSignatureAction implements CheckPSLSignatureActionInterface
 {
     /**
-     * @param string $rawBody
-     * @param array $webhookHeaders
-     *
-     * @throws WebhookException
-     *
-     * @return void
+     * @var MaaslandOrderHttpClientInterface
      */
-    public function execute(string $rawBody, array $webhookHeaders): void;
+    private $orderHttpClient;
+
+    public function __construct(
+        MaaslandOrderHttpClientInterface $orderHttpClient
+    ) {
+        $this->orderHttpClient = $orderHttpClient;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function execute(array $bodyValues): bool
+    {
+        $response = $this->orderHttpClient->getShopSignature($bodyValues);
+
+        if (isset($response['statusCode'], $response['message']) && 200 === $response['statusCode'] && 'VERIFIED' === $response['message']) {
+            return true;
+        }
+
+        throw new WebhookException('Invalid PSL signature', 401);
+    }
 }

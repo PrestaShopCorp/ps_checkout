@@ -18,17 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Api\Http;
+namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-interface WebhookHttpClientInterface
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+interface CheckPSLSignatureActionInterface
 {
     /**
-     * Verifies webhook authenticity
-     *
-     * @param string $rawBody
-     * @param array $headers
+     * @param array<string, mixed> $bodyValues
      *
      * @return bool
      */
-    public function verifyWebhook(string $rawBody, array $headers): bool;
+    public function execute(array $bodyValues): bool;
 }

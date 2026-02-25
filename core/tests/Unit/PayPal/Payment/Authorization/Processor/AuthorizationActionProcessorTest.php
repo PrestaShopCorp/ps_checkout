@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
-use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\AuthorizationActionInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use Psr\Log\LoggerInterface;
 

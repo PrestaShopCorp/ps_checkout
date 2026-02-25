@@ -50,6 +50,9 @@ class HeaderValuesValidatorTest extends TestCase
             'Shop-Id' => 'shop-123',
             'Merchant-Id' => 'merchant-456',
             'Psx-Id' => 'firebase-789',
+            'Svix-Id' => null,
+            'Svix-Timestamp' => null,
+            'Svix-Signature' => null
         ];
 
         $this->webhookHeaderProvider->expects($this->once())
@@ -64,6 +67,9 @@ class HeaderValuesValidatorTest extends TestCase
             'shopId' => 'shop-123',
             'merchantId' => 'merchant-456',
             'firebaseId' => 'firebase-789',
+            'Svix-Id' => null,
+            'Svix-Timestamp' => null,
+            'Svix-Signature' => null
         ], $result);
     }
 

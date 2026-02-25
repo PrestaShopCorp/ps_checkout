@@ -236,6 +236,7 @@ class SetAuthorizedOrderStateActionTest extends TestCase
         $idCart = 333;
         $orderId = 444;
         $completedStateId = 2;
+        $partiallyPaidStateId = 16;
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
         $payPalOrder->method('getIdCart')->willReturn($idCart);
@@ -265,8 +266,15 @@ class SetAuthorizedOrderStateActionTest extends TestCase
 
         $this->configuration->expects($this->once())
             ->method('getInteger')
-            ->with(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED)
-            ->willReturn($completedStateId);
+            ->willReturnCallback(function ($key) use ($completedStateId, $partiallyPaidStateId) {
+                if ($key === OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED) {
+                    return $completedStateId;
+                } elseif ($key === OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID) {
+                    return $partiallyPaidStateId;
+                }
+
+                return 0;
+            });
 
         $this->changeOrderStateAction->expects($this->never())
             ->method('execute');

@@ -25,7 +25,7 @@ interface WebhookHeaderProviderInterface
     /**
      * Extract HTTP headers.
      *
-     * @return array
+     * @return array<string, string|null>
      */
     public function getHeaders(): array;
 }

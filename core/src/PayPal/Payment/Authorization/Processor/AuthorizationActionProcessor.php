@@ -22,6 +22,7 @@ namespace PsCheckout\Core\PayPal\Payment\Authorization\Processor;
 
 use Exception;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\PayPal\Payment\Authorization\Action\AuthorizationActionInterface;
 use Psr\Log\LoggerInterface;
 
 class AuthorizationActionProcessor implements AuthorizationActionProcessorInterface

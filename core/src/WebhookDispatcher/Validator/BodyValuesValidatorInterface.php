@@ -25,11 +25,35 @@ use PsCheckout\Core\Webhook\WebhookException;
 interface BodyValuesValidatorInterface
 {
     /**
-     * Execute the body validation action.
+     * Validate and transform webhook body from PayPal format
      *
-     * @return array
+     * @return array{
+     *     resource: array<string, mixed>,
+     *     eventType: string,
+     *     shopId: string,
+     *     summary: string|null,
+     *     webhookId: string
+     * }
      *
      * @throws WebhookException
      */
     public function validate(): array;
+
+    /**
+     * Validate and transform webhook body from Maasland format
+     *
+     * @return array{
+     *     webhookId: string,
+     *     resource: array<string, mixed>,
+     *     eventType: string,
+     *     eventStream: string,
+     *     eventNumber: string,
+     *     category: string,
+     *     summary: string|null,
+     *     orderId: string|null
+     * }
+     *
+     * @throws WebhookException
+     */
+    public function validateMaasland(): array;
 }

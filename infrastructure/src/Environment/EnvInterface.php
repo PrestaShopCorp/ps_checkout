@@ -73,4 +73,11 @@ interface EnvInterface
      * @return string
      */
     public function getWebhookApiUrl(): string;
+
+    /**
+     * Retrieve Maasland order api url
+     *
+     * @return string
+     */
+    public function getMaaslandOrderApiUrl(): string;
 }

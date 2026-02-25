@@ -29,7 +29,6 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
-use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionInterface;
 
 final class CaptureAuthorizationAction implements AuthorizationActionInterface
 {
@@ -109,9 +108,16 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
             );
         }
 
+        $expirationTime = null;
         if (isset($authorization['expiration_time'])) {
-            $expirationTime = new \DateTime((string) $authorization['expiration_time']);
-        } else {
+            try {
+                $expirationTime = new \DateTime((string) $authorization['expiration_time']);
+            } catch (\Exception $e) {
+                $expirationTime = null;
+            }
+        }
+
+        if ($expirationTime === null) {
             $expirationTime = new \DateTime((string) $authorization['create_time']);
             $expirationTime->modify('+30 days');
         }
