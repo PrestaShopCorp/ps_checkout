@@ -6,7 +6,7 @@ services:
     container_name: ${MODULE_VERSION}-ps-mysql-${PS_VERSION_TAG}
     image: mariadb:10.9.4
     ports:
-      - ${DATABASE_PORT}:3306
+      - "3306"
     environment:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
@@ -16,6 +16,8 @@ services:
       interval: 10s
     volumes:
       - ./mysql/${MODULE_VERSION}-mysql-backup-${PS_VERSION_TAG}:/var/lib/mysql
+    networks:
+      - ps-checkout
 
   ps-prestashop:
     container_name: ${MODULE_VERSION}-ps-prestashop-${PS_VERSION_TAG}
@@ -40,11 +42,10 @@ services:
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
       PS_ENABLE_SSL: ${SSL_ENABLED}
-      SENTRY_DSN: ${SENTRY_DSN}
     depends_on:
       - mysql
     ports:
-      - ${LOCALHOST_PORT}:80
+      - "80"
     volumes:
       - ./prestashop/${PS_VERSION_TAG}:/var/www/html
       - ./${MODULE_VERSION}:/var/www/html/modules/ps_checkout
@@ -62,6 +63,11 @@ services:
       start_period: 15s
       timeout: 10s
       retries: 5
+    networks:
+      - ps-checkout
     post_start:
       - command: cd /var/www/html/modules/ps_checkout && composer install
       - command: chmod -R 777 /var/www/html
+
+networks:
+  ps-checkout:

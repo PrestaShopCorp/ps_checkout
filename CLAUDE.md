@@ -92,7 +92,7 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 ### Key domain areas in `core/`
 
-- `PayPal/` — PayPal API integration (14+ subdirectories covering orders, payments, webhooks, funding sources)
+- `PayPal/` — PayPal API integration (orders, payments, webhooks, funding sources, refunds, Apple/Google Pay)
 - `Order/` + `OrderState/` — Order processing and status transitions
 - `Webhook/` + `WebhookDispatcher/` — Webhook event handling pipeline
 - `Settings/` — Configuration management
@@ -100,11 +100,19 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 ### Key areas in `infrastructure/`
 
-- `Adapter/` (29 adapters) — Bridge between the core domain and PrestaShop's legacy APIs
-- `Repository/` (43+ repositories) — Database access layer
+- `Adapter/` — Bridge between the core domain and PrestaShop's legacy APIs
+- `Repository/` — Database access layer
 - `Bootstrap/` — Module installation/upgrade logic
 - `Controller/` — Web controllers (front + admin)
 - `Environment/` — Runtime environment detection
+
+### CI/CD (`.github/workflows/`)
+
+- `ci.yml` — runs tests on pull requests
+- `lint.yml` — runs linting checks
+- `create-testing-zip.yml` — generates module ZIP for testing
+- `prerelease.yml` — pre-release pipeline
+- `publish-to-marketplace.yml` — publishes to PrestaShop Marketplace
 
 ### PHP-CS-Fixer scope
 

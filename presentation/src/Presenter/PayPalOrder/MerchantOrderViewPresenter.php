@@ -43,7 +43,7 @@ class MerchantOrderViewPresenter
      * @param PayPalOrder $payPalOrder
      * @param bool $isProductionEnv
      *
-     * @return array{orderData: array, transactionList: array}
+     * @return array{orderData: array<string, mixed>, transactionList: list<array<string, mixed>>}
      */
     public function present(
         PayPalOrderResponse $paypalOrderResponse,
@@ -52,7 +52,8 @@ class MerchantOrderViewPresenter
     ): array {
         $presenterData = $this->payPalOrderPresenter->present($paypalOrderResponse);
 
-        $transactions = isset($presenterData['transactions']) ? $presenterData['transactions'] : [];
+        /** @var list<array<string, mixed>> $transactions */
+        $transactions = isset($presenterData['transactions']) && is_array($presenterData['transactions']) ? $presenterData['transactions'] : [];
 
         $currency = $this->extractCurrency($paypalOrderResponse);
 
@@ -82,13 +83,13 @@ class MerchantOrderViewPresenter
     }
 
     /**
-     * @param array $presenterData
-     * @param array $transactions
+     * @param array<string, mixed> $presenterData
+     * @param list<array<string, mixed>> $transactions
      * @param PayPalOrder $payPalOrder
      * @param bool $isProductionEnv
      * @param string $currency
      *
-     * @return array
+     * @return array<string, mixed>
      */
     private function buildOrderData(
         array $presenterData,
@@ -97,13 +98,13 @@ class MerchantOrderViewPresenter
         bool $isProductionEnv,
         string $currency
     ): array {
-        $isAuthorizeIntent = strtoupper($presenterData['intent'] ?? '') === 'AUTHORIZE';
+        $isAuthorizeIntent = strtoupper((string) ($presenterData['intent'] ?? '')) === 'AUTHORIZE';
 
         $authTotal = 0.0;
         $captured = 0.0;
 
         foreach ($transactions as $tx) {
-            $txType = isset($tx['type']['value']) ? $tx['type']['value'] : '';
+            $txType = $tx['type']['value'] ?? '';
             $txAmount = (float) $tx['amount'];
 
             if ($txType === 'authorization') {
@@ -127,11 +128,11 @@ class MerchantOrderViewPresenter
 
         $is3DSecureAvailable = !empty($presenterData['is3DSecureAvailable']);
         $isLiabilityShifted = !empty($presenterData['isLiabilityShifted']);
-        $threeDSecure = $is3DSecureAvailable ? 'Success' : 'None';
-        $liabilityShift = $isLiabilityShifted ? 'Bank' : 'None';
+        $threeDSecure = $is3DSecureAvailable ? 'Success' : 'N/A';
+        $liabilityShift = $isLiabilityShifted ? 'Bank' : 'N/A';
 
-        $orderStatus = isset($presenterData['status']['translated']) ? $presenterData['status']['translated'] : '';
-        $paymentSourceName = isset($presenterData['paymentSourceName']) ? $presenterData['paymentSourceName'] : 'PayPal';
+        $orderStatus = $presenterData['status']['translated'] ?? '';
+        $paymentSourceName = $presenterData['paymentSourceName'] ?? 'PayPal';
 
         return [
             'reference' => 'ORDER-' . $payPalOrder->getIdCart(),
@@ -154,9 +155,9 @@ class MerchantOrderViewPresenter
     }
 
     /**
-     * @param array $transactions
+     * @param list<array<string, mixed>> $transactions
      *
-     * @return array
+     * @return list<array<string, mixed>>
      */
     private function buildTransactionList(array $transactions): array
     {
@@ -165,15 +166,21 @@ class MerchantOrderViewPresenter
         foreach ($transactions as $tx) {
             $list[] = [
                 'id' => $tx['id'],
-                'type' => isset($tx['type']['translated']) ? $tx['type']['translated'] : '',
-                'status' => isset($tx['status']['translated']) ? $tx['status']['translated'] : '',
+                'type' => $tx['type']['translated'] ?? '',
+                'status' => $tx['status']['translated'] ?? '',
                 'date' => $tx['date'],
                 'amount' => (float) $tx['amount'],
                 'currency' => $tx['currency'],
                 'reference' => $tx['id'],
+                'expirationTime' => $tx['expiration_time'] ?? '',
+                'isRefundable' => !empty($tx['isRefundable']),
+                'maxAmountRefundable' => isset($tx['maxAmountRefundable']) ? (float) $tx['maxAmountRefundable'] : 0.0,
                 'details' => [
                     'total' => (float) $tx['amount'],
-                    'sellerProtection' => isset($tx['seller_protection']['translated']) ? $tx['seller_protection']['translated'] : '',
+                    'gross' => isset($tx['gross_amount']) ? (float) $tx['gross_amount'] : null,
+                    'fee' => isset($tx['paypal_fee']) ? (float) $tx['paypal_fee'] : null,
+                    'net' => isset($tx['net_amount']) ? (float) $tx['net_amount'] : null,
+                    'sellerProtection' => $tx['seller_protection']['translated'] ?? '',
                 ],
             ];
         }
