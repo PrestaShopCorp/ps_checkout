@@ -110,28 +110,18 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 PHP-CS-Fixer applies to: `api/`, `core/`, `infrastructure/`, `presentation/`, `utility/` — not to the `ps17/`, `ps8/`, `ps9/` version directories. Rules: PSR-2, AFL-3.0 header comment, no unused imports.
 
-### Merchant SDK (Admin Order View) — PAYSHIP-3878
-
-The Merchant SDK is a **zoid** component loaded on the admin order view page. It exposes `window.PrestaShopCheckoutSDK.PrestaShopCheckout(props)`, which takes `{ orderData, transactionList, onSubmit }` and renders into a container via `.render('#id')`.
-
-**Key files:**
-- `core/src/Settings/Configuration/PayPalSdkConfiguration.php` — `SDK_MERCHANT_ENDPOINT` constant
-- `ps{17,8,9}/.env.dist` — `CHECKOUT_MERCHANT_SDK_URL` / `CHECKOUT_MERCHANT_SDK_VERSION` vars
-- `ps{17,8,9}/ps_checkout.php` — `case 'AdminOrders':` loads the SDK; hooks inject `window.store.context` with `orderId` + `prestashopCheckoutAjax`
-- `ps{17,8,9}/views/templates/hook/displayAdminOrderMainBottom.tpl` — container div + partial include
-- `ps17/views/templates/hook/displayAdminOrderLeft.tpl` — same (pre-1.7.7 hook)
-- `ps{17,8,9}/views/templates/hook/partials/adminOrderViewSdk.tpl` — initialization script
-
-**`onSubmit` action → AJAX endpoint mapping:**
-- `capture` → `CaptureAuthorization`
-- `void` → `VoidAuthorization`
-- `reauthorize` → `ReauthorizeAuthorization`
-- `refund` → `RefundOrder`
-
-**Local dev:** set `CHECKOUT_MERCHANT_SDK_URL=http://localhost:5174/merchant-sdk.umd.js` in `.env`. The URL ends in `.js` so the PHP version-appending logic is skipped.
-
-**Current state (as of PAYSHIP-3878):** placeholder `orderData` and `transactionList` are hardcoded in the template. Real data mapping from PHP presenters is the follow-up task.
-
 ### Coding standards
 
 Follow [PrestaShop coding standards](https://devdocs.prestashop-project.org/8/development/coding-standards/). Do not update the module version number in pull requests.
+
+### Admin AJAX controller patterns
+
+- **Response method**: Use `exitWithResponse(['httpCode' => N, 'status' => bool, ...])` for all JSON responses — not `http_response_code()` + `ajaxRender(json_encode(...))`. No `return` needed; `exitWithResponse` exits internally.
+- **Request encoding**: Admin AJAX calls must POST with `Content-Type: application/x-www-form-urlencoded` so `Tools::getValue('action')` can route to the correct `ajaxProcess*` method. `application/json` bodies are invisible to `Tools::getValue`.
+
+### Back-office JS pattern (`views/js/`)
+
+- `views/js/<name>.js` — defines `var ps_checkout_<name> = {}` with an `initialize(config)` method (never inline in a template)
+- `views/templates/hook/partials/<name>.tpl` — thin wrapper: guard with `typeof ps_checkout_<name> !== 'undefined'`, then call `.initialize({...})` with Smarty-escaped config values
+- Register in `hookActionAdminControllerSetMedia` via `addJS(...'?version=' . $this->version . '&rand=' . time(), false)`
+- JS files under `ps{8,9,17}/views/js/` are identical across versions — create one, `cp` to the other two

@@ -294,6 +294,10 @@ class Ps_Checkout extends PaymentModule
                 }
 
                 $this->context->controller->addJS($merchantSdkUrl, false);
+                $this->context->controller->addJS(
+                    $this->getPathUri() . 'views/js/adminOrderViewSdk.js?version=' . $this->version,
+                    false
+                );
                 $this->context->controller->addCss(
                     $this->_path . 'views/css/adminOrderViewSdk.css?version=' . $this->version,
                     'all',

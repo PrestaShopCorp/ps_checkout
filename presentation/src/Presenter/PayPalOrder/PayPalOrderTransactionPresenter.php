@@ -110,6 +110,26 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
                     ];
                 }
             }
+
+            if (!empty($purchase['payments']['authorizations'])) {
+                foreach ($purchase['payments']['authorizations'] as $authorization) {
+                    $transactions[] = [
+                        'type' => $this->getTransactionType('authorization'),
+                        'id' => $authorization['id'],
+                        'status' => $this->getTransactionStatus($authorization['status']),
+                        'amount' => (float) ($authorization['amount']['value'] ?? 0),
+                        'currency' => $authorization['amount']['currency_code'] ?? '',
+                        'date' => $this->datePresenter->present($authorization['create_time'] ?? '', 'Y-m-d H:i:s'),
+                        'expiration_time' => $authorization['expiration_time'] ?? '',
+                        'isRefundable' => false,
+                        'maxAmountRefundable' => 0,
+                        'gross_amount' => $authorization['amount']['value'] ?? '',
+                        'paypal_fee' => '',
+                        'net_amount' => $authorization['amount']['value'] ?? '',
+                        'seller_protection' => [],
+                    ];
+                }
+            }
         }
 
         if (!empty($transactions)) {
@@ -137,6 +157,11 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
             case 'refund':
                 $translated = $this->translator->trans('Refund');
                 $class = 'refund';
+
+                break;
+            case 'authorization':
+                $translated = $this->translator->trans('Authorization');
+                $class = 'authorization';
 
                 break;
             default:
@@ -182,6 +207,26 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
             case 'REFUNDED':
                 $translated = $this->translator->trans('Refunded');
                 $class = 'info';
+
+                break;
+            case 'CREATED':
+                $translated = $this->translator->trans('Created');
+                $class = 'info';
+
+                break;
+            case 'PARTIALLY_CAPTURED':
+                $translated = $this->translator->trans('Partially captured');
+                $class = 'info';
+
+                break;
+            case 'VOIDED':
+                $translated = $this->translator->trans('Voided');
+                $class = 'warning';
+
+                break;
+            case 'EXPIRED':
+                $translated = $this->translator->trans('Expired');
+                $class = 'danger';
 
                 break;
             default:

@@ -17,106 +17,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 <script>
-  (function () {
-    try {
-      var containerId = '{$containerId|escape:'javascript':'UTF-8'}';
-      var container = document.getElementById(containerId);
-
-      if (!container) {
-        console.error('[ps_checkout] PrestaShopCheckout container #' + containerId + ' not found.');
-        return;
-      }
-
-      if (typeof window.PrestaShopCheckoutSDK === 'undefined' || typeof window.PrestaShopCheckoutSDK.PrestaShopCheckout === 'undefined') {
-        throw new Error('PrestaShopCheckout SDK not available on window.');
-      }
-
-      var ajaxUrl = '{$orderPayPalBaseUrl|escape:'javascript':'UTF-8'}';
-      var sdkScript = Array.from(document.querySelectorAll('script[src]')).find(function (s) {
-        return s.src.indexOf('merchant-sdk') !== -1;
-      });
-      var appUrl = sdkScript ? new URL(sdkScript.src).origin : undefined;
-
-      // Placeholder data matching the SDK's expected shape (real presenter mapping is a follow-up).
-      var orderData = {
-        reference: 'ORDER-{$orderPrestaShopId|intval}',
-        total: 125.5,
-        currency: "EUR",
-        status: "Pending",
-        balance: 0,
-        paymentMode: "PayPal",
-        isTestMode: true,
-        threeDSecure: "Success",
-        liabilityShift: "Bank",
-        financials: {
-          gross: 125.5,
-          fees: 0,
-          net: 125.5,
-          captured: 0,
-          leftToCapture: 125.5,
-        },
-      };
-
-      var transactionList = [
-        {
-          id: "p1",
-          type: "Authorization",
-          status: "Pending",
-          date: new Date().toISOString(),
-          amount: 125.5,
-          currency: "EUR",
-          reference: "PLAYGROUND-TX-001",
-          details: {
-            total: 125.5,
-            sellerProtection: "Eligible",
-          },
-        },
-      ];
-
-      var actionMap = {
-        capture: 'CaptureAuthorization',
-        void: 'VoidAuthorization',
-        reauthorize: 'ReauthorizeAuthorization',
-        refund: 'RefundOrder',
-      };
-
-      function onSubmit(type, transaction, data) {
-        console.log('[ps_checkout] onSubmit:', type, transaction, data);
-        var action = actionMap[type];
-        if (!action || !ajaxUrl) {
-          console.warn('[ps_checkout] Unknown action type or missing AJAX URL:', type);
-          return;
-        }
-        var payload = Object.assign({ id_transaction: transaction.id }, data || {});
-        fetch(ajaxUrl + '&action=' + action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-                .then(function (res) { return res.json(); })
-                .then(function (json) { console.log('[ps_checkout] AJAX response:', json); })
-                .catch(function (err) { console.error('[ps_checkout] AJAX error:', err); });
-      }
-
-      var checkoutComponent = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
-        url: appUrl,
-        orderData: orderData,
-        transactionList: transactionList,
-        onSubmit: onSubmit,
-      });
-
-      checkoutComponent.render('#' + containerId);
-      console.log('[ps_checkout] PrestaShopCheckout component rendering into #' + containerId);
-
-    } catch (e) {
-      console.error('[ps_checkout] PrestaShopCheckout initialization failed:', e);
-      var container = document.getElementById('{$containerId|escape:'javascript':'UTF-8'}' || 'ps-checkout-merchant-order-view');
-      if (container) {
-        var msg = document.createElement('div');
-        msg.className = 'd-print-none alert alert-warning';
-        msg.textContent = 'PrestaShop Checkout order view could not be loaded. See browser console for details.';
-        container.appendChild(msg);
-      }
-    }
-  })();
+  if (typeof ps_checkout_merchant !== 'undefined') {
+    ps_checkout_merchant.initialize({
+      containerId: '{$containerId|escape:'javascript':'UTF-8'}',
+      ajaxUrl: '{$orderPayPalBaseUrl|escape:'javascript':'UTF-8'}',
+      orderId: {$orderPrestaShopId|intval},
+    });
+  }
 </script>

@@ -50,6 +50,7 @@ use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use PsCheckout\Module\Presentation\Translator;
+use PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter;
 use PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter;
 use Psr\Log\LoggerInterface;
 
@@ -795,6 +796,100 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ? $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrderLegacy.tpl')
                 : $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrder.tpl'),
         ]));
+    }
+
+    public function ajaxProcessGetOrderViewData()
+    {
+        /** @var Translator $translator **/
+        $translator = $this->module->getService(Translator::class);
+        $id_order = (int) Tools::getValue('id_order');
+
+        if (empty($id_order)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('No PrestaShop Order identifier received'),
+                ],
+            ]);
+        }
+
+        $order = new Order($id_order);
+
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
+        $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+
+        if (!$payPalOrder) {
+            try {
+                $migrationSuccessful = $payPalOrderRepository->attemptToMigratePsCheckoutCart($order->id_cart);
+                if ($migrationSuccessful) {
+                    $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+                }
+            } catch (\Exception $e) {
+                \Sentry\captureException($e);
+
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->error(
+                    'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
+                    [
+                        'exception' => $e,
+                        'cart_id' => $order->id_cart,
+                    ]
+                );
+            }
+        }
+
+        if (!$payPalOrder) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('Unable to find PayPal Order associated to this PrestaShop Order %s', [$order->id]),
+                ],
+            ]);
+        }
+
+        /** @var Configuration $configuration */
+        $configuration = $this->module->getService(Configuration::class);
+
+        if ($configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE) !== $payPalOrder->getEnvironment()) {
+            $this->exitWithResponse([
+                'httpCode' => 422,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('PayPal Order %s is not in the same environment as PrestaShop Checkout', [$payPalOrder->getId()]),
+                ],
+            ]);
+        }
+
+        /** @var PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+        } catch (Exception $exception) {
+            \Sentry\captureException($exception);
+
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [$exception->getMessage()],
+            ]);
+        }
+
+        $isProductionEnv = $payPalOrder->getEnvironment() === PayPalConfiguration::MODE_LIVE;
+
+        /** @var MerchantOrderViewPresenter $presenter */
+        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
+        $data = $presenter->present($paypalOrderResponse, $payPalOrder, $isProductionEnv);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'orderData' => $data['orderData'],
+            'transactionList' => $data['transactionList'],
+        ]);
     }
 
     public function ajaxProcessRefundOrder()
