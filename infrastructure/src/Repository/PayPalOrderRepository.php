@@ -51,7 +51,7 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
         ->where('id_cart=' . $cartId)
         ->where('tags NOT LIKE "%' . PayPalOrder::DELETED . '%"');
 
-        $payPalOrderData = $this->db->getRow($query);
+        $payPalOrderData = $this->db->getRow($query, false);
 
         if (!$payPalOrderData) {
             return null;
@@ -73,7 +73,7 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
             $query->where(pSQL($key) . ' = "' . pSQL((string) $value) . '"');
         }
 
-        $payPalOrderDataList = $this->db->executeS($query);
+        $payPalOrderDataList = $this->db->executeS($query, true, false);
 
         if (empty($payPalOrderDataList)) {
             return null;

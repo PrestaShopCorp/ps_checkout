@@ -20,11 +20,13 @@
 
 namespace PsCheckout\Core\PayPal\Order\Action;
 
+use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -106,6 +108,12 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
      */
     public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderResponse
     {
+        $latestPayPalOrderResponse = $this->payPalOrderProvider->getById($payPalOrder->getId());
+
+        if (in_array($latestPayPalOrderResponse->getStatus(), [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::CANCELED], true)) {
+            return $this->handleCapturedOrder($latestPayPalOrderResponse);
+        }
+
         $payload = [
             'mode' => $payPalOrder->getFundingSource() ?:
                 $this->payPalOrderRepository->getOneBy(['id' => $payPalOrder->getId()])->getFundingSource(),
@@ -119,48 +127,68 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
             $payload['vault'] = true;
         }
 
-        $response = $this->orderHttpClient->captureOrder($payload);
+        try {
+            $response = $this->orderHttpClient->captureOrder($payload);
 
-        $orderPayPal = json_decode($response->getBody(), true);
-        $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);
+            $orderPayPal = json_decode($response->getBody(), true);
+            $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);
 
-        $this->payPalOrderCache->set($orderPayPal['id'], array_replace_recursive($cachedOrder, $orderPayPal));
+            $this->payPalOrderCache->set($orderPayPal['id'], array_replace_recursive($cachedOrder, $orderPayPal));
 
-        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderPayPal['id']);
+            $payPalOrderResponse = $this->payPalOrderProvider->getById($orderPayPal['id']);
+        } catch (PayPalException $exception) {
+            if ($exception->getCode() !== PayPalException::ORDER_ALREADY_CAPTURED) {
+                throw $exception;
+            }
+
+            // Another process captured the order first; reload latest state and continue idempotently.
+            $payPalOrderResponse = $this->payPalOrderProvider->getById($payPalOrder->getId());
+        }
 
         if (!$payPalOrderResponse) {
             throw new PsCheckoutException('Capture declined', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
+        return $this->handleCapturedOrder($payPalOrderResponse);
+    }
+
+    private function handleCapturedOrder(PayPalOrderResponse $payPalOrderResponse): PayPalOrderResponse
+    {
         if ($payPalOrderResponse->getStatus() === PayPalCaptureStatus::COMPLETED) {
             $this->orderCompletedEventHandler->handle($payPalOrderResponse);
         }
 
-        if ($payPalOrderResponse->getCapture()['status'] === PayPalCaptureStatus::PENDING) {
+        $capture = $payPalOrderResponse->getCapture();
+
+        if (empty($capture['status'])) {
+            return $payPalOrderResponse;
+        }
+
+        if ($capture['status'] === PayPalCaptureStatus::PENDING) {
             $this->paymentPendingEventHandler->handle($payPalOrderResponse);
         }
 
-        if ($payPalOrderResponse->getCapture()['status'] === PayPalCaptureStatus::COMPLETED) {
+        if ($capture['status'] === PayPalCaptureStatus::COMPLETED) {
             $this->paymentCompletedEventHandler->handle($payPalOrderResponse);
         }
 
-        if ($payPalOrderResponse->getCapture()['status'] === PayPalCaptureStatus::DECLINED || $payPalOrderResponse->getCapture()['status'] === PayPalCaptureStatus::FAILED) {
+        if ($capture['status'] === PayPalCaptureStatus::DECLINED || $capture['status'] === PayPalCaptureStatus::FAILED) {
             $this->paymentDeniedEventHandler->handle($payPalOrderResponse);
         }
 
         if (
-            PayPalCaptureStatus::DECLINED === $payPalOrderResponse->getCapture()['status']
+            PayPalCaptureStatus::DECLINED === $capture['status']
             && $payPalOrderResponse->getPaymentSource()
             && $payPalOrderResponse->getCard()
-            && $payPalOrderResponse->getCapture()['processor_response']
+            && isset($capture['processor_response'])
         ) {
             $payPalProcessorResponse = new PayPalProcessorResponse(
                 $payPalOrderResponse->getCard()['brand'] ?: null,
                 $payPalOrderResponse->getCard()['type'] ?: null,
-                $payPalOrderResponse->getCapture()['processor_response']['avs_code'] ?? null,
-                $payPalOrderResponse->getCapture()['processor_response']['cvv_code'] ?? null,
-                $payPalOrderResponse->getCapture()['processor_response']['payment_advice_code'] ?? null,
-                $payPalOrderResponse->getCapture()['processor_response']['response_code'] ?? null
+                $capture['processor_response']['avs_code'] ?? null,
+                $capture['processor_response']['cvv_code'] ?? null,
+                $capture['processor_response']['payment_advice_code'] ?? null,
+                $capture['processor_response']['response_code'] ?? null
             );
             $message = 'The card processor declined the transaction';
             if ($payPalProcessorResponse->getResponseCode()) {
@@ -168,7 +196,7 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
             }
 
             throw new PsCheckoutException($message, PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR);
-        } elseif (PayPalCaptureStatus::DECLINED === $payPalOrderResponse->getCapture()['status'] || PayPalCaptureStatus::FAILED === $payPalOrderResponse->getCapture()['status']) {
+        } elseif (PayPalCaptureStatus::DECLINED === $capture['status'] || PayPalCaptureStatus::FAILED === $capture['status']) {
             throw new PsCheckoutException('PayPal declined the capture', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 

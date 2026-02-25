@@ -1,0 +1,10 @@
+tunnel: 76a2e4c6-8608-4e35-b966-fd9faab75cd0
+credentials-file: /credentials.json
+ingress:
+  - hostname: ps-checkout-v8.ludovic-cardinale-mytun.prestashop.name
+    service: http://ps8-ps-prestashop-8:80
+  - hostname: logs.ludovic-cardinale-mytun.prestashop.name
+    service: http://dozzle:8080
+  - hostname: glitchtip.ludovic-cardinale-mytun.prestashop.name
+    service: http://glitchtip:8000
+  - service: http_status:404

@@ -6,7 +6,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 run:
 	composer install
 	cd $${MODULE_VERSION} && composer install
-	MODULE_VERSION=$(module_version) SSL_ENABLED=$(ssl_enabled) docker compose up -d --build
+	docker compose up -d --build
 	docker exec -it $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} chmod -R 777 /var/www/html
 	# make run module_version=ps8 ssl_enabled=1
 

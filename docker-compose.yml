@@ -1,5 +1,8 @@
 version: "3.8"
 
+include:
+  - docker-compose.local.yml
+
 services:
   mysql:
     container_name: ${MODULE_VERSION}-ps-mysql-${PS_VERSION_TAG}

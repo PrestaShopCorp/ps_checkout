@@ -3,6 +3,7 @@
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
@@ -112,13 +113,16 @@ class CapturePayPalOrderActionTest extends TestCase
             ->method('set');
 
         // Setup provider response
+        $approvedResponse = PayPalOrderResponseFactory::create([
+            'status' => 'APPROVED',
+        ]);
         $capturedResponse = PayPalOrderResponseFactory::create([
             'status' => PayPalCaptureStatus::COMPLETED
         ]);
-        
-        $this->payPalOrderProvider->expects($this->once())
+
+        $this->payPalOrderProvider->expects($this->exactly(2))
             ->method('getById')
-            ->willReturn($capturedResponse);
+            ->willReturnOnConsecutiveCalls($approvedResponse, $capturedResponse);
 
         // Setup event handler expectations
         $this->orderCompletedEventHandler->expects($this->once())
@@ -167,8 +171,12 @@ class CapturePayPalOrderActionTest extends TestCase
                 ]
             ]
         ]);
-        
-        $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
+
+        $approvedResponse = PayPalOrderResponseFactory::create([
+            'status' => 'APPROVED',
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturnOnConsecutiveCalls($approvedResponse, $declinedResponse);
         
         $this->paymentDeniedEventHandler->expects($this->once())
             ->method('handle')
@@ -230,7 +238,11 @@ class CapturePayPalOrderActionTest extends TestCase
             ]
         ]);
 
-        $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
+        $approvedResponse = PayPalOrderResponseFactory::create([
+            'status' => 'APPROVED',
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturnOnConsecutiveCalls($approvedResponse, $declinedResponse);
 
         $this->paymentDeniedEventHandler->expects($this->once())
             ->method('handle')
@@ -250,6 +262,7 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
         
         $capturedResponse = PayPalOrderResponseFactory::create([
+            'status' => PayPalCaptureStatus::COMPLETED,
             'purchase_units' => [
                 [
                     'payments' => [
@@ -271,8 +284,12 @@ class CapturePayPalOrderActionTest extends TestCase
 
         // Fix: Return empty array instead of null for cache->getValue()
         $this->payPalOrderCache->method('getValue')->willReturn([]);
-        
-        $this->payPalOrderProvider->method('getById')->willReturn($capturedResponse);
+
+        $approvedResponse = PayPalOrderResponseFactory::create([
+            'status' => 'APPROVED',
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturnOnConsecutiveCalls($approvedResponse, $capturedResponse);
 
         $this->paymentPendingEventHandler->expects($this->once())
             ->method('handle')
@@ -280,5 +297,63 @@ class CapturePayPalOrderActionTest extends TestCase
 
         $result = $this->action->execute($initialResponse);
         $this->assertInstanceOf(PayPalOrderResponse::class, $result);
+    }
+
+    public function testDoesNotCaptureWhenOrderAlreadyCompleted(): void
+    {
+        $initialResponse = PayPalOrderResponseFactory::create();
+        $completedResponse = PayPalOrderResponseFactory::create([
+            'status' => PayPalCaptureStatus::COMPLETED,
+        ]);
+
+        $this->payPalOrderProvider->expects($this->once())
+            ->method('getById')
+            ->willReturn($completedResponse);
+
+        $this->payPalOrderRepository->expects($this->never())->method('getOneBy');
+        $this->orderHttpClient->expects($this->never())->method('captureOrder');
+
+        $this->orderCompletedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($completedResponse);
+        $this->paymentCompletedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($completedResponse);
+
+        $result = $this->action->execute($initialResponse);
+
+        $this->assertSame($completedResponse, $result);
+    }
+
+    public function testRecoversWhenOrderIsAlreadyCapturedDuringCaptureCall(): void
+    {
+        $initialResponse = PayPalOrderResponseFactory::create();
+        $payPalOrder = PayPalOrderFactory::create();
+
+        $approvedResponse = PayPalOrderResponseFactory::create([
+            'status' => 'APPROVED',
+        ]);
+        $completedResponse = PayPalOrderResponseFactory::create([
+            'status' => PayPalCaptureStatus::COMPLETED,
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturnOnConsecutiveCalls($approvedResponse, $completedResponse);
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
+        $this->configuration->method('get')->willReturn('TEST_MERCHANT_ID');
+
+        $this->orderHttpClient->method('captureOrder')->willThrowException(
+            new PayPalException('Order already captured', PayPalException::ORDER_ALREADY_CAPTURED)
+        );
+
+        $this->orderCompletedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($completedResponse);
+        $this->paymentCompletedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($completedResponse);
+
+        $result = $this->action->execute($initialResponse);
+
+        $this->assertSame($completedResponse, $result);
     }
 }
