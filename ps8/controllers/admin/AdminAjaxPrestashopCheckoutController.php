@@ -1005,34 +1005,4 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'status' => true,
         ]);
     }
-
-    public function ajaxProcessCaptureAuthorization()
-    {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
-
-        $this->exitWithResponse($processor->process(AuthorizationAction::CAPTURE, Tools::getValue('orderId')));
-    }
-
-    public function ajaxProcessVoidAuthorization()
-    {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
-
-        $this->exitWithResponse($processor->process(AuthorizationAction::VOID, Tools::getValue('orderId')));
-    }
-
-    public function ajaxProcessReauthorizeAuthorization()
-    {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
-
-        $this->exitWithResponse($processor->process(AuthorizationAction::REAUTHORIZE, Tools::getValue('orderId')));
-    }
 }

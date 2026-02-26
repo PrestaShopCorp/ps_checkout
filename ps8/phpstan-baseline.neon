@@ -331,18 +331,6 @@ parameters:
 			path: ../api/src/Http/PsrHttpClientAdapter.php
 
 		-
-			message: '#^Parameter \#1 \$normalizers of class Symfony\\Component\\Serializer\\Serializer constructor expects array\<Symfony\\Component\\Serializer\\DenormalizerInterface\|Symfony\\Component\\Serializer\\NormalizerInterface\>, array\<int, Symfony\\Component\\Serializer\\Normalizer\\ArrayDenormalizer\|Symfony\\Component\\Serializer\\Normalizer\\GetSetMethodNormalizer\|Symfony\\Component\\Serializer\\Normalizer\\ObjectNormalizer\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/Serializer/PaymentSerializerFactory.php
-
-		-
-			message: '#^Parameter \#2 \$encoders of class Symfony\\Component\\Serializer\\Serializer constructor expects array\<Symfony\\Component\\Serializer\\DecoderInterface\|Symfony\\Component\\Serializer\\EncoderInterface\>, array\<int, Symfony\\Component\\Serializer\\Encoder\\JsonEncoder\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/Serializer/PaymentSerializerFactory.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\Http\\WebhookHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1

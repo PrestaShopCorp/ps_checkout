@@ -102,7 +102,6 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
-      - '@PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction'
 
   PsCheckout\Infrastructure\Action\CustomerNotifyAction:
     class: PsCheckout\Infrastructure\Action\CustomerNotifyAction
@@ -273,14 +272,3 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
       - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
-
-  PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction:
-    class: PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction
-    arguments:
-      - '@PsCheckout\Api\Http\OrderHttpClient'
-      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
-      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler'
-      - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
-      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
-      - '@Psr\Log\LoggerInterface'

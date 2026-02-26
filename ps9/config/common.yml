@@ -50,11 +50,3 @@ services:
   PsCheckout\Utility\Common\InputStreamUtility:
     class: PsCheckout\Utility\Common\InputStreamUtility
 
-  PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler:
-    class: PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler
-    arguments:
-      - '@Psr\Log\LoggerInterface'
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction'

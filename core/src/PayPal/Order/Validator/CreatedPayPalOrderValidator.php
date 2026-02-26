@@ -21,7 +21,6 @@
 namespace PsCheckout\Core\PayPal\Order\Validator;
 
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
-use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\ValueObject\PayPalOrderCompletionData;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
@@ -82,12 +81,10 @@ class CreatedPayPalOrderValidator implements CreatedPayPalOrderValidatorInterfac
             return null;
         }
 
-        $transactionModel = $paypalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE ? $paypalOrderResponse->getAuthorization() : $paypalOrderResponse->getCapture();
-
         return new PayPalOrderCompletionData(
             $paypalOrderResponse->getStatus(),
             $paypalOrderResponse->getId(),
-            $transactionModel['id'],
+            $paypalOrderResponse->getCapture()['id'],
             $cartId,
             $this->moduleId,
             (int) $order->id,

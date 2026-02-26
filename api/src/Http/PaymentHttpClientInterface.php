@@ -40,43 +40,4 @@ interface PaymentHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function refundOrder(string $captureId, array $payload): ResponseInterface;
-
-    /**
-     * @param string $authorizationId
-     * @param array<mixed> $payload
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
-
-    /**
-     * @param string $authorizationId
-     * @param array<string, mixed> $payload
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function voidAuthorization(string $authorizationId, array $payload = []): ResponseInterface;
-  
-    /**
-     * @param string $authorizationId
-     *
-     * @return PaymentAuthorizationResponseDto
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto;
-
-    /**
-     * @param string $authorizationId
-     * @param ReauthorizeAuthorizationRequestDto $requestDto
-     *
-     * @return PaymentAuthorizationResponseDto
-     *
-     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
-     */
-    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto;
 }
