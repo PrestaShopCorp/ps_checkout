@@ -423,4 +423,23 @@ class PayPalOrderResponse
 
         return '';
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'status' => $this->status,
+            'intent' => $this->intent,
+            'purchase_units' => $this->purchaseUnits,
+        ];
+
+        if ($this->paymentSource !== null) {
+            $data['payment_source'] = $this->paymentSource;
+        }
+
+        return $data;
+    }
 }

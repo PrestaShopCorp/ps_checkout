@@ -59,7 +59,7 @@ final class VoidAuthorizationAction implements AuthorizationActionInterface
     /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $payPalOrder): PayPalOrderAuthorization
+    public function execute(PayPalOrderResponse $payPalOrder, array $payload = []): PayPalOrderAuthorization
     {
         // Check intent must be AUTHORIZE
         if ($payPalOrder->getIntent() !== 'AUTHORIZE') {

@@ -45,6 +45,8 @@ var ps_checkout_merchant = {};
       });
       var appUrl = sdkScript ? new URL(sdkScript.src).origin : undefined;
 
+      var checkoutComponent = null;
+
       var actionMap = {
         capture:     'CaptureAuthorization',
         void:        'VoidAuthorization',
@@ -52,22 +54,40 @@ var ps_checkout_merchant = {};
         refund:      'RefundOrder',
       };
 
-      function onSubmit(type, transaction, data) {
-        console.log('[ps_checkout] onSubmit:', type, transaction, data);
+      function onSubmit(type, transactionId, data) {
         var action = actionMap[type];
         if (!action || !ajaxUrl) {
-          console.warn('[ps_checkout] Unknown action type or missing AJAX URL:', type);
-          return;
+          return Promise.reject(new Error('Unknown action type or missing AJAX URL'));
         }
-        var payload = Object.assign({ id_transaction: transaction.id }, data || {});
-        fetch(ajaxUrl + '&action=' + action, {
+        var params = new URLSearchParams({
+          ajax: 1,
+          action: action,
+          id_order: orderId,
+          id_transaction: transactionId,
+        });
+        if (data) {
+          Object.keys(data).forEach(function (key) {
+            params.append(key, data[key]);
+          });
+        }
+        return fetch(ajaxUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
         })
           .then(function (res) { return res.json(); })
-          .then(function (json) { console.log('[ps_checkout] AJAX response:', json); })
-          .catch(function (err) { console.error('[ps_checkout] AJAX error:', err); });
+          .then(function (json) {
+            if (!json.status) {
+              throw new Error((json.errors || []).join(', ') || (json.error && json.error.message) || 'Unknown error');
+            }
+            if (checkoutComponent && json.order) {
+              checkoutComponent.updateProps({
+                order: json.order,
+                transactionActions: json.transactionActions || {},
+              });
+            }
+            return { message: json.message || '' };
+          });
       }
 
       container.innerHTML = '<div class="d-print-none text-muted p-3">Loading PayPal order data\u2026</div>';
@@ -85,14 +105,14 @@ var ps_checkout_merchant = {};
 
           container.innerHTML = '';
 
-          var checkoutComponent = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
+          checkoutComponent = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
             url: appUrl,
-            orderData: json.orderData,
-            transactionList: json.transactionList,
+            order: json.order,
+            isTestMode: json.isTestMode || false,
+            transactionActions: json.transactionActions || {},
             onSubmit: onSubmit,
           });
           checkoutComponent.render('#' + containerId);
-          console.log('[ps_checkout] PrestaShopCheckout initialized with real order data.');
         })
         .catch(function (err) {
           console.error('[ps_checkout] Failed to load PayPal order data:', err);

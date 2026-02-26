@@ -337,6 +337,30 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
+			message: '#^Cannot call method getBody\(\) on GuzzleHttp\\Exception\\ResponseInterface\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
+			message: '#^Cannot call method getContents\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
+			message: '#^Cannot call method getHeaders\(\) on GuzzleHttp\\Exception\\ResponseInterface\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
+			message: '#^Cannot call method getStatusCode\(\) on GuzzleHttp\\Exception\\ResponseInterface\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\PsrHttpClientAdapter\:\:__construct\(\) has parameter \$configuration with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -344,6 +368,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$config of method Prestashop\\ModuleLibGuzzleAdapter\\ClientFactory\:\:getClient\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
+			message: '#^Parameter \#1 \$json of function json_decode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/PsrHttpClientAdapter.php
@@ -3533,12 +3563,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
-
-		-
-			message: '#^Call to an undefined method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\|PsCheckout\\Core\\PayPal\\Order\\Response\\ValueObject\\CreatePayPalOrderResponse\:\:toArray\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: ../core/src/PayPal/Order/Cache/PayPalOrderCache.php
 
 		-
 			message: '#^Call to method get\(\) on an unknown class Symfony\\Component\\Cache\\Adapter\\CacheItem\.$#'
@@ -11047,32 +11071,26 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenterInterface.php
 
 		-
-			message: '#^Cannot access offset ''translated'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
-
-		-
 			message: '#^Cannot access offset ''value'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 3
 			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
 
 		-
 			message: '#^Cannot cast mixed to float\.$#'
 			identifier: cast.double
-			count: 10
+			count: 3
 			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
 
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
-			count: 1
+			count: 4
 			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
 
 		-
-			message: '#^Parameter \#1 \$presenterData of method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\MerchantOrderViewPresenter\:\:buildOrderData\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
+			message: '#^Method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\MerchantOrderViewPresenter\:\:present\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
 

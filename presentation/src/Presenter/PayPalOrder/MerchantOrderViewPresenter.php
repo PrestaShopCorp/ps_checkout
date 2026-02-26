@@ -21,170 +21,115 @@
 namespace PsCheckout\Presentation\Presenter\PayPalOrder;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 
 class MerchantOrderViewPresenter
 {
     /**
-     * @var PayPalOrderPresenterInterface
-     */
-    private $payPalOrderPresenter;
-
-    /**
-     * @param PayPalOrderPresenterInterface $payPalOrderPresenter
-     */
-    public function __construct(PayPalOrderPresenterInterface $payPalOrderPresenter)
-    {
-        $this->payPalOrderPresenter = $payPalOrderPresenter;
-    }
-
-    /**
      * @param PayPalOrderResponse $paypalOrderResponse
-     * @param PayPalOrder $payPalOrder
      * @param bool $isProductionEnv
      *
-     * @return array{orderData: array<string, mixed>, transactionList: list<array<string, mixed>>}
+     * @return array{order: array, transactionActions: array<string, array<string, mixed>>, isTestMode: bool}
      */
     public function present(
         PayPalOrderResponse $paypalOrderResponse,
-        PayPalOrder $payPalOrder,
         bool $isProductionEnv
     ): array {
-        $presenterData = $this->payPalOrderPresenter->present($paypalOrderResponse);
-
-        /** @var list<array<string, mixed>> $transactions */
-        $transactions = isset($presenterData['transactions']) && is_array($presenterData['transactions']) ? $presenterData['transactions'] : [];
-
-        $currency = $this->extractCurrency($paypalOrderResponse);
-
-        $orderData = $this->buildOrderData($presenterData, $transactions, $payPalOrder, $isProductionEnv, $currency);
-        $transactionList = $this->buildTransactionList($transactions);
-
         return [
-            'orderData' => $orderData,
-            'transactionList' => $transactionList,
+            'order' => $paypalOrderResponse->toArray(),
+            'transactionActions' => $this->buildTransactionActionsMap($paypalOrderResponse),
+            'isTestMode' => !$isProductionEnv,
         ];
     }
 
     /**
      * @param PayPalOrderResponse $paypalOrderResponse
      *
-     * @return string
+     * @return array<string, array<string, mixed>>
      */
-    private function extractCurrency(PayPalOrderResponse $paypalOrderResponse): string
+    private function buildTransactionActionsMap(PayPalOrderResponse $paypalOrderResponse): array
     {
-        foreach ($paypalOrderResponse->getPurchaseUnits() as $purchase) {
-            if (!empty($purchase['amount']['currency_code'])) {
-                return $purchase['amount']['currency_code'];
+        /** @var array<string, array<string, mixed>> $actions */
+        $actions = [];
+        $purchaseUnits = $paypalOrderResponse->getPurchaseUnits();
+
+        if (empty($purchaseUnits) || !isset($purchaseUnits[0]['payments'])) {
+            return $actions;
+        }
+
+        $payments = $purchaseUnits[0]['payments'];
+
+        $capturedTotal = 0.0;
+        if (!empty($payments['captures'])) {
+            foreach ($payments['captures'] as $capture) {
+                /** @var string $captureStatus */
+                $captureStatus = isset($capture['status']) ? (string) $capture['status'] : '';
+                if (in_array($captureStatus, ['COMPLETED', 'PARTIALLY_REFUNDED', 'PENDING'], true)) {
+                    $capturedTotal += isset($capture['amount']['value']) ? (float) $capture['amount']['value'] : 0.0;
+                }
             }
         }
 
-        return '';
-    }
+        if (!empty($payments['authorizations'])) {
+            foreach ($payments['authorizations'] as $authorization) {
+                $status = $authorization['status'];
+                $id = $authorization['id'];
+                $amount = (float) $authorization['amount']['value'];
 
-    /**
-     * @param array<string, mixed> $presenterData
-     * @param list<array<string, mixed>> $transactions
-     * @param PayPalOrder $payPalOrder
-     * @param bool $isProductionEnv
-     * @param string $currency
-     *
-     * @return array<string, mixed>
-     */
-    private function buildOrderData(
-        array $presenterData,
-        array $transactions,
-        PayPalOrder $payPalOrder,
-        bool $isProductionEnv,
-        string $currency
-    ): array {
-        $isAuthorizeIntent = strtoupper((string) ($presenterData['intent'] ?? '')) === 'AUTHORIZE';
+                switch ($status) {
+                    case 'CREATED':
+                    case 'PENDING':
+                        $actions[$id] = [
+                            'capture' => $amount,
+                            'void' => true,
+                            'reauthorize' => true,
+                        ];
 
-        $authTotal = 0.0;
-        $captured = 0.0;
+                        break;
+                    case 'PARTIALLY_CAPTURED':
+                        $leftToCapture = max(0.0, $amount - $capturedTotal);
+                        $actions[$id] = [
+                            'capture' => $leftToCapture,
+                            'void' => true,
+                            'reauthorize' => true,
+                        ];
 
-        foreach ($transactions as $tx) {
-            $txType = $tx['type']['value'] ?? '';
-            $txAmount = (float) $tx['amount'];
-
-            if ($txType === 'authorization') {
-                $authTotal += $txAmount;
-            } elseif ($txType === 'capture') {
-                $captured += $txAmount;
+                        break;
+                }
             }
         }
 
-        if ($isAuthorizeIntent && $authTotal > 0) {
-            $total = $authTotal;
-            $leftToCapture = max(0.0, $authTotal - $captured);
-        } else {
-            $total = (float) $presenterData['total'];
-            $captured = 0.0;
-            $leftToCapture = 0.0;
+        if (!empty($payments['captures'])) {
+            foreach ($payments['captures'] as $capture) {
+                /** @var string $status */
+                $status = isset($capture['status']) ? (string) $capture['status'] : '';
+                /** @var string $id */
+                $id = isset($capture['id']) ? (string) $capture['id'] : '';
+                $captureAmount = isset($capture['amount']['value']) ? (float) $capture['amount']['value'] : 0.0;
+
+                if (!in_array($status, ['COMPLETED', 'PARTIALLY_REFUNDED'], true)) {
+                    continue;
+                }
+
+                $refundedTotal = 0.0;
+                if (!empty($payments['refunds'])) {
+                    foreach ($payments['refunds'] as $refund) {
+                        /** @var string $refundStatus */
+                        $refundStatus = isset($refund['status']) ? (string) $refund['status'] : '';
+                        if (in_array($refundStatus, ['COMPLETED', 'PENDING'], true)) {
+                            $refundedTotal += isset($refund['amount']['value']) ? (float) $refund['amount']['value'] : 0.0;
+                        }
+                    }
+                }
+
+                $maxRefundable = max(0.0, $captureAmount - $refundedTotal);
+                if ($maxRefundable > 0) {
+                    $actions[$id] = [
+                        'refund' => $maxRefundable,
+                    ];
+                }
+            }
         }
 
-        $fees = (float) $presenterData['fees'];
-        $balance = (float) $presenterData['balance'];
-
-        $is3DSecureAvailable = !empty($presenterData['is3DSecureAvailable']);
-        $isLiabilityShifted = !empty($presenterData['isLiabilityShifted']);
-        $threeDSecure = $is3DSecureAvailable ? 'Success' : 'N/A';
-        $liabilityShift = $isLiabilityShifted ? 'Bank' : 'N/A';
-
-        $orderStatus = $presenterData['status']['translated'] ?? '';
-        $paymentSourceName = $presenterData['paymentSourceName'] ?? 'PayPal';
-
-        return [
-            'reference' => 'ORDER-' . $payPalOrder->getIdCart(),
-            'total' => $total,
-            'currency' => $currency,
-            'status' => $orderStatus,
-            'balance' => $balance,
-            'paymentMode' => $paymentSourceName,
-            'isTestMode' => !$isProductionEnv,
-            'threeDSecure' => $threeDSecure,
-            'liabilityShift' => $liabilityShift,
-            'financials' => [
-                'gross' => $total,
-                'fees' => $fees,
-                'net' => $total + $fees,
-                'captured' => $captured,
-                'leftToCapture' => $leftToCapture,
-            ],
-        ];
-    }
-
-    /**
-     * @param list<array<string, mixed>> $transactions
-     *
-     * @return list<array<string, mixed>>
-     */
-    private function buildTransactionList(array $transactions): array
-    {
-        $list = [];
-
-        foreach ($transactions as $tx) {
-            $list[] = [
-                'id' => $tx['id'],
-                'type' => $tx['type']['translated'] ?? '',
-                'status' => $tx['status']['translated'] ?? '',
-                'date' => $tx['date'],
-                'amount' => (float) $tx['amount'],
-                'currency' => $tx['currency'],
-                'reference' => $tx['id'],
-                'expirationTime' => $tx['expiration_time'] ?? '',
-                'isRefundable' => !empty($tx['isRefundable']),
-                'maxAmountRefundable' => isset($tx['maxAmountRefundable']) ? (float) $tx['maxAmountRefundable'] : 0.0,
-                'details' => [
-                    'total' => (float) $tx['amount'],
-                    'gross' => isset($tx['gross_amount']) ? (float) $tx['gross_amount'] : null,
-                    'fee' => isset($tx['paypal_fee']) ? (float) $tx['paypal_fee'] : null,
-                    'net' => isset($tx['net_amount']) ? (float) $tx['net_amount'] : null,
-                    'sellerProtection' => $tx['seller_protection']['translated'] ?? '',
-                ],
-            ];
-        }
-
-        return $list;
+        return $actions;
     }
 }

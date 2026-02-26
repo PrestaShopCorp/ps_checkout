@@ -291,13 +291,13 @@ class Ps_Checkout extends PaymentModule
                     $merchantSdkUrl = $merchantSdkUrl . $merchantSdkVersion . PayPalSdkConfiguration::SDK_MERCHANT_ENDPOINT;
                 }
 
-                $this->context->controller->addJS($merchantSdkUrl, false);
+                $this->context->controller->addJS($merchantSdkUrl . '?time='.time(), false);
                 $this->context->controller->addJS(
-                    $this->getPathUri() . 'views/js/adminOrderViewSdk.js?version=' . $this->version,
+                    $this->getPathUri() . 'views/js/adminOrderViewSdk.js?version=' . $this->version . '&time='.time(),
                     false
                 );
                 $this->context->controller->addCss(
-                    $this->_path . 'views/css/adminOrderViewSdk.css?version=' . $this->version,
+                    $this->_path . 'views/css/adminOrderViewSdk.css?version=' . $this->version . '&time='.time(),
                     'all',
                     null,
                     false

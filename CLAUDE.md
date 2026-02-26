@@ -52,6 +52,7 @@ make install-module        # Install the module in PrestaShop via console
 ```
 
 All `make` test commands run inside the Docker container using `$MODULE_VERSION` and `$PS_VERSION_TAG` from `.env`.
+`make phpstan` runs locally without Docker. All `make *-test` commands require a running Docker container (`make up`).
 
 Code style check without fixing: `composer cs` (from root).
 
@@ -114,6 +115,10 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 - `prerelease.yml` — pre-release pipeline
 - `publish-to-marketplace.yml` — publishes to PrestaShop Marketplace
 
+### PHPStan workflow
+
+`make phpstan` runs locally (no Docker needed). When modifying shared packages, always run `make phpstan` and fix reported errors. Only regenerate the baseline (`make phpstan-baseline`) if errors are pre-existing or unfixable (e.g., baseline count mismatches from removed code).
+
 ### PHP-CS-Fixer scope
 
 PHP-CS-Fixer applies to: `api/`, `core/`, `infrastructure/`, `presentation/`, `utility/` — not to the `ps17/`, `ps8/`, `ps9/` version directories. Rules: PSR-2, AFL-3.0 header comment, no unused imports.
@@ -133,3 +138,4 @@ Follow [PrestaShop coding standards](https://devdocs.prestashop-project.org/8/de
 - `views/templates/hook/partials/<name>.tpl` — thin wrapper: guard with `typeof ps_checkout_<name> !== 'undefined'`, then call `.initialize({...})` with Smarty-escaped config values
 - Register in `hookActionAdminControllerSetMedia` via `addJS(...'?version=' . $this->version . '&rand=' . time(), false)`
 - JS files under `ps{8,9,17}/views/js/` are identical across versions — create one, `cp` to the other two
+- Admin controllers (`ps{8,9,17}/controllers/admin/`) are nearly identical across versions — apply the same edit to all three. Exception: ps9 uses `\Exception` (namespaced), ps8/ps17 use `Exception` (global).

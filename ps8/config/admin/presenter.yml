@@ -55,8 +55,6 @@ services:
 
   PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter:
     class: PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter
-    arguments:
-      - '@PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter'
 
   PsCheckout\Presentation\Presenter\Date\DatePresenter:
     class: PsCheckout\Presentation\Presenter\Date\DatePresenter

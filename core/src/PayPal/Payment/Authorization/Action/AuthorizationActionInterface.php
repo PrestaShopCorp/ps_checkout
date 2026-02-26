@@ -38,8 +38,9 @@ interface AuthorizationActionInterface
      * Execute the authorization action.
      *
      * @param PayPalOrderResponse $payPalOrder
+     * @param array<string, mixed> $payload
      *
      * @return PayPalOrderAuthorization
      */
-    public function execute(PayPalOrderResponse $payPalOrder);
+    public function execute(PayPalOrderResponse $payPalOrder, array $payload = []);
 }
