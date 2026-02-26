@@ -1,74 +1,11 @@
-services:
-#  wiremock:
-#    image: wiremock/wiremock
-#    container_name: ${MODULE_VERSION}-wiremock-${PS_VERSION_TAG}
-#    volumes:
-#      - ./prestashop/${PS_VERSION_TAG}/modules/${MODULE_NAME}/wiremock:/home/wiremock
-#    ports:
-#      - ${WIREMOCK_PORT}:8080
-#    restart: "no"
-#
-#  dozzle:
-#    image: amir20/dozzle:latest
-#    platform: linux/amd64
-#    container_name: dozzle
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    ports:
-#      - "8080:8080"
-#
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    platform: linux/amd64
-    container_name: cloudflared
-    env_file: ./.env
-    command: tunnel --config /config.yml run
-    volumes:
-      - ./.cloudflared.yml:/config.yml
-      - ${CLOUDFLARED_CREDENTIALS_FILE}:/credentials.json
-    tty: true
-    stdin_open: true
-    logging:
-      options:
-        max-size: 10m
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
+version: "3.8"
 
-#  glitchtip-db:
-#    container_name: glitchtip-db
-#    image: postgres:18
-#    environment:
-#      POSTGRES_USER: glitchtip
-#      POSTGRES_PASSWORD: glitchtip
-#      POSTGRES_DB: glitchtip
-#    restart: unless-stopped
-#    volumes:
-#      - glitchtip-db-data:/var/lib/postgresql
-#
-#  glitchtip:
-#    container_name: glitchtip
-#    image: glitchtip/glitchtip
-#    depends_on:
-#      - glitchtip-db
-#    ports:
-#      - "8000:8000"
-#    environment:
-#      DATABASE_URL: postgres://glitchtip:glitchtip@glitchtip-db:5432/glitchtip
-#      VALKEY_URL: ""
-#      EMAIL_URL: consolemail://
-#      SECRET_KEY: 166OvGiU9k51uYoLn5n8AP2pL3A3rLBH3qXXsAQylxbOTwqXzku
-#      PORT: 8000
-#      GLITCHTIP_DOMAIN: https://glitchtip.${CLOUDFLARED_DOMAIN}
-#      DEFAULT_FROM_EMAIL: demo@prestashop.com
-#      CELERY_WORKER_AUTOSCALE: "1,2"
-#      CSRF_TRUSTED_ORIGINS: https://glitchtip.${CLOUDFLARED_DOMAIN}
-#    command: ./bin/run-all-in-one.sh
-#    restart: unless-stopped
-#    volumes:
-#      - glitchtip-uploads:/code/uploads
-#
-#volumes:
-#  glitchtip-db-data:
-#  glitchtip-uploads:
+services:
+  wiremock:
+    image: wiremock/wiremock
+    container_name: ${PROJECT_NAME}-wiremock-${PS_VERSION_TAG}
+    volumes:
+      - ./prestashop/${PS_VERSION_TAG}/modules/${PROJECT_NAME}/wiremock:/home/wiremock
+    ports:
+      - ${WIREMOCK_PORT}:8080
+    restart: "no"
