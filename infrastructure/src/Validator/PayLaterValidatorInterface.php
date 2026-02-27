@@ -18,28 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\PayPal\Order\Handler;
+namespace PsCheckout\Infrastructure\Validator;
 
-use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
-
-class AuthorizationVoidedEventHandler implements EventHandlerInterface
+interface PayLaterValidatorInterface
 {
     /**
-     * @var SetOrderStateActionInterface
+     * @return bool
      */
-    private $setVoidedOrderStateAction;
-
-    public function __construct(SetOrderStateActionInterface $setVoidedOrderStateAction)
-    {
-        $this->setVoidedOrderStateAction = $setVoidedOrderStateAction;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function handle(PayPalOrderResponse $payPalOrderResponse)
-    {
-        $this->setVoidedOrderStateAction->execute($payPalOrderResponse->getId());
-    }
+    public function isPayLaterAvailable(): bool;
 }

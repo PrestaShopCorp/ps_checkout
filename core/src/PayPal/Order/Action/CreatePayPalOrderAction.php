@@ -117,7 +117,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             ->setIsExpressCheckout($request->isExpressCheckout())
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
-            ->setIsVault($request->getVaultId() || $request->isVault());
+            ->setIsVault($request->getVaultId() || $request->isVault())
+            ->setCustomerBirthDay($request->getBirthDate());
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());
@@ -136,7 +137,11 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $payload = $this->orderPayloadBuilder->build();
 
         try {
-            $orderResponse = $this->createPayPalOrder($payload);
+            $clientMetadataId = $request->getFundingSource() === 'pay_upon_invoice' && $request->getMetaDataId()
+                ? $request->getMetaDataId()
+                : null;
+
+            $orderResponse = $this->createPayPalOrder($payload, null, $clientMetadataId);
         } catch (PayPalException $exception) {
             if ($request->getVaultId() && $exception->getCode() === PayPalException::CARD_CLOSED) {
                 $this->deletePaymentTokenAction->execute(

@@ -163,6 +163,11 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction'
 
+  PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler:
+    class: PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler
+    arguments:
+      - '@PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction'
+
   PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler
     arguments:
@@ -197,16 +202,6 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
 
-  PsCheckout\Core\PayPal\Order\Handler\AuthorizationCreatedEventHandler:
-    class: PsCheckout\Core\PayPal\Order\Handler\AuthorizationCreatedEventHandler
-    arguments:
-      - '@PsCheckout\Core\OrderState\Action\SetAuthorizedOrderStateAction'
-
-  PsCheckout\Core\PayPal\Order\Handler\AuthorizationVoidedEventHandler:
-    class: PsCheckout\Core\PayPal\Order\Handler\AuthorizationVoidedEventHandler
-    arguments:
-      - '@PsCheckout\Core\OrderState\Action\SetVoidedOrderStateAction'
-
   PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction:
     class: PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction
     arguments:
@@ -226,17 +221,8 @@ services:
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
 
-  PsCheckout\Core\OrderState\Action\SetAuthorizedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetAuthorizedOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
-
-  PsCheckout\Core\OrderState\Action\SetVoidedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetVoidedOrderStateAction
+  PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
     arguments:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
@@ -255,8 +241,6 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler'
-      - '@PsCheckout\Core\PayPal\Order\Handler\AuthorizationCreatedEventHandler'
-      - '@PsCheckout\Core\PayPal\Order\Handler\AuthorizationVoidedEventHandler'
 
   PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver:
     class: PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver

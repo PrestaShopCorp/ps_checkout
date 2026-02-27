@@ -28,4 +28,11 @@ interface StateRepositoryInterface
      * @return string
      */
     public function getNameById($idState);
+
+    /**
+     * @param int $idState
+     *
+     * @return string
+     */
+    public function getIsoById($idState);
 }

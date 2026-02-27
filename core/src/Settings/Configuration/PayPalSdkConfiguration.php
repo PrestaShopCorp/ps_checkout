@@ -39,10 +39,10 @@ class PayPalSdkConfiguration
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
     /**
-     * google_pay and apple_pay are not considered funding sources
+     * google_pay, apple_pay and pui are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK
      */
-    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay', 'pay_upon_invoice'];
 
     /**
      * @var ContextInterface
@@ -114,7 +114,8 @@ class PayPalSdkConfiguration
         CountryResolverInterface $countryResolver,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
@@ -126,6 +127,7 @@ class PayPalSdkConfiguration
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -278,35 +280,18 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        if ('index' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER)) {
-            return true;
+        switch ($pageName) {
+            case 'cart':
+            case 'category':
+            case 'product':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled($pageName);
+            case 'order':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('checkout');
+            case 'index':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
+            default:
+                return false;
         }
-
-        if ('category' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER)) {
-            return true;
-        }
-
-        if (
-            in_array($pageName, ['cart', 'order']) &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        if (
-            'product' === $pageName &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

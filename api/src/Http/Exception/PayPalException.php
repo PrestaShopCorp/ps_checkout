@@ -345,4 +345,6 @@ class PayPalException extends PsCheckoutException
     const CREDIT_CARD_NUMBER_IS_INVALID = 160;
 
     const CARD_EXPIRATION_YEAR_IS_INVALID = 161;
+
+    const ORDER_REQUIRES_ASYNC_CAPTURE = 162;
 }

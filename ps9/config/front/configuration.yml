@@ -49,7 +49,7 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags: ['funding_source.eligibility_checker']
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -81,7 +81,7 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags: ['funding_source.eligibility_checker']
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -100,3 +100,4 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
       - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'

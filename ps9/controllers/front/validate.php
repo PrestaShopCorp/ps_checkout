@@ -39,10 +39,6 @@ use PsCheckout\Utility\Common\InputStreamUtility;
  */
 class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
 
     /**
      * @see FrontController::postProcess()

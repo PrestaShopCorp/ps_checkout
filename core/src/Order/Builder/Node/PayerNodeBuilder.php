@@ -86,6 +86,14 @@ class PayerNodeBuilder implements PayerNodeBuilderInterface
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
             : '';
 
+        if (isset($invoiceAddress->id_state)) {
+            $stateName = $payerCountryIsoCode === 'US' ?
+                $this->stateRepository->getIsoById($invoiceAddress->id_state)
+                : $this->stateRepository->getNameById($invoiceAddress->id_state);
+        } else {
+            $stateName = '';
+        }
+
         $node['payer'] = [
             'name' => [
                 'given_name' => isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '',
@@ -94,7 +102,7 @@ class PayerNodeBuilder implements PayerNodeBuilderInterface
             'address' => OrderPayloadUtility::getAddressPortable(
                 $invoiceAddress,
                 $payerCountryIsoCode,
-                isset($invoiceAddress->id_state) ? $this->stateRepository->getNameById($invoiceAddress->id_state) : ''
+                $stateName
             ),
         ];
 

@@ -52,6 +52,8 @@ class PayPalOrderCache extends ChainAdapter implements PayPalOrderCacheInterface
         PayPalOrderStatus::COMPLETED => 3600,
     ];
 
+    /**
+     */
     public function updateOrderCache($orderResponse)
     {
         $currentOrderPayPal = $this->getValue($orderResponse->getId());

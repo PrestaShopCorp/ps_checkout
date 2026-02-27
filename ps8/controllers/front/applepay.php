@@ -34,11 +34,6 @@ use PsCheckout\Utility\Common\InputStreamUtility;
 class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
-     */
-    public $module;
-
-    /**
      * @see FrontController::postProcess()
      */
     public function postProcess()
@@ -47,7 +42,10 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
             $action = $this->getActionFromRequest();
 
             if (!$action) {
-                throw new PsCheckoutException('Invalid request', 400);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Invalid request',
+                ]);
             }
 
             switch ($action) {
@@ -60,11 +58,21 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
 
                     break;
                 default:
-                    throw new Exception('Invalid request', 400);
+                    $this->exitWithResponse([
+                        'httpCode' => 400,
+                        'body' => 'Invalid request',
+                    ]);
             }
         } catch (Exception $exception) {
             \Sentry\captureException($exception);
+
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the Apple Pay request.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 
@@ -106,7 +114,10 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
         $associationFile = _PS_MODULE_DIR_ . $this->module->name . "/.well-known/apple-$environment-merchantid-domain-association";
 
         if (!file_exists($associationFile)) {
-            throw new Exception('File not found', 404);
+            $this->exitWithResponse([
+                'httpCode' => 404,
+                'body' => 'File not found',
+            ]);
         }
 
         if (!headers_sent()) {

@@ -36,19 +36,9 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 class PayPalOrderProvider implements PayPalOrderProviderInterface
 {
     /**
-     * @var ConfigurationInterface
-     */
-    private $configuration;
-
-    /**
      * @var PayPalOrderCacheInterface
      */
     private $payPalOrderCache;
-
-    /**
-     * @var PayPalOrderRepositoryInterface
-     */
-    private $payPalOrderRepository;
 
     /**
      * @var OrderHttpClientInterface
@@ -56,20 +46,14 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
     private $orderHttpClient;
 
     /**
-     * @param ConfigurationInterface $configuration
      * @param PayPalOrderCacheInterface $payPalOrderCache
-     * @param PayPalOrderRepositoryInterface $payPalOrderRepository
      * @param OrderHttpClientInterface $orderHttpClient
      */
     public function __construct(
-        ConfigurationInterface $configuration,
         PayPalOrderCacheInterface $payPalOrderCache,
-        PayPalOrderRepositoryInterface $payPalOrderRepository,
         OrderHttpClientInterface $orderHttpClient
     ) {
-        $this->configuration = $configuration;
         $this->payPalOrderCache = $payPalOrderCache;
-        $this->payPalOrderRepository = $payPalOrderRepository;
         $this->orderHttpClient = $orderHttpClient;
     }
 
@@ -112,21 +96,6 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
      */
     private function fetchOrder(string $id)
     {
-        $data = null;
-
-        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $id]);
-
-        $payload = [
-            'orderId' => $id,
-        ];
-
-        if ($payPalOrder && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)) {
-            $payload['vault'] = true;
-            $payload['payee'] = [
-                'merchant_id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
-            ];
-        }
-
         try {
             $response = $this->orderHttpClient->fetchOrder($id);
             $responseData = json_decode($response->getBody(), true);

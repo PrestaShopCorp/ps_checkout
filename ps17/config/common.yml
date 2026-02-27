@@ -49,5 +49,3 @@ services:
 
   PsCheckout\Utility\Common\InputStreamUtility:
     class: PsCheckout\Utility\Common\InputStreamUtility
-
-
