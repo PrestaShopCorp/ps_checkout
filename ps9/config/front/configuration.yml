@@ -87,6 +87,24 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
 
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
   PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration:
     class: PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration
     arguments:
