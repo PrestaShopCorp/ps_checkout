@@ -29,7 +29,6 @@ Load the UMD bundle via a `<script>` tag, then create and render the component:
     url: "https://checkout-app.example.com",
     order: { /* Raw PayPal Order JSON */ },
     isTestMode: false,
-    transactionActions: { /* Optional action overrides keyed by transaction ID */ },
     onSubmit: async (type, transactionId, data) => {
       // Handle the action (API call, etc.)
       return { message: "Action completed." };
@@ -77,7 +76,6 @@ interface PrestaShopCheckoutProps {
   url?: string;                                          // URL of the hosted child app (iframe src)
   order: PayPalOrder;                                    // Raw PayPal Order JSON from Orders v2 API
   isTestMode?: boolean;                                  // Display test mode indicator
-  transactionActions?: Record<string, TransactionActions>; // Action overrides keyed by transaction ID
   onSubmit?: (                                           // Action callback (see above)
     type: TransactionActionType,
     transactionId: string,
@@ -89,7 +87,6 @@ interface PrestaShopCheckoutProps {
 - `url` — Defaults to `window.location.origin` if omitted.
 - `order` — Required. The raw PayPal Order object from the Orders v2 API response.
 - `isTestMode` — Optional. Displays a test/production mode indicator.
-- `transactionActions` — Optional. Overrides available actions per transaction ID.
 - `onSubmit` — Optional. Called when the user triggers a transaction action.
 
 ## Type Reference
@@ -120,19 +117,6 @@ interface PurchaseUnit {
 ```
 
 Each authorization, capture, and refund object includes `id`, `status`, `amount`, `create_time`, and type-specific breakdown fields.
-
-### TransactionActions
-
-Controls which action buttons are shown. A `boolean` enables/disables; a `number` sets the maximum amount for the action. Keyed by transaction ID in `transactionActions`.
-
-```ts
-interface TransactionActions {
-  capture?: boolean | number;   // true or max capturable amount
-  void?: boolean;
-  reauthorize?: boolean;
-  refund?: boolean | number;    // true or max refundable amount
-}
-```
 
 ### TransactionActionData
 
@@ -264,13 +248,6 @@ const checkout = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
     payment_source: { paypal: {} },
   },
   isTestMode: false,
-  transactionActions: {
-    "0AE12345BC678901D": {
-      capture: 125.50,
-      void: true,
-      reauthorize: true,
-    },
-  },
   onSubmit: async (type, transactionId, data) => {
     const response = await fetch("/api/checkout/action", {
       method: "POST",
@@ -325,9 +302,6 @@ const checkout = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
       },
     },
   },
-  transactionActions: {
-    "CAP-001": { refund: 200.00 },
-  },
   onSubmit: async (type, transactionId, data) => {
     const response = await fetch("/api/checkout/action", {
       method: "POST",
@@ -351,16 +325,15 @@ let checkoutInstance;
 checkoutInstance = window.PrestaShopCheckoutSDK.PrestaShopCheckout({
   url: "https://checkout-app.example.com",
   order: currentOrder,
-  transactionActions: currentActions,
   onSubmit: async (type, transactionId, data) => {
     await performAction(type, transactionId, data);
 
     // Fetch updated data from your backend
     const updated = await fetch(`/api/orders/${currentOrder.id}`);
-    const { order, transactionActions } = await updated.json();
+    const { order } = await updated.json();
 
     // Push new props into the iframe
-    await checkoutInstance.updateProps({ order, transactionActions });
+    await checkoutInstance.updateProps({ order });
 
     return { message: "Action completed and data refreshed." };
   },

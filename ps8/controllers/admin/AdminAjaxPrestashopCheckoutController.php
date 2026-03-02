@@ -808,7 +808,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'httpCode' => 200,
             'status' => true,
             'order' => $data['order'],
-            'transactionActions' => $data['transactionActions'],
             'isTestMode' => $data['isTestMode'],
         ]);
     }
@@ -936,7 +935,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'status' => true,
             'message' => $translator->trans('Refund has been processed by PayPal.'),
             'order' => $data['order'],
-            'transactionActions' => $data['transactionActions'],
             'isTestMode' => $data['isTestMode'],
         ]);
     }
@@ -1206,7 +1204,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'status' => true,
             'message' => $this->module->l('Authorization captured successfully.'),
             'order' => $data['order'],
-            'transactionActions' => $data['transactionActions'],
             'isTestMode' => $data['isTestMode'],
         ]);
     }
@@ -1253,7 +1250,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'status' => true,
             'message' => $this->module->l('Authorization voided successfully.'),
             'order' => $data['order'],
-            'transactionActions' => $data['transactionActions'],
             'isTestMode' => $data['isTestMode'],
         ]);
     }
@@ -1300,7 +1296,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'status' => true,
             'message' => $this->module->l('Authorization reauthorized successfully.'),
             'order' => $data['order'],
-            'transactionActions' => $data['transactionActions'],
             'isTestMode' => $data['isTestMode'],
         ]);
     }

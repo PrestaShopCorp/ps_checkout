@@ -83,7 +83,6 @@ var ps_checkout_merchant = {};
             if (checkoutComponent && json.order) {
               checkoutComponent.updateProps({
                 order: json.order,
-                transactionActions: json.transactionActions || {},
               });
             }
             return { message: json.message || '' };
@@ -109,7 +108,6 @@ var ps_checkout_merchant = {};
             url: appUrl,
             order: json.order,
             isTestMode: json.isTestMode || false,
-            transactionActions: json.transactionActions || {},
             onSubmit: onSubmit,
           });
           checkoutComponent.render('#' + containerId);
