@@ -129,6 +129,10 @@ class PayPalOrderResponse
      *         authorizations?: array<int, array{
      *             id: string,
      *             status: string,
+     *             amount: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
      *             status_details?: array{
      *                 reason: string,
      *             },
@@ -197,6 +201,10 @@ class PayPalOrderResponse
      * @return array{
      *     id: string,
      *     status: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
      *     status_details?: array{
      *         reason: string,
      *     },
@@ -219,6 +227,10 @@ class PayPalOrderResponse
      * @return array<int, array{
      *     id: string,
      *     status: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
      *     status_details?: array{
      *         reason: string,
      *     },

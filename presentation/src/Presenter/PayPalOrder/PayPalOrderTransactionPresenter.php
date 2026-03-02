@@ -81,7 +81,7 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
                         'status' => $this->getTransactionStatus($refund['status']),
                         'amount' => $refund['amount']['value'],
                         'currency' => $refund['amount']['currency_code'],
-                        'date' => $this->datePresenter->present($refund['create_time'], 'Y-m-d H:i:s'),
+                        'date' => $this->datePresenter->present($refund['create_time'], 'Y-m-d\TH:i:s'),
                         'isRefundable' => false,
                         'maxAmountRefundable' => 0,
                         'gross_amount' => $refund['seller_payable_breakdown']['gross_amount']['value'] ?? '',
@@ -100,13 +100,33 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
                         'status' => $this->getTransactionStatus($payment['status']),
                         'amount' => $payment['amount']['value'],
                         'currency' => $payment['amount']['currency_code'],
-                        'date' => $this->datePresenter->present($payment['create_time'], 'Y-m-d H:i:s'),
+                        'date' => $this->datePresenter->present($payment['create_time'], 'Y-m-d\TH:i:s'),
                         'isRefundable' => in_array($payment['status'], ['COMPLETED', 'PARTIALLY_REFUNDED']),
-                        'maxAmountRefundable' => $maxAmountRefundable > 0 ? $maxAmountRefundable : 0,
+                        'maxAmountRefundable' => max($maxAmountRefundable, 0),
                         'gross_amount' => $payment['seller_receivable_breakdown']['gross_amount']['value'] ?? '',
                         'paypal_fee' => $payment['seller_receivable_breakdown']['paypal_fee']['value'] ?? '',
                         'net_amount' => $payment['seller_receivable_breakdown']['net_amount']['value'] ?? '',
                         'seller_protection' => $this->getSellerProtection($payment),
+                    ];
+                }
+            }
+
+            if (!empty($purchase['payments']['authorizations'])) {
+                foreach ($purchase['payments']['authorizations'] as $authorization) {
+                    $transactions[] = [
+                        'type' => $this->getTransactionType('authorization'),
+                        'id' => $authorization['id'],
+                        'status' => $this->getTransactionStatus($authorization['status']),
+                        'amount' => $authorization['amount']['value'],
+                        'currency' => $authorization['amount']['currency_code'],
+                        'date' => $this->datePresenter->present($authorization['create_time'] ?? '', 'Y-m-d\TH:i:s'),
+                        'expiration_time' => $authorization['expiration_time'] ?? '',
+                        'isRefundable' => false,
+                        'maxAmountRefundable' => 0,
+                        'gross_amount' => $authorization['amount']['value'],
+                        'paypal_fee' => '',
+                        'net_amount' => $authorization['amount']['value'],
+                        'seller_protection' => [],
                     ];
                 }
             }
@@ -137,6 +157,11 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
             case 'refund':
                 $translated = $this->translator->trans('Refund');
                 $class = 'refund';
+
+                break;
+            case 'authorization':
+                $translated = $this->translator->trans('Authorization');
+                $class = 'authorization';
 
                 break;
             default:
@@ -175,13 +200,48 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
 
                 break;
             case 'PARTIALLY_REFUNDED':
-                $translated = $this->translator->trans('Partially refunded');
+                $translated = $this->translator->trans('Partially Refunded');
                 $class = 'info';
 
                 break;
             case 'REFUNDED':
                 $translated = $this->translator->trans('Refunded');
                 $class = 'info';
+
+                break;
+            case 'CREATED':
+                $translated = $this->translator->trans('Created');
+                $class = 'info';
+
+                break;
+            case 'PARTIALLY_CAPTURED':
+                $translated = $this->translator->trans('Partially captured');
+                $class = 'info';
+
+                break;
+            case 'VOIDED':
+                $translated = $this->translator->trans('Voided');
+                $class = 'warning';
+
+                break;
+            case 'EXPIRED':
+                $translated = $this->translator->trans('Expired');
+                $class = 'danger';
+
+                break;
+            case 'FAILED':
+                $translated = $this->translator->trans('Failed');
+                $class = 'danger';
+
+                break;
+            case 'CANCELLED':
+                $translated = $this->translator->trans('Cancelled');
+                $class = 'danger';
+
+                break;
+            case 'DENIED':
+                $translated = $this->translator->trans('Denied');
+                $class = 'danger';
 
                 break;
             default:
@@ -240,7 +300,7 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
 
                 return [
                     'value' => $status,
-                    'translated' => $this->translator->trans('Partially eligible'),
+                    'translated' => $this->translator->trans('Partially Eligible'),
                     'help' => implode(' ', $help),
                     'class' => 'info',
                 ];
@@ -256,7 +316,7 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
 
                 return [
                     'value' => $status,
-                    'translated' => $this->translator->trans('Not eligible'),
+                    'translated' => $this->translator->trans('Not Eligible'),
                     'help' => implode(' ', $help),
                     'class' => 'warning',
                 ];

@@ -577,7 +577,7 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPurchaseUnits\(\) should return array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> but returns array\.$#'
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPurchaseUnits\(\) should return array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> but returns array\.$#'
 			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -619,19 +619,19 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Offset ''authorizations'' might not exist on array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\.$#'
+			message: '#^Offset ''authorizations'' might not exist on array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Offset ''items'' on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\} on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''items'' on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Offset ''payments'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			message: '#^Offset ''payments'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -3499,13 +3499,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Offset ''items'' does not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			message: '#^Offset ''items'' does not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
 
 		-
-			message: '#^Offset ''reference_id'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			message: '#^Offset ''reference_id'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitAction.php
@@ -4357,13 +4357,13 @@ parameters:
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
-			message: '#^Offset ''purchase_units'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''purchase_units'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
-			message: '#^Offset ''shipping'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> in isset\(\) does not exist\.$#'
+			message: '#^Offset ''shipping'' on non\-empty\-array\<int, array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\> in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
@@ -4837,7 +4837,7 @@ parameters:
 			path: ../core/src/PayPal/OrderStatus/Action/PayPalCheckOrderStatusAction.php
 
 		-
-			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
+			message: '#^Offset ''create_time'' might not exist on array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../core/src/PayPal/Payment/Authorization/Action/CaptureAuthorizationAction.php
@@ -11101,6 +11101,36 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenterInterface.php
 
 		-
+			message: '#^Cannot access offset ''translated'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 10
+			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
+
+		-
+			message: '#^Parameter \#1 \$presenterData of method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\MerchantOrderViewPresenter\:\:buildOrderData\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../presentation/src/Presenter/PayPalOrder/MerchantOrderViewPresenter.php
+
+		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderPresenter\:\:getOrderStatus\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -11167,7 +11197,7 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
 
 		-
-			message: '#^Offset ''amount'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\: non\-empty\-array\{authorizations\?\: array\<int, array\{id\: string, status\: string, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
+			message: '#^Offset ''amount'' might not exist on array\{reference_id\?\: string, amount\?\: array\{value\: string, currency_code\: string\}, payments\: non\-empty\-array\{authorizations\?\: array\<int, array\{id\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, create_time\?\: string, update_time\?\: string, expiration_time\?\: string, links\?\: array\<int, array\{rel\: string, href\: string, method\: string\}\>\}\>, captures\?\: array\<int, array\<string, mixed\>\>, refunds\?\: array\<int, array\<string, mixed\>\>\}\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
