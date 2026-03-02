@@ -221,15 +221,6 @@ services:
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
 
-  PsCheckout\Core\OrderState\Action\SetVoidedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetVoidedOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
-
   PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher:
     class: PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher
     arguments:

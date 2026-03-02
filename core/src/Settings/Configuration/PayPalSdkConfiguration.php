@@ -210,6 +210,11 @@ class PayPalSdkConfiguration
             $components[] = 'applepay';
         }
 
+        if (array_key_exists('pay_upon_invoice', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['pay_upon_invoice']);
+            $components[] = 'legal';
+        }
+
         if (!empty($eligibleAlternativePaymentMethods) && $this->shouldIncludeButtonsComponent()) {
             $locale = $this->getLocale();
 
