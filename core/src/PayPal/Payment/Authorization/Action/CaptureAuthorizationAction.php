@@ -66,7 +66,7 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
         // Check PayPal order status must be COMPLETED
         if ($payPalOrder->getStatus() !== PayPalOrderStatus::COMPLETED) {
             throw new PsCheckoutException(
-                sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
+                sprintf('PayPal Order %s status must be COMPLETED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
                 PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID
             );
         }

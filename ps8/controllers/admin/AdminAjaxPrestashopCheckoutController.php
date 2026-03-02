@@ -821,15 +821,12 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $captureId = Tools::getValue('id_transaction') ?: Tools::getValue('orderPayPalRefundTransaction');
         $amount = Tools::getValue('amount') ?: Tools::getValue('orderPayPalRefundAmount');
 
-        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
 
         $payPalOrderId = $payPalOrder->getId();
         $currency = Tools::getValue('currency') ?: Tools::getValue('orderPayPalRefundCurrency');
 
         if (!$currency) {
-            /** @var PayPalOrderProvider $paypalOrderProvider */
-            $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
             $orderAmount = $paypalOrderResponse->getOrderAmount();
             $currency = $orderAmount['currency_code'] ?? '';
         }
@@ -907,36 +904,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             ]);
         }
 
-        /** @var PayPalOrderCache $cache */
-        $cache = $this->module->getService(PayPalOrderCache::class);
-        $cache->delete($payPalOrderId);
-
-        /** @var PayPalOrderProvider $paypalOrderProvider */
-        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-
-        try {
-            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
-        } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
-            $this->exitWithResponse([
-                'httpCode' => 200,
-                'status' => true,
-                'message' => $translator->trans('Refund has been processed by PayPal.'),
-            ]);
-        }
-
-        /** @var MerchantOrderViewPresenter $presenter */
-        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
-        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
-
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'message' => $translator->trans('Refund has been processed by PayPal.'),
-            'order' => $data['order'],
-            'isTestMode' => $data['isTestMode'],
-        ]);
+        $this->exitWithRefreshedOrderData($payPalOrderId, $isProductionEnv, $translator->trans('Refund has been processed by PayPal.'));
     }
 
     /**
@@ -1176,36 +1144,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
-        /** @var PayPalOrderCache $cache */
-        $cache = $this->module->getService(PayPalOrderCache::class);
-        $cache->delete($payPalOrder->getId());
-
-        /** @var PayPalOrderProvider $paypalOrderProvider */
-        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-
-        try {
-            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
-        } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [$exception->getMessage()],
-            ]);
-        }
-
-        /** @var MerchantOrderViewPresenter $presenter */
-        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
-        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
-
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'message' => $this->module->l('Authorization captured successfully.'),
-            'order' => $data['order'],
-            'isTestMode' => $data['isTestMode'],
-        ]);
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization captured successfully.'));
     }
 
     public function ajaxProcessVoidAuthorization()
@@ -1222,36 +1161,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
-        /** @var PayPalOrderCache $cache */
-        $cache = $this->module->getService(PayPalOrderCache::class);
-        $cache->delete($payPalOrder->getId());
-
-        /** @var PayPalOrderProvider $paypalOrderProvider */
-        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
-
-        try {
-            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
-        } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [$exception->getMessage()],
-            ]);
-        }
-
-        /** @var MerchantOrderViewPresenter $presenter */
-        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
-        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
-
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'message' => $this->module->l('Authorization voided successfully.'),
-            'order' => $data['order'],
-            'isTestMode' => $data['isTestMode'],
-        ]);
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization voided successfully.'));
     }
 
     public function ajaxProcessReauthorizeAuthorization()
@@ -1268,22 +1178,34 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization reauthorized successfully.'));
+    }
+
+    /**
+     * @param string $payPalOrderId
+     * @param bool $isProductionEnv
+     * @param string $message
+     *
+     * @return void
+     */
+    private function exitWithRefreshedOrderData(string $payPalOrderId, bool $isProductionEnv, string $message)
+    {
         /** @var PayPalOrderCache $cache */
         $cache = $this->module->getService(PayPalOrderCache::class);
-        $cache->delete($payPalOrder->getId());
+        $cache->delete($payPalOrderId);
 
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
 
         try {
-            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
         } catch (Exception $exception) {
             \Sentry\captureException($exception);
 
             $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [$exception->getMessage()],
+                'httpCode' => 200,
+                'status' => true,
+                'message' => $message,
             ]);
         }
 
@@ -1294,7 +1216,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $this->exitWithResponse([
             'httpCode' => 200,
             'status' => true,
-            'message' => $this->module->l('Authorization reauthorized successfully.'),
+            'message' => $message,
             'order' => $data['order'],
             'isTestMode' => $data['isTestMode'],
         ]);
