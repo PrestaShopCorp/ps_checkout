@@ -21,7 +21,6 @@
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 
 class PayUponInvoiceEligibilityChecker extends BaseFundingSourceEligibilityChecker
 {

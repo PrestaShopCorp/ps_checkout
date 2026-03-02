@@ -25,12 +25,8 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
-use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 
 class PayPalOrderProvider implements PayPalOrderProviderInterface

@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Core\PayPal\Order\Validator;
 
-use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\ValueObject\PayPalOrderCompletionData;

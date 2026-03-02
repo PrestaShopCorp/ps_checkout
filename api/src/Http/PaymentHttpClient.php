@@ -22,8 +22,6 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Client\ClientInterface;

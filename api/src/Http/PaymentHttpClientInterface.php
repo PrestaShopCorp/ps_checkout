@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Api\Http;
 
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use Psr\Http\Message\ResponseInterface;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\HttpException;

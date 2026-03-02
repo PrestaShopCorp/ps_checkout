@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
 {
     /**

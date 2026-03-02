@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Presentation\Presenter\Settings\Front\Modules;
 
-use PsCheckout\Core\FundingSource\Constraint\FundingSourceConstraint;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration;
