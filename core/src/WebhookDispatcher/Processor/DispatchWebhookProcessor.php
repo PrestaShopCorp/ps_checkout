@@ -31,7 +31,6 @@ use PsCheckout\Core\Webhook\Configuration\WebhookCategoryConfiguration;
 use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
 use Psr\Log\LoggerInterface;
-use function Sentry\init;
 
 class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 {
@@ -99,6 +98,7 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 
         if ($dispatchWebhookRequest->getEventType() === WebhookEventTypeConfiguration::PAYMENT_AUTHORIZATION_VOIDED) {
             $this->log('Payment authorization voided, skipping', $dispatchWebhookRequest);
+
             return true;
         }
 
