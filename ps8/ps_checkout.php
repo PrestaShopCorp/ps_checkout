@@ -272,11 +272,11 @@ class Ps_Checkout extends PaymentModule
                 break;
             case 'AdminOrders':
                 $this->context->controller->addJS(
-                    $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
+                    $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version . '&time='.time(),
                     false
                 );
                 $this->context->controller->addCss(
-                    $this->_path . 'views/css/adminOrderView.css?version=' . $this->version,
+                    $this->_path . 'views/css/adminOrderView.css?version=' . $this->version . '&time='.time(),
                     'all',
                     null,
                     false

@@ -130,6 +130,24 @@ class OrderStateInstaller implements InstallerInterface
             $this->configuration->set(OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED, $authorizedStateId);
         }
 
+        if (!$this->checkAlreadyInstalled(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED)) {
+            $voidedStateId = $this->createOrderState(
+                '#DC143C',
+                [
+                    'en' => 'Authorization voided',
+                    'fr' => 'Autorisation annulée',
+                    'es' => 'Autorización anulada',
+                    'it' => 'Autorizzazione annullata',
+                    'nl' => 'Autorisatie ongeldig gemaakt',
+                    'de' => 'Autorisierung aufgehoben',
+                    'pl' => 'Autoryzacja unieważniona',
+                    'pt' => 'Autorização anulada',
+                ]
+            );
+
+            $this->configuration->set(OrderStateConfiguration::PS_CHECKOUT_STATE_VOIDED, $voidedStateId);
+        }
+
         return true;
     }
 

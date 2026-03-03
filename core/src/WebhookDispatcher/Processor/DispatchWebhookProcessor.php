@@ -31,6 +31,7 @@ use PsCheckout\Core\Webhook\Configuration\WebhookCategoryConfiguration;
 use PsCheckout\Core\Webhook\Configuration\WebhookEventTypeConfiguration;
 use PsCheckout\Core\WebhookDispatcher\ValueObject\DispatchWebhookRequest;
 use Psr\Log\LoggerInterface;
+use function Sentry\init;
 
 class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
 {
@@ -96,8 +97,12 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
             return true;
         }
 
-        $orderId = $dispatchWebhookRequest->getOrderId();
+        if ($dispatchWebhookRequest->getEventType() === WebhookEventTypeConfiguration::PAYMENT_AUTHORIZATION_VOIDED) {
+            $this->log('Payment authorization voided, skipping', $dispatchWebhookRequest);
+            return true;
+        }
 
+        $orderId = $dispatchWebhookRequest->getOrderId();
         if (!$orderId) {
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
