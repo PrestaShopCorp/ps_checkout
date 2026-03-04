@@ -25,6 +25,7 @@ use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
+use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction;
@@ -539,8 +540,8 @@ class Ps_Checkout extends PaymentModule
 
         /** @var Configuration $configuration */
         $configuration = $this->getService(Configuration::class);
-        /** @var FundingSourcePresenter $fundingSourcePresenter */
-        $fundingSourcePresenter = $this->getService(FundingSourcePresenter::class);
+        /** @var FundingSourceEligibilityService $eligibilityService */
+        $eligibilityService = $this->getService(FundingSourceEligibilityService::class);
         /** @var FundingSourceTokenPresenter $fundingSourceTokenPresenter */
         $fundingSourceTokenPresenter = $this->getService(FundingSourceTokenPresenter::class);
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
@@ -589,7 +590,7 @@ class Ps_Checkout extends PaymentModule
                 $paymentOptions[] = $paymentOption;
             }
         }
-        foreach ($fundingSourcePresenter->getAllActiveForSpecificShop($this->context->shop->id) as $fundingSource) {
+        foreach ($eligibilityService->getEligibleFundingSources() as $fundingSource) {
             $paymentOption = new PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->getName());
             $paymentOption->setCallToActionText($fundingSourceTranslationProvider->getPaymentMethodName(
@@ -1206,8 +1207,6 @@ class Ps_Checkout extends PaymentModule
             }
         }
     }
-
-
 
     /**
      * Common logic to process tracking number update.

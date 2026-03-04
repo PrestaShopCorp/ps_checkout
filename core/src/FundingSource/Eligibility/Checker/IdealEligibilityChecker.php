@@ -43,4 +43,9 @@ class IdealEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [];
     }
+
+    protected function getMinAmount(): ?float
+    {
+        return 1.0;
+    }
 }

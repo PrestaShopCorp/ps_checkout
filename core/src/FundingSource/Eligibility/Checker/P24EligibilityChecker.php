@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
+use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class P24EligibilityChecker extends BaseFundingSourceEligibilityChecker
@@ -42,5 +43,26 @@ class P24EligibilityChecker extends BaseFundingSourceEligibilityChecker
     protected function assertConfigurations(): array
     {
         return [];
+    }
+
+    protected function getMinAmount(): ?float
+    {
+        return 1.0;
+    }
+
+    public function isEligible(FundingSource $fundingSource): bool
+    {
+        if (!parent::isEligible($fundingSource)) {
+            return false;
+        }
+
+        if ($this->context->getCurrencyIsoCode() === 'PLN') {
+            $cartTotal = $this->context->getCartOrderTotal();
+            if ($cartTotal !== null && $cartTotal > 55000.0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

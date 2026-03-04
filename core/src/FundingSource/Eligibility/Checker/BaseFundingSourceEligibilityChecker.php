@@ -77,6 +77,18 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
             return false;
         }
 
+        $cartTotal = $this->context->getCartOrderTotal();
+        if ($cartTotal !== null) {
+            $minAmount = $this->getMinAmount();
+            if ($minAmount !== null && $cartTotal < $minAmount) {
+                return false;
+            }
+            $maxAmount = $this->getMaxAmount();
+            if ($maxAmount !== null && $cartTotal > $maxAmount) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -105,4 +117,24 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
      * @return string[]
      */
     abstract protected function assertConfigurations(): array;
+
+    /**
+     * Minimum cart order total (inclusive) required for this funding source, or null for no limit.
+     *
+     * @return float|null
+     */
+    protected function getMinAmount(): ?float
+    {
+        return null;
+    }
+
+    /**
+     * Maximum cart order total (inclusive) allowed for this funding source, or null for no limit.
+     *
+     * @return float|null
+     */
+    protected function getMaxAmount(): ?float
+    {
+        return null;
+    }
 }

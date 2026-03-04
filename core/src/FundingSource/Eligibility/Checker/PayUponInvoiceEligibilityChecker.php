@@ -43,4 +43,14 @@ class PayUponInvoiceEligibilityChecker extends BaseFundingSourceEligibilityCheck
     {
         return [];
     }
+
+    protected function getMinAmount(): ?float
+    {
+        return 5.0;
+    }
+
+    protected function getMaxAmount(): ?float
+    {
+        return 2500.0;
+    }
 }
