@@ -170,7 +170,7 @@ class Context implements ContextInterface
     {
         $cart = $this->context->cart;
 
-        return ($cart instanceof \Cart && \Validate::isLoadedObject($cart))
+        return (\Validate::isLoadedObject($cart))
             ? (float) $cart->getOrderTotal(true, \Cart::BOTH)
             : null;
     }
