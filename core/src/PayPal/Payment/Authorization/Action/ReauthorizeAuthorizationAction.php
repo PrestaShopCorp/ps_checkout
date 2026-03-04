@@ -87,7 +87,7 @@ final class ReauthorizeAuthorizationAction implements AuthorizationActionInterfa
     /**
      * @inheritDoc
      */
-    public function execute(PayPalOrderResponse $payPalOrder)
+    public function execute(PayPalOrderResponse $payPalOrder, array $payload = [])
     {
         if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             $this->logger->error('PayPal Order intent must be AUTHORIZE', ['order_id' => $payPalOrder->getId()]);

@@ -25,6 +25,7 @@ interface AuthorizationActionProcessorInterface
     /**
      * @param string $action
      * @param string|null $orderId
+     * @param array<string, mixed> $payload
      *
      * @return array{
      *     status: bool,
@@ -32,5 +33,5 @@ interface AuthorizationActionProcessorInterface
      *     error?: array{message: string, code: int}
      * }
      */
-    public function process(string $action, ?string $orderId): array;
+    public function process(string $action, ?string $orderId, array $payload = []): array;
 }

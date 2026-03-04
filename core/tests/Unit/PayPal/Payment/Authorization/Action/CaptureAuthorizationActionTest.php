@@ -62,7 +62,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -119,7 +119,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -170,7 +170,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -204,7 +204,64 @@ class CaptureAuthorizationActionTest extends TestCase
         $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
     }
 
-    public function testThrowsExceptionWhenOrderStatusNotApproved(): void
+    public function testSuccessfulCaptureWithPayload(): void
+    {
+        $payload = [
+            'amount' => [
+                'value' => '50.00',
+                'currency_code' => 'EUR',
+            ],
+        ];
+
+        $payPalOrder = $this->createPayPalOrder(
+            'ORDER-123',
+            PayPalOrderStatus::COMPLETED,
+            'AUTHORIZE',
+            [
+                'id' => 'AUTH-456',
+                'status' => PayPalAuthorizationStatus::CREATED,
+                'expiration_time' => '2100-01-28T23:59:59Z',
+                'create_time' => '2099-12-31T23:59:59Z',
+                'update_time' => '2099-12-31T23:59:59Z',
+            ]
+        );
+
+        $capturedAuthData = [
+            'id' => 'AUTH-456',
+            'status' => PayPalAuthorizationStatus::CAPTURED,
+            'create_time' => '2099-12-31T23:59:59Z',
+            'update_time' => '2099-12-31T23:59:59Z',
+        ];
+
+        $this->paymentHttpClient->expects($this->once())
+            ->method('captureAuthorization')
+            ->with('AUTH-456', $payload)
+            ->willReturn($this->createHttpResponse($capturedAuthData));
+
+        $existingEntity = new PayPalOrderAuthorization(
+            'AUTH-456',
+            'ORDER-123',
+            PayPalAuthorizationStatus::CREATED,
+            '2100-01-28T23:59:59Z',
+            '2025-01-01T00:00:00Z',
+            '2025-01-01T00:00:00Z'
+        );
+
+        $this->authorizationRepository->expects($this->once())
+            ->method('getById')
+            ->with('AUTH-456')
+            ->willReturn($existingEntity);
+
+        $this->authorizationRepository->expects($this->once())
+            ->method('save');
+
+        $result = $this->action->execute($payPalOrder, $payload);
+
+        $this->assertEquals('AUTH-456', $result->getId());
+        $this->assertEquals(PayPalAuthorizationStatus::CAPTURED, $result->getStatus());
+    }
+
+    public function testThrowsExceptionWhenOrderStatusNotCompleted(): void
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
@@ -220,7 +277,7 @@ class CaptureAuthorizationActionTest extends TestCase
         );
 
         $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('PayPal Order ORDER-123 status must be APPROVED, current status: CREATED');
+        $this->expectExceptionMessage('PayPal Order ORDER-123 status must be COMPLETED, current status: CREATED');
         $this->expectExceptionCode(PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
 
         $this->action->execute($payPalOrder);
@@ -230,7 +287,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'CAPTURE',
             [
                 'id' => 'AUTH-456',
@@ -272,7 +329,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -294,7 +351,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -316,7 +373,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',
@@ -338,7 +395,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = $this->createPayPalOrder(
             'ORDER-123',
-            PayPalOrderStatus::APPROVED,
+            PayPalOrderStatus::COMPLETED,
             'AUTHORIZE',
             [
                 'id' => 'AUTH-456',

@@ -114,11 +114,13 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
      */
     public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto
     {
-        $payload = $this->serializer->serialize($requestDto ?? [], JsonEncoder::FORMAT, [
-            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
-        ]);
-
-        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], $payload));
+        $payload = [];
+        if ($requestDto) {
+            $payload = $this->serializer->serialize($requestDto, JsonEncoder::FORMAT, [
+                AbstractObjectNormalizer::SKIP_NULL_VALUES => true
+            ]);
+        }
+        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], empty($payload) ? '{}' : $payload));
 
         return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
     }

@@ -61,12 +61,12 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
     /**
      * {@inheritDoc}
      */
-    public function execute(PayPalOrderResponse $payPalOrder)
+    public function execute(PayPalOrderResponse $payPalOrder, array $payload = [])
     {
-        // Check PayPal order status must be APPROVED
-        if ($payPalOrder->getStatus() !== PayPalOrderStatus::APPROVED) {
+        // Check PayPal order status must be COMPLETED
+        if ($payPalOrder->getStatus() !== PayPalOrderStatus::COMPLETED) {
             throw new PsCheckoutException(
-                sprintf('PayPal Order %s status must be APPROVED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
+                sprintf('PayPal Order %s status must be COMPLETED, current status: %s', $payPalOrder->getId(), $payPalOrder->getStatus()),
                 PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID
             );
         }
@@ -131,7 +131,7 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
             );
         }
 
-        $captureResponse = $this->paymentHttpClient->captureAuthorization($authorizationId);
+        $captureResponse = $this->paymentHttpClient->captureAuthorization($authorizationId, $payload);
 
         /**
          * @var array{

@@ -27,6 +27,7 @@ use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
 use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
@@ -797,11 +798,150 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessGetOrderViewData()
     {
-        /** @var Translator $translator **/
-        $translator = $this->module->getService(Translator::class);
         $id_order = (int) Tools::getValue('id_order');
 
-        if (empty($id_order)) {
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var MerchantOrderViewPresenter $presenter */
+        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
+        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'order' => $data['order'],
+            'isTestMode' => $data['isTestMode'],
+        ]);
+    }
+
+    public function ajaxProcessRefundOrder()
+    {
+        /** @var Translator $translator **/
+        $translator = $this->module->getService(Translator::class);
+
+        $id_order = (int) Tools::getValue('id_order');
+        $captureId = Tools::getValue('id_transaction') ?: Tools::getValue('orderPayPalRefundTransaction');
+        $amount = Tools::getValue('amount') ?: Tools::getValue('orderPayPalRefundAmount');
+
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        $payPalOrderId = $payPalOrder->getId();
+        $currency = Tools::getValue('currency') ?: Tools::getValue('orderPayPalRefundCurrency');
+
+        if (!$currency) {
+            $orderAmount = $paypalOrderResponse->getOrderAmount();
+            $currency = $orderAmount['currency_code'] ?? '';
+        }
+
+        /** @var RefundPayPalOrderAction $refundPayPalOrderAction */
+        $refundPayPalOrderAction = $this->module->getService(RefundPayPalOrderAction::class);
+
+        try {
+            $payPalRefund = new PayPalRefund($payPalOrderId, $captureId, $currency, $amount);
+
+            $refundPayPalOrderAction->execute($payPalRefund);
+        } catch (PayPalRefundException $exception) {
+            \Sentry\captureException($exception);
+
+            switch ($exception->getCode()) {
+                case PayPalRefundException::INVALID_ORDER_ID:
+                    $error = $translator->trans('PayPal Order is invalid.');
+
+                    break;
+                case PayPalRefundException::INVALID_TRANSACTION_ID:
+                    $error = $translator->trans('PayPal Transaction is invalid.');
+
+                    break;
+                case PayPalRefundException::INVALID_CURRENCY:
+                    $error = $translator->trans('PayPal refund currency is invalid.');
+
+                    break;
+                case PayPalRefundException::INVALID_AMOUNT:
+                    $error = $translator->trans('PayPal refund amount is invalid.');
+
+                    break;
+                case PayPalRefundException::REFUND_FAILED:
+                    $error = $translator->trans('PayPal refund failed.');
+
+                    break;
+                default:
+                    $error = '';
+
+                    break;
+            }
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'errors' => [$error],
+            ]);
+        } catch (OrderException $exception) {
+            \Sentry\captureException($exception);
+
+            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                $this->exitWithResponse([
+                    'httpCode' => 200,
+                    'status' => true,
+                    'content' => $translator->trans('Refund has been processed by PayPal, but order status change or email sending failed.'),
+                ]);
+            } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
+                $this->exitWithResponse([
+                    'httpCode' => 500,
+                    'status' => false,
+                    'errors' => [
+                        $exception->getMessage(),
+                    ],
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        } catch (\Exception $exception) {
+            \Sentry\captureException($exception);
+
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('Refund cannot be processed by PayPal.'),
+                ],
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
+        $this->exitWithRefreshedOrderData($payPalOrderId, $isProductionEnv, $translator->trans('Refund has been processed by PayPal.'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAnonymousAllowed(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param string|null $value
+     * @param string|null $controller
+     * @param string|null $method
+     *
+     * @throws PrestaShopException
+     */
+    protected function ajaxRender($value = null, $controller = null, $method = null)
+    {
+        parent::ajaxRender($value, $controller, $method);
+
+        exit;
+    }
+
+    /**
+     * @param int $idOrder
+     *
+     * @return array{0: \PsCheckout\Infrastructure\Repository\PayPalOrder, 1: \PsCheckout\Api\ValueObject\PayPalOrderResponse, 2: bool}
+     */
+    private function resolvePayPalOrder(int $idOrder): array
+    {
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        if (empty($idOrder)) {
             $this->exitWithResponse([
                 'httpCode' => 400,
                 'status' => false,
@@ -811,7 +951,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             ]);
         }
 
-        $order = new Order($id_order);
+        $order = new Order($idOrder);
 
         /** @var PayPalOrderRepository $payPalOrderRepository */
         $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
@@ -876,128 +1016,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         $isProductionEnv = $payPalOrder->getEnvironment() === PayPalConfiguration::MODE_LIVE;
 
-        /** @var MerchantOrderViewPresenter $presenter */
-        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
-        $data = $presenter->present($paypalOrderResponse, $payPalOrder, $isProductionEnv);
-
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'orderData' => $data['orderData'],
-            'transactionList' => $data['transactionList'],
-        ]);
-    }
-
-    public function ajaxProcessRefundOrder()
-    {
-        /** @var Translator $translator **/
-        $translator = $this->module->getService(Translator::class);
-
-        $payPalOrderId = Tools::getValue('orderPayPalRefundOrder');
-        $captureId = Tools::getValue('orderPayPalRefundTransaction');
-        $amount = Tools::getValue('orderPayPalRefundAmount');
-        $currency = Tools::getValue('orderPayPalRefundCurrency');
-
-        /** @var RefundPayPalOrderAction $refundPayPalOrderAction */
-        $refundPayPalOrderAction = $this->module->getService(RefundPayPalOrderAction::class);
-
-        try {
-            $payPalRefund = new PayPalRefund($payPalOrderId, $captureId, $currency, $amount);
-
-            $refundPayPalOrderAction->execute($payPalRefund);
-        } catch (PayPalRefundException $exception) {
-            \Sentry\captureException($exception);
-
-            switch ($exception->getCode()) {
-                case PayPalRefundException::INVALID_ORDER_ID:
-                    $error = $translator->trans('PayPal Order is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_TRANSACTION_ID:
-                    $error = $translator->trans('PayPal Transaction is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_CURRENCY:
-                    $error = $translator->trans('PayPal refund currency is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_AMOUNT:
-                    $error = $translator->trans('PayPal refund amount is invalid.');
-
-                    break;
-                case PayPalRefundException::REFUND_FAILED:
-                    $error = $translator->trans('PayPal refund failed.');
-
-                    break;
-                default:
-                    $error = '';
-
-                    break;
-            }
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-                'errors' => [$error],
-            ]);
-        } catch (OrderException $exception) {
-            \Sentry\captureException($exception);
-
-            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 200,
-                    'status' => true,
-                    'content' => $translator->trans('Refund has been processed by PayPal, but order status change or email sending failed.'),
-                ]);
-            } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 500,
-                    'status' => false,
-                    'errors' => [
-                        $exception->getMessage(),
-                    ],
-                    'error' => $exception->getMessage(),
-                ]);
-            }
-        } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [
-                    $translator->trans('Refund cannot be processed by PayPal.'),
-                ],
-                'error' => $exception->getMessage(),
-            ]);
-        }
-
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'content' => $translator->trans('Refund has been processed by PayPal.'),
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAnonymousAllowed(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @param string|null $value
-     * @param string|null $controller
-     * @param string|null $method
-     *
-     * @throws PrestaShopException
-     */
-    protected function ajaxRender($value = null, $controller = null, $method = null)
-    {
-        parent::ajaxRender($value, $controller, $method);
-
-        exit;
+        return [$payPalOrder, $paypalOrderResponse, $isProductionEnv];
     }
 
     /**
@@ -1108,31 +1127,104 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessCaptureAuthorization()
     {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $id_order = (int) Tools::getValue('id_order');
 
-        $this->exitWithResponse($processor->process(AuthorizationAction::CAPTURE, Tools::getValue('orderId')));
+        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        $payload = [];
+        $amount = Tools::getValue('amount');
+        $currency = Tools::getValue('currency');
+
+        if ($amount && $currency) {
+            $payload['amount'] = [
+                'value' => $amount,
+                'currency_code' => $currency,
+            ];
+        }
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::CAPTURE, $payPalOrder->getId(), $payload);
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization captured successfully.'));
     }
 
     public function ajaxProcessVoidAuthorization()
     {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $id_order = (int) Tools::getValue('id_order');
 
-        $this->exitWithResponse($processor->process(AuthorizationAction::VOID, Tools::getValue('orderId')));
+        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::VOID, $payPalOrder->getId());
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization voided successfully.'));
     }
 
     public function ajaxProcessReauthorizeAuthorization()
     {
-        /**
-         * @var AuthorizationActionProcessor $processor
-         */
-        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $id_order = (int) Tools::getValue('id_order');
 
-        $this->exitWithResponse($processor->process(AuthorizationAction::REAUTHORIZE, Tools::getValue('orderId')));
+        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::REAUTHORIZE, $payPalOrder->getId());
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization reauthorized successfully.'));
+    }
+
+    /**
+     * @param string $payPalOrderId
+     * @param bool $isProductionEnv
+     * @param string $message
+     *
+     * @return void
+     */
+    private function exitWithRefreshedOrderData(string $payPalOrderId, bool $isProductionEnv, string $message)
+    {
+        /** @var PayPalOrderCache $cache */
+        $cache = $this->module->getService(PayPalOrderCache::class);
+        $cache->delete($payPalOrderId);
+
+        /** @var PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
+        } catch (\Exception $exception) {
+            \Sentry\captureException($exception);
+
+            $this->exitWithResponse([
+                'httpCode' => 200,
+                'status' => true,
+                'message' => $message,
+            ]);
+        }
+
+        /** @var MerchantOrderViewPresenter $presenter */
+        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
+        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'message' => $message,
+            'order' => $data['order'],
+            'isTestMode' => $data['isTestMode'],
+        ]);
     }
 }

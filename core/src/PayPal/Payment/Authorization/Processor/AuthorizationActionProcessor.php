@@ -60,7 +60,7 @@ class AuthorizationActionProcessor implements AuthorizationActionProcessorInterf
     /**
      * @inheritDoc
      */
-    public function process(string $action, ?string $orderId): array
+    public function process(string $action, ?string $orderId, array $payload = []): array
     {
         if (!$orderId) {
             return [
@@ -80,8 +80,10 @@ class AuthorizationActionProcessor implements AuthorizationActionProcessorInterf
         try {
             $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
 
-            $handler->execute($payPalOrderResponse);
+            $handler->execute($payPalOrderResponse, $payload);
         } catch (Exception $e) {
+            \Sentry\captureException($e);
+
             $this->logger->error('Failed to execute authorization action: ' . $e->getMessage());
 
             return [

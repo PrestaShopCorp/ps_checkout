@@ -347,6 +347,35 @@ class AuthorizationActionProcessorTest extends TestCase
         $this->assertEquals($exceptionCode, $result['error']['code']);
     }
 
+    public function testProcessCaptureActionWithPayload(): void
+    {
+        $orderId = 'ORDER-PAYLOAD';
+        $payload = [
+            'amount' => [
+                'value' => '50.00',
+                'currency_code' => 'EUR',
+            ],
+        ];
+        $payPalOrderResponse = $this->createMock(PayPalOrderResponse::class);
+
+        $this->payPalOrderProvider
+            ->expects($this->once())
+            ->method('getById')
+            ->with($orderId)
+            ->willReturn($payPalOrderResponse);
+
+        $this->captureAction
+            ->expects($this->once())
+            ->method('execute')
+            ->with($payPalOrderResponse, $payload);
+
+        $result = $this->processor->process('capture', $orderId, $payload);
+
+        $this->assertTrue($result['status']);
+        $this->assertArrayNotHasKey('httpCode', $result);
+        $this->assertArrayNotHasKey('error', $result);
+    }
+
     public function testProcessWithExceptionCodeZero(): void
     {
         $orderId = 'ORDER-NO-CODE';

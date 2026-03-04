@@ -367,6 +367,8 @@ class PayPalError
                 throw new PayPalException('Credit card number is invalid.', PayPalException::CREDIT_CARD_NUMBER_IS_INVALID, $previous);
             case 'CARD_EXPIRATION_YEAR_IS_INVALID':
                 throw new PayPalException('Expiration year outside of acceptable range.', PayPalException::CARD_EXPIRATION_YEAR_IS_INVALID, $previous);
+            case 'REAUTHORIZATION_TOO_SOON':
+                throw new PayPalException('Reauthorization of authorization happened too soon.', PayPalException::REAUTHORIZATION_TOO_SOON, $previous);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN, $previous);
         }
