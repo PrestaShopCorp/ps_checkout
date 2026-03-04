@@ -112,24 +112,6 @@ class OrderStateInstaller implements InstallerInterface
             $this->configuration->set(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID, $partiallyPaidStateId);
         }
 
-        if (!$this->checkAlreadyInstalled(OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED)) {
-            $authorizedStateId = $this->createOrderState(
-                '#3498D8',
-                [
-                    'en' => 'Authorized. To be captured by merchant',
-                    'fr' => 'Autorisation. A capturer par le marchand',
-                    'es' => 'Autorizado. El vendedor lo capturará',
-                    'it' => 'Autorizzato. Sarà acquisito dal commerciante',
-                    'nl' => 'Goedgekeurd. Door retailer te registreren.',
-                    'de' => 'Autorisiert. Wird von Händler erfasst.',
-                    'pl' => 'Pomyślna autoryzacja. Transfer do przeprowadzenia przez sklep',
-                    'pt' => 'Autorizado. A ser capturado pelo comerciante',
-                ]
-            );
-
-            $this->configuration->set(OrderStateConfiguration::PS_CHECKOUT_STATE_AUTHORIZED, $authorizedStateId);
-        }
-
         return true;
     }
 

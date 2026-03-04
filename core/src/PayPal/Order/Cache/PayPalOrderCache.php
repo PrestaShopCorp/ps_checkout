@@ -53,6 +53,7 @@ class PayPalOrderCache extends ChainAdapter implements PayPalOrderCacheInterface
     ];
 
     /**
+     * {@inheritdoc}
      */
     public function updateOrderCache($orderResponse)
     {
