@@ -9973,12 +9973,6 @@ parameters:
 			path: ../infrastructure/src/Controller/AbstractFrontController.php
 
 		-
-			message: '#^Function Sentry\\captureException not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: ../infrastructure/src/Controller/AbstractFrontController.php
-
-		-
 			message: '#^Method PsCheckout\\Infrastructure\\Controller\\AbstractFrontController\:\:exitWithResponse\(\) has parameter \$response with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
