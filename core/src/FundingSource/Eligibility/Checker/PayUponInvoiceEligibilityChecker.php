@@ -44,13 +44,13 @@ class PayUponInvoiceEligibilityChecker extends BaseFundingSourceEligibilityCheck
         return [];
     }
 
-    protected function getMinAmount(): ?float
+    public function getMinAmount(string $currency): ?float
     {
-        return 5.0;
+        return ['EUR' => 5.0][$currency] ?? null;
     }
 
-    protected function getMaxAmount(): ?float
+    public function getMaxAmount(string $currency): ?float
     {
-        return 2500.0;
+        return ['EUR' => 2500.0][$currency] ?? null;
     }
 }

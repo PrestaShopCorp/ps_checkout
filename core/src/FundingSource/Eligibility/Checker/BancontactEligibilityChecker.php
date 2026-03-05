@@ -44,8 +44,8 @@ class BancontactEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return [];
     }
 
-    protected function getMinAmount(): ?float
+    public function getMinAmount(string $currency): ?float
     {
-        return 1.0;
+        return ['EUR' => 1.0][$currency] ?? null;
     }
 }
