@@ -11,13 +11,11 @@ services:
     class: PsCheckout\Module\Presentation\Translator
     arguments:
       - '@=service("ps_checkout.module").getTranslator()'
-
+  
   PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider:
     class: PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider
     arguments:
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Api\Http\OrderHttpClient'
 
   PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider:
