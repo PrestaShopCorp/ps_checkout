@@ -65,6 +65,8 @@ class FundingSourceTranslationProvider implements FundingSourceTranslationProvid
                 return $this->translator->trans('Pay with a PayPal account');
             case 'paylater':
                 return $this->translator->trans('Pay in installments with PayPal Pay Later');
+            case 'pay_upon_invoice':
+                return $this->translator->trans('Pay later with invoice');
             default:
                 return sprintf($payByTranslation, $fundingSourceLabel);
         }
@@ -96,6 +98,7 @@ class FundingSourceTranslationProvider implements FundingSourceTranslationProvid
             'mybank' => 'MyBank',
             'blik' => 'BLIK',
             'p24' => 'Przelewy24',
+            'pay_upon_invoice' => $this->translator->trans('Pay upon Invoice'),
             'zimpler' => 'Zimpler',
             'wechatpay' => 'WeChat Pay',
             'payu' => 'PayU',

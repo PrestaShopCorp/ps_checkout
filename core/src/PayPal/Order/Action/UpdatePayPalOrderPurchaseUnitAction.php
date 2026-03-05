@@ -114,8 +114,7 @@ class UpdatePayPalOrderPurchaseUnitAction implements UpdatePayPalOrderPurchaseUn
                     $orderId,
                     $authorization['status'],
                     $authorization['expiration_time'],
-                    $authorization['create_time'],
-                    $authorization['update_time']
+                    $authorization['seller_protection']
                 );
                 $this->payPalOrderAuthorizationRepository->save($payPalAuthorization);
             }

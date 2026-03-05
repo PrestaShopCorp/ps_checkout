@@ -30,11 +30,4 @@ interface PayPalOrderAuthorizationRepositoryInterface
      * @return void
      */
     public function save(PayPalOrderAuthorization $payPalOrderAuthorization);
-
-    /**
-     * @param string $payPalOrderAuthorizationId
-     *
-     * @return PayPalOrderAuthorization|null
-     */
-    public function getById(string $payPalOrderAuthorizationId): ?PayPalOrderAuthorization;
 }

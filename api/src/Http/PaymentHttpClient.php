@@ -22,31 +22,19 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
-use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
-use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClientInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
     public function __construct(
         HttpClientConfigurationBuilderInterface $configurationBuilder,
-        SerializerInterface $serializer,
         ?ClientInterface $client = null
     ) {
         parent::__construct($configurationBuilder->build(), $client);
-        $this->serializer = $serializer;
     }
 
     /**
@@ -77,50 +65,6 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
         $body = $this->generatePayloadString($payload);
 
         return $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], $body));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface
-    {
-        $payloadString = !empty($payload) && json_encode($payload) ? json_encode($payload) : '{}';
-
-        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $payloadString));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function voidAuthorization(string $authorizationId, array $payload = []): ResponseInterface
-    {
-        $body = $this->generatePayloadString($payload);
-
-        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/void", [], $body));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto
-    {
-        $response = $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
-
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto
-    {
-        $payload = $this->serializer->serialize($requestDto ?? [], JsonEncoder::FORMAT, [
-            AbstractObjectNormalizer::SKIP_NULL_VALUES => true
-        ]);
-
-        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], $payload));
-
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
     }
 
     /**

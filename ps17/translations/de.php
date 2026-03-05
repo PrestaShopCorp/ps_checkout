@@ -268,3 +268,4 @@ $_MODULE['<{ps_checkout}prestashop>translator_f1359dd5749dd996e2506e60bfeb9d05']
 $_MODULE['<{ps_checkout}prestashop>translator_a995e3f4789afc5c69be0f2c4a283fe3'] = 'Für weitere Informationen besuchen Sie bitte die offizielle PayPal-Website.';
 $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee'] = 'Der Käufer hat für einen Artikel bezahlt, den er nicht erhalten hat.';
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'Der Käufer hat die Zahlung nicht autorisiert.';
+$_MODULE['<{ps_checkout}prestashop>create_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'Die Zahlung ist ungültig: Der Betrag ist nicht zulässig.';

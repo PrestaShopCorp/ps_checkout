@@ -79,9 +79,10 @@ class SetPendingOrderStateAction implements SetOrderStateActionInterface
             throw new PsCheckoutException('PayPal order not found.', PsCheckoutException::ORDER_NOT_FOUND);
         }
 
+        /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if ($this->orderHasPendingState($order)) {
+        if (!$order || $this->orderHasPendingState($order)) {
             return;
         }
 

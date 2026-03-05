@@ -73,6 +73,16 @@ class CreatePayPalOrderRequest
     private $isExpressCheckout;
 
     /**
+     * @var ?string
+     */
+    private $metaDataId;
+
+    /**
+     * @var ?string
+     */
+    private $birthDate;
+
+    /**
      * CheckoutCreateRequest constructor.
      *
      * @param array $request
@@ -89,6 +99,8 @@ class CreatePayPalOrderRequest
         $this->fundingSource = isset($request['fundingSource']) ? (string) $request['fundingSource'] : 'paypal';
         $this->isCardFields = isset($request['isCardFields']) && (bool) $request['isCardFields'];
         $this->isExpressCheckout = (bool) $request['isExpressCheckout'];
+        $this->metaDataId = isset($request['metadataId']) ? (string) $request['metadataId'] : null;
+        $this->birthDate = isset($request['birthDate']) ? (string) $request['birthDate'] : null;
     }
 
     /**
@@ -189,5 +201,25 @@ class CreatePayPalOrderRequest
     public function isExpressCheckout(): bool
     {
         return $this->isExpressCheckout;
+    }
+
+    /**
+     * Get the metadata ID.
+     *
+     * @return string|null
+     */
+    public function getMetaDataId()
+    {
+        return $this->metaDataId;
+    }
+
+    /**
+     * Get the birth date.
+     *
+     * @return string|null
+     */
+    public function getBirthDate()
+    {
+        return $this->birthDate;
     }
 }

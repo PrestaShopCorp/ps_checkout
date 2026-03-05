@@ -10,3 +10,9 @@ services:
 
   PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator:
     class: PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator
+
+  PsCheckout\Infrastructure\Validator\PayLaterValidator:
+    class: PsCheckout\Infrastructure\Validator\PayLaterValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'

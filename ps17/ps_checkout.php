@@ -25,10 +25,6 @@ use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
-use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
-use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
-use PsCheckout\Core\Hook\Handlers\HookHandlerInterface;
-use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction;
@@ -618,6 +614,20 @@ class Ps_Checkout extends PaymentModule
                 )
             ) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/cardFields.tpl'));
+            } elseif ($fundingSource->getName() === 'pay_upon_invoice') {
+                $customerBirthday = null;
+                if (
+                    !empty($this->context->customer->birthday)
+                    && $this->context->customer->birthday !== '0000-00-00'
+                ) {
+                    $customerBirthday = $this->context->customer->birthday;
+                }
+                $this->context->smarty->assign([
+                    'customerBirthday' => $customerBirthday,
+                    'min_date' => '1900-01-01',
+                    'max_date' => date('Y-m-d', strtotime('-18 years')),
+                ]);
+                $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/payUponInvoiceFields.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && empty($vaultedPayPal)) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/vaultPaymentForm.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && $vaultedPayPal) {
@@ -1225,24 +1235,7 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
-    public function hookActionOrderStatusPostUpdate(array $params)
-    {
-        /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
-        $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
 
-        $result = $handler->handle(new OrderCaptureAuthorizationStatusPostUpdateHookParams(
-            $params['newOrderStatus'],
-            (int) $params['id_order']
-        ));
-
-        if ($result instanceof HookHandlerResult) {
-            if ($result->isError()) {
-                $this->context->controller->errors[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
-            } else {
-                $this->context->controller->confirmations[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
-            }
-        }
-    }
 
     /**
      * Common logic to process tracking number update.

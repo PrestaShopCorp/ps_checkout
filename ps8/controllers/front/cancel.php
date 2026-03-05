@@ -21,6 +21,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CancelPayPalOrderRequest;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
@@ -32,11 +33,6 @@ use Psr\Log\LoggerInterface;
  */
 class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      */
@@ -112,6 +108,12 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             );
 
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while canceling the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 }

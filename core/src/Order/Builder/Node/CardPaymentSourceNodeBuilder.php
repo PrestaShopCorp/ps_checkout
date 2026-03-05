@@ -80,7 +80,9 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $address = $this->cart['addresses']['invoice'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $this->stateRepository->getNameById($address->id_state);
+        $stateName = $countryIso === 'US' ?
+            $this->stateRepository->getIsoById($address->id_state)
+            : $this->stateRepository->getNameById($address->id_state);
 
         $node = [
             'payment_source' => [
@@ -98,11 +100,6 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         if ($this->paypalVaultId) {
             unset($node['payment_source']['card']['billing_address']);
             $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
-            $node['payment_source']['card']['stored_credential'] = [
-                'payment_initiator' => 'CUSTOMER',
-                'payment_type' => 'ONE_TIME',
-                'usage' => 'SUBSEQUENT',
-            ];
         }
 
         if ($this->paypalCustomerId) {
@@ -114,11 +111,6 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         if ($this->savePaymentMethod) {
             $node['payment_source']['card']['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
-            ];
-            $node['payment_source']['card']['stored_credential'] = [
-                'payment_initiator' => 'CUSTOMER',
-                'payment_type' => 'ONE_TIME',
-                'usage' => 'FIRST',
             ];
         }
 
