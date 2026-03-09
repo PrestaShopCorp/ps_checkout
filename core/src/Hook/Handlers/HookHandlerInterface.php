@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Core\Hook\Handlers;
 
-use PsCheckout\src\Hook\Handlers\HookParamsInterface;
-
 /**
  * @template T of HookParamsInterface
  */

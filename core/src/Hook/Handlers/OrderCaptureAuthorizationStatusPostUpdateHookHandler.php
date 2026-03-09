@@ -28,7 +28,6 @@ use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction;
 use PsCheckout\Infrastructure\Adapter\Configuration;
-use PsCheckout\src\Hook\Handlers\HookParamsInterface;
 use Psr\Log\LoggerInterface;
 
 /**

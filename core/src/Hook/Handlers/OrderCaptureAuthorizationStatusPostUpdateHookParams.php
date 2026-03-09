@@ -21,7 +21,6 @@
 namespace PsCheckout\Core\Hook\Handlers;
 
 use OrderState;
-use PsCheckout\src\Hook\Handlers\HookParamsInterface;
 
 class OrderCaptureAuthorizationStatusPostUpdateHookParams implements HookParamsInterface
 {
