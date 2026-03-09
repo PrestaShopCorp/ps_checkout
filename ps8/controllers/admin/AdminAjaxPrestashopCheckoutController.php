@@ -1123,17 +1123,22 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     {
         $id_order = (int) Tools::getValue('id_order');
 
-        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
 
         $payload = [];
         $amount = Tools::getValue('amount');
         $currency = Tools::getValue('currency');
 
-        if ($amount && $currency) {
+        if ($amount) {
             $payload['amount'] = [
                 'value' => $amount,
-                'currency_code' => $currency,
             ];
+        }
+
+        if ($currency) {
+            $payload['amount']['currency_code'] = $currency;
+        } else {
+            $payload['amount']['currency_code'] = $paypalOrderResponse->getOrderAmount()['currency_code'];
         }
 
         /** @var AuthorizationActionProcessor $processor */
