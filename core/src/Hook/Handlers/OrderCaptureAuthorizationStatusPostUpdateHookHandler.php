@@ -93,7 +93,7 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
         }
 
         try {
-            $payPalOrder = $this->paypalOrderRepository->getOneBy(['id' => $params->getOrderId()]);
+            $payPalOrder = $this->paypalOrderRepository->getOneByCartId($order->id_cart);
             if (!$payPalOrder) {
                 $this->logger->error('PayPal order not found for order ID: ' . $params->getOrderId());
 
@@ -112,11 +112,20 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
 
         $statuses = $this->configuration->get(OrderStateConfiguration::PS_CHECKOUT_AUTHORIZE_STATES);
         if (empty($statuses)) {
+            $this->logger->info('No order statuses are configured for the capture of the authorization.', [
+                'order_id' => $params->getOrderId(),
+                'order_status_id' => $params->getNewOrderStatus()->id,
+            ]);
             return null;
         }
 
         $captureOrderStatusIds = explode(',', $statuses);
         if (!in_array((string) $params->getNewOrderStatus()->id, $captureOrderStatusIds, true)) {
+            $this->logger->info('Order status does not match any of the configured capture order statuses.', [
+                'order_id' => $params->getOrderId(),
+                'order_status_id' => $params->getNewOrderStatus()->id,
+                'capture_order_status_ids' => $captureOrderStatusIds,
+            ]);
             return null;
         }
 
