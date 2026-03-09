@@ -116,6 +116,7 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
                 'order_id' => $params->getOrderId(),
                 'order_status_id' => $params->getNewOrderStatus()->id,
             ]);
+
             return null;
         }
 
@@ -126,6 +127,7 @@ class OrderCaptureAuthorizationStatusPostUpdateHookHandler implements HookHandle
                 'order_status_id' => $params->getNewOrderStatus()->id,
                 'capture_order_status_ids' => $captureOrderStatusIds,
             ]);
+
             return null;
         }
 
