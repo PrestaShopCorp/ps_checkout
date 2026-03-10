@@ -25,6 +25,7 @@ use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
+use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
 use PsCheckout\Core\Hook\Handlers\HookHandlerInterface;
@@ -566,8 +567,8 @@ class Ps_Checkout extends PaymentModule
 
         /** @var Configuration $configuration */
         $configuration = $this->getService(Configuration::class);
-        /** @var FundingSourcePresenter $fundingSourcePresenter */
-        $fundingSourcePresenter = $this->getService(FundingSourcePresenter::class);
+        /** @var FundingSourceEligibilityService $eligibilityService */
+        $eligibilityService = $this->getService(FundingSourceEligibilityService::class);
         /** @var FundingSourceTokenPresenter $fundingSourceTokenPresenter */
         $fundingSourceTokenPresenter = $this->getService(FundingSourceTokenPresenter::class);
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
@@ -616,7 +617,7 @@ class Ps_Checkout extends PaymentModule
                 $paymentOptions[] = $paymentOption;
             }
         }
-        foreach ($fundingSourcePresenter->getAllActiveForSpecificShop($this->context->shop->id) as $fundingSource) {
+        foreach ($eligibilityService->getEligibleFundingSources() as $fundingSource) {
             $paymentOption = new PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->getName());
             $paymentOption->setCallToActionText($fundingSourceTranslationProvider->getPaymentMethodName(
@@ -639,6 +640,20 @@ class Ps_Checkout extends PaymentModule
                 )
             ) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/cardFields.tpl'));
+            } elseif ($fundingSource->getName() === 'pay_upon_invoice') {
+                $customerBirthday = null;
+                if (
+                    !empty($this->context->customer->birthday)
+                    && $this->context->customer->birthday !== '0000-00-00'
+                ) {
+                    $customerBirthday = $this->context->customer->birthday;
+                }
+                $this->context->smarty->assign([
+                    'customerBirthday' => $customerBirthday,
+                    'min_date' => '1900-01-01',
+                    'max_date' => date('Y-m-d', strtotime('-18 years')),
+                ]);
+                $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/payUponInvoiceFields.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && empty($vaultedPayPal)) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/vaultPaymentForm.tpl'));
             } elseif ($fundingSource->getName() === 'paypal' && $vaultedPayPal) {
@@ -709,8 +724,8 @@ class Ps_Checkout extends PaymentModule
 
         /** @var FundingSourceTokenPresenter $fundingSourceTokenPresenter */
         $fundingSourceTokenPresenter = $this->getService(FundingSourceTokenPresenter::class);
-        /** @var FundingSourcePresenter $fundingSourcePresenter */
-        $fundingSourcePresenter = $this->getService(FundingSourcePresenter::class);
+        /** @var FundingSourceEligibilityService $eligibilityService */
+        $eligibilityService = $this->getService(FundingSourceEligibilityService::class);
 
         $paymentOptions = [];
 
@@ -718,7 +733,7 @@ class Ps_Checkout extends PaymentModule
             $paymentOptions[] = $fundingSource->getName();
         }
 
-        foreach ($fundingSourcePresenter->getAllActiveForSpecificShop($this->context->shop->id) as $fundingSource) {
+        foreach ($eligibilityService->getEligibleFundingSources() as $fundingSource) {
             $paymentOptions[] = $fundingSource->getName();
         }
 

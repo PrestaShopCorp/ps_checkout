@@ -31,7 +31,9 @@ use PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecke
 use PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker;
+use PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker;
+use PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
@@ -83,7 +85,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
         'ideal' => IdealEligibilityChecker::class,
         'mybank' => MybankEligibilityChecker::class,
         'p24' => P24EligibilityChecker::class,
+        'pay_upon_invoice' => PayUponInvoiceEligibilityChecker::class,
         'paylater' => PaylaterEligibilityChecker::class,
+        'venmo' => VenmoEligibilityChecker::class,
     ];
 
     protected function setUp(): void
@@ -155,7 +159,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
      *     country: string,
      *     currency: ?string,
      *     intent: string,
-     *     configurations: array<int, array{string, bool}>
+     *     configurations: array<int, array{string, bool}>,
+     *     amount?: float
      * } $context
      * @param bool $eligible
      *
@@ -188,6 +193,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
 
         $this->context->method('getCurrencyIsoCode')->willReturn($context['currency'] ?: 'EUR');
 
+        $this->context->method('getCartOrderTotal')->willReturn($context['amount'] ?? 100.0);
+
         $eligibleFundingSources = $this->fundingSourceEligibilityService->getEligibleFundingSources();
         $isEligible = array_key_exists($name, $eligibleFundingSources);
 
@@ -201,7 +208,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
      *         country: string,
      *         currency: ?string,
      *         intent: string,
-     *         configurations: array<int, array{string, bool}>
+     *         configurations: array<int, array{string, bool}>,
+     *         amount?: float
      *     },
      *     eligible: bool
      * }>
@@ -626,6 +634,153 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'currency' => null,
                     'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'eligible_paylater_de' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => null,
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_au' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'AU',
+                    'currency' => null,
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_ca' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => null,
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_venmo' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_venmo_wrong_country' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_venmo_wrong_currency' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_venmo_authorize_intent' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'eligible_pay_upon_invoice' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_pay_upon_invoice_wrong_country' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_pay_upon_invoice_wrong_currency' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_pay_upon_invoice_authorize_intent' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_pay_upon_invoice_below_min' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 3.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_pay_upon_invoice_above_max' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 3000.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_p24_pln_above_max' => [
+                'name' => 'p24',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'PLN',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 60000.0,
                 ],
                 'eligible' => false,
             ],

@@ -43,4 +43,14 @@ class HookHandlerResult
     {
         return $this->message;
     }
+
+    public function getMinAmount(string $currency): ?float
+    {
+        return ['EUR' => 5.0][$currency] ?? null;
+    }
+
+    public function getMaxAmount(string $currency): ?float
+    {
+        return ['EUR' => 2500.0][$currency] ?? null;
+    }
 }

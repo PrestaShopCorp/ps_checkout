@@ -43,4 +43,14 @@ class P24EligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [];
     }
+
+    public function getMinAmount(string $currency): ?float
+    {
+        return ['EUR' => 1.0, 'PLN' => 1.0][$currency] ?? null;
+    }
+
+    public function getMaxAmount(string $currency): ?float
+    {
+        return ['PLN' => 55000.0][$currency] ?? null;
+    }
 }

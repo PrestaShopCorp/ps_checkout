@@ -162,4 +162,16 @@ class Context implements ContextInterface
             $this->context->cookie->write();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCartOrderTotal(): ?float
+    {
+        $cart = $this->context->cart;
+
+        return ($cart !== null && \Validate::isLoadedObject($cart))
+            ? (float) $cart->getOrderTotal(true, \Cart::BOTH)
+            : null;
+    }
 }
