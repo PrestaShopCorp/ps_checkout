@@ -174,7 +174,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $optionalPayload = [];
 
         if ($isFullPayload) {
-            $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
+            $amountBreakdown = $this->amountBreakdownNodeBuilder
+                ->setCart($this->cart)
+                ->setFundingSource($this->fundingSource)
+                ->build();
             if (!empty($amountBreakdown)) {
                 $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $amountBreakdown);
             }
