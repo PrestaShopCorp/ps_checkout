@@ -43,4 +43,9 @@ class IdealEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [];
     }
+
+    public function getMinAmount(string $currency): ?float
+    {
+        return ['EUR' => 0.01][$currency] ?? null;
+    }
 }

@@ -9625,6 +9625,12 @@ parameters:
 			path: ../infrastructure/src/Adapter/Context.php
 
 		-
+			message: '#^Strict comparison using \!\=\= between Cart and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: ../infrastructure/src/Adapter/Context.php
+
+		-
 			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\ContextInterface\:\:getController\(\) has invalid return type PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\.$#'
 			identifier: class.notFound
 			count: 1

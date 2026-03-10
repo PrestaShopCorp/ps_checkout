@@ -48,11 +48,17 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         $this->countryResolver = $countryResolver;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function supports(FundingSource $fundingSource): bool
     {
         return $fundingSource->getName() === $this->getSupportedName();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isEligible(FundingSource $fundingSource): bool
     {
         $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
@@ -75,6 +81,18 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         $currency = $this->context->getCurrencyIsoCode();
         if (!empty($this->getAllowedCurrenciesIsoCodes()) && !in_array($currency, $this->getAllowedCurrenciesIsoCodes(), true)) {
             return false;
+        }
+
+        $cartTotal = $this->context->getCartOrderTotal();
+        if ($cartTotal !== null) {
+            $minAmount = $this->getMinAmount($currency);
+            if ($minAmount !== null && $cartTotal < $minAmount) {
+                return false;
+            }
+            $maxAmount = $this->getMaxAmount($currency);
+            if ($maxAmount !== null && $cartTotal > $maxAmount) {
+                return false;
+            }
         }
 
         return true;
@@ -105,4 +123,20 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
      * @return string[]
      */
     abstract protected function assertConfigurations(): array;
+
+    /**
+     * @inheritDoc
+     */
+    public function getMinAmount(string $currency): ?float
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMaxAmount(string $currency): ?float
+    {
+        return null;
+    }
 }

@@ -26,11 +26,37 @@ interface FundingSourceEligibilityCheckerInterface
 {
     /**
      * Whether this checker is responsible for the given funding source name.
+     *
+     * @param FundingSource $fundingSource
+     *
+     * @return bool
      */
     public function supports(FundingSource $fundingSource): bool;
 
     /**
      * Returns whether the given funding source is eligible in the current checkout context and settings.
+     *
+     * @param FundingSource $fundingSource
+     *
+     * @return bool
      */
     public function isEligible(FundingSource $fundingSource): bool;
+
+    /**
+     * Minimum cart order total (inclusive) for the given currency ISO code, or null for no limit.
+     *
+     * @param string $currency ISO 4217 currency code (e.g. 'EUR', 'PLN')
+     *
+     * @return float|null
+     */
+    public function getMinAmount(string $currency): ?float;
+
+    /**
+     * Maximum cart order total (inclusive) for the given currency ISO code, or null for no limit.
+     *
+     * @param string $currency ISO 4217 currency code (e.g. 'EUR', 'PLN')
+     *
+     * @return float|null
+     */
+    public function getMaxAmount(string $currency): ?float;
 }

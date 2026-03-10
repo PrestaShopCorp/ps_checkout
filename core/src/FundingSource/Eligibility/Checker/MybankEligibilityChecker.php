@@ -43,4 +43,9 @@ class MybankEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [];
     }
+
+    public function getMinAmount(string $currency): ?float
+    {
+        return ['EUR' => 1.0][$currency] ?? null;
+    }
 }
