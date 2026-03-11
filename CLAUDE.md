@@ -54,6 +54,8 @@ make install-module        # Install the module in PrestaShop via console
 All `make` test commands run inside the Docker container using `$MODULE_VERSION` and `$PS_VERSION_TAG` from `.env`.
 `make phpstan` runs locally without Docker. All `make *-test` commands require a running Docker container (`make up`).
 
+Do not run `phpunit` directly from the host — cross-package autoloading (e.g., `api/` classes in `core/` tests) only resolves inside the Docker container via the module's `vendor/autoload.php`. Always use `make` commands for tests.
+
 Code style check without fixing: `composer cs` (from root).
 
 ## Architecture
@@ -119,6 +121,7 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 `make phpstan` runs locally (no Docker needed). When modifying shared packages, always run `make phpstan` and fix reported errors. Only regenerate the baseline (`make phpstan-baseline`) if errors are pre-existing or unfixable (e.g., baseline count mismatches from removed code).
 
+- **Test files**: PHPStan requires explicit return types on test methods (`: void`), `@return` annotations on data providers (e.g., `@return array<string, array{int, string}>`), and `@var` type hints when accessing nested array results from `handle()` methods.
 - `make phpstan` only checks the version set in `$MODULE_VERSION`. To verify all versions, also run `composer phpstan` from within `ps9/` and `ps17/` (or whichever versions aren't the default).
 - PHPStan baselines (`ps8/phpstan-baseline.neon`, `ps9/phpstan-baseline.neon`, `ps17/phpstan-baseline.neon`) have identical entries for shared `core/` test files — when updating baseline counts, apply the same change to all three.
 
@@ -129,6 +132,8 @@ PHP-CS-Fixer applies to: `api/`, `core/`, `infrastructure/`, `presentation/`, `u
 ### Coding standards
 
 Follow [PrestaShop coding standards](https://devdocs.prestashop-project.org/8/development/coding-standards/). Do not update the module version number in pull requests.
+
+- Every new directory must contain an `index.php` file (security requirement). Copy from any existing `index.php` in `core/tests/`. `make lint` runs autoindex which creates missing ones, but adding them upfront keeps commits clean.
 
 ### Admin AJAX controller patterns
 
