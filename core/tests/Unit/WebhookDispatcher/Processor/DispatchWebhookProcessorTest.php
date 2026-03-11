@@ -138,6 +138,22 @@ class DispatchWebhookProcessorTest extends TestCase
         $this->assertTrue($this->processor->process($request));
     }
 
+    public function testProcessPaymentAuthorizationVoidedDispatchesEvent(): void
+    {
+        $request = $this->createMock(DispatchWebhookRequest::class);
+        $request->method('getCategory')->willReturn('ShopNotificationOrderChange');
+        $request->method('getOrderId')->willReturn('12345');
+        $request->method('getEventType')->willReturn('PaymentAuthorizationVoided');
+
+        $payPalOrderResponse = $this->createMock(PayPalOrderResponse::class);
+
+        $this->payPalOrderCache->method('has')->willReturn(false);
+        $this->payPalOrderProvider->method('getById')->willReturn($payPalOrderResponse);
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with('PaymentAuthorizationVoided', $payPalOrderResponse);
+
+        $this->assertTrue($this->processor->process($request));
+    }
+
     public function testHandlePaymentTokenEventsForDeletedToken(): void
     {
         $request = $this->createMock(DispatchWebhookRequest::class);

@@ -40,6 +40,14 @@ class AuthorizationVoidedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
+        $authorizations = $payPalOrderResponse->getAuthorizations();
+        $hasCaptures = $payPalOrderResponse->getCapture() !== null;
+        $hasRefunds = !empty($payPalOrderResponse->getRefunds());
+
+        if (count($authorizations) !== 1 || $hasCaptures || $hasRefunds) {
+            return;
+        }
+
         $this->setVoidedOrderStateAction->execute($payPalOrderResponse->getId());
     }
 }
