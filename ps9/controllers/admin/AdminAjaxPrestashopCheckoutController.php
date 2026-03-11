@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
+use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
@@ -866,6 +867,88 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                     break;
                 default:
                     $error = '';
+
+                    break;
+            }
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'errors' => [$error],
+            ]);
+        } catch (PayPalException $exception) {
+            \Sentry\captureException($exception);
+
+            switch ($exception->getCode()) {
+                case PayPalException::REFUND_TIME_LIMIT_EXCEEDED:
+                    $error = $translator->trans('The refund time limit has been exceeded for this transaction.');
+
+                    break;
+                case PayPalException::REFUND_FAILED_INSUFFICIENT_FUNDS:
+                    $error = $translator->trans('Refund failed due to insufficient funds in the PayPal account.');
+
+                    break;
+                case PayPalException::REFUND_NOT_ALLOWED:
+                    $error = $translator->trans('A full refund is not allowed because a partial refund has already been issued.');
+
+                    break;
+                case PayPalException::REFUND_CAPTURE_CURRENCY_MISMATCH:
+                    $error = $translator->trans('The refund currency must match the capture currency.');
+
+                    break;
+                case PayPalException::REFUND_AMOUNT_EXCEEDED:
+                    $error = $translator->trans('The refund amount exceeds the remaining capturable amount.');
+
+                    break;
+                case PayPalException::CAPTURE_FULLY_REFUNDED:
+                    $error = $translator->trans('This capture has already been fully refunded.');
+
+                    break;
+                case PayPalException::CAPTURE_DISPUTED_PARTIAL_REFUND_NOT_ALLOWED:
+                    $error = $translator->trans('A partial refund cannot be issued while there is an open dispute on this capture.');
+
+                    break;
+                case PayPalException::REFUND_NOT_PERMITTED_DUE_TO_CHARGEBACK:
+                    $error = $translator->trans('Refund is not permitted due to a chargeback on this transaction.');
+
+                    break;
+                case PayPalException::MAX_NUMBER_OF_REFUNDS_EXCEEDED:
+                    $error = $translator->trans('The maximum number of refunds for this capture has been reached.');
+
+                    break;
+                case PayPalException::PARTIAL_REFUND_NOT_ALLOWED:
+                    $error = $translator->trans('Partial refund is not allowed for this capture. Only a full refund can be issued.');
+
+                    break;
+                case PayPalException::PENDING_CAPTURE:
+                    $error = $translator->trans('Cannot refund a pending capture. Please wait until the capture is completed.');
+
+                    break;
+                case PayPalException::CANNOT_PROCESS_REFUNDS:
+                    $error = $translator->trans('PayPal cannot process refunds at this time. Please try again later.');
+
+                    break;
+                case PayPalException::INVALID_REFUND_AMOUNT:
+                    $error = $translator->trans('The refund amount is invalid.');
+
+                    break;
+                case PayPalException::REFUND_AMOUNT_TOO_LOW:
+                    $error = $translator->trans('The refund amount is too low.');
+
+                    break;
+                case PayPalException::TRANSACTION_DISPUTED:
+                    $error = $translator->trans('This transaction is under dispute. Refund cannot be processed.');
+
+                    break;
+                case PayPalException::REFUND_IS_RESTRICTED:
+                    $error = $translator->trans('Refund is restricted for this transaction.');
+
+                    break;
+                case PayPalException::CURRENCY_MISMATCH:
+                    $error = $translator->trans('The currency does not match the capture currency.');
+
+                    break;
+                default:
+                    $error = $translator->trans('Refund cannot be processed by PayPal.');
 
                     break;
             }
