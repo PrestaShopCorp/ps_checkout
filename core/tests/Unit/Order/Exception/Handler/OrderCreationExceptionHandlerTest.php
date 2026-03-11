@@ -183,6 +183,46 @@ class OrderCreationExceptionHandlerTest extends TestCase
                 PayPalException::TRANSACTION_RECEIVING_LIMIT_EXCEEDED,
                 'Payment cannot be processed at the moment. Please contact our customer service.',
             ],
+            'ORDER_ALREADY_CAPTURED' => [
+                PayPalException::ORDER_ALREADY_CAPTURED,
+                'Order is already captured.',
+            ],
         ];
+    }
+
+    public function testUnrecognizedPayPalExceptionFallsBackToGenericCriticalPath(): void
+    {
+        $exception = new PayPalException('Some unknown error', 99999);
+
+        $this->customerNotifyAction->expects($this->once())->method('execute');
+        $this->logger->expects($this->once())->method('error');
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handle($exception, 'PAYPAL-ORDER-123');
+
+        $this->assertSame(500, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame(
+            'Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.',
+            $result['body']['error']['message']
+        );
+    }
+
+    public function testUnknownExceptionTypeFallsBackToGenericCriticalPath(): void
+    {
+        $exception = new \RuntimeException('Unexpected error', 500);
+
+        $this->customerNotifyAction->expects($this->once())->method('execute');
+        $this->logger->expects($this->once())->method('error');
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handle($exception, 'PAYPAL-ORDER-123');
+
+        $this->assertSame(500, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame(
+            'Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.',
+            $result['body']['error']['message']
+        );
     }
 }

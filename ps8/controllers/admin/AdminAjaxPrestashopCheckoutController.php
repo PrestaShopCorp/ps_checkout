@@ -876,6 +876,12 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         } catch (PayPalException $exception) {
             \Sentry\captureException($exception);
 
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('ajaxProcessRefundOrder - PayPalException ' . $exception->getCode(), [
+                'exception' => $exception,
+            ]);
+
             switch ($exception->getCode()) {
                 case PayPalException::REFUND_TIME_LIMIT_EXCEEDED:
                     $error = $translator->trans('The refund time limit has been exceeded for this transaction.');
@@ -946,7 +952,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
                     break;
                 default:
-                    $error = $translator->trans('Refund cannot be processed by PayPal.');
+                    $error = $translator->trans('Refund cannot be processed by PayPal.') . ' (' . $exception->getMessage() . ')';
 
                     break;
             }

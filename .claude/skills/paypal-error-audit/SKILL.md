@@ -79,8 +79,8 @@ Verify each is wrapped in `$this->translator->trans()` or `$translator->trans()`
 After generating the report, auto-fix all identified gaps following these patterns:
 
 1. **New constants**: Add to `PayPalException.php` after the last constant, incrementing the integer value
-2. **New switch cases**: Add to `PayPalError.php` before `default:`, with a concise message from PayPal docs
-3. **Customer messages**: Add to `OrderCreationExceptionHandler.php` in the `PayPalException::class` switch block. Card errors → `$notifyCustomerService = false` + httpCode 400. Merchant errors → `$notifyCustomerService = true` + httpCode 500.
+2. **New switch cases**: Add to `PayPalError.php` before `default:` in the `throwException()` method, with a concise message from PayPal docs
+3. **Customer messages**: Add to `OrderCreationExceptionHandler.php` in the `PayPalException::class` switch block. Card errors: set `$notifyCustomerService = false` (which yields httpCode 400 at the bottom of the method). Merchant errors: leave `$notifyCustomerService` at default `true` (which yields httpCode 500). Do NOT set `$httpCode` directly inside switch cases.
 4. **Refund messages**: Add to admin controllers' `catch (PayPalException ...)` block. Apply identically to all 3 versions (ps9 uses `\Exception`, ps8/ps17 use `Exception`).
 
 Then run:

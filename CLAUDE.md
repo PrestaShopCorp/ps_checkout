@@ -147,3 +147,5 @@ Follow [PrestaShop coding standards](https://devdocs.prestashop-project.org/8/de
 - Register in `hookActionAdminControllerSetMedia` via `addJS(...'?version=' . $this->version . '&rand=' . time(), false)`
 - JS files under `ps{8,9,17}/views/js/` are identical across versions — create one, `cp` to the other two
 - Admin controllers (`ps{8,9,17}/controllers/admin/`) are nearly identical across versions — apply the same edit to all three. Exception: ps9 uses `\Exception` (namespaced), ps8/ps17 use `Exception` (global).
+- **Logging in catch blocks**: Always add local logging via `$this->module->getService(LoggerInterface::class)->error(...)` alongside `\Sentry\captureException()`. Sentry alone is insufficient — it may be unconfigured in dev/staging.
+- **Admin error messages**: Default/fallback error messages in admin catch blocks should append `$exception->getMessage()` for merchant debugging context. Customer-facing defaults should remain generic.
