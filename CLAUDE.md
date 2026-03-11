@@ -119,6 +119,9 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 `make phpstan` runs locally (no Docker needed). When modifying shared packages, always run `make phpstan` and fix reported errors. Only regenerate the baseline (`make phpstan-baseline`) if errors are pre-existing or unfixable (e.g., baseline count mismatches from removed code).
 
+- `make phpstan` only checks the version set in `$MODULE_VERSION`. To verify all versions, also run `composer phpstan` from within `ps9/` and `ps17/` (or whichever versions aren't the default).
+- PHPStan baselines (`ps8/phpstan-baseline.neon`, `ps9/phpstan-baseline.neon`, `ps17/phpstan-baseline.neon`) have identical entries for shared `core/` test files — when updating baseline counts, apply the same change to all three.
+
 ### PHP-CS-Fixer scope
 
 PHP-CS-Fixer applies to: `api/`, `core/`, `infrastructure/`, `presentation/`, `utility/` — not to the `ps17/`, `ps8/`, `ps9/` version directories. Rules: PSR-2, AFL-3.0 header comment, no unused imports.
