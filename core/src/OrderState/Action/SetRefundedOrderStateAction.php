@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\OrderState\Action;
 
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProviderInterface;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefundOrder;
@@ -98,6 +100,11 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($payPalOrderId);
 
+        if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
+            $this->handleAuthorizationRefund($refundOrder, $payPalOrderResponse);
+            return;
+        }
+
         if (!$payPalOrderResponse || empty($payPalOrderResponse->getRefunds())) {
             return;
         }
@@ -120,5 +127,29 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
         }
 
         $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
+    }
+
+    //TODO: Check this logic for authorization refunds
+    private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse)
+    {
+        $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
+            return $totalCaptured + (float) $capture['amount']['value'];
+        });
+
+        $totalRefunded = array_reduce($payPalOrderResponse->getRefunds(), function ($totalRefunded, $refund) {
+            return $totalRefunded + (float) $refund['amount']['value'];
+        });
+
+        $newOrderState = null;
+
+        if ($totalRefunded < $totalCaptured) {
+            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+        } else if ($totalRefunded === $totalCaptured) {
+            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
+        }
+
+        if ($newOrderState && $refundOrder->getCurrentStateId() !== $newOrderState) {
+            $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
+        }
     }
 }

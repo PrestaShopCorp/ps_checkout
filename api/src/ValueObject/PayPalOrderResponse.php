@@ -190,6 +190,14 @@ class PayPalOrderResponse
     }
 
     /**
+     * @return array
+     */
+    public function getCaptures()
+    {
+        return $this->getPurchaseUnits()[0]['payments']['captures'] ?? [];
+    }
+
+    /**
      * @return array|null
      */
     public function getRefunds()
