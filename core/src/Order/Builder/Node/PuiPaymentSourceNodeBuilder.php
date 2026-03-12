@@ -22,7 +22,6 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use libphonenumber\PhoneNumberUtil;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Infrastructure\Adapter\Configuration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;

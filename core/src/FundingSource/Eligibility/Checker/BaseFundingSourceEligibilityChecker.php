@@ -132,7 +132,7 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
     abstract protected function assertConfigurations(): array;
 
     /**
-     * Supported intents for this funding source.
+     * Supporter merchant countries for this funding source.
      *
      * @return string[]
      */
