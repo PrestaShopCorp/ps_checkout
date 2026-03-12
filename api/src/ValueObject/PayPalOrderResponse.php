@@ -190,19 +190,37 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array
+     * @return array<int, array{
+     *     id?: string,
+     *     status?: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     * }>
      */
     public function getCaptures()
     {
-        return $this->getPurchaseUnits()[0]['payments']['captures'] ?? [];
+        /** @var array<int, array{id?: string, status?: string, amount: array{value: string, currency_code: string}}> $captures */
+        $captures = $this->getPurchaseUnits()[0]['payments']['captures'] ?? [];
+
+        return $captures;
     }
 
     /**
-     * @return array|null
+     * @return array<int, array{
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     * }>|null
      */
     public function getRefunds()
     {
-        return $this->getPurchaseUnits()[0]['payments']['refunds'] ?? null;
+        /** @var array<int, array{amount: array{value: string, currency_code: string}}>|null $refunds */
+        $refunds = $this->getPurchaseUnits()[0]['payments']['refunds'] ?? null;
+
+        return $refunds;
     }
 
     /**

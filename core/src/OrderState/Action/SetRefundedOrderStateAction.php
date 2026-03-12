@@ -112,7 +112,7 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
 
         $totalRefunded = array_reduce($payPalOrderResponse->getRefunds(), function ($totalRefunded, $refund) {
             return $totalRefunded + (float) $refund['amount']['value'];
-        });
+        }, 0.0);
 
         $orderFullyRefunded = (float) $refundOrder->getTotalAmount() <= round($totalRefunded, 2);
         $orderStateRefunded = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
@@ -130,17 +130,17 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
         $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
     }
 
-    private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse)
+    private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse): void
     {
         $orderTotal = (float) $refundOrder->getTotalAmount();
 
         $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
             return $totalCaptured + (float) $capture['amount']['value'];
-        });
+        }, 0.0);
 
-        $totalRefunded = array_reduce($payPalOrderResponse->getRefunds(), function ($totalRefunded, $refund) {
+        $totalRefunded = array_reduce($payPalOrderResponse->getRefunds() ?? [], function ($totalRefunded, $refund) {
             return $totalRefunded + (float) $refund['amount']['value'];
-        });
+        }, 0.0);
 
         $capturedFullyRefunded = round($totalRefunded, 2) >= round($totalCaptured, 2);
         $orderFullyCaptured = round($totalCaptured, 2) >= round($orderTotal, 2);
@@ -154,7 +154,7 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
         }
 
         if ($newOrderState && $refundOrder->getCurrentStateId() !== $newOrderState) {
-            $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
+            $this->changeOrderStateAction->execute($refundOrder->getOrderId(), (string) $newOrderState);
         }
     }
 }

@@ -36,6 +36,21 @@ use PsCheckout\Core\Tests\Integration\Factory\PayPalRefundOrderFactory;
 
 class SetRefundedOrderStateActionTest extends BaseTestCase
 {
+    /** @var PayPalRefundOrderProvider&\PHPUnit\Framework\MockObject\MockObject */
+    private $payPalRefundOrderProvider;
+
+    /** @var PayPalOrderProvider&\PHPUnit\Framework\MockObject\MockObject */
+    private $payPalOrderProvider;
+
+    /** @var PayPalOrderCache&\PHPUnit\Framework\MockObject\MockObject */
+    private $orderPayPalCache;
+
+    /** @var OrderStateMapper */
+    private $orderStateMapper;
+
+    /** @var SetRefundedOrderStateAction */
+    private $refundedOrderStateAction;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,7 +58,9 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $this->payPalRefundOrderProvider = $this->createMock(PayPalRefundOrderProvider::class);
         $this->payPalOrderProvider = $this->createMock(PayPalOrderProvider::class);
         $this->orderPayPalCache = $this->createMock(PayPalOrderCache::class);
-        $this->orderStateMapper = $this->getService(OrderStateMapper::class);
+        /** @var OrderStateMapper $orderStateMapper */
+        $orderStateMapper = $this->getService(OrderStateMapper::class);
+        $this->orderStateMapper = $orderStateMapper;
 
         $this->refundedOrderStateAction = new SetRefundedOrderStateAction(
             $this->payPalRefundOrderProvider,
@@ -133,7 +150,7 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
     }
 
-    public function testAuthorizationFullRefundOfPartialCaptureIsPartiallyRefunded()
+    public function testAuthorizationFullRefundOfPartialCaptureIsPartiallyRefunded(): void
     {
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
@@ -181,7 +198,7 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
     }
 
-    public function testAuthorizationFullRefundOfFullCaptureIsRefunded()
+    public function testAuthorizationFullRefundOfFullCaptureIsRefunded(): void
     {
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
@@ -229,7 +246,7 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
     }
 
-    public function testAuthorizationPartialRefundOfPartialCaptureIsPartiallyRefunded()
+    public function testAuthorizationPartialRefundOfPartialCaptureIsPartiallyRefunded(): void
     {
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
