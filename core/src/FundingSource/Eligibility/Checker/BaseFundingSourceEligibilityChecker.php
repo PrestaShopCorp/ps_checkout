@@ -66,6 +66,13 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
             return false;
         }
 
+        if (!empty($this->getSupportedMerchantCountries())) {
+            $merchantCountry = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
+            if (!in_array($merchantCountry, $this->getSupportedMerchantCountries(), true)) {
+                return false;
+            }
+        }
+
         $configurations = array_map(function ($assertion) {
             return $this->configuration->getBoolean($assertion);
         }, $this->assertConfigurations());
@@ -123,6 +130,13 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
      * @return string[]
      */
     abstract protected function assertConfigurations(): array;
+
+    /**
+     * Supported intents for this funding source.
+     *
+     * @return string[]
+     */
+    abstract protected function getSupportedMerchantCountries(): array;
 
     /**
      * @inheritDoc

@@ -48,4 +48,9 @@ class ApplePayEligibilityChecker extends BaseFundingSourceEligibilityChecker
 
         return [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, $configuration];
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

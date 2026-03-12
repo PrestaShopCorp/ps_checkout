@@ -53,4 +53,9 @@ class P24EligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return ['PLN' => 55000.0][$currency] ?? null;
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

@@ -21,6 +21,9 @@
 namespace PsCheckout\Core\Order\Builder\Node;
 
 use libphonenumber\PhoneNumberUtil;
+use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Infrastructure\Adapter\Configuration;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
@@ -53,14 +56,21 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     private $birthDate;
 
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
     public function __construct(
         LoggerInterface $logger,
         ValidateInterface $validate,
-        CountryRepositoryInterface $countryRepository
+        CountryRepositoryInterface $countryRepository,
+        ConfigurationInterface $configuration
     ) {
         $this->logger = $logger;
         $this->validate = $validate;
         $this->countryRepository = $countryRepository;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -68,20 +78,8 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     public function build(): array
     {
-        if (!isset($this->cart['addresses']['invoice'])) {
-            $this->logger->warning('Invoice address is missing in the cart for PUI payment.');
-
-            return [];
-        }
-
-        $invoiceAddress = $this->cart['addresses']['invoice'];
-        $customer = $this->cart['customer'] ?? null;
-
-        if (!$customer) {
-            $this->logger->warning('Customer is missing in the cart for PUI payment.');
-
-            return [];
-        }
+        $invoiceAddress = $this->cart['addresses']['invoice'] ?? $this->cart['addresses']['shipping'];
+        $customer = $this->cart['customer'];
 
         $countryIsoCode = isset($invoiceAddress->id_country)
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
@@ -94,13 +92,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             'surname' => isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '',
         ];
 
-        if (isset($customer->email) && $this->validate->isEmail($customer->email)) {
-            $puiData['email'] = (string) $customer->email;
-        } else {
-            $this->logger->warning('Valid email is required for PUI payment.');
-
-            return [];
-        }
+        $puiData['email'] = (string) $customer->email;
 
         $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
 
@@ -122,7 +114,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                     'exception' => $exception,
                 ]);
 
-                return [];
+                throw $exception;
             } catch (\Exception $exception) {
                 $this->logger->warning('Unexpected error formatting phone number for PUI payment.', [
                     'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
@@ -130,12 +122,12 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                     'exception' => $exception,
                 ]);
 
-                return [];
+                throw $exception;
             }
         } else {
             $this->logger->warning('Phone number is required for PUI payment.');
 
-            return [];
+            throw new PsCheckoutException('Phone number is required for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
         $billingAddress = OrderPayloadUtility::getAddressPortable(
@@ -145,12 +137,6 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         );
 
         unset($billingAddress['admin_area_1']);
-
-        if (empty($billingAddress)) {
-            $this->logger->warning('Billing address is required for PUI payment.');
-
-            return [];
-        }
 
         $puiData['billing_address'] = $billingAddress;
 
@@ -169,11 +155,12 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
 
         $experienceContext = [];
 
-        if (isset($puiData['phone']['national_number']) && isset($puiData['phone']['country_code'])) {
-            $experienceContext['customer_service_instructions'] = [
-                sprintf('Customer service phone is +%s %s.', $puiData['phone']['country_code'], $puiData['phone']['national_number']),
-            ];
-        }
+        $customerServicePhone = $this->configuration->get('PS_SHOP_PHONE');
+        $customerServiceEmail = $this->configuration->get('PS_SHOP_EMAIL');
+
+        $experienceContext['customer_service_instructions'] = [
+            sprintf('Contact customer service via %s.', empty($customerServicePhone) ? $customerServiceEmail : $customerServicePhone),
+        ];
 
         $locale = $this->getLocale();
         if (!empty($locale)) {
