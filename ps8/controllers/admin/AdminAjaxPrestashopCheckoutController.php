@@ -22,8 +22,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
-use PsCheckout\Api\Http\Exception\PayPalException;
-use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
@@ -31,7 +29,7 @@ use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
 use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
-use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
+use PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
@@ -839,157 +837,16 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $payPalRefund = new PayPalRefund($payPalOrderId, $captureId, $currency, $amount);
 
             $refundPayPalOrderAction->execute($payPalRefund);
-        } catch (PayPalRefundException $exception) {
-            \Sentry\captureException($exception);
-
-            switch ($exception->getCode()) {
-                case PayPalRefundException::INVALID_ORDER_ID:
-                    $error = $translator->trans('PayPal Order is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_TRANSACTION_ID:
-                    $error = $translator->trans('PayPal Transaction is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_CURRENCY:
-                    $error = $translator->trans('PayPal refund currency is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_AMOUNT:
-                    $error = $translator->trans('PayPal refund amount is invalid.');
-
-                    break;
-                case PayPalRefundException::REFUND_FAILED:
-                    $error = $translator->trans('PayPal refund failed.');
-
-                    break;
-                default:
-                    $error = '';
-
-                    break;
-            }
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-                'errors' => [$error],
-            ]);
-        } catch (PayPalException $exception) {
-            \Sentry\captureException($exception);
-
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-            $logger->error('ajaxProcessRefundOrder - PayPalException ' . $exception->getCode(), [
-                'exception' => $exception,
-            ]);
-
-            switch ($exception->getCode()) {
-                case PayPalException::REFUND_TIME_LIMIT_EXCEEDED:
-                    $error = $translator->trans('The refund time limit has been exceeded for this transaction.');
-
-                    break;
-                case PayPalException::REFUND_FAILED_INSUFFICIENT_FUNDS:
-                    $error = $translator->trans('Refund failed due to insufficient funds in the PayPal account.');
-
-                    break;
-                case PayPalException::REFUND_NOT_ALLOWED:
-                    $error = $translator->trans('A full refund is not allowed because a partial refund has already been issued.');
-
-                    break;
-                case PayPalException::REFUND_CAPTURE_CURRENCY_MISMATCH:
-                    $error = $translator->trans('The refund currency must match the capture currency.');
-
-                    break;
-                case PayPalException::REFUND_AMOUNT_EXCEEDED:
-                    $error = $translator->trans('The refund amount exceeds the remaining capturable amount.');
-
-                    break;
-                case PayPalException::CAPTURE_FULLY_REFUNDED:
-                    $error = $translator->trans('This capture has already been fully refunded.');
-
-                    break;
-                case PayPalException::CAPTURE_DISPUTED_PARTIAL_REFUND_NOT_ALLOWED:
-                    $error = $translator->trans('A partial refund cannot be issued while there is an open dispute on this capture.');
-
-                    break;
-                case PayPalException::REFUND_NOT_PERMITTED_DUE_TO_CHARGEBACK:
-                    $error = $translator->trans('Refund is not permitted due to a chargeback on this transaction.');
-
-                    break;
-                case PayPalException::MAX_NUMBER_OF_REFUNDS_EXCEEDED:
-                    $error = $translator->trans('The maximum number of refunds for this capture has been reached.');
-
-                    break;
-                case PayPalException::PARTIAL_REFUND_NOT_ALLOWED:
-                    $error = $translator->trans('Partial refund is not allowed for this capture. Only a full refund can be issued.');
-
-                    break;
-                case PayPalException::PENDING_CAPTURE:
-                    $error = $translator->trans('Cannot refund a pending capture. Please wait until the capture is completed.');
-
-                    break;
-                case PayPalException::CANNOT_PROCESS_REFUNDS:
-                    $error = $translator->trans('PayPal cannot process refunds at this time. Please try again later.');
-
-                    break;
-                case PayPalException::INVALID_REFUND_AMOUNT:
-                    $error = $translator->trans('The refund amount is invalid.');
-
-                    break;
-                case PayPalException::REFUND_AMOUNT_TOO_LOW:
-                    $error = $translator->trans('The refund amount is too low.');
-
-                    break;
-                case PayPalException::TRANSACTION_DISPUTED:
-                    $error = $translator->trans('This transaction is under dispute. Refund cannot be processed.');
-
-                    break;
-                case PayPalException::REFUND_IS_RESTRICTED:
-                    $error = $translator->trans('Refund is restricted for this transaction.');
-
-                    break;
-                case PayPalException::CURRENCY_MISMATCH:
-                    $error = $translator->trans('The currency does not match the capture currency.');
-
-                    break;
-                default:
-                    $error = $translator->trans('Refund cannot be processed by PayPal.') . ' (' . $exception->getMessage() . ')';
-
-                    break;
-            }
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-                'errors' => [$error],
-            ]);
-        } catch (OrderException $exception) {
-            \Sentry\captureException($exception);
-
-            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 200,
-                    'status' => true,
-                    'content' => $translator->trans('Refund has been processed by PayPal, but order status change or email sending failed.'),
-                ]);
-            } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 500,
-                    'status' => false,
-                    'errors' => [
-                        $exception->getMessage(),
-                    ],
-                    'error' => $exception->getMessage(),
-                ]);
-            }
         } catch (Exception $exception) {
             \Sentry\captureException($exception);
 
-            $this->exitWithResponse([
+            /** @var RefundExceptionHandler $refundExceptionHandler */
+            $refundExceptionHandler = $this->module->getService(RefundExceptionHandler::class);
+
+            $this->exitWithResponse($refundExceptionHandler->handle($exception) ?? [
                 'httpCode' => 500,
                 'status' => false,
-                'errors' => [
-                    $translator->trans('Refund cannot be processed by PayPal.'),
-                ],
-                'error' => $exception->getMessage(),
+                'errors' => [$exception->getMessage()],
             ]);
         }
 
