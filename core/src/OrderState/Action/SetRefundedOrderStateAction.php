@@ -102,6 +102,7 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
 
         if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
             $this->handleAuthorizationRefund($refundOrder, $payPalOrderResponse);
+
             return;
         }
 
