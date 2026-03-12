@@ -129,9 +129,10 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
         $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
     }
 
-    //TODO: Check this logic for authorization refunds
     private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse)
     {
+        $orderTotal = (float) $refundOrder->getTotalAmount();
+
         $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
             return $totalCaptured + (float) $capture['amount']['value'];
         });
@@ -140,12 +141,15 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
             return $totalRefunded + (float) $refund['amount']['value'];
         });
 
+        $capturedFullyRefunded = round($totalRefunded, 2) >= round($totalCaptured, 2);
+        $orderFullyCaptured = round($totalCaptured, 2) >= round($orderTotal, 2);
+
         $newOrderState = null;
 
-        if ($totalRefunded < $totalCaptured) {
-            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
-        } else if ($totalRefunded === $totalCaptured) {
+        if ($capturedFullyRefunded && $orderFullyCaptured) {
             $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
+        } elseif ($totalRefunded > 0) {
+            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
         }
 
         if ($newOrderState && $refundOrder->getCurrentStateId() !== $newOrderState) {

@@ -133,6 +133,150 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
     }
 
+    public function testAuthorizationFullRefundOfPartialCaptureIsPartiallyRefunded()
+    {
+        $payPalOrderResponseData = [
+            'intent' => 'AUTHORIZE',
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'id' => 'CAPTURE-1',
+                        'status' => 'REFUNDED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '10.00',
+                        ],
+                    ]],
+                    'refunds' => [[
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '10.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '22.94']);
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 22.94]);
+
+        $this->payPalOrderProvider->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->payPalRefundOrderProvider->expects($this->once())
+            ->method('provide')
+            ->willReturn($payPalRefundOrder);
+
+        $expectedOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+
+        try {
+            $this->refundedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $exception) {
+            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+            }
+        }
+
+        $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
+    }
+
+    public function testAuthorizationFullRefundOfFullCaptureIsRefunded()
+    {
+        $payPalOrderResponseData = [
+            'intent' => 'AUTHORIZE',
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'id' => 'CAPTURE-1',
+                        'status' => 'REFUNDED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '22.94',
+                        ],
+                    ]],
+                    'refunds' => [[
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '22.94',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '22.94']);
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 22.94]);
+
+        $this->payPalOrderProvider->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->payPalRefundOrderProvider->expects($this->once())
+            ->method('provide')
+            ->willReturn($payPalRefundOrder);
+
+        $expectedOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
+
+        try {
+            $this->refundedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $exception) {
+            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+            }
+        }
+
+        $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
+    }
+
+    public function testAuthorizationPartialRefundOfPartialCaptureIsPartiallyRefunded()
+    {
+        $payPalOrderResponseData = [
+            'intent' => 'AUTHORIZE',
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'id' => 'CAPTURE-1',
+                        'status' => 'COMPLETED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '10.00',
+                        ],
+                    ]],
+                    'refunds' => [[
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '5.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '22.94']);
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 22.94]);
+
+        $this->payPalOrderProvider->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->payPalRefundOrderProvider->expects($this->once())
+            ->method('provide')
+            ->willReturn($payPalRefundOrder);
+
+        $expectedOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+
+        try {
+            $this->refundedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $exception) {
+            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+            }
+        }
+
+        $this->assertEquals($expectedOrderStateId, (new \Order($order->id))->current_state);
+    }
+
     public function testSetRefundedOrderStateActionToFullRefundWithMultipleRefunds()
     {
         $payPalOrderResponseData = [
