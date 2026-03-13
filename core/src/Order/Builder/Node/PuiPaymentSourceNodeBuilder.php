@@ -23,8 +23,10 @@ namespace PsCheckout\Core\Order\Builder\Node;
 use libphonenumber\PhoneNumberUtil;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Presentation\TranslatorInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use Psr\Log\LoggerInterface;
 
@@ -60,16 +62,30 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     private $configuration;
 
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function __construct(
         LoggerInterface $logger,
         ValidateInterface $validate,
         CountryRepositoryInterface $countryRepository,
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        LinkInterface $link,
+        TranslatorInterface $translator
     ) {
         $this->logger = $logger;
         $this->validate = $validate;
         $this->countryRepository = $countryRepository;
         $this->configuration = $configuration;
+        $this->link = $link;
+        $this->translator = $translator;
     }
 
     /**
@@ -77,8 +93,20 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     public function build(): array
     {
-        $invoiceAddress = $this->cart['addresses']['invoice'] ?? $this->cart['addresses']['shipping'];
-        $customer = $this->cart['customer'];
+        if (!isset($this->cart['addresses']['invoice'])) {
+            $this->logger->warning('Invoice address is missing in the cart for PUI payment.');
+
+            throw new PsCheckoutException('Invoice address is missing in the cart for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+        }
+
+        $invoiceAddress = $this->cart['addresses']['invoice'];
+        $customer = $this->cart['customer'] ?? null;
+
+        if (!$customer) {
+            $this->logger->warning('Customer is missing in the cart for PUI payment.');
+
+            throw new PsCheckoutException('Customer is missing in the cart for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+        }
 
         $countryIsoCode = isset($invoiceAddress->id_country)
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
@@ -91,7 +119,13 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             'surname' => isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '',
         ];
 
-        $puiData['email'] = (string) $customer->email;
+        if (isset($customer->email) && $this->validate->isEmail($customer->email)) {
+            $puiData['email'] = (string) $customer->email;
+        } else {
+            $this->logger->warning('Valid email is required for PUI payment.');
+
+            throw new PsCheckoutException('Valid email is required for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+        }
 
         $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
 
@@ -156,19 +190,29 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
 
         $customerServicePhone = $this->configuration->get('PS_SHOP_PHONE');
         $customerServiceEmail = $this->configuration->get('PS_SHOP_EMAIL');
+        $customerServiceLink = $this->link->getPageLink('contact');
+        $contactMethod = $customerServiceLink;
+
+        if (!empty($customerServicePhone)) {
+            $contactMethod = $customerServicePhone;
+        } elseif (!empty($customerServiceEmail)) {
+            $contactMethod = $customerServiceEmail;
+        }
 
         $experienceContext['customer_service_instructions'] = [
-            sprintf('Contact customer service via %s.', empty($customerServicePhone) ? $customerServiceEmail : $customerServicePhone),
+            sprintf(
+                $this->translator->trans('Contact customer service via %s'),
+                $contactMethod
+            ),
         ];
 
         $locale = $this->getLocale();
+
         if (!empty($locale)) {
             $experienceContext['locale'] = $locale;
         }
 
-        if (!empty($experienceContext)) {
-            $puiData['experience_context'] = $experienceContext;
-        }
+        $puiData['experience_context'] = $experienceContext;
 
         return [
             'payment_source' => [
