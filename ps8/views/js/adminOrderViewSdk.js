@@ -26,6 +26,7 @@ var ps_checkout_merchant = {};
       var containerId = config.containerId;
       var ajaxUrl    = config.ajaxUrl;
       var orderId    = config.orderId;
+      var locale     = config.locale;
 
       var container = document.getElementById(containerId);
       if (!container) {
@@ -108,6 +109,7 @@ var ps_checkout_merchant = {};
             url: appUrl,
             order: json.order,
             isTestMode: json.isTestMode || false,
+            locale: locale,
             onSubmit: onSubmit,
           });
           checkoutComponent.render('#' + containerId);
