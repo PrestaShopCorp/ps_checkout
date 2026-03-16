@@ -31,4 +31,4 @@
 </div>
 
 {include file='./partials/adminOrderView.tpl' legacy=true orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
-{include file='./partials/adminOrderViewSdk.tpl' containerId='ps-checkout-merchant-order-view' orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+{include file='./partials/adminOrderViewSdk.tpl' containerId='ps-checkout-merchant-order-view' orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl locale=$locale}

@@ -987,6 +987,7 @@ class Ps_Checkout extends PaymentModule
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'locale' => $this->context->language->iso_code,
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderLeft.tpl');
@@ -1012,6 +1013,7 @@ class Ps_Checkout extends PaymentModule
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'locale' => $this->context->language->iso_code,
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderMainBottom.tpl');

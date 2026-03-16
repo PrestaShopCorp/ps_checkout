@@ -22,6 +22,7 @@
       containerId: '{$containerId|escape:'javascript':'UTF-8'}',
       ajaxUrl: '{$orderPayPalBaseUrl|escape:'javascript':'UTF-8'}',
       orderId: {$orderPrestaShopId|intval},
+      locale: '{$locale|escape:'javascript':'UTF-8'}',
     });
   }
 </script>
