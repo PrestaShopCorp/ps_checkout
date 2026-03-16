@@ -92,6 +92,8 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
      */
     private function fetchOrder(string $id)
     {
+        $data = null;
+
         try {
             $response = $this->orderHttpClient->fetchOrder($id);
             $responseData = json_decode($response->getBody(), true);
