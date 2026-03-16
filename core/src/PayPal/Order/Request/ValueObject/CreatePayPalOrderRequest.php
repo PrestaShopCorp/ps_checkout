@@ -83,6 +83,11 @@ class CreatePayPalOrderRequest
     private $birthDate;
 
     /**
+     * @var ?string
+     */
+    private $phone;
+
+    /**
      * CheckoutCreateRequest constructor.
      *
      * @param array $request
@@ -101,6 +106,7 @@ class CreatePayPalOrderRequest
         $this->isExpressCheckout = (bool) $request['isExpressCheckout'];
         $this->metaDataId = isset($request['metadataId']) ? (string) $request['metadataId'] : null;
         $this->birthDate = isset($request['birthDate']) ? (string) $request['birthDate'] : null;
+        $this->phone = isset($request['phone']) ? (string) $request['phone'] : null;
     }
 
     /**
@@ -221,5 +227,15 @@ class CreatePayPalOrderRequest
     public function getBirthDate()
     {
         return $this->birthDate;
+    }
+
+    /**
+     * Get the phone number.
+     *
+     * @return string|null
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }

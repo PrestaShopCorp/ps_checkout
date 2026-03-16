@@ -58,6 +58,11 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
     private $birthDate;
 
     /**
+     * @var null|string
+     */
+    private $phone;
+
+    /**
      * @var ConfigurationInterface
      */
     private $configuration;
@@ -127,7 +132,9 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             throw new PsCheckoutException('Valid email is required for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
         }
 
-        $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
+        $phone = !empty($this->phone)
+            ? $this->phone
+            : (!empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : ''));
 
         if (!empty($phone)) {
             try {
@@ -234,6 +241,16 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
     public function setBirthDate($birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @param ?string $phone
+     */
+    public function setPhone($phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

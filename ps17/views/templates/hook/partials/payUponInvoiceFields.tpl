@@ -33,7 +33,20 @@
               {if !empty($max_date)}max="{$max_date}"{/if}
               {if isset($customerBirthday) && $customerBirthday}value="{$customerBirthday|escape:'html':'UTF-8'}"{/if}
       />
-      <span class="form-control-comment" id="ps_checkout-pui-birthday-error" style="display: none; color: #dc3545;"></span>
+    </div>
+    <div class="form-group">
+      <label for="ps_checkout-pui-phone" class="form-control-label required">
+        {l s='Phone Number' d='Modules.Checkout.Pscheckout'}
+      </label>
+      <input
+              type="tel"
+              id="ps_checkout-pui-phone"
+              name="ps_checkout-pui-phone"
+              class="form-control"
+              required="required"
+              placeholder="+49 123 456789"
+              {if isset($customerPhone) && $customerPhone}value="{$customerPhone|escape:'html':'UTF-8'}"{/if}
+      />
     </div>
     <div id="paypal-legal-container"></div>
   </form>
