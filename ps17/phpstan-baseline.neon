@@ -8911,24 +8911,6 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
 
 		-
-			message: '#^Class PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider constructor invoked with 4 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Parameter \#1 \$payPalOrderCache of class PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider constructor expects PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Adapter\\ConfigurationInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
-			message: '#^Parameter \#2 \$orderHttpClient of class PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider constructor expects PsCheckout\\Api\\Http\\OrderHttpClientInterface, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
-
-		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\PayPal\\OrderStatus\\Action\\PayPalCheckOrderStatusActionTest\:\:provideInvalidTransitions\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
