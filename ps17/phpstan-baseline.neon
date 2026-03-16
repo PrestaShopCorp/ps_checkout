@@ -4507,12 +4507,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider\:\:fetchOrder\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
-			count: 1
-			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Provider\\PayPalOrderProvider\:\:fetchOrder\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4569,12 +4563,6 @@ parameters:
 		-
 			message: '#^Parameter \#7 \$links of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
-
-		-
-			message: '#^Variable \$data might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
@@ -8235,7 +8223,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''card'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
+			count: 4
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8257,33 +8245,9 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot access offset ''payment_initiator'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''payment_type'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access offset ''store_in_vault'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''stored_credential'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''usage'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8595,13 +8559,13 @@ parameters:
 		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 3
 			path: ../core/tests/Unit/Order/Builder/Node/SupplementaryDataNodeBuilderTest.php
 
 		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 3
 			path: ../core/tests/Unit/Order/Builder/Node/SupplementaryDataNodeBuilderTest.php
 
 		-
