@@ -133,6 +133,10 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
             ->method('getNameById')
             ->willReturn('California');
 
+        $this->stateRepository
+            ->method('getIsoById')
+            ->willReturn('CA');
+
         // Set cart data
         $this->cardPaymentSourceNodeBuilder->setCart($cart);
 

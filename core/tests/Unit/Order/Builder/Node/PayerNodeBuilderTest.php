@@ -110,7 +110,7 @@ class PayerNodeBuilderTest extends TestCase
         if (isset($cartData['addresses']['invoice']->id_state)) {
             $this->stateRepository
                 ->expects($this->once())
-                ->method('getNameById')
+                ->method($mockSetup['countryIso'] === 'US' ? 'getIsoById' : 'getNameById')
                 ->with($cartData['addresses']['invoice']->id_state)
                 ->willReturn($mockSetup['stateName']);
         }
@@ -190,7 +190,7 @@ class PayerNodeBuilderTest extends TestCase
                         'address' => [
                             'address_line_1' => '123 Main St',
                             'address_line_2' => 'Apt 4B',
-                            'admin_area_1' => 'California',
+                            'admin_area_1' => 'CA',
                             'admin_area_2' => 'Los Angeles',
                             'postal_code' => '90001',
                             'country_code' => 'US',
@@ -206,7 +206,7 @@ class PayerNodeBuilderTest extends TestCase
                 'mockSetup' => [
                     'isEmailValid' => true,
                     'countryIso' => 'US',
-                    'stateName' => 'California',
+                    'stateName' => 'CA',
                     'phoneValid' => true,
                 ],
             ],
