@@ -255,6 +255,90 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     $notifyCustomerService = false;
 
                     break;
+                case PayPalException::CARD_EXPIRED:
+                    $exceptionMessageForCustomer = $this->translator->trans('Your card has expired. Please use another card.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::CARD_CLOSED:
+                    $exceptionMessageForCustomer = $this->translator->trans('This card has been closed by the issuer. Please use another card.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::INVALID_SECURITY_CODE:
+                    $exceptionMessageForCustomer = $this->translator->trans('The security code is incorrect. Please check and try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::INVALID_EXPIRY_DATE:
+                    $exceptionMessageForCustomer = $this->translator->trans('The expiry date is invalid. Please check and try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::CREDIT_CARD_NUMBER_IS_INVALID:
+                    $exceptionMessageForCustomer = $this->translator->trans('The card number is invalid. Please check and try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::CARD_EXPIRATION_YEAR_IS_INVALID:
+                    $exceptionMessageForCustomer = $this->translator->trans('The card expiration year is invalid. Please check and try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::BILLING_ADDRESS_INVALID:
+                    $exceptionMessageForCustomer = $this->translator->trans('The billing address is invalid. Please check and try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR:
+                    $exceptionMessageForCustomer = $this->translator->trans('Your payment was declined. Please try a different payment method.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED:
+                    $exceptionMessageForCustomer = $this->translator->trans('Your payment information could not be verified. Please try a different payment method.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::DUPLICATE_INVOICE_ID:
+                    $exceptionMessageForCustomer = $this->translator->trans('This order has already been processed. Please check your order history.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::ORDER_NOT_APPROVED:
+                    $exceptionMessageForCustomer = $this->translator->trans('The payment was not approved. Please try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::ORDER_EXPIRED:
+                    $exceptionMessageForCustomer = $this->translator->trans('Your payment session has expired. Please try again.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::ORDER_ALREADY_AUTHORIZED:
+                    $exceptionMessageForCustomer = $this->translator->trans('This order has already been authorized.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::DOMESTIC_TRANSACTION_REQUIRED:
+                    $exceptionMessageForCustomer = $this->translator->trans('This payment method is not available for international transactions. Please try another payment method.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::TRANSACTION_LIMIT_EXCEEDED:
+                    $exceptionMessageForCustomer = $this->translator->trans('The transaction limit has been exceeded. Please try a smaller amount or another payment method.');
+                    $notifyCustomerService = false;
+
+                    break;
+                case PayPalException::PAYEE_ACCOUNT_LOCKED_OR_CLOSED:
+                case PayPalException::PAYEE_ACCOUNT_RESTRICTED:
+                    $exceptionMessageForCustomer = $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.');
+
+                    break;
+                case PayPalException::TRANSACTION_RECEIVING_LIMIT_EXCEEDED:
+                    $exceptionMessageForCustomer = $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.');
+
+                    break;
             }
         }
 
