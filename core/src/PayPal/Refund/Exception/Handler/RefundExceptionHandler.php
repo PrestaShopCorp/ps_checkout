@@ -49,7 +49,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    public function handle(\Exception $exception)
+    public function handle(\Exception $exception): ?array
     {
         if ($exception instanceof PayPalRefundException) {
             return $this->handlePayPalRefundException($exception);
@@ -71,7 +71,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
      *
      * @return array<string, mixed>
      */
-    private function handlePayPalRefundException(PayPalRefundException $exception)
+    private function handlePayPalRefundException(PayPalRefundException $exception): array
     {
         switch ($exception->getCode()) {
             case PayPalRefundException::INVALID_ORDER_ID:
@@ -112,7 +112,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
      *
      * @return array<string, mixed>
      */
-    private function handlePayPalException(PayPalException $exception)
+    private function handlePayPalException(PayPalException $exception): array
     {
         $this->logger->error('ajaxProcessRefundOrder - PayPalException ' . $exception->getCode(), [
             'exception' => $exception,
@@ -205,7 +205,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
      *
      * @return array<string, mixed>|null null when the exception should be silently ignored (ORDER_HAS_ALREADY_THIS_STATUS)
      */
-    private function handleOrderException(OrderException $exception)
+    private function handleOrderException(OrderException $exception): ?array
     {
         if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
             return [
@@ -234,7 +234,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
      *
      * @return array<string, mixed>
      */
-    private function handleGenericException(\Exception $exception)
+    private function handleGenericException(\Exception $exception): array
     {
         $this->logger->error('RefundExceptionHandler - Exception ' . $exception->getCode(), [
             'exception' => $exception,
