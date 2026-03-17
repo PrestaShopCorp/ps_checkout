@@ -21,7 +21,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
@@ -174,7 +176,15 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]
             );
 
-            $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error occurred.', $exception->getCode()));
+            $previous = $exception->getPrevious();
+
+            if ( $previous !== null && $exception->getPrevious() instanceof PayPalException) {
+                $exceptionHandler = $this->module->getService(OrderCreationExceptionHandler::class);
+                $fundingSource = $createPayPalOrderRequest ? $createPayPalOrderRequest->getFundingSource() : null;
+                $this->exitWithExceptionMessage($exceptionHandler->handleOrderCreateException($previous, $fundingSource));
+            }
+
+            $this->exitWithExceptionMessage($exception);
         } catch (Throwable $exception) {
             $this->exitWithExceptionMessage(new PsCheckoutException(
                 'An error occurred while creating the PayPal order.',
