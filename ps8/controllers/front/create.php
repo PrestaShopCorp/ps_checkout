@@ -178,7 +178,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $previous = $exception->getPrevious();
 
-            if ( $previous !== null && $exception->getPrevious() instanceof PayPalException) {
+            if ($previous !== null && $exception->getPrevious() instanceof PayPalException) {
                 $exceptionHandler = $this->module->getService(OrderCreationExceptionHandler::class);
                 $fundingSource = $createPayPalOrderRequest ? $createPayPalOrderRequest->getFundingSource() : null;
                 $this->exitWithExceptionMessage($exceptionHandler->handleOrderCreateException($previous, $fundingSource));

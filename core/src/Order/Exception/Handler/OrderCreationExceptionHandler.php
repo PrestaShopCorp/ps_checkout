@@ -384,9 +384,8 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
     public function handleOrderCreateException(Exception $exception, ?string $fundingSource): PsCheckoutException
     {
         $exceptionMessageForCustomer = $exception->getMessage();
-        $exceptionClass = get_class($exception);
 
-        if ($exceptionClass === PayPalException::class) {
+        if ($exception instanceof PayPalException) {
             switch ($exception->getCode()) {
                 case PayPalException::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED:
                     if ($fundingSource === 'pay_upon_invoice') {
