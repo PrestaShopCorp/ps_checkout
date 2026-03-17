@@ -589,12 +589,6 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getRefunds\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getTotalAmount\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -2947,32 +2941,8 @@ parameters:
 			path: ../core/src/OrderState/Action/SetPendingOrderStateAction.php
 
 		-
-			message: '#^Cannot access offset ''amount'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
-
-		-
-			message: '#^Cannot access offset ''value'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
-
-		-
-			message: '#^Cannot cast mixed to float\.$#'
-			identifier: cast.double
-			count: 1
-			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
-
-		-
-			message: '#^Parameter \#1 \$num of function round expects float\|int, float\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../core/src/OrderState/Action/SetRefundedOrderStateAction.php
 
@@ -7477,66 +7447,6 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
 
 		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:\$orderPayPalCache\.$#'
-			identifier: property.notFound
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:\$orderStateMapper\.$#'
-			identifier: property.notFound
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:\$payPalOrderProvider\.$#'
-			identifier: property.notFound
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:\$payPalRefundOrderProvider\.$#'
-			identifier: property.notFound
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:\$refundedOrderStateAction\.$#'
-			identifier: property.notFound
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method execute\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method expects\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method getIdByKey\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method method\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:testSetRefundedOrderStateActionToFullRefund\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -7551,12 +7461,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:testSetRefundedOrderStateActionToPartiallyRefund\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#3 \$orderStateMapper of class PsCheckout\\Core\\OrderState\\Action\\SetRefundedOrderStateAction constructor expects PsCheckout\\Core\\OrderState\\Service\\OrderStateMapperInterface, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
 
