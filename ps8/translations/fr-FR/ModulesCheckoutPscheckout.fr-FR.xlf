@@ -2467,54 +2467,6 @@
         <source>An unexpected refund error occurred.</source>
         <target>Une erreur inattendue s'est produite lors du remboursement.</target>
       </trans-unit>
-      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
-        <source>Authorization captured successfully.</source>
-        <target>L'autorisation a été capturée avec succès.</target>
-      </trans-unit>
-      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
-        <source>Authorization voided successfully.</source>
-        <target>L'autorisation a été annulée avec succès.</target>
-      </trans-unit>
-      <trans-unit id="d7711b029221c7de1444292a4068bfee">
-        <source>Authorization reauthorized successfully.</source>
-        <target>L'autorisation a été renouvelée avec succès.</target>
-      </trans-unit>
-    <trans-unit id="9976a3ca5309b7639b4a8d54561f2ca9">
-      <source>Pay upon Invoice</source>
-      <target>Payer sur facture</target>
-    </trans-unit>
-    <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
-      <source>Pay later with invoice</source>
-      <target>Payer plus tard par facture</target>
-    </trans-unit>
-    <trans-unit id="853e088f85c693c3c6ab297971b4aecc">
-      <source>Contact customer service via %s</source>
-      <target>Contactez le service client via %s</target>
-    </trans-unit>
-    <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
-      <source>Phone Number</source>
-      <target>Numéro de téléphone</target>
-    </trans-unit>
-    <trans-unit id="10803b83a68db8f7e7a33e3b41e184d0">
-      <source>Date of Birth</source>
-      <target>Date de naissance</target>
-    </trans-unit>
-    <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
-      <source>Not required</source>
-      <target>Non requis</target>
-    </trans-unit>
-    <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
-      <source>The payment is not valid: the amount is not eligible.</source>
-      <target>Le paiement n'est pas valide : le montant n'est pas éligible.</target>
-    </trans-unit>
-    <trans-unit id="3253bd5ea8ec8be1fd8679a3a9e1fb4f">
-      <source>The authorization has been successfully captured.</source>
-      <target>L'autorisation a été capturée avec succès.</target>
-    </trans-unit>
-    <trans-unit id="9242a892e473073c133a71a50eb29b99">
-      <source>An error occurred during the capture of the authorization.</source>
-      <target>Une erreur s'est produite lors de la capture de l'autorisation.</target>
-    </trans-unit>
     </body>
   </file>
 </xliff>
