@@ -2479,6 +2479,10 @@
         <source>Date of Birth</source>
         <target>Date of Birth</target>
       </trans-unit>
+      <trans-unit id="1f8261d17452a959e013666c5df45e07">
+        <source>Phone number</source>
+        <target>Phone number</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
