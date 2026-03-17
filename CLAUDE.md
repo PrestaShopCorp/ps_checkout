@@ -129,6 +129,10 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 PHP-CS-Fixer applies to: `api/`, `core/`, `infrastructure/`, `presentation/`, `utility/` — not to the `ps17/`, `ps8/`, `ps9/` version directories. Rules: PSR-2, AFL-3.0 header comment, no unused imports.
 
+### Service container (admin vs front)
+
+Each version (`ps{8,9,17}/config/`) has separate service containers for admin and front contexts. A service registered in `config/front/*.yml` is **not** available in admin controllers, and vice versa. If an admin controller calls `$this->module->getService(Foo::class)` and gets `ServiceNotFoundException`, check whether `Foo` is only registered in `config/front/` and needs an entry in `config/admin/` too.
+
 ### Coding standards
 
 Follow [PrestaShop coding standards](https://devdocs.prestashop-project.org/8/development/coding-standards/). Do not update the module version number in pull requests.
