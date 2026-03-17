@@ -2515,10 +2515,6 @@
         <source>An error occurred during the capture of the authorization.</source>
         <target>Er is een fout opgetreden tijdens het vastleggen van de autorisatie.</target>
       </trans-unit>
-      <trans-unit id="355b1fcf1c9c3940759af7e0171ddc47">
-        <source>The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.</source>
-        <target>The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.</target>
-      </trans-unit>
       <trans-unit id="54fe49d73ccb07edee76f7e0e9ffd46b">
         <source>The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.</source>
         <target>The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.</target>

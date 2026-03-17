@@ -390,13 +390,13 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
             switch ($exception->getCode()) {
                 case PayPalException::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED:
                     if ($fundingSource === 'pay_upon_invoice') {
-                        $exceptionMessageForCustomer = $this->translator->trans('The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.');
+                        $exceptionMessageForCustomer = $this->translator->trans('The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.');
                     }
 
                     break;
                 case PayPalException::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR:
                     if ($fundingSource === 'pay_upon_invoice') {
-                        $exceptionMessageForCustomer = $this->translator->trans('It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.');
+                        $exceptionMessageForCustomer = $this->translator->trans('It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.');
                     }
 
                     break;
