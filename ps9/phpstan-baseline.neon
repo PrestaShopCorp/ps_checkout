@@ -2617,6 +2617,12 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
+			message: '#^Cannot call method setPhone\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2703,12 +2709,6 @@ parameters:
 		-
 			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:\$birthDate \(PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilderInterface\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
@@ -3434,6 +3434,12 @@ parameters:
 
 		-
 			message: '#^Cannot call method setCustomerBirthDay\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
+
+		-
+			message: '#^Cannot call method setCustomerPhone\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
@@ -4635,7 +4641,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
-			count: 4
+			count: 5
 			path: ../core/src/PayPal/Order/Request/ValueObject/CreatePayPalOrderRequest.php
 
 		-

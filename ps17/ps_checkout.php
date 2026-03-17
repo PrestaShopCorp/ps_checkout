@@ -623,8 +623,19 @@ class Ps_Checkout extends PaymentModule
                 ) {
                     $customerBirthday = $this->context->customer->birthday;
                 }
+                $customerPhone = '';
+                $cart = $this->context->cart;
+                if ($cart && $cart->id_address_invoice) {
+                    $invoiceAddress = new \Address((int) $cart->id_address_invoice);
+                    if (\Validate::isLoadedObject($invoiceAddress)) {
+                        $customerPhone = !empty($invoiceAddress->phone)
+                            ? $invoiceAddress->phone
+                            : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
+                    }
+                }
                 $this->context->smarty->assign([
                     'customerBirthday' => $customerBirthday,
+                    'customerPhone' => $customerPhone,
                     'min_date' => '1900-01-01',
                     'max_date' => date('Y-m-d', strtotime('-18 years')),
                 ]);

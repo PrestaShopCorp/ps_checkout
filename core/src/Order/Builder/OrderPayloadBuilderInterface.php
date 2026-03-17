@@ -91,4 +91,9 @@ interface OrderPayloadBuilderInterface
      * @param ?string $birthDate
      */
     public function setCustomerBirthDay($birthDate): OrderPayloadBuilder;
+
+    /**
+     * @param ?string $phone
+     */
+    public function setCustomerPhone($phone): OrderPayloadBuilder;
 }
