@@ -161,24 +161,29 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         }
 
         if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
-            $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
+            $processedResponse = $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
         } else {
-            $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
+            $processedResponse = $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
+        }
+
+        if ($processedResponse) {
+            $this->savePaymentTokenAction->execute($processedResponse);
         }
     }
 
+    /**
+     * @return PayPalOrderResponse|null
+     */
     private function capturePayPalOrder(string $orderId, PayPalOrderResponse $payPalOrderResponse)
     {
         try {
-            $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
-
-            $this->savePaymentTokenAction->execute($capturedOrderResponse);
+            return $this->capturePayPalOrderAction->execute($payPalOrderResponse);
         } catch (PayPalException $exception) {
             switch ($exception->getCode()) {
                 case PayPalException::ORDER_NOT_APPROVED:
                     $this->createOrderAction->execute($payPalOrderResponse);
 
-                    return;
+                    return null;
 
                 case PayPalException::RESOURCE_NOT_FOUND:
                     $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
@@ -193,7 +198,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
                     $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->createOrderAction->execute($capturedOrderResponse);
 
-                    return;
+                    return null;
                 case PayPalException::CARD_CLOSED:
                     $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->deletePaymentTokenAction->execute(
