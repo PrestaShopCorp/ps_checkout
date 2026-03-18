@@ -2479,8 +2479,8 @@
         <source>Date of Birth</source>
         <target>Geburtsdatum</target>
       </trans-unit>
-      <trans-unit id="1f8261d17452a959e013666c5df45e07">
-        <source>Phone number</source>
+      <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
+        <source>Phone Number</source>
         <target>Telefon</target>
       </trans-unit>
     </body>
