@@ -48,9 +48,9 @@ class PayPalOrderTotalsPresenter implements PayPalOrderPresenterInterface
 
             if (!empty($purchase['payments']['captures'])) {
                 foreach ($purchase['payments']['captures'] as $payment) {
-                    $total += $payment['amount']['value'];
+                    $total += (float) $payment['amount']['value'];
                     if (isset($payment['seller_receivable_breakdown']['paypal_fee']['value'])) {
-                        $fees -= $payment['seller_receivable_breakdown']['paypal_fee']['value'];
+                        $fees -= (float) $payment['seller_receivable_breakdown']['paypal_fee']['value'];
                     }
                 }
             }

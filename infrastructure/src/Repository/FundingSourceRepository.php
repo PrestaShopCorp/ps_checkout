@@ -132,7 +132,7 @@ class FundingSourceRepository implements FundingSourceRepositoryInterface
             // Prepare the data to insert or update
             $data = [
                 'name' => pSQL($name),
-                'active' => (int) !in_array($name, ['google_pay', 'apple_pay']),
+                'active' => (int) !in_array($name, ['google_pay', 'apple_pay', 'venmo', 'pay_upon_invoice']),
                 'position' => ++$positionCounter,
                 'id_shop' => (int) $shopId,
             ];

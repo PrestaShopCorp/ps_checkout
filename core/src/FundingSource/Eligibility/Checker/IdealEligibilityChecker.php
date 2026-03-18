@@ -48,4 +48,9 @@ class IdealEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return ['EUR' => 0.01][$currency] ?? null;
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

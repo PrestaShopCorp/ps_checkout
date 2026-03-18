@@ -48,4 +48,9 @@ class MybankEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return ['EUR' => 1.0][$currency] ?? null;
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

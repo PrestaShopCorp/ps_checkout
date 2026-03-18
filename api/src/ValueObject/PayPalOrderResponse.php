@@ -48,7 +48,175 @@ class PayPalOrderResponse
     private $paymentSource;
 
     /**
-     * @var array
+     * @var array<int, array{
+     *     reference_id?: string,
+     *     invoice_id?: string,
+     *     custom_id?: string,
+     *     description?: string,
+     *     items?: array<int, array<string, mixed>>,
+     *     shipping?: array<string, mixed>,
+     *     amount?: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     *     payments?: array{
+     *         authorizations?: array<int, array{
+     *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             seller_protection?: array{
+     *                 status: string,
+     *                 dispute_categories: array<int, string>,
+     *             },
+     *             network_transaction_reference?: array{
+     *                 id: string,
+     *                 date: string,
+     *                 network: string,
+     *                 acquirer_reference_number: string,
+     *             },
+     *             create_time?: string,
+     *             update_time?: string,
+     *             expiration_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *         captures?: array<int, array{
+     *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             final_capture?: bool,
+     *             seller_protection?: array{
+     *                 status: string,
+     *                 dispute_categories: array<int, string>,
+     *             },
+     *             seller_payable_breakdown?: array{
+     *                 gross_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 platform_fees?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 receivable_amount?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *                 exchange_rate?: array{
+     *                      source_currency: string,
+     *                      target_currency: string,
+     *                      value: string,
+     *                 },
+     *             },
+     *             processor_response?: array{
+     *                 avs_code?: string,
+     *                 cvv_code?: string,
+     *                 response_code?: string,
+     *                 payment_advice_code?: string,
+     *             },
+     *             network_transaction_reference?: array{
+     *                 id: string,
+     *                 date: string,
+     *                 network: string,
+     *                 acquirer_reference_number: string,
+     *             },
+     *             disbursement_mode?: string,
+     *             create_time?: string,
+     *             update_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *         refunds?: array<int, array{
+     *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             note_to_payer?: string,
+     *             seller_payable_breakdown?: array{
+     *                 gross_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 platform_fees?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount_breakdown?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *                 total_refunded_amount?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *             },
+     *             create_time?: string,
+     *             update_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *     },
+     * }>
      */
     private $purchaseUnits;
 
@@ -121,6 +289,11 @@ class PayPalOrderResponse
     /**
      * @return array<int, array{
      *     reference_id?: string,
+     *     invoice_id?: string,
+     *     custom_id?: string,
+     *     description?: string,
+     *     items?: array<int, array<string, mixed>>,
+     *     shipping?: array<string, mixed>,
      *     amount?: array{
      *         value: string,
      *         currency_code: string,
@@ -128,6 +301,8 @@ class PayPalOrderResponse
      *     payments?: array{
      *         authorizations?: array<int, array{
      *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
      *             status: string,
      *             amount: array{
      *                 value: string,
@@ -135,6 +310,20 @@ class PayPalOrderResponse
      *             },
      *             status_details?: array{
      *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             seller_protection?: array{
+     *                 status: string,
+     *                 dispute_categories: array<int, string>,
+     *             },
+     *             network_transaction_reference?: array{
+     *                 id: string,
+     *                 date: string,
+     *                 network: string,
+     *                 acquirer_reference_number: string,
      *             },
      *             create_time?: string,
      *             update_time?: string,
@@ -145,8 +334,130 @@ class PayPalOrderResponse
      *                 method: string,
      *             }>
      *         }>,
-     *         captures?: array<int, array<string, mixed>>,
-     *         refunds?: array<int, array<string, mixed>>,
+     *         captures?: array<int, array{
+     *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             final_capture?: bool,
+     *             seller_protection?: array{
+     *                 status: string,
+     *                 dispute_categories: array<int, string>,
+     *             },
+     *             seller_payable_breakdown?: array{
+     *                 gross_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 platform_fees?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 receivable_amount?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *                 exchange_rate?: array{
+     *                      source_currency: string,
+     *                      target_currency: string,
+     *                      value: string,
+     *                 },
+     *             },
+     *             processor_response?: array{
+     *                 avs_code?: string,
+     *                 cvv_code?: string,
+     *                 response_code?: string,
+     *                 payment_advice_code?: string,
+     *             },
+     *             network_transaction_reference?: array{
+     *                 id: string,
+     *                 date: string,
+     *                 network: string,
+     *                 acquirer_reference_number: string,
+     *             },
+     *             disbursement_mode?: string,
+     *             create_time?: string,
+     *             update_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
+     *         refunds?: array<int, array{
+     *             id: string,
+     *             invoice_id?: string,
+     *             custom_id?: string,
+     *             status: string,
+     *             status_details?: array{
+     *                 reason: string,
+     *             },
+     *             amount?: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
+     *             note_to_payer?: string,
+     *             seller_payable_breakdown?: array{
+     *                 gross_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 paypal_fee_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount_in_receivable_currency?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 platform_fees?: array{
+     *                     value: string,
+     *                     currency_code: string,
+     *                 },
+     *                 net_amount_breakdown?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *                 total_refunded_amount?: array{
+     *                      value: string,
+     *                      currency_code: string,
+     *                 },
+     *             },
+     *             create_time?: string,
+     *             update_time?: string,
+     *             links?: array<int, array{
+     *                 rel: string,
+     *                 href: string,
+     *                 method: string,
+     *             }>
+     *         }>,
      *     },
      * }>
      */
@@ -226,6 +537,8 @@ class PayPalOrderResponse
     /**
      * @return array{
      *     id: string,
+     *     invoice_id?: string,
+     *     custom_id?: string,
      *     status: string,
      *     amount: array{
      *         value: string,
@@ -233,6 +546,20 @@ class PayPalOrderResponse
      *     },
      *     status_details?: array{
      *         reason: string,
+     *     },
+     *     amount?: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     *     seller_protection?: array{
+     *         status: string,
+     *         dispute_categories: array<int, string>,
+     *     },
+     *     network_transaction_reference?: array{
+     *         id: string,
+     *         date: string,
+     *         network: string,
+     *         acquirer_reference_number: string,
      *     },
      *     create_time?: string,
      *     update_time?: string,
@@ -252,6 +579,8 @@ class PayPalOrderResponse
     /**
      * @return array<int, array{
      *     id: string,
+     *     invoice_id?: string,
+     *     custom_id?: string,
      *     status: string,
      *     amount: array{
      *         value: string,
@@ -259,6 +588,20 @@ class PayPalOrderResponse
      *     },
      *     status_details?: array{
      *         reason: string,
+     *     },
+     *     amount?: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     *     seller_protection?: array{
+     *         status: string,
+     *         dispute_categories: array<int, string>,
+     *     },
+     *     network_transaction_reference?: array{
+     *         id: string,
+     *         date: string,
+     *         network: string,
+     *         acquirer_reference_number: string,
      *     },
      *     create_time?: string,
      *     update_time?: string,

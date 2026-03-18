@@ -114,19 +114,6 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
     {
         $data = null;
 
-        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $id]);
-
-        $payload = [
-            'orderId' => $id,
-        ];
-
-        if ($payPalOrder && $payPalOrder->checkCustomerIntent(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)) {
-            $payload['vault'] = true;
-            $payload['payee'] = [
-                'merchant_id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
-            ];
-        }
-
         try {
             $response = $this->orderHttpClient->fetchOrder($id);
             $responseData = json_decode($response->getBody(), true);

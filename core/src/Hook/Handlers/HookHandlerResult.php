@@ -44,6 +44,11 @@ class HookHandlerResult
         return $this->message;
     }
 
+    protected function getSupportedMerchantCountries(): array
+    {
+        return ['DE'];
+    }
+
     public function getMinAmount(string $currency): ?float
     {
         return ['EUR' => 5.0][$currency] ?? null;

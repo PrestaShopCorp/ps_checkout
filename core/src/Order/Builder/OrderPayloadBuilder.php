@@ -27,7 +27,9 @@ use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PayerNodeBuilderInterface;
+use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
@@ -93,6 +95,18 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var GooglePayPaymentSourceNodeBuilderInterface */
     private $googlePayPaymentSourceNodeBuilder;
 
+    /** @var VenmoPaymentSourceNodeBuilderInterface */
+    private $venmoPaymentSourceNodeBuilder;
+
+    /** @var PuiPaymentSourceNodeBuilderInterface */
+    private $puiPaymentSourceNodeBuilder;
+
+    /** @var ?string */
+    private $birthDate;
+
+    /** @var ?string */
+    private $phone;
+
     public function __construct(
         BaseNodeBuilderInterface $baseNodeBuilder,
         AmountBreakdownNodeInterface $amountBreakdownNodeBuilder,
@@ -102,7 +116,9 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         SupplementaryDataNodeBuilderInterface $supplementaryDataNodeBuilder,
         ApplicationContextNodeBuilderInterface $applicationContextNodeBuilder,
         PayPalPaymentSourceNodeBuilderInterface $payPalPaymentSourceNodeBuilder,
-        GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder
+        GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder,
+        VenmoPaymentSourceNodeBuilderInterface $venmoPaymentSourceNodeBuilder,
+        PuiPaymentSourceNodeBuilderInterface $puiPaymentSourceNodeBuilder
     ) {
         $this->baseNodeBuilder = $baseNodeBuilder;
         $this->amountBreakdownNodeBuilder = $amountBreakdownNodeBuilder;
@@ -113,6 +129,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $this->applicationContextNodeBuilder = $applicationContextNodeBuilder;
         $this->payPalPaymentSourceNodeBuilder = $payPalPaymentSourceNodeBuilder;
         $this->googlePayPaymentSourceNodeBuilder = $googlePayPaymentSourceNodeBuilder;
+        $this->venmoPaymentSourceNodeBuilder = $venmoPaymentSourceNodeBuilder;
+        $this->puiPaymentSourceNodeBuilder = $puiPaymentSourceNodeBuilder;
     }
 
     /** {@inheritDoc} */
@@ -159,7 +177,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $optionalPayload = [];
 
         if ($isFullPayload) {
-            $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
+            $amountBreakdown = $this->amountBreakdownNodeBuilder
+                ->setCart($this->cart)
+                ->setFundingSource($this->fundingSource)
+                ->build();
             if (!empty($amountBreakdown)) {
                 $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $amountBreakdown);
             }
@@ -184,6 +205,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             if (!empty($paymentSource)) {
                 $optionalPayload[] = $paymentSource;
             }
+        }
+
+        if ($this->fundingSource === 'pay_upon_invoice' && !$this->isUpdate) {
+            $optionalPayload[] = ['processing_instruction' => 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL'];
         }
 
         if (!$this->isUpdate && !isset($paymentSource['payment_source'][$this->fundingSource]['experience_context'])) {
@@ -261,13 +286,23 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'google_pay':
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
-                $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
+                return $this->payPalPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
                     ->setShippingAddressExists($this->shippingAddressExists())
-                    ->setVirtualCart((bool) $this->cart['cart']['is_virtual']);
-
-                return $this->payPalPaymentSourceNodeBuilder->build();
+                    ->setVirtualCart((bool) $this->cart['cart']['is_virtual'])
+                    ->build();
+            case 'venmo':
+                return $this->venmoPaymentSourceNodeBuilder->setSavePaymentMethod($this->savePaymentMethod)
+                    ->setCart($this->cart)
+                    ->setPaypalCustomerId($this->paypalCustomerId)
+                    ->setPaypalVaultId($this->paypalVaultId)
+                    ->build();
+            case 'pay_upon_invoice':
+                return $this->puiPaymentSourceNodeBuilder->setCart($this->cart)
+                    ->setBirthDate($this->birthDate)
+                    ->setPhone($this->phone)
+                    ->build();
         }
 
         return null;
@@ -360,5 +395,21 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public function setCustomerBirthDay($birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setCustomerPhone($phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
     }
 }

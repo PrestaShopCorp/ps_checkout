@@ -82,6 +82,10 @@ class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterfac
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $payPalOrder->getId()), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
 
+        if ($payPalOrder->getFundingSource() === 'pay_upon_invoice' && !in_array($payPalOrder->getStatus(), ['PENDING_APPROVAL', 'APPROVED'], true)) {
+            throw new PsCheckoutException(sprintf('Pay Upon Invoice Order %s status is invalid', $payPalOrder->getId()), PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
+        }
+
         $contingencies = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES);
         $paymentSource = key($payPalOrder->getPaymentSource());
 

@@ -48,4 +48,9 @@ class BlikEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return ['PLN' => 1.0][$currency] ?? null;
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }
