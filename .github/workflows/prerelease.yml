@@ -86,7 +86,7 @@ jobs:
       - name: Install Composer Dev Dependencies (for monorepo)
         run: |
           echo "Installing root-level dev dependencies"
-          composer install --prefer-dist --optimize-autoloader
+          composer install --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
       - name: Prepare and Package Module
         run: |
@@ -97,7 +97,7 @@ jobs:
           echo "Preparing module: $MODULE_NAME (suffix: $VERSION_SUFFIX)"
 
           cd $MODULE_NAME
-          composer install --no-dev --prefer-dist --optimize-autoloader
+          composer install --no-dev --prefer-dist --optimize-autoloader --ignore-platform-reqs
           cd ..
 
           mkdir -p $MODULE_NAME/vendor/invertus
@@ -106,7 +106,9 @@ jobs:
           rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
                  $MODULE_NAME/tests \
                  $MODULE_NAME/vendor/tests \
-                 $MODULE_NAME/.php-cs-fixer.cache
+                 $MODULE_NAME/.php-cs-fixer.cache \
+                 $MODULE_NAME/phpstan.neon \
+                 $MODULE_NAME/phpstan-baseline.neon
 
           find $MODULE_NAME -type f -name "monorepo.json" -delete
           for dir in api core infrastructure presentation utility; do
