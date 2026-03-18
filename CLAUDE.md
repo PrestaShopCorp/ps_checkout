@@ -51,6 +51,8 @@ make ssh                   # Shell into the running PrestaShop container
 make install-module        # Install the module in PrestaShop via console
 ```
 
+Module logs (inside project root, not container): `prestashop/<PS_VERSION_TAG>/var/logs/ps_checkout-*-<YYYY-MM-DD>`.
+
 All `make` test commands run inside the Docker container using `$MODULE_VERSION` and `$PS_VERSION_TAG` from `.env`.
 `make phpstan` runs locally without Docker. All `make *-test` commands require a running Docker container (`make up`).
 
