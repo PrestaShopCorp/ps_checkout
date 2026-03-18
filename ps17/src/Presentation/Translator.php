@@ -80,6 +80,7 @@ class Translator implements TranslatorInterface
             'Pay with %s' => $this->module->l('Pay with %s', 'Translator'),
             'Pay later with invoice' => $this->module->l('Pay later with invoice', 'Translator'),
             'Pay upon Invoice' => $this->module->l('Pay upon Invoice', 'Translator'),
+            'Contact customer service via %s' => $this->module->l('Contact customer service via %s', 'Translator'),
 
             'Card holder name' => $this->module->l('Card holder name', 'Translator'),
             'Card number' => $this->module->l('Card number', 'Translator'),

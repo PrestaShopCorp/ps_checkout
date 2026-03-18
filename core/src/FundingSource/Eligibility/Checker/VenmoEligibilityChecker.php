@@ -43,4 +43,9 @@ class VenmoEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [];
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

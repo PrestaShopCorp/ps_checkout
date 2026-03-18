@@ -21,8 +21,12 @@
 namespace PsCheckout\Core\Order\Builder\Node;
 
 use libphonenumber\PhoneNumberUtil;
+use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Presentation\TranslatorInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use Psr\Log\LoggerInterface;
 
@@ -53,14 +57,40 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     private $birthDate;
 
+    /**
+     * @var null|string
+     */
+    private $phone;
+
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function __construct(
         LoggerInterface $logger,
         ValidateInterface $validate,
-        CountryRepositoryInterface $countryRepository
+        CountryRepositoryInterface $countryRepository,
+        ConfigurationInterface $configuration,
+        LinkInterface $link,
+        TranslatorInterface $translator
     ) {
         $this->logger = $logger;
         $this->validate = $validate;
         $this->countryRepository = $countryRepository;
+        $this->configuration = $configuration;
+        $this->link = $link;
+        $this->translator = $translator;
     }
 
     /**
@@ -71,7 +101,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         if (!isset($this->cart['addresses']['invoice'])) {
             $this->logger->warning('Invoice address is missing in the cart for PUI payment.');
 
-            return [];
+            throw new PsCheckoutException('Invoice address is missing in the cart for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
         $invoiceAddress = $this->cart['addresses']['invoice'];
@@ -80,7 +110,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         if (!$customer) {
             $this->logger->warning('Customer is missing in the cart for PUI payment.');
 
-            return [];
+            throw new PsCheckoutException('Customer is missing in the cart for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
         }
 
         $countryIsoCode = isset($invoiceAddress->id_country)
@@ -99,10 +129,12 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         } else {
             $this->logger->warning('Valid email is required for PUI payment.');
 
-            return [];
+            throw new PsCheckoutException('Valid email is required for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
         }
 
-        $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
+        $phone = !empty($this->phone)
+            ? $this->phone
+            : (!empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : ''));
 
         if (!empty($phone)) {
             try {
@@ -122,7 +154,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                     'exception' => $exception,
                 ]);
 
-                return [];
+                throw $exception;
             } catch (\Exception $exception) {
                 $this->logger->warning('Unexpected error formatting phone number for PUI payment.', [
                     'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
@@ -130,12 +162,12 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                     'exception' => $exception,
                 ]);
 
-                return [];
+                throw $exception;
             }
         } else {
             $this->logger->warning('Phone number is required for PUI payment.');
 
-            return [];
+            throw new PsCheckoutException('Phone number is required for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
         $billingAddress = OrderPayloadUtility::getAddressPortable(
@@ -145,12 +177,6 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         );
 
         unset($billingAddress['admin_area_1']);
-
-        if (empty($billingAddress)) {
-            $this->logger->warning('Billing address is required for PUI payment.');
-
-            return [];
-        }
 
         $puiData['billing_address'] = $billingAddress;
 
@@ -169,20 +195,31 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
 
         $experienceContext = [];
 
-        if (isset($puiData['phone']['national_number']) && isset($puiData['phone']['country_code'])) {
-            $experienceContext['customer_service_instructions'] = [
-                sprintf('Customer service phone is +%s %s.', $puiData['phone']['country_code'], $puiData['phone']['national_number']),
-            ];
+        $customerServicePhone = $this->configuration->get('PS_SHOP_PHONE');
+        $customerServiceEmail = $this->configuration->get('PS_SHOP_EMAIL');
+        $customerServiceLink = $this->link->getPageLink('contact');
+        $contactMethod = $customerServiceLink;
+
+        if (!empty($customerServicePhone)) {
+            $contactMethod = $customerServicePhone;
+        } elseif (!empty($customerServiceEmail)) {
+            $contactMethod = $customerServiceEmail;
         }
 
+        $experienceContext['customer_service_instructions'] = [
+            sprintf(
+                $this->translator->trans('Contact customer service via %s'),
+                $contactMethod
+            ),
+        ];
+
         $locale = $this->getLocale();
+
         if (!empty($locale)) {
             $experienceContext['locale'] = $locale;
         }
 
-        if (!empty($experienceContext)) {
-            $puiData['experience_context'] = $experienceContext;
-        }
+        $puiData['experience_context'] = $experienceContext;
 
         return [
             'payment_source' => [
@@ -204,6 +241,16 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
     public function setBirthDate($birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @param ?string $phone
+     */
+    public function setPhone($phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

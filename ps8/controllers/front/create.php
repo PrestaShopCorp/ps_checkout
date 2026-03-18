@@ -162,7 +162,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-                        $this->module->getService(LoggerInterface::class)->error(
+            $this->module->getService(LoggerInterface::class)->error(
                 'CreateController - Exception ' . $exception->getCode(),
                 [
                     'exception' => $exception,

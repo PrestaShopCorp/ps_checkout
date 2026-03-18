@@ -63,9 +63,7 @@ class PayPalOrderProviderTest extends TestCase
         $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
 
         $this->provider = new PayPalOrderProvider(
-            $this->configuration,
             $this->orderPayPalCache,
-            $this->payPalOrderRepository,
             $this->orderHttpClient
         );
     }

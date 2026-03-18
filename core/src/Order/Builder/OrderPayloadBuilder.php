@@ -101,8 +101,11 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var PuiPaymentSourceNodeBuilderInterface */
     private $puiPaymentSourceNodeBuilder;
 
-    /** @var PuiPaymentSourceNodeBuilderInterface */
+    /** @var ?string */
     private $birthDate;
+
+    /** @var ?string */
+    private $phone;
 
     public function __construct(
         BaseNodeBuilderInterface $baseNodeBuilder,
@@ -174,7 +177,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         $optionalPayload = [];
 
         if ($isFullPayload) {
-            $amountBreakdown = $this->amountBreakdownNodeBuilder->setCart($this->cart)->build();
+            $amountBreakdown = $this->amountBreakdownNodeBuilder
+                ->setCart($this->cart)
+                ->setFundingSource($this->fundingSource)
+                ->build();
             if (!empty($amountBreakdown)) {
                 $this->payload['purchase_units'][0] = array_replace_recursive($this->payload['purchase_units'][0], $amountBreakdown);
             }
@@ -295,6 +301,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'pay_upon_invoice':
                 return $this->puiPaymentSourceNodeBuilder->setCart($this->cart)
                     ->setBirthDate($this->birthDate)
+                    ->setPhone($this->phone)
                     ->build();
         }
 
@@ -394,6 +401,14 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     public function setCustomerBirthDay($birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setCustomerPhone($phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }

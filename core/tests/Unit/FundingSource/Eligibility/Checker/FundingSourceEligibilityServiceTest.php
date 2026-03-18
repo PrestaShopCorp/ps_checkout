@@ -181,6 +181,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
             ->willReturnMap([
                 [PayPalConfiguration::PS_CHECKOUT_INTENT, $context['intent']],
                 [PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE, PayPalConfiguration::MODE_SANDBOX],
+                [PayPalConfiguration::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT, 'DE'],
             ]);
 
         if (!empty($context['configurations'])) {
@@ -665,7 +666,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [],
                 ],
-                'eligible' => true,
+                'eligible' => false,
             ],
             'eligible_venmo' => [
                 'name' => 'venmo',

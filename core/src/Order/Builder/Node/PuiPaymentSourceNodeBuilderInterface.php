@@ -39,4 +39,11 @@ interface PuiPaymentSourceNodeBuilderInterface
     public function setCart(array $cart);
 
     public function setBirthDate($birthDate);
+
+    /**
+     * @param ?string $phone
+     *
+     * @return self
+     */
+    public function setPhone($phone);
 }

@@ -118,7 +118,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
             ->setIsVault($request->getVaultId() || $request->isVault())
-            ->setCustomerBirthDay($request->getBirthDate());
+            ->setCustomerBirthDay($request->getBirthDate())
+            ->setCustomerPhone($request->getPhone());
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());

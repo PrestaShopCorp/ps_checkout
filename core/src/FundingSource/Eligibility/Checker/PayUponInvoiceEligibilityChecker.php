@@ -44,6 +44,11 @@ class PayUponInvoiceEligibilityChecker extends BaseFundingSourceEligibilityCheck
         return [];
     }
 
+    protected function getSupportedMerchantCountries(): array
+    {
+        return ['DE'];
+    }
+
     public function getMinAmount(string $currency): ?float
     {
         return ['EUR' => 5.0][$currency] ?? null;
