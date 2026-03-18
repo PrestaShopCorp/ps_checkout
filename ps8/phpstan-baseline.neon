@@ -10921,12 +10921,6 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
 		-
-			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
 			message: '#^Cannot access offset ''brand'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -10939,25 +10933,7 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
 			message: '#^Cannot access offset ''last_digits'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
-			message: '#^Cannot access offset ''status'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
-			message: '#^Cannot access offset ''vault'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
