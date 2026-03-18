@@ -132,7 +132,7 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
 
     private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse): void
     {
-        $orderTotal = (float) $refundOrder->getTotalAmount();
+        $orderTotal = (float) $payPalOrderResponse->getOrderAmountValue();
 
         $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
             return $totalCaptured + (float) $capture['amount']['value'];
