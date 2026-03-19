@@ -194,15 +194,6 @@ class OrderSummaryPresenter implements OrderSummaryPresenterInterface
      */
     private function isTokenSaved(PayPalOrder $payPalOrder): bool
     {
-        $fundingSource = $payPalOrder->getFundingSource();
-        $paymentSource = $payPalOrder->getPaymentSource()[$fundingSource] ?? null;
-
-        if (!$paymentSource) {
-            return false;
-        }
-
-        return isset($paymentSource['attributes']['vault']['id']) &&
-            isset($paymentSource['attributes']['vault']['status']) &&
-            $paymentSource['attributes']['vault']['status'] === 'VAULTED';
+        return !empty($payPalOrder->getPaymentTokenId());
     }
 }

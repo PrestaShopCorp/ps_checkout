@@ -2575,12 +2575,6 @@ parameters:
 			path: ../core/src/Order/Processor/CreateOrderProcessor.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Processor\\CreateOrderProcessor\:\:capturePayPalOrder\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: ../core/src/Order/Processor/CreateOrderProcessor.php
-
-		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
@@ -8383,6 +8377,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/SupplementaryDataNodeBuilderTest.php
 
 		-
+			message: '#^Trying to mock an undefined method getOneBy\(\) on class PsCheckout\\Infrastructure\\Repository\\CartRepositoryInterface\.$#'
+			identifier: phpunit.mockMethod
+			count: 1
+			path: ../core/tests/Unit/Order/Processor/CreateOrderProcessorTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''Validation passed…'' will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
@@ -10921,12 +10921,6 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
 		-
-			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
 			message: '#^Cannot access offset ''brand'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -10939,25 +10933,7 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
 			message: '#^Cannot access offset ''last_digits'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
-			message: '#^Cannot access offset ''status'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
-
-		-
-			message: '#^Cannot access offset ''vault'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenter.php
