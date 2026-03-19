@@ -106,8 +106,8 @@ class AuthorizePayPalOrderActionTest extends TestCase
             $this->paymentDeniedEventHandler,
             $this->payPalOrderProvider,
             $this->payPalOrderAuthorizationRepository,
-            $this->logger,
-            $this->payPalOrderRepository
+            $this->payPalOrderRepository,
+            $this->logger
         );
     }
 

@@ -82,8 +82,8 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         EventHandlerInterface $paymentDeniedEventHandler,
         PayPalOrderProviderInterface $payPalOrderProvider,
         PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository,
-        LoggerInterface $logger,
-        PayPalOrderRepositoryInterface $payPalOrderRepository
+        PayPalOrderRepositoryInterface $payPalOrderRepository,
+        LoggerInterface $logger
     ) {
         $this->orderHttpClient = $orderHttpClient;
         $this->payPalOrderCache = $payPalOrderCache;
@@ -91,8 +91,8 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $this->paymentDeniedEventHandler = $paymentDeniedEventHandler;
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
-        $this->logger = $logger;
         $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->logger = $logger;
     }
 
     /**
