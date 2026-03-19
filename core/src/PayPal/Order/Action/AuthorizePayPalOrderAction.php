@@ -30,6 +30,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
@@ -65,6 +66,11 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
     private $payPalOrderAuthorizationRepository;
 
     /**
+     * @var PayPalOrderRepositoryInterface
+     */
+    private $payPalOrderRepository;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -76,7 +82,8 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         EventHandlerInterface $paymentDeniedEventHandler,
         PayPalOrderProviderInterface $payPalOrderProvider,
         PayPalOrderAuthorizationRepositoryInterface $payPalOrderAuthorizationRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalOrderRepositoryInterface $payPalOrderRepository
     ) {
         $this->orderHttpClient = $orderHttpClient;
         $this->payPalOrderCache = $payPalOrderCache;
@@ -85,6 +92,7 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->payPalOrderAuthorizationRepository = $payPalOrderAuthorizationRepository;
         $this->logger = $logger;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -106,6 +114,14 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $this->payPalOrderCache->set($orderId, array_replace_recursive($cachedOrder, $orderPayPal));
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
+
+        if ($payPalOrderResponse->getPaymentSource()) {
+            $payPalOrderEntity = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
+            if ($payPalOrderEntity) {
+                $payPalOrderEntity->setPaymentSource($payPalOrderResponse->getPaymentSource());
+                $this->payPalOrderRepository->save($payPalOrderEntity);
+            }
+        }
 
         $authorization = $payPalOrderResponse->getAuthorization();
 

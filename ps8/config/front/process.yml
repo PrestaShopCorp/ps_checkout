@@ -284,3 +284,4 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
       - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'

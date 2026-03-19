@@ -3201,7 +3201,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 4
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
@@ -3302,12 +3302,6 @@ parameters:
 
 		-
 			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Action\\CapturePayPalOrderAction\:\:\$configuration is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\PayPal\\Order\\Action\\CapturePayPalOrderAction\:\:\$payPalOrderRepository is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php

@@ -118,6 +118,14 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
             throw new PsCheckoutException('Capture declined', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
+        if ($payPalOrderResponse->getPaymentSource()) {
+            $payPalOrderEntity = $this->payPalOrderRepository->getOneBy(['id' => $orderPayPal['id']]);
+            if ($payPalOrderEntity) {
+                $payPalOrderEntity->setPaymentSource($payPalOrderResponse->getPaymentSource());
+                $this->payPalOrderRepository->save($payPalOrderEntity);
+            }
+        }
+
         if ($payPalOrderResponse->getStatus() === PayPalCaptureStatus::COMPLETED) {
             $this->orderCompletedEventHandler->handle($payPalOrderResponse);
         }
