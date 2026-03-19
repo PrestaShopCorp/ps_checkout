@@ -155,6 +155,10 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
             'purchase_units' => [[
+                'amount' => [
+                    'currency_code' => 'EUR',
+                    'value' => '22.94',
+                ],
                 'payments' => [
                     'captures' => [[
                         'id' => 'CAPTURE-1',
@@ -174,9 +178,9 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
             ]],
         ];
 
-        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '22.94']);
+        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '10.00']);
         $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
-        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 22.94]);
+        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 10.00]);
 
         $this->payPalOrderProvider->expects($this->once())
             ->method('getById')
@@ -203,6 +207,10 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
             'purchase_units' => [[
+                'amount' => [
+                    'currency_code' => 'EUR',
+                    'value' => '22.94',
+                ],
                 'payments' => [
                     'captures' => [[
                         'id' => 'CAPTURE-1',
@@ -251,6 +259,10 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
         $payPalOrderResponseData = [
             'intent' => 'AUTHORIZE',
             'purchase_units' => [[
+                'amount' => [
+                    'currency_code' => 'EUR',
+                    'value' => '22.94',
+                ],
                 'payments' => [
                     'captures' => [[
                         'id' => 'CAPTURE-1',
@@ -270,9 +282,9 @@ class SetRefundedOrderStateActionTest extends BaseTestCase
             ]],
         ];
 
-        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '22.94']);
+        $order = OrderFactory::create(['current_state' => 1, 'total_paid' => '10.00']);
         $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
-        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 22.94]);
+        $payPalRefundOrder = PayPalRefundOrderFactory::create(['id' => $order->id, 'totalPaid' => 10.00]);
 
         $this->payPalOrderProvider->expects($this->once())
             ->method('getById')
