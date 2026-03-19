@@ -283,4 +283,5 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@Psr\Log\LoggerInterface'
