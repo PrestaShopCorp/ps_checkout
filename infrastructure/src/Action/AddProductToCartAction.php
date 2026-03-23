@@ -46,16 +46,26 @@ class AddProductToCartAction implements AddProductToCartActionInterface
             throw new PsCheckoutException('Failed to create cart instance');
         }
 
-        if (!$cart->updateQty(
-            $requestData->getQuantityWanted(),
+        $quantityInCart = $cart->getProductQuantity(
             $requestData->getIdProduct(),
-            !$requestData->getIdProductAttribute() ? null : $requestData->getIdProductAttribute(),
-            !$requestData->getIdCustomization() ? false : $requestData->getIdCustomization(),
-            'up'
-        )) {
-            $cart->delete();
+            !$requestData->getIdProductAttribute() ? 0 : $requestData->getIdProductAttribute(),
+            !$requestData->getIdCustomization() ? 0 : $requestData->getIdCustomization()
+        );
 
-            throw new PsCheckoutException('Failed to add product to cart');
+        $quantityToAdd = isset($quantityInCart['quantity']) ? $requestData->getQuantityWanted() - (int) $quantityInCart['quantity'] : $requestData->getQuantityWanted();
+
+        if ($quantityToAdd !== 0) {
+            if (!$cart->updateQty(
+                $quantityToAdd < 0 ? -1 * $quantityToAdd : $quantityToAdd,
+                $requestData->getIdProduct(),
+                !$requestData->getIdProductAttribute() ? null : $requestData->getIdProductAttribute(),
+                !$requestData->getIdCustomization() ? false : $requestData->getIdCustomization(),
+                $quantityToAdd < 0 ? 'down' : 'up'
+            )) {
+                $cart->delete();
+
+                throw new PsCheckoutException('Failed to add product to cart');
+            }
         }
 
         try {

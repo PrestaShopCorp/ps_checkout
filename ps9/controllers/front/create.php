@@ -83,18 +83,23 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             }
             // END Express Checkout
 
-            if (!isset($context->getCart()->id)) {
+            $cart = $context->getCart();
+
+            if (!isset($cart->id)) {
                 $this->exitWithResponse([
                     'httpCode' => 404,
                     'body' => 'Cart not found',
                 ]);
             }
 
+            $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
+
+            if ($cartTotal <= 0) {
+                throw new PsCheckoutException($this->module->l('Cart is empty', 'create'), PsCheckoutException::CART_PRODUCT_MISSING);
+            }
+
             // Validate PUI amount limits (5 EUR < amount < 2500 EUR)
             if ($createPayPalOrderRequest->getFundingSource() === 'pay_upon_invoice') {
-                $cart = $context->getCart();
-                $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
-
                 if ($cartTotal <= 5.00 || $cartTotal >= 2500.00) {
                     $this->exitWithResponse([
                         'status' => false,
@@ -108,11 +113,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 }
             }
 
-            if ($createPayPalOrderRequest->isExpressCheckout() || empty($context->getCart()->id_address_delivery)) {
+            if ($createPayPalOrderRequest->isExpressCheckout() || empty($cart->id_address_delivery)) {
                 /** @var PayPalOrderRepository $payPalOrderRepository */
                 $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
 
-                $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $context->getCart()->id);
+                $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $cart->id);
 
                 if ($payPalOrder && $payPalOrder->isExpressCheckout() && in_array(
                     $payPalOrder->getStatus(),
@@ -137,11 +142,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             /** @var CreatePayPalOrderAction $createPayPalOrderAction */
             $createPayPalOrderAction = $this->module->getService(CreatePayPalOrderAction::class);
-            $createPayPalOrderAction->execute((int) $context->getCart()->id, $createPayPalOrderRequest);
+            $createPayPalOrderAction->execute((int) $cart->id, $createPayPalOrderRequest);
 
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
-            $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $context->getCart()->id);
+            $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $cart->id);
 
             if (!$payPalOrder) {
                 $this->exitWithResponse([
@@ -160,7 +165,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-                        $this->module->getService(LoggerInterface::class)->error(
+            $this->module->getService(LoggerInterface::class)->error(
                 'CreateController - Exception ' . $exception->getCode(),
                 [
                     'exception' => $exception,
