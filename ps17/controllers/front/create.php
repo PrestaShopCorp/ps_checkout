@@ -93,7 +93,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]);
             }
 
-            $cartTotal = $cart->getOrderTotal(true, \Cart::BOTH);
+            $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
 
             if ($cartTotal <= 0) {
                 throw new PsCheckoutException($this->module->l('Cart is empty', 'create'), PsCheckoutException::CART_PRODUCT_MISSING);

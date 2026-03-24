@@ -46,13 +46,18 @@ class AddProductToCartAction implements AddProductToCartActionInterface
             throw new PsCheckoutException('Failed to create cart instance');
         }
 
+        /**
+         * @var array{quantity: string, deep_quantity: string} $quantityInCart
+         */
         $quantityInCart = $cart->getProductQuantity(
-            $requestData->getIdProduct(),
+            (int) $requestData->getIdProduct(),
             !$requestData->getIdProductAttribute() ? 0 : $requestData->getIdProductAttribute(),
             !$requestData->getIdCustomization() ? 0 : $requestData->getIdCustomization()
         );
 
-        $quantityToAdd = isset($quantityInCart['quantity']) ? $requestData->getQuantityWanted() - (int) $quantityInCart['quantity'] : $requestData->getQuantityWanted();
+        $quantityWanted = (int) $requestData->getQuantityWanted();
+
+        $quantityToAdd = $quantityWanted - (int) $quantityInCart['quantity'];
 
         if ($quantityToAdd !== 0) {
             if (!$cart->updateQty(

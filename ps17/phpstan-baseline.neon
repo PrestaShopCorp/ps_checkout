@@ -9109,12 +9109,6 @@ parameters:
 			path: ../infrastructure/src/Action/AddProductToCartAction.php
 
 		-
-			message: '#^Parameter \#1 \$quantity of method CartCore\:\:updateQty\(\) expects int, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/src/Action/AddProductToCartAction.php
-
-		-
 			message: '#^Parameter \#2 \$id_product of method CartCore\:\:updateQty\(\) expects int, int\|null given\.$#'
 			identifier: argument.type
 			count: 1

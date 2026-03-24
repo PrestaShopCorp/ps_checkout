@@ -95,7 +95,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
 
             if ($cartTotal <= 0) {
-                throw new PsCheckoutException($this->module->l('The payment is not valid: the amount is not eligible.', 'create'), PsCheckoutException::CART_PRODUCT_MISSING);
+                throw new PsCheckoutException($this->module->l('Cart is empty', 'create'), PsCheckoutException::CART_PRODUCT_MISSING);
             }
 
             // Validate PUI amount limits (5 EUR < amount < 2500 EUR)
