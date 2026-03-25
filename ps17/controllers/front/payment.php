@@ -280,9 +280,16 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     private function createOrder(PayPalOrderResponse $payPalOrderResponse, PayPalOrder $payPalOrder)
     {
-        /** @var CreateOrderAction $createOrderAction */
-        $createOrderAction = $this->module->getService(CreateOrderAction::class);
-        $createOrderAction->execute($payPalOrderResponse);
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $this->module->getService(OrderRepository::class);
+
+        $orders = $orderRepository->getAllBy(['id_cart' => $payPalOrder->getIdCart()]);
+
+        if (empty($orders)) {
+            /** @var CreateOrderAction $createOrderAction */
+            $createOrderAction = $this->module->getService(CreateOrderAction::class);
+            $createOrderAction->execute($payPalOrderResponse);
+        }
 
         if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalConfiguration::PS_CHECKOUT_CUSTOMER_INTENT_FAVORITE)) {
             /** @var PaymentTokenRepository $paymentTokenRepository */
