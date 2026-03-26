@@ -622,3 +622,8 @@ form button.ps_checkout-vault-token-delete {
   width: 20px;
   height: 20px;
 }
+
+.js-payment-binary.js-payment-ps_checkout.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

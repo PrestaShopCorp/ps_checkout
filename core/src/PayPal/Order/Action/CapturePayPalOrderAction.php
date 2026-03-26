@@ -142,7 +142,7 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
         ) {
             $payPalProcessorResponse = new PayPalProcessorResponse(
                 $payPalOrderResponse->getCard()['brand'] ?: null,
-                $payPalOrderResponse->getCard()['brand']['type'] ?: null,
+                $payPalOrderResponse->getCard()['type'] ?: null,
                 $payPalOrderResponse->getCapture()['processor_response']['avs_code'] ?? null,
                 $payPalOrderResponse->getCapture()['processor_response']['cvv_code'] ?? null,
                 $payPalOrderResponse->getCapture()['processor_response']['payment_advice_code'] ?? null,

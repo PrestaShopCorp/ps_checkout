@@ -29,9 +29,9 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
     {
         return [
             // TODO: Remove when maasland webhooks are redundant
-            'shopId' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-            'merchantId' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-            'firebaseId' => $_SERVER['HTTP_PSX_ID'] ?? null,
+            'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
+            'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
+            'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
             // END TODO
             'Svix-Id' => $_SERVER['HTTP_SVIX_ID'] ?? null,
             'Svix-Timestamp' => $_SERVER['HTTP_SVIX_TIMESTAMP'] ?? null,
