@@ -21,10 +21,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PsCheckout\Core\Webhook\WebhookException;
 use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
 use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 use PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor;
+use PsCheckout\Core\WebhookDispatcher\Provider\WebhookHeaderProvider;
 use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator;
@@ -102,9 +102,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         } catch (Exception $e) {
             \Sentry\captureException($e);
 
+            /** @var WebhookHeaderProvider $headerProvider */
+            $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
+
             // Handle the exception
             $logger->error('Webhook Dispatcher error', [
                 'message' => $e->getMessage(),
+                'headers' => $headerProvider->getHeaders(),
                 'trace' => $e->getTraceAsString(),
             ]);
             http_response_code(400);
