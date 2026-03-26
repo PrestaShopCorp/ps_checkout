@@ -85,12 +85,6 @@ parameters:
 			path: ../api/src/Http/MaaslandOrderHttpClient.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/MaaslandOrderHttpClient.php
-
-		-
 			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 4
@@ -152,12 +146,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$body of method PsCheckout\\Api\\Http\\OrderHttpClient\:\:extractMessage\(\) expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/OrderHttpClient.php
-
-		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<mixed, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/OrderHttpClient.php
@@ -295,12 +283,6 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/PaymentHttpClient.php
-
-		-
 			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 4
@@ -368,12 +350,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$body of method PsCheckout\\Api\\Http\\WebhookHttpClient\:\:extractMessage\(\) expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/WebhookHttpClient.php
-
-		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array\<mixed, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/WebhookHttpClient.php
@@ -1999,6 +1975,12 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayerNodeBuilder.php
 
 		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: ../core/src/Order/Builder/Node/PayerNodeBuilder.php
+
+		-
 			message: '#^Cannot access property \$id_country on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -3344,12 +3326,6 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''response_code'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
-
-		-
-			message: '#^Cannot access offset ''type'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
@@ -6139,12 +6115,6 @@ parameters:
 			path: ../core/src/PayPal/ShippingTracking/ValueObject/PayPalTrackingStatus.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/ShippingTracking/ValueObject/PayPalTrackingStatus.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\ShippingTracking\\ValueObject\\TrackingApiRequest\:\:__construct\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -6602,12 +6572,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
@@ -10681,12 +10645,6 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
-
-		-
 			message: '#^Parameter \#2 \$idCart of class PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrder constructor expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -11031,13 +10989,13 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$filename of method PsCheckout\\Infrastructure\\Logger\\LoggerFileReader\:\:validateFilename\(\) expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 3
+			count: 1
 			path: ../infrastructure/tests/Unit/Logger/LoggerFileReaderTest.php
 
 		-
-			message: '#^Parameter \#1 \$keys of function array_fill_keys expects an array of values castable to string, array\<int, mixed\> given\.$#'
+			message: '#^Parameter \#1 \$filename of method PsCheckout\\Infrastructure\\Logger\\LoggerFileReaderInterface\:\:validateFilename\(\) expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../infrastructure/tests/Unit/Logger/LoggerFileReaderTest.php
 
 		-
@@ -11383,12 +11341,6 @@ parameters:
 			path: ../presentation/src/Presenter/OrderSummary/OrderSummaryPresenterInterface.php
 
 		-
-			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse referenced with incorrect case\: PsCheckout\\Api\\ValueObject\\PaypalOrderResponse\.$#'
-			identifier: class.nameCase
-			count: 4
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
-
-		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderPresenter\:\:getOrderStatus\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -11417,12 +11369,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenter.php
-
-		-
-			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse referenced with incorrect case\: PsCheckout\\Api\\ValueObject\\PaypalOrderResponse\.$#'
-			identifier: class.nameCase
-			count: 2
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderPresenterInterface.php
 
 		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\PayPalOrder\\PayPalOrderPresenterInterface\:\:present\(\) return type has no value type specified in iterable type array\.$#'
@@ -11458,12 +11404,6 @@ parameters:
 			message: '#^Cannot cast mixed to float\.$#'
 			identifier: cast.double
 			count: 1
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
-
-		-
-			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse referenced with incorrect case\: PsCheckout\\Api\\ValueObject\\PaypalOrderResponse\.$#'
-			identifier: class.nameCase
-			count: 2
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTotalsPresenter.php
 
 		-
@@ -11536,12 +11476,6 @@ parameters:
 			message: '#^Cannot access offset ''value'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
-			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse referenced with incorrect case\: PsCheckout\\Api\\ValueObject\\PaypalOrderResponse\.$#'
-			identifier: class.nameCase
-			count: 4
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
@@ -11629,12 +11563,6 @@ parameters:
 			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
 
 		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../presentation/src/Presenter/PayPalOrder/PayPalOrderTransactionPresenter.php
-
-		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\PresenterInterface\:\:present\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -11691,12 +11619,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\Settings\\Admin\\Modules\\ConfigurationModule\:\:present\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../presentation/src/Presenter/Settings/Admin/Modules/ConfigurationModule.php
-
-		-
-			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/Settings/Admin/Modules/ConfigurationModule.php
 
@@ -11889,24 +11811,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Presentation\\Presenter\\Settings\\Front\\SupportedCardBrandsPresenter\:\:present\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../presentation/src/Presenter/Settings/Front/SupportedCardBrandsPresenter.php
-
-		-
-			message: '#^Parameter \#1 \$array of function array_intersect expects an array of values castable to string, array given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../presentation/src/Presenter/Settings/Front/SupportedCardBrandsPresenter.php
-
-		-
-			message: '#^Parameter \#2 \$arrays of function array_intersect expects an array of values castable to string, array given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../presentation/src/Presenter/Settings/Front/SupportedCardBrandsPresenter.php
-
-		-
-			message: '#^Parameter \#3 of function array_intersect expects an array of values castable to string, array given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../presentation/src/Presenter/Settings/Front/SupportedCardBrandsPresenter.php
 
