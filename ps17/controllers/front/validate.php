@@ -52,9 +52,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         /** @var Validate $validate */
         $validate = $this->module->getService(Validate::class);
 
-        /** @var CreatedPayPalOrderValidator $createdPayPalOrderValidator */
-        $createdPayPalOrderValidator = $this->module->getService(CreatedPayPalOrderValidator::class);
-
         $checkoutRequest = null;
 
         try {
@@ -191,9 +188,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         ]);
     }
 
-    /**
-    * @return CreatedPayPalOrderValidatorInterface
-    **/
     private function getCreatedOrderValidator(ValidateOrderRequest $checkoutRequest)
     {
         if ($checkoutRequest->getFundingSource() === 'pay_upon_invoice') {
