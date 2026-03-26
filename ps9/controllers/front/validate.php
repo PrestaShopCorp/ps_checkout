@@ -27,6 +27,8 @@ use PsCheckout\Core\Order\Processor\CreateOrderProcessor;
 use PsCheckout\Core\Order\Request\ValueObject\ValidateOrderRequest;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidator;
+use PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidatorInterface;
+use PsCheckout\Core\PayPal\Order\Validator\CreatedPayUponInvoiceOrderValidator;
 use PsCheckout\Core\PayPal\Order\ValueObject\PayPalOrderCompletionData;
 use PsCheckout\Infrastructure\Adapter\Tools;
 use PsCheckout\Infrastructure\Adapter\Validate;
@@ -54,9 +56,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
         /** @var Validate $validate */
         $validate = $this->module->getService(Validate::class);
-
-        /** @var CreatedPayPalOrderValidator $createdPayPalOrderValidator */
-        $createdPayPalOrderValidator = $this->module->getService(CreatedPayPalOrderValidator::class);
 
         $checkoutRequest = null;
 
@@ -104,7 +103,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $createOrderProcessor = $this->module->getService(CreateOrderProcessor::class);
             $createOrderProcessor->run($checkoutRequest);
 
-            $completedPayPalOrderData = $createdPayPalOrderValidator->validate($checkoutRequest->getOrderId(), $checkoutRequest->getCartId());
+            /** @var CreatedPayPalOrderValidatorInterface $createdOrderValidator */
+            $createdOrderValidator = $this->getCreatedOrderValidator($checkoutRequest);
+            $completedPayPalOrderData = $createdOrderValidator->validate($checkoutRequest->getOrderId(), $checkoutRequest->getCartId());
 
             if (empty($completedPayPalOrderData)) {
                 throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
@@ -119,13 +120,21 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             // NOTE: Retry to get the PayPal Order after the order creation
-            $completedPayPalOrderData = $createdPayPalOrderValidator->validate($checkoutRequest->getOrderId(), $checkoutRequest->getCartId());
+            /** @var CreatedPayPalOrderValidatorInterface $createdOrderValidator */
+            $createdOrderValidator = $this->getCreatedOrderValidator($checkoutRequest);
+            $completedPayPalOrderData = $createdOrderValidator->validate($checkoutRequest->getOrderId(), $checkoutRequest->getCartId());
 
             if (!empty($completedPayPalOrderData)) {
                 $this->sendOkResponse($completedPayPalOrderData);
             }
 
             $this->handleOrderCreationException($exception, $checkoutRequest->getOrderId());
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while validating the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 
@@ -182,5 +191,14 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 ],
             ],
         ]);
+    }
+
+    private function getCreatedOrderValidator(ValidateOrderRequest $checkoutRequest)
+    {
+        if ($checkoutRequest->getFundingSource() === 'pay_upon_invoice') {
+            return $this->module->getService(CreatedPayUponInvoiceOrderValidator::class);
+        }
+
+        return $this->module->getService(CreatedPayPalOrderValidator::class);
     }
 }

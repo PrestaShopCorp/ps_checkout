@@ -3217,12 +3217,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
 
 		-
-			message: '#^Cannot access offset ''type'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CapturePayPalOrderAction.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -8535,31 +8529,31 @@ parameters:
 		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 3
+			count: 4
 			path: ../core/tests/Unit/PayPal/Action/CapturePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method expects\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 8
+			count: 9
 			path: ../core/tests/Unit/PayPal/Action/CapturePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 17
+			count: 23
 			path: ../core/tests/Unit/PayPal/Action/CapturePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 12
+			count: 17
 			path: ../core/tests/Unit/PayPal/Action/CapturePayPalOrderActionTest.php
 
 		-
 			message: '#^Cannot call method with\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 5
 			path: ../core/tests/Unit/PayPal/Action/CapturePayPalOrderActionTest.php
 
 		-
@@ -8849,12 +8843,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Provider\\WebhookHeaderProvider@anonymous/core/tests/Unit/WebhookDispatcher/Provider/WebhookHeaderProviderTest\.php\:137\:\:getHeaders\(\) should return array\<string, string\|null\> but returns array\<string, mixed\>\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/tests/Unit/WebhookDispatcher/Provider/WebhookHeaderProviderTest.php
 
 		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\WebhookDispatcher\\Provider\\WebhookHeaderProviderTest\:\:mockServerHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
