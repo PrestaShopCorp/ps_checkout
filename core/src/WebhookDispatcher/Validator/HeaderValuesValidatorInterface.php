@@ -27,8 +27,15 @@ interface HeaderValuesValidatorInterface
     /**
      * Validate the header values.
      *
-     * @return array
-     *
+     * @return array{
+     *     shopId: string|null,
+     *     merchantId: string|null,
+     *     firebaseId: string|null,
+     *     Svix-Id: string|null,
+     *     Svix-Timestamp: string|null,
+     *     Svix-Signature: string|null,
+     * }
+ *
      * @throws WebhookException
      */
     public function validate(): array;

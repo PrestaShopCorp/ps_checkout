@@ -6757,18 +6757,6 @@ parameters:
 			path: ../core/src/WebhookDispatcher/Validator/BodyValuesValidator.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Validator\\HeaderValuesValidator\:\:validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/WebhookDispatcher/Validator/HeaderValuesValidator.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Validator\\HeaderValuesValidatorInterface\:\:validate\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/WebhookDispatcher/Validator/HeaderValuesValidatorInterface.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\ValueObject\\DispatchWebhookRequest\:\:__construct\(\) has parameter \$resource with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
