@@ -46,7 +46,6 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Infrastructure\Validator\MerchantValidator;
 use PsCheckout\Module\Presentation\Translator;
-use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider;
 use PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter;
