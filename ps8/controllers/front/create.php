@@ -39,10 +39,6 @@ use Psr\Log\LoggerInterface;
  */
 class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
 
     /**
      * @see FrontController::postProcess()
@@ -75,6 +71,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     $addProductToCartAction->execute($createPayPalOrderRequest);
                 } catch (PsCheckoutException $exception) {
                     \Sentry\captureException($exception);
+
                     $this->exitWithResponse([
                         'status' => false,
                         'httpCode' => 400,
@@ -93,6 +90,24 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     'httpCode' => 404,
                     'body' => 'Cart not found',
                 ]);
+            }
+
+            // Validate PUI amount limits (5 EUR < amount < 2500 EUR)
+            if ($createPayPalOrderRequest->getFundingSource() === 'pay_upon_invoice') {
+                $cart = $context->getCart();
+                $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
+
+                if ($cartTotal <= 5.00 || $cartTotal >= 2500.00) {
+                    $this->exitWithResponse([
+                        'status' => false,
+                        'httpCode' => 400,
+                        'body' => [
+                            'error' => [
+                                'message' => $this->module->l('The payment is not valid: the amount is not eligible.', 'create'),
+                            ],
+                        ],
+                    ]);
+                }
             }
 
             if ($createPayPalOrderRequest->isExpressCheckout() || empty($context->getCart()->id_address_delivery)) {
@@ -157,6 +172,12 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             \Sentry\captureException($exception);
 
             $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error ocurred.', $exception->getCode()));
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while creating the PayPal order.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

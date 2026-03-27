@@ -76,9 +76,10 @@ class SetDeclinedOrderStateAction implements SetOrderStateActionInterface
             throw new PsCheckoutException('PayPal order not found.', PsCheckoutException::ORDER_NOT_FOUND);
         }
 
+        /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if ($this->orderHasErrorState($order)) {
+        if (!$order || $this->orderHasErrorState($order)) {
             return;
         }
 

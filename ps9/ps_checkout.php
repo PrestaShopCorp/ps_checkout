@@ -25,12 +25,9 @@ use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
-use PsCheckout\Core\Hook\Handlers\HookHandlerInterface;
 use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
-use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
-use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;
@@ -52,7 +49,6 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Infrastructure\Validator\MerchantValidator;
 use PsCheckout\Module\Presentation\Translator;
-use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider;
 use PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter;
@@ -736,8 +732,8 @@ class Ps_Checkout extends PaymentModule
 
         /** @var FundingSourceTokenPresenter $fundingSourceTokenPresenter */
         $fundingSourceTokenPresenter = $this->getService(FundingSourceTokenPresenter::class);
-        /** @var FundingSourcePresenter $fundingSourcePresenter */
-        $fundingSourcePresenter = $this->getService(FundingSourcePresenter::class);
+        /** @var FundingSourceEligibilityService $eligibilityService */
+        $eligibilityService = $this->getService(FundingSourceEligibilityService::class);
 
         $paymentOptions = [];
 
@@ -745,7 +741,7 @@ class Ps_Checkout extends PaymentModule
             $paymentOptions[] = $fundingSource->getName();
         }
 
-        foreach ($fundingSourcePresenter->getAllActiveForSpecificShop($this->context->shop->id) as $fundingSource) {
+        foreach ($eligibilityService->getEligibleFundingSources() as $fundingSource) {
             $paymentOptions[] = $fundingSource->getName();
         }
 

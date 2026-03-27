@@ -23,6 +23,7 @@ namespace PsCheckout\Core\OrderState\Action;
 use Order;
 use OrderState;
 use PsCheckout\Core\Order\Exception\OrderException;
+use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Infrastructure\Repository\OrderHistoryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\OrderStateRepositoryInterface;
@@ -64,11 +65,19 @@ class ChangeOrderStateAction implements ChangeOrderStateActionInterface
      */
     public function execute(int $orderId, string $newOrderStateId)
     {
-        /** @var Order $order */
+        /** @var Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_order' => $orderId]);
 
-        /** @var OrderState $newOrderState */
+        if (!$order) {
+            throw new OrderException(sprintf('The order #%d does not exist', $orderId), OrderException::ORDER_NOT_FOUND);
+        }
+
+        /** @var OrderState|null $newOrderState */
         $newOrderState = $this->orderStateRepository->getOneBy(['id_order_state' => $newOrderStateId]);
+
+        if (!$newOrderState) {
+            throw new OrderException(sprintf('The OrderState #%d does not exist', $newOrderStateId), OrderStateException::INVALID_ID);
+        }
 
         if ($order->getCurrentState() === $newOrderState->id) {
             throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $orderId, $newOrderState->id), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);

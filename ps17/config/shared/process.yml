@@ -46,6 +46,15 @@ services:
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
+  PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+
   PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction
     arguments:

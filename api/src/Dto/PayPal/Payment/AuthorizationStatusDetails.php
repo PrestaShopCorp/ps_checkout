@@ -49,9 +49,4 @@ class AuthorizationStatusDetails
     {
         $this->reason = $reason;
     }
-
-    protected function getSupportedMerchantCountries(): array
-    {
-        return [];
-    }
 }

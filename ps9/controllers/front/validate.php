@@ -42,11 +42,6 @@ use PsCheckout\Utility\Common\InputStreamUtility;
 class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
-     */
-    public $module;
-
-    /**
      * @see FrontController::postProcess()
      */
     public function postProcess()
@@ -193,6 +188,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         ]);
     }
 
+    /**
+     * @return CreatedPayPalOrderValidatorInterface
+     **/
     private function getCreatedOrderValidator(ValidateOrderRequest $checkoutRequest)
     {
         if ($checkoutRequest->getFundingSource() === 'pay_upon_invoice') {

@@ -30,9 +30,6 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
-use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -41,25 +38,15 @@ class PayPalOrderProviderTest extends TestCase
     /** @var PayPalOrderProvider */
     private $provider;
 
-    /** @var ConfigurationInterface|MockObject */
-    private $configuration;
-
     /** @var PayPalOrderCacheInterface|MockObject */
     private $orderPayPalCache;
-
-    /** @var PayPalOrderRepositoryInterface|MockObject */
-    private $payPalOrderRepository;
 
     /** @var OrderHttpClientInterface|MockObject */
     private $orderHttpClient;
 
     protected function setUp(): void
     {
-        $this->configuration = $this->createMock(ConfigurationInterface::class);
-
         $this->orderPayPalCache = $this->createMock(PayPalOrderCacheInterface::class);
-
-        $this->payPalOrderRepository = $this->createMock(PayPalOrderRepositoryInterface::class);
         $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
 
         $this->provider = new PayPalOrderProvider(
@@ -148,20 +135,11 @@ class PayPalOrderProviderTest extends TestCase
     public function testItHandlesVaultingOrder(): void
     {
         $orderId = 'ORDER-123';
-        $merchantId = 'MERCHANT-123';
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
         $payPalOrder->method('checkCustomerIntent')
             ->with(PayPalOrder::CUSTOMER_INTENT_USES_VAULTING)
             ->willReturn(true);
-
-        $this->payPalOrderRepository->method('getOneBy')
-            ->with(['id' => $orderId])
-            ->willReturn($payPalOrder);
-
-        $this->configuration->method('get')
-            ->with(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
-            ->willReturn($merchantId);
 
         $orderData = [
             'id' => $orderId,

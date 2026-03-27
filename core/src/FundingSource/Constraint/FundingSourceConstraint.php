@@ -38,9 +38,11 @@ class FundingSourceConstraint
             'ideal' => ['NL'],
             'mybank' => ['IT'],
             'p24' => ['PL'],
-            'paylater' => ['FR', 'GB', 'US', 'ES', 'IT'],
+            'paylater' => ['AU', 'DE', 'ES', 'FR', 'GB', 'IT', 'US'],
             'google_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             'apple_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
+            'venmo' => ['US'],
+            'pay_upon_invoice' => ['DE'],
         ];
 
         return $countries[$fundingSourceName] ?? [];

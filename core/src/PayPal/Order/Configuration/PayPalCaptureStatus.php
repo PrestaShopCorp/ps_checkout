@@ -22,6 +22,8 @@ namespace PsCheckout\Core\PayPal\Order\Configuration;
 
 class PayPalCaptureStatus
 {
+    const CREATED = 'CREATED';
+
     const PENDING = 'PENDING';
 
     const PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED';

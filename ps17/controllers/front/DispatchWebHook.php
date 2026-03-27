@@ -47,6 +47,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     public function display(): bool
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 405,
+                'body' => 'Method Not Allowed',
+            ]);
+        }
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
@@ -98,7 +105,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             /** @var DispatchWebhookProcessor $dispatchWebHookProcessor */
             $dispatchWebHookProcessor = $this->module->getService(DispatchWebhookProcessor::class);
 
-            return $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+            $processed = $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+
+            if ($processed) {
+                $logger->info('Webhook dispatch completed successfully');
+            } else {
+                $logger->warning('Webhook dispatch completed with no processing');
+            }
+
+            return $processed;
         } catch (Exception $e) {
             \Sentry\captureException($e);
 
@@ -117,6 +132,19 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
+        } catch (Throwable $e) {
+            \Sentry\captureException($e);
+            $logger->error(
+                sprintf(
+                    'DispatchWebHookController - Exception %s : %s',
+                    $e->getCode(),
+                    $e->getMessage()
+                ),
+                ['exception' => $e]
+            );
+            http_response_code(500);
+
+            echo json_encode(['error' => 'An unexpected error occurred.']);
         }
 
         return false;

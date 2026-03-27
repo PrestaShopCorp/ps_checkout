@@ -18,7 +18,7 @@ services:
     public: true
 
   ps_checkout.module:
-    class: 'ps_checkout'
+    class: 'Ps_Checkout'
     factory: [ 'Module', 'getInstanceByName' ]
     arguments:
       - 'ps_checkout'

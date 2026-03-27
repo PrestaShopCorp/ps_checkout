@@ -28,7 +28,6 @@ use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
-use PsCheckout\Core\Hook\Handlers\HookHandlerInterface;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;

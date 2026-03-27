@@ -11,7 +11,7 @@ services:
     class: PsCheckout\Module\Presentation\Translator
     arguments:
       - '@=service("ps_checkout.module").getTranslator()'
-  
+
   PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider:
     class: PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider
     arguments:
