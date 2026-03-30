@@ -22,7 +22,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
-use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
@@ -47,7 +46,6 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Infrastructure\Validator\MerchantValidator;
 use PsCheckout\Module\Presentation\Translator;
-use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider;
 use PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter;
@@ -63,7 +61,7 @@ require_once __DIR__ . '/sentry.php';
 class Ps_Checkout extends PaymentModule
 {
     /**
-     * @var ServiceContainer
+     * @var PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $serviceContainer;
 
