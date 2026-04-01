@@ -61,12 +61,12 @@
           <dd data-test="total-value">{$orderPayPal.total}</dd>
           <dt data-grid-area="balance">
             {l s='Balance' d='Modules.Checkout.Pscheckout'}
-            <i class="balance-info-icon" title="{l s='Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds' d='Modules.Checkout.Pscheckout'}"></i>
+            <i class="balance-info-icon material-icons" title="{l s='Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds' d='Modules.Checkout.Pscheckout'}">info</i>
           </dt>
           <dd data-test="balance-value">{$orderPayPal.balance}</dd>
           <dt data-grid-area="environment">
             {l s='Environment' d='Modules.Checkout.Pscheckout'}
-            <i class="environment-info-icon" title="{l s='The environment in which the transaction was made: Test or Production' d='Modules.Checkout.Pscheckout'}"></i>
+            <i class="environment-info-icon material-icons" title="{l s='The environment in which the transaction was made: Test or Production' d='Modules.Checkout.Pscheckout'}">info</i>
           </dt>
           <dd data-grid-area="environment-value">
             <span data-test="payment-env-value" class="badge rounded badge-paypal-environment-{if $isProductionEnv}live{else}sandbox{/if}" data-value="{$psPayPalOrder->getEnvironment()|escape:'html':'UTF-8'}">
@@ -190,7 +190,7 @@
                   {if !empty($orderPayPalTransaction.seller_protection)}
                     <dt>
                       {l s='Seller protection' d='Modules.Checkout.Pscheckout'}
-                      <i class="seller-protection-info-icon" title="{$orderPayPalTransaction.seller_protection.help|escape:'html':'UTF-8'}"></i>
+                      <i class="seller-protection-info-icon material-icons" title="{$orderPayPalTransaction.seller_protection.help|escape:'html':'UTF-8'}">info</i>
                     </dt>
                     <dd>
                     <span class="badge rounded badge-{$orderPayPalTransaction.seller_protection.class|escape:'html':'UTF-8'}">

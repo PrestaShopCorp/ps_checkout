@@ -22,9 +22,17 @@ namespace PsCheckout\Infrastructure\Controller;
 
 use Connection;
 use Exception;
+use ModuleFrontController;
+use Ps_Checkout;
+use Psr\Log\LoggerInterface;
 
-class AbstractFrontController extends \ModuleFrontController
+class AbstractFrontController extends ModuleFrontController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
     /**
      * Override checkAccess to block access for bots and invalid token
      *
@@ -92,6 +100,15 @@ class AbstractFrontController extends \ModuleFrontController
      */
     protected function exitWithExceptionMessage(Exception $exception)
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->error(
+            $exception->getMessage(),
+            [
+                'controller' => static::class,
+                'exception' => $exception,
+            ]
+        );
         \Sentry\captureException($exception);
 
         $this->exitWithResponse([

@@ -97,6 +97,7 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
         }
 
         $orderId = $dispatchWebhookRequest->getOrderId();
+
         if (!$orderId) {
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }

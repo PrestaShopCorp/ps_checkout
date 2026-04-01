@@ -413,4 +413,6 @@ class PayPalException extends PsCheckoutException
     const PLATFORM_FEE_NOT_ENABLED = 194;
 
     const CURRENCY_MISMATCH = 195;
+
+    const ORDER_REQUIRES_ASYNC_CAPTURE = 196;
 }

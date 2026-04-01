@@ -44,4 +44,9 @@ class GooglePayEligibilityChecker extends BaseFundingSourceEligibilityChecker
     {
         return [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY];
     }
+
+    protected function getSupportedMerchantCountries(): array
+    {
+        return [];
+    }
 }

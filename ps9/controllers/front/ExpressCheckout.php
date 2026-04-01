@@ -37,10 +37,6 @@ use Psr\Log\LoggerInterface;
  */
 class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
 
     /**
      * {@inheritdoc}

@@ -69,7 +69,7 @@ class BaseNodeBuilder implements BaseNodeBuilderInterface
         $node = [
             'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT),
             'purchase_units' => [[
-                'custom_id' => (string) $this->cart['cart']['id'],
+                'custom_id' => (string) $this->cart['cart']['id'] . '@' . time(),
                 'invoice_id' => '',
                 'description' => StringUtility::truncate(
                     'Checking out with your cart #' . $this->cart['cart']['id'] . ' from ' . $shopName,

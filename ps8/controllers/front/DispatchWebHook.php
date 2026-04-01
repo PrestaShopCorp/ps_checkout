@@ -21,10 +21,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PsCheckout\Core\Webhook\WebhookException;
 use PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction;
 use PsCheckout\Core\WebhookDispatcher\Action\VerifyWebhookAction;
 use PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor;
+use PsCheckout\Core\WebhookDispatcher\Provider\WebhookHeaderProvider;
 use PsCheckout\Core\WebhookDispatcher\Validator\BodyValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\HeaderValuesValidator;
 use PsCheckout\Core\WebhookDispatcher\Validator\WebhookShopIdValidator;
@@ -47,14 +47,24 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     public function display(): bool
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 405,
+                'body' => 'Method Not Allowed',
+            ]);
+        }
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->info('Webhook dispatch initiated');
 
         try {
+            /** @var WebhookHeaderProvider $headerProvider */
+            $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
             /** @var HeaderValuesValidator $headerValuesValidator */
             $headerValuesValidator = $this->module->getService(HeaderValuesValidator::class);
+
             $headerValues = $headerValuesValidator->validate();
             $logger->info('Headers validated', $headerValues);
 
@@ -98,13 +108,22 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             /** @var DispatchWebhookProcessor $dispatchWebHookProcessor */
             $dispatchWebHookProcessor = $this->module->getService(DispatchWebhookProcessor::class);
 
-            return $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+            $processed = $dispatchWebHookProcessor->process($dispatchWebhookRequest);
+
+            if ($processed) {
+                $logger->info('Webhook dispatch completed successfully');
+            } else {
+                $logger->warning('Webhook dispatch completed with no processing');
+            }
+
+            return $processed;
         } catch (Exception $e) {
             \Sentry\captureException($e);
 
             // Handle the exception
             $logger->error('Webhook Dispatcher error', [
                 'message' => $e->getMessage(),
+                'headers' => $headerProvider->getHeaders(),
                 'trace' => $e->getTraceAsString(),
             ]);
             http_response_code(400);
@@ -113,6 +132,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
+        } catch (Throwable $e) {
+            $logger->error(
+                sprintf(
+                    'DispatchWebHookController - Exception %s : %s',
+                    $e->getCode(),
+                    $e->getMessage()
+                ),
+                ['exception' => $e]
+            );
+            http_response_code(500);
+
+            echo json_encode(['error' => 'An unexpected error occurred.']);
         }
 
         return false;

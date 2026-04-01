@@ -63,7 +63,7 @@ class ShippingNodeBuilderTest extends TestCase
 
         $this->stateRepository
             ->expects($this->once())
-            ->method('getNameById')
+            ->method($cartData['country_iso'] === 'US' ? 'getIsoById' : 'getNameById')
             ->with($cartData['addresses']['shipping']->id_state)
             ->willReturn($cartData['state_name']);
 
@@ -91,7 +91,7 @@ class ShippingNodeBuilderTest extends TestCase
                     ],
                     'gender_prefix' => 'Mr.',
                     'country_iso' => 'US',
-                    'state_name' => 'California',
+                    'state_name' => 'CA',
                     'addresses' => [
                         'shipping' => $this->createMockAddress([
                             'id_country' => 21,
@@ -113,7 +113,7 @@ class ShippingNodeBuilderTest extends TestCase
                         'address' => [
                             'address_line_1' => '123 Main St',
                             'address_line_2' => 'Apt 4B',
-                            'admin_area_1' => 'California',
+                            'admin_area_1' => 'CA',
                             'admin_area_2' => 'Los Angeles',
                             'postal_code' => '90001',
                             'country_code' => 'US',

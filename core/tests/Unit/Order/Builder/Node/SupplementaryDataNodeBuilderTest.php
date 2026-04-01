@@ -45,6 +45,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
     {
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
         $this->stateRepository->method('getNameById')->willReturn('California');
+        $this->stateRepository->method('getIsoById')->willReturn('CA');
 
         $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
         $builder->setCart($cart);
@@ -122,7 +123,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
     private function getExpectedOutput(bool $hasFullAddress): array
     {
         $shippingAddress = [
-            'admin_area_1' => 'California',
+            'admin_area_1' => 'CA',
             'country_code' => 'US',
         ];
 

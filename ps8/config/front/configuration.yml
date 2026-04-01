@@ -22,6 +22,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker
@@ -30,6 +31,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker
@@ -38,6 +40,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker
@@ -46,6 +49,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker
@@ -54,6 +58,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker
@@ -62,6 +67,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker
@@ -70,6 +76,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker
@@ -78,6 +85,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker
@@ -86,6 +94,25 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration:
     class: PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration
@@ -100,3 +127,4 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
       - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'

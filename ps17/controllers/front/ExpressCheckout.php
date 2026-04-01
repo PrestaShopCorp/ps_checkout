@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 use PsCheckout\Core\Customer\Action\ExpressCheckoutAction;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
@@ -37,11 +38,6 @@ use Psr\Log\LoggerInterface;
  */
 class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * {@inheritdoc}
      */
@@ -130,6 +126,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             );
 
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the express checkout.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
 
         $this->exitWithResponse([

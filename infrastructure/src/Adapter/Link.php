@@ -27,6 +27,11 @@ class Link implements LinkInterface
      */
     private $context;
 
+    /**
+     * @var string
+     */
+    private $moduleName;
+
     public function __construct(
         ContextInterface $context,
         string $moduleName

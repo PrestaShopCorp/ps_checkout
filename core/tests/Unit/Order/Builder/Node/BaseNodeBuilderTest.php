@@ -46,6 +46,15 @@ class BaseNodeBuilderTest extends TestCase
             ->setPaypalOrderId($paypalOrderId);
 
         $result = $builder->build();
+
+        $customId = $result['purchase_units'][0]['custom_id'];
+        $expectedCartId = $cartData['cart']['id'];
+        $this->assertRegExp(
+            '/^' . $expectedCartId . '@\d+$/',
+            $customId
+        );
+
+        $result['purchase_units'][0]['custom_id'] = $expected['purchase_units'][0]['custom_id'];
         $this->assertEquals($expected, $result);
     }
 

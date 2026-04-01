@@ -220,7 +220,7 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
                 $orderResponse->getId(),
                 crc32(json_encode($purchaseUnit)),
                 $purchaseUnit['reference_id'],
-                $purchaseUnit['items']
+                $purchaseUnit['items'] ?? []
             );
 
             $this->payPalOrderPurchaseUnitRepository->save($payPalPurchaseUnit);

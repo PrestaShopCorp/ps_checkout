@@ -62,7 +62,9 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
         $address = $this->cart['addresses']['invoice'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $this->stateRepository->getNameById($address->id_state);
+        $stateName = $countryIso === 'US' ?
+            $this->stateRepository->getIsoById($address->id_state)
+            : $this->stateRepository->getNameById($address->id_state);
 
         $node = [
             'supplementary_data' => [
