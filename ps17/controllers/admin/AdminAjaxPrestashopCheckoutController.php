@@ -225,7 +225,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'isAccountLinked' => $psAccountRepository->isAccountLinked(),
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -248,11 +247,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $token = (string) Tools::getValue('body');
 
         $response = [];
-
         try {
             $status = $webhookSecretTokenService->upsertToken($token);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $status = false;
             $response['errors'] = $exception->getMessage();
@@ -334,7 +331,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
         } catch (OrderStateException $exception) {
-            \Sentry\captureException($exception);
 
             if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
                 /** @var OrderStateInstaller $orderStateInstaller */
@@ -369,7 +365,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'status' => true,
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -552,7 +547,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 $limit
             );
         } catch (InvalidArgumentException $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'status' => false,
@@ -562,7 +556,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ],
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'status' => false,
@@ -674,7 +667,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                     $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
                 }
             } catch (\Exception $e) {
-                \Sentry\captureException($e);
 
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(
@@ -716,7 +708,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             http_response_code(500);
             $this->ajaxRender(json_encode([
@@ -763,7 +754,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
             $refundPayPalOrderAction->execute($payPalRefund);
         } catch (PayPalRefundException $exception) {
-            \Sentry\captureException($exception);
 
             switch ($exception->getCode()) {
                 case PayPalRefundException::INVALID_ORDER_ID:
@@ -797,7 +787,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'errors' => [$error],
             ]);
         } catch (OrderException $exception) {
-            \Sentry\captureException($exception);
 
             if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
                 $this->exitWithResponse([
@@ -816,7 +805,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ]);
             }
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -904,7 +892,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $loggerFileReader = $this->module->getService(LoggerFileReader::class);
             $loggerFileReader->validateFilename($filename);
         } catch (InvalidArgumentException $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithResponse([
                 'status' => false,
@@ -946,8 +933,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $applePayInstaller->setup();
         } catch (ApplePayInstallerException $e) {
-            \Sentry\captureException($e);
-
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,

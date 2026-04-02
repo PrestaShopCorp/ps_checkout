@@ -109,7 +109,6 @@ class AbstractFrontController extends ModuleFrontController
                 'exception' => $exception,
             ]
         );
-        \Sentry\captureException($exception);
 
         $this->exitWithResponse([
             'status' => false,

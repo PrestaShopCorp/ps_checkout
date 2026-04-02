@@ -115,8 +115,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             return $processed;
         } catch (Exception $e) {
-            \Sentry\captureException($e);
-
             /** @var WebhookHeaderProvider $headerProvider */
             $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
 
@@ -133,7 +131,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 'code' => $e->getCode(),
             ]);
         } catch (Throwable $e) {
-            \Sentry\captureException($e);
             $logger->error(
                 sprintf(
                     'DispatchWebHookController - Exception %s : %s',

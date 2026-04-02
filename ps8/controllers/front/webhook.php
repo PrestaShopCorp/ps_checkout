@@ -83,8 +83,6 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 
             exit;
         } catch (WebhookException $exception) {
-            \Sentry\captureException($exception);
-
             switch ($exception->getCode()) {
                 case WebhookException::WEBHOOK_SECRET_MISMATCH:
                     $this->exitWithResponse([
@@ -102,8 +100,6 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 
             exit;
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             $logger->error(
                 'Webhook cannot be handled',
                 [
