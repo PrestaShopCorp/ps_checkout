@@ -108,7 +108,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             $this->sendOkResponse($completedPayPalOrderData);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
+
 
             if (!$checkoutRequest) {
                 $this->handleOrderCreationException($exception, 'unknown');

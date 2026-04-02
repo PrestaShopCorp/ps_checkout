@@ -55,7 +55,6 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
                 $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->exitWithExceptionMessage($exception);
         } catch (Throwable $exception) {

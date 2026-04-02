@@ -79,7 +79,6 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
 
                 $updateExternalPayPalOrderProcessor->execute($checkOrderRequest);
             } catch (Exception $exception) {
-                \Sentry\captureException($exception);
 
                 $logger->error(
                     'Failed to patch PayPal Order',
@@ -105,8 +104,6 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             $logger->error(
                 sprintf(
                     'CheckController - Exception %s : %s',
