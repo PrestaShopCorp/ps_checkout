@@ -70,7 +70,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     $addProductToCartAction = $this->module->getService(AddProductToCartAction::class);
                     $addProductToCartAction->execute($createPayPalOrderRequest);
                 } catch (PsCheckoutException $exception) {
-                    \Sentry\captureException($exception);
 
                     $this->exitWithResponse([
                         'status' => false,
@@ -162,7 +161,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $this->module->getService(LoggerInterface::class)->error(
                 'CreateController - Exception ' . $exception->getCode(),

@@ -82,8 +82,6 @@ class AuthorizationActionProcessor implements AuthorizationActionProcessorInterf
 
             $handler->execute($payPalOrderResponse, $payload);
         } catch (Exception $e) {
-            \Sentry\captureException($e);
-
             $this->logger->error('Failed to execute authorization action: ' . $e->getMessage());
 
             return [

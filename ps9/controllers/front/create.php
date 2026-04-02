@@ -70,8 +70,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     $addProductToCartAction = $this->module->getService(AddProductToCartAction::class);
                     $addProductToCartAction->execute($createPayPalOrderRequest);
                 } catch (PsCheckoutException $exception) {
-                    \Sentry\captureException($exception);
-
                     $this->exitWithResponse([
                         'status' => false,
                         'httpCode' => 400,
@@ -169,7 +167,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]
             );
 
-            \Sentry\captureException($exception);
 
             $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error ocurred.', $exception->getCode()));
         } catch (Throwable $exception) {
