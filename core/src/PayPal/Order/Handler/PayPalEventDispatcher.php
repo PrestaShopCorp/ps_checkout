@@ -37,7 +37,7 @@ class PayPalEventDispatcher implements PayPalEventDispatcherInterface
         EventHandlerInterface $orderCompletedHandler,
         EventHandlerInterface $orderApprovalReversedHandler,
         EventHandlerInterface $paymentAuthorizationCreatedHandler,
-        EventHandlerInterface $paymentAuthorizationVoidedHandler,
+        EventHandlerInterface $paymentAuthorizationVoidedHandler
     ) {
         $this->handlers = [
             'PaymentCaptureCompleted' => $paymentCompletedHandler,
