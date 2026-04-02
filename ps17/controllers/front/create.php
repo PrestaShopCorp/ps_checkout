@@ -71,7 +71,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     $addProductToCartAction->execute($createPayPalOrderRequest);
                 } catch (PsCheckoutException $exception) {
 
-
                     $this->exitWithResponse([
                         'status' => false,
                         'httpCode' => 400,

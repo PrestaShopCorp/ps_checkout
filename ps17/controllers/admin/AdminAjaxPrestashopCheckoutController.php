@@ -226,7 +226,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             ]);
         } catch (Exception $exception) {
 
-
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -248,11 +247,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $token = (string) Tools::getValue('body');
 
         $response = [];
-
         try {
             $status = $webhookSecretTokenService->upsertToken($token);
         } catch (Exception $exception) {
-
 
             $status = false;
             $response['errors'] = $exception->getMessage();
@@ -335,7 +332,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
         } catch (OrderStateException $exception) {
 
-
             if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
                 /** @var OrderStateInstaller $orderStateInstaller */
                 $orderStateInstaller = $this->module->getService(OrderStateInstaller::class);
@@ -369,7 +365,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'status' => true,
             ]);
         } catch (Exception $exception) {
-
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -553,7 +548,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             );
         } catch (InvalidArgumentException $exception) {
 
-
             $this->exitWithResponse([
                 'status' => false,
                 'httpCode' => 400,
@@ -562,7 +556,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ],
             ]);
         } catch (Exception $exception) {
-
 
             $this->exitWithResponse([
                 'status' => false,
@@ -675,7 +668,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 }
             } catch (\Exception $e) {
 
-
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(
                     'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
@@ -716,7 +708,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
-
 
             http_response_code(500);
             $this->ajaxRender(json_encode([
@@ -764,7 +755,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $refundPayPalOrderAction->execute($payPalRefund);
         } catch (PayPalRefundException $exception) {
 
-
             switch ($exception->getCode()) {
                 case PayPalRefundException::INVALID_ORDER_ID:
                     $error = $translator->trans('PayPal Order is invalid.');
@@ -798,7 +788,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             ]);
         } catch (OrderException $exception) {
 
-
             if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
                 $this->exitWithResponse([
                     'httpCode' => 200,
@@ -816,7 +805,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ]);
             }
         } catch (Exception $exception) {
-
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -904,7 +892,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $loggerFileReader = $this->module->getService(LoggerFileReader::class);
             $loggerFileReader->validateFilename($filename);
         } catch (InvalidArgumentException $exception) {
-
 
             $this->exitWithResponse([
                 'status' => false,

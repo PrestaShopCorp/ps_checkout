@@ -99,7 +99,6 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             ]);
         } catch (Exception $exception) {
 
-
             $logger->error(
                 'CancelController - Exception ' . $exception->getCode(),
                 [

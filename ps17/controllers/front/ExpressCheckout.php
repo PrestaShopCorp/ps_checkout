@@ -110,7 +110,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $expressCheckoutAction->execute($expressCheckoutRequest);
         } catch (Exception $exception) {
 
-
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(

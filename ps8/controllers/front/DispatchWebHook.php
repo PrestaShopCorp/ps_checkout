@@ -115,7 +115,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             return $processed;
         } catch (Exception $e) {
-
             /** @var WebhookHeaderProvider $headerProvider */
             $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
 

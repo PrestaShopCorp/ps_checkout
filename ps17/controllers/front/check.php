@@ -80,7 +80,6 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 $updateExternalPayPalOrderProcessor->execute($checkOrderRequest);
             } catch (Exception $exception) {
 
-
                 $logger->error(
                     'Failed to patch PayPal Order',
                     [
