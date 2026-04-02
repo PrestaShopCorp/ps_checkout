@@ -161,7 +161,8 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
         }
 
         if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
-            $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
+            $authorizedOrderResponse = $this->authorizePayPalOrderAction->execute($payPalOrderResponse);
+            $this->savePaymentTokenAction->execute($authorizedOrderResponse);
         } else {
             $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
         }
