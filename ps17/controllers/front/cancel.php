@@ -98,7 +98,6 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             $logger->error(
                 'CancelController - Exception ' . $exception->getCode(),

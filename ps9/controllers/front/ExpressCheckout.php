@@ -109,8 +109,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $expressCheckoutAction = $this->module->getService(ExpressCheckoutAction::class);
             $expressCheckoutAction->execute($expressCheckoutRequest);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(

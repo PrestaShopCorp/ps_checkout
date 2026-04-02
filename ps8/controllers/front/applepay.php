@@ -64,8 +64,6 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
                     ]);
             }
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             $this->exitWithExceptionMessage($exception);
         } catch (Throwable $exception) {
             $this->exitWithExceptionMessage(new PsCheckoutException(

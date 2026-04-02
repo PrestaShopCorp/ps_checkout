@@ -138,7 +138,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrderResponse = $payPalOrderProvider->getById($this->paypalOrderId);
             $this->handleOrderStatus($payPalOrderResponse, $payPalOrder);
         } catch (Throwable $exception) {
-            \Sentry\captureException($exception);
             $logger->error(
                 sprintf(
                     'PaymentController - Exception %s : %s',

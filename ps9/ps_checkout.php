@@ -59,8 +59,6 @@ use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/sentry.php';
-
 class Ps_Checkout extends PaymentModule
 {
     /**
@@ -170,8 +168,6 @@ class Ps_Checkout extends PaymentModule
             $psAccountsPresenter = $psAccountsFacade->getPsAccountsPresenter();
             $contextPsAccounts = $psAccountsPresenter->present();
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             $contextPsAccounts = [];
             $this->getService(LoggerInterface::class)->error(
                 'Failed to get PsAccounts context',
@@ -212,8 +208,6 @@ class Ps_Checkout extends PaymentModule
                 $requiredDependencies = $mboInstaller->handleDependencies();
                 $hasRequiredDependencies = $mboInstaller->areDependenciesMet();
             } catch (Exception $exception) {
-                \Sentry\captureException($exception);
-
                 $this->getService(LoggerInterface::class)->error(
                     'Failed to get required dependencies',
                     [
@@ -506,8 +500,6 @@ class Ps_Checkout extends PaymentModule
             $paypalOrderProvider = $this->getService(PayPalOrderProvider::class);
             $payPalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             return;
         }
 
@@ -778,8 +770,6 @@ class Ps_Checkout extends PaymentModule
         try {
             $templateVars = $orderSummaryPresenter->present($order);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             return '';
         }
 
@@ -814,8 +804,6 @@ class Ps_Checkout extends PaymentModule
         try {
             $templateVars = $orderSummaryPresenter->present($order);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             return '';
         }
 
@@ -850,8 +838,6 @@ class Ps_Checkout extends PaymentModule
         try {
             $templateVars = $orderSummaryPresenter->present($order);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
-
             return '';
         }
 
@@ -1231,8 +1217,6 @@ class Ps_Checkout extends PaymentModule
                 // Process external shipment data (stop on error as requested)
                 $processExternalShipmentAction->execute($order, $shipment);
             } catch (\Exception $exception) {
-                \Sentry\captureException($exception);
-
                 /** @var LoggerInterface $logger */
                 $logger = $this->getService(LoggerInterface::class);
                 $logger->error('Failed to process external shipment data', [
@@ -1289,8 +1273,6 @@ class Ps_Checkout extends PaymentModule
             $addTrackingAction = $this->getService(AddTrackingAction::class);
             $addTrackingAction->execute($order, $carrier);
         } catch (\Exception $exception) {
-            \Sentry\captureException($exception);
-
             /** @var LoggerInterface $logger */
             $logger = $this->getService(LoggerInterface::class);
             $logger->error('Failed to process tracking number update', [

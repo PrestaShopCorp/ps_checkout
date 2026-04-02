@@ -90,7 +90,6 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
                 ],
             ]);
         } catch (Exception $exception) {
-            \Sentry\captureException($exception);
 
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);

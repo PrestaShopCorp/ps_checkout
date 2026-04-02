@@ -34,7 +34,6 @@ function upgrade_module_7_5_3_0(Ps_checkout $module)
         $db = Db::getInstance();
 
     } catch (Exception $exception) {
-        \Sentry\captureException($exception);
 
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
