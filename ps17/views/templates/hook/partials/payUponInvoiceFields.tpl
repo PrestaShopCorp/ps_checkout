@@ -20,7 +20,7 @@
   <form id="ps_checkout-pay-upon-invoice-fields-form" class="form-horizontal loading">
     <div class="form-group">
       <label for="ps_checkout-pui-birthday" class="form-control-label required">
-        {l s='Date of Birth' d='Modules.Checkout.Pscheckout'}
+        {l s='Date of Birth'  mod='ps_checkout'}
       </label>
       <input
               type="date"
@@ -36,7 +36,7 @@
     </div>
     <div class="form-group">
       <label for="ps_checkout-pui-phone" class="form-control-label required">
-        {l s='Phone Number' d='Modules.Checkout.Pscheckout'}
+        {l s='Phone Number'  mod='ps_checkout'}
       </label>
       <input
               type="tel"
