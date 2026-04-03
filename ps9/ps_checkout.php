@@ -685,19 +685,23 @@ class Ps_Checkout extends PaymentModule
         $payPalOrder = $payPalOrderRepository->getOneByCartId($this->context->cart->id);
 
         $isExpressCheckout = $payPalOrder && $payPalOrder->isExpressCheckout();
+        $cookieEmail = $this->context->cookie->__get('paypalEmail');
+        $email = ($cookieEmail && Validate::isEmail($cookieEmail)) ? $cookieEmail : '';
+
+        /** @var Translator $translator */
+        $translator = $this->getService(Translator::class);
 
         $this->context->smarty->assign([
             'isExpressCheckout' => $isExpressCheckout,
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-            'loaderTranslatedText' => $this->trans('Please wait, loading additional payment methods.', [], 'Modules.Checkout.Pscheckout'),
+            'loaderTranslatedText' => $translator->trans('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => $this->trans(
+            'translatedText' => $translator->trans(
                 'You have selected your %s PayPal account to proceed to the payment.',
-                [$this->context->cookie->__get('paypalEmail') ?: ''],
-                'Modules.Checkout.Pscheckout'
+                [$email]
             ),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/icons/shopping-cart-warning.svg',
-            'warningTranslatedText' => $this->trans('Warning', [], 'Modules.Checkout.Pscheckout'),
+            'warningTranslatedText' => $translator->trans('Warning'),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayPaymentTop.tpl');
@@ -896,7 +900,7 @@ class Ps_Checkout extends PaymentModule
 
         foreach ($orderPayments as $orderPayment) {
             if (!empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->trans('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $translator->trans('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 

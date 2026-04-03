@@ -12417,7 +12417,7 @@ parameters:
 		-
 			message: '#^Call to method l\(\) on an unknown class Ps_Checkout\.$#'
 			identifier: class.notFound
-			count: 139
+			count: 142
 			path: src/Presentation/Translator.php
 
 		-

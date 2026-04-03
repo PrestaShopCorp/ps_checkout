@@ -691,18 +691,23 @@ class Ps_Checkout extends PaymentModule
         $payPalOrder = $payPalOrderRepository->getOneByCartId($this->context->cart->id);
 
         $isExpressCheckout = $payPalOrder && $payPalOrder->isExpressCheckout();
+        $cookieEmail = $this->context->cookie->__get('paypalEmail');
+        $email = ($cookieEmail && Validate::isEmail($cookieEmail)) ? $cookieEmail : '';
+
+        /** @var Translator $translator */
+        $translator = $this->getService(Translator::class);
 
         $this->context->smarty->assign([
             'isExpressCheckout' => $isExpressCheckout,
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-            'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
+            'loaderTranslatedText' => $translator->trans('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => sprintf(
-                $this->l('You have selected your %s PayPal account to proceed to the payment.'),
-                $this->context->cookie->__get('paypalEmail') ?: ''
+            'translatedText' => $translator->trans(
+                'You have selected your %s PayPal account to proceed to the payment.',
+                [$email]
             ),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/icons/shopping-cart-warning.svg',
-            'warningTranslatedText' => $this->l('Warning'),
+            'warningTranslatedText' => $translator->trans('Warning'),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayPaymentTop.tpl');
@@ -904,7 +909,7 @@ class Ps_Checkout extends PaymentModule
 
         foreach ($orderPayments as $orderPayment) {
             if (!empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->l('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $translator->trans('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 
