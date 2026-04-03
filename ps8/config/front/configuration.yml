@@ -13,6 +13,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@Psr\Log\LoggerInterface'
       - !tagged_iterator funding_source.eligibility_checker
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker:

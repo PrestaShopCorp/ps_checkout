@@ -34,6 +34,7 @@ use PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker;
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
@@ -101,6 +102,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
         $this->fundingSourceEligibilityService = new FundingSourceEligibilityService(
             $this->context,
             $this->fundingSourcePresenter,
+            $this->createMock(LoggerInterface::class),
             array_map(function (string $className) {
                 return new $className($this->context, $this->configuration, $this->countryResolver);
             }, array_values($this->checkers))
