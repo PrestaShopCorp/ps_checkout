@@ -46,15 +46,6 @@ services:
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
-  PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
-
   PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction
     arguments:
@@ -69,11 +60,6 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRefundRepository'
-
-  PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler:
-    class: PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler
-    arguments:
-      - '@PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction'
 
   PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator:
     class: PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidator
