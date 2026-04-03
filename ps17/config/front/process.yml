@@ -164,11 +164,6 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction'
 
-  PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler:
-    class: PsCheckout\Core\PayPal\Order\Handler\PaymentDeniedEventHandler
-    arguments:
-      - '@PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction'
-
   PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentRefundedEventHandler
     arguments:
@@ -222,15 +217,6 @@ services:
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
-
-  PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
 
   PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
     class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
