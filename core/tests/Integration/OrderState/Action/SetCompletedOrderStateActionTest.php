@@ -79,6 +79,7 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
             'purchase_units' => [[
                 'payments' => [
                     'captures' => [[
+                        'status' => 'COMPLETED',
                         'amount' => [
                             'currency_code' => 'EUR',
                             'value' => '29.00',
@@ -126,6 +127,7 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
             'purchase_units' => [[
                 'payments' => [
                     'captures' => [[
+                        'status' => 'COMPLETED',
                         'amount' => [
                             'currency_code' => 'EUR',
                             'value' => '15.00',
@@ -174,12 +176,14 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
                 'payments' => [
                     'captures' => [
                         [
+                            'status' => 'COMPLETED',
                             'amount' => [
                                 'currency_code' => 'EUR',
                                 'value' => '14.80',
                             ],
                         ],
                         [
+                            'status' => 'COMPLETED',
                             'amount' => [
                                 'currency_code' => 'EUR',
                                 'value' => '20.00',

@@ -25,6 +25,7 @@ use PsCheckout\Core\Order\Validator\OrderAmountValidator;
 use PsCheckout\Core\Order\Validator\OrderAmountValidatorInterface;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
@@ -99,7 +100,11 @@ class SetCompletedOrderStateAction implements SetOrderStateActionInterface
             return;
         }
 
-        $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
+        $completedCaptures = array_filter($payPalOrderResponse->getCaptures(), function ($capture) {
+            return isset($capture['status']) && $capture['status'] === PayPalCaptureStatus::COMPLETED;
+        });
+
+        $totalCaptured = array_reduce($completedCaptures, function ($totalCaptured, $capture) {
             return $totalCaptured + (float) $capture['amount']['value'];
         }, 0.0);
 
