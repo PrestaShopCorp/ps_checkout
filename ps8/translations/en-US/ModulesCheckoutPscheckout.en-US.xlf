@@ -2467,21 +2467,25 @@
         <source>The payment is not valid: the amount is not eligible.</source>
         <target>The payment is not valid: the amount is not eligible.</target>
       </trans-unit>
-      <trans-unit id="ab9b4762660906602b63bcd99e5e9747">
+      <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
         <source>Pay later with invoice</source>
         <target>Pay later with invoice</target>
       </trans-unit>
-      <trans-unit id="ab9b4762660906602b63bcd99e5e9748">
+      <trans-unit id="9976a3ca5309b7639b4a8d54561f2ca9">
         <source>Pay upon Invoice</source>
         <target>Pay upon Invoice</target>
       </trans-unit>
-      <trans-unit id="ab9b4762660906602b63bcd99e5e9767">
+      <trans-unit id="10803b83a68db8f7e7a33e3b41e184d0">
         <source>Date of Birth</source>
         <target>Date of Birth</target>
       </trans-unit>
       <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
         <source>Phone Number</source>
         <target>Phone Number</target>
+      </trans-unit>
+      <trans-unit id="853e088f85c693c3c6ab297971b4aecc">
+        <source>Contact customer service via %s</source>
+        <target>Contact customer service via %s</target>
       </trans-unit>
     </body>
   </file>
