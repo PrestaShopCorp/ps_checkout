@@ -93,13 +93,19 @@ class SetCompletedOrderStateAction implements SetOrderStateActionInterface
         /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if (!$order || $order->hasBeenPaid()) {
+        $completedStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+
+        if (!$order || (int) $order->getCurrentState() === $completedStateId) {
             return;
         }
 
+        $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
+            return $totalCaptured + (float) $capture['amount']['value'];
+        }, 0.0);
+
         switch ($this->orderAmountValidator->validate(
             (string) $order->total_paid,
-            (string) $payPalOrderResponse->getCapture()['amount']['value']
+            (string) round($totalCaptured, 2)
         )) {
             case OrderAmountValidator::ORDER_FULL_PAID:
             case OrderAmountValidator::ORDER_TO_MUCH_PAID:
