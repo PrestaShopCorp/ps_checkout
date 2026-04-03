@@ -1009,13 +1009,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         if ($amount) {
             $payload['amount'] = [
                 'value' => $amount,
+                'currency_code' => $currency ?: $paypalOrderResponse->getOrderAmount()['currency_code'],
             ];
-        }
-
-        if ($currency) {
-            $payload['amount']['currency_code'] = $currency;
-        } else {
-            $payload['amount']['currency_code'] = $paypalOrderResponse->getOrderAmount()['currency_code'];
         }
 
         /** @var AuthorizationActionProcessor $processor */

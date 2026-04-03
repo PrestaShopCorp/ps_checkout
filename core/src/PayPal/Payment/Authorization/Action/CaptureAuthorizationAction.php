@@ -29,9 +29,15 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use Psr\Log\LoggerInterface;
 
 final class CaptureAuthorizationAction implements AuthorizationActionInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var PaymentHttpClientInterface
      */
@@ -43,9 +49,11 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
     private $authorizationRepository;
 
     public function __construct(
+        LoggerInterface $logger,
         PaymentHttpClientInterface $paymentHttpClient,
         PayPalOrderAuthorizationRepositoryInterface $authorizationRepository
     ) {
+        $this->logger = $logger;
         $this->paymentHttpClient = $paymentHttpClient;
         $this->authorizationRepository = $authorizationRepository;
     }
@@ -131,6 +139,12 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
             );
         }
 
+        $this->logger->info('Capturing authorization', [
+            'order_id' => $payPalOrder->getId(),
+            'authorization_id' => $authorizationId,
+            'authorization_status' => $authorizationStatus,
+        ]);
+
         $captureResponse = $this->paymentHttpClient->captureAuthorization($authorizationId, $payload);
 
         /**
@@ -139,9 +153,21 @@ final class CaptureAuthorizationAction implements AuthorizationActionInterface
          *     status: string,
          *     create_time: string,
          *     update_time: string
-         * } $capturedAuthorization
+         * }|null $capturedAuthorization
          */
         $capturedAuthorization = json_decode($captureResponse->getBody(), true);
+
+        if (empty($capturedAuthorization)) {
+            $this->logger->error('Invalid capture response for authorization', [
+                'order_id' => $payPalOrder->getId(),
+                'authorization_id' => $authorizationId,
+            ]);
+
+            throw new PsCheckoutException(
+                sprintf('Invalid capture response for authorization %s', $authorizationId),
+                PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND
+            );
+        }
 
         $authorizationEntity = $this->authorizationRepository->getById($authorizationId);
 
