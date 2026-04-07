@@ -222,6 +222,283 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
         $this->assertEquals($expectedStatus, (new \Order($order->id))->current_state);
     }
 
+    public function testItShouldNotChangeStateWhenOrderHasAlreadyBeenCompleted(): void
+    {
+        $completedStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+        $order = OrderFactory::create(['total_paid' => 29.00, 'current_state' => $completedStateId]);
+
+        // Simulate that order has been moved past Completed by another module
+        $shippedStateId = 4; // PS default "Shipped" state
+        $order->setCurrentState($shippedStateId);
+
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'status' => 'COMPLETED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '29.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_order' => $order->id,
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn($order);
+
+        try {
+            $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                // NOTE: Email sending causes this error
+            }
+        }
+
+        // Order should remain in Shipped state, not regress to Completed
+        $this->assertEquals($shippedStateId, (int) (new \Order($order->id))->current_state);
+    }
+
+    public function testItShouldChangeStateToCompletedWhenCaptureIsPartiallyRefunded(): void
+    {
+        $order = OrderFactory::create(['total_paid' => 29.00]);
+
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'status' => 'PARTIALLY_REFUNDED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '29.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_order' => $order->id,
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn($order);
+
+        $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+
+        try {
+            $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                // NOTE: Email sending causes this error
+            }
+        }
+
+        $this->assertEquals($expectedStatus, (new \Order($order->id))->current_state);
+    }
+
+    public function testItShouldChangeStateToCompletedWhenCaptureIsFullyRefunded(): void
+    {
+        $order = OrderFactory::create(['total_paid' => 29.00]);
+
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'status' => 'REFUND',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '29.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_order' => $order->id,
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn($order);
+
+        $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+
+        try {
+            $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                // NOTE: Email sending causes this error
+            }
+        }
+
+        $this->assertEquals($expectedStatus, (new \Order($order->id))->current_state);
+    }
+
+    public function testItShouldNotCountPendingCapturesInTotal(): void
+    {
+        $order = OrderFactory::create(['total_paid' => 29.00]);
+
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [
+                        [
+                            'status' => 'COMPLETED',
+                            'amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '15.00',
+                            ],
+                        ],
+                        [
+                            'status' => 'PENDING',
+                            'amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '14.00',
+                            ],
+                        ],
+                    ],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_order' => $order->id,
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn($order);
+
+        $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_PAID);
+
+        try {
+            $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                // NOTE: Email sending causes this error
+            }
+        }
+
+        $this->assertEquals($expectedStatus, (new \Order($order->id))->current_state);
+    }
+
+    public function testItShouldChangeStateToCompletedWhenOverpaid(): void
+    {
+        $order = OrderFactory::create(['total_paid' => 29.00]);
+
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'status' => 'COMPLETED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '35.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_order' => $order->id,
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn($order);
+
+        $expectedStatus = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+
+        try {
+            $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+        } catch (Exception $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                // NOTE: Email sending causes this error
+            }
+        }
+
+        $this->assertEquals($expectedStatus, (new \Order($order->id))->current_state);
+    }
+
+    public function testItShouldReturnEarlyWhenOrderNotFound(): void
+    {
+        $payPalOrderResponseData = [
+            'purchase_units' => [[
+                'payments' => [
+                    'captures' => [[
+                        'status' => 'COMPLETED',
+                        'amount' => [
+                            'currency_code' => 'EUR',
+                            'value' => '29.00',
+                        ],
+                    ]],
+                ],
+            ]],
+        ];
+
+        $payPalOrderResponse = PayPalOrderResponseFactory::create($payPalOrderResponseData);
+
+        $this->payPalOrderRepository->save(PayPalOrderFactory::create([
+            'id_paypal_order' => $payPalOrderResponse->getId(),
+        ]));
+
+        $this->payPalOrderProviderMock->expects($this->once())
+            ->method('getById')
+            ->willReturn($payPalOrderResponse);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('getOneBy')
+            ->willReturn(null);
+
+        // Should not throw any exception
+        $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
+    }
+
     public function testItShouldThrowPayPalOrderDoesNotExistException(): void
     {
         $this->expectException(PsCheckoutException::class);
