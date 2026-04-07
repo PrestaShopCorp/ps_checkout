@@ -702,10 +702,7 @@ class Ps_Checkout extends PaymentModule
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
             'loaderTranslatedText' => $translator->trans('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => $translator->trans(
-                'You have selected your %s PayPal account to proceed to the payment.',
-                [$email]
-            ),
+            'translatedText' => sprintf($translator->trans('You have selected your %s PayPal account to proceed to the payment.'), $email),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/icons/shopping-cart-warning.svg',
             'warningTranslatedText' => $translator->trans('Warning'),
         ]);
