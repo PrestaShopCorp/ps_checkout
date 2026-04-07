@@ -274,3 +274,4 @@ $_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc']
 $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_10803b83a68db8f7e7a33e3b41e184d0'] = 'Date of Birth';
 $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Phone Number';
 $_MODULE['<{ps_checkout}prestashop>create_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'The payment is not valid: the amount is not eligible.';
+$_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'An unexpected refund error occurred.';

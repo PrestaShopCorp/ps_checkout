@@ -49,7 +49,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    public function handle(\Exception $exception): ?array
+    public function handle(\Exception $exception): array
     {
         if ($exception instanceof PayPalRefundException) {
             return $this->handlePayPalRefundException($exception);
@@ -95,7 +95,7 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
 
                 break;
             default:
-                $error = '';
+                $error = $this->translator->trans('An unexpected refund error occurred.') . ' (' . $exception->getMessage() . ')';
 
                 break;
         }
@@ -203,9 +203,9 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
     /**
      * @param OrderException $exception
      *
-     * @return array<string, mixed>|null null when the exception should be silently ignored (ORDER_HAS_ALREADY_THIS_STATUS)
+     * @return array<string, mixed>
      */
-    private function handleOrderException(OrderException $exception): ?array
+    private function handleOrderException(OrderException $exception): array
     {
         if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
             return [
@@ -226,7 +226,11 @@ class RefundExceptionHandler implements RefundExceptionHandlerInterface
             ];
         }
 
-        return null;
+        return [
+            'httpCode' => 200,
+            'status' => true,
+            'content' => $this->translator->trans('Refund has been processed by PayPal.'),
+        ];
     }
 
     /**
