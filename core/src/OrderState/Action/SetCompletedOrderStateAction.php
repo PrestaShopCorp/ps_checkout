@@ -105,8 +105,14 @@ class SetCompletedOrderStateAction implements SetOrderStateActionInterface
             return;
         }
 
-        $completedCaptures = array_filter($payPalOrderResponse->getCaptures(), function ($capture) {
-            return isset($capture['status']) && $capture['status'] === PayPalCaptureStatus::COMPLETED;
+        $capturedStatuses = [
+            PayPalCaptureStatus::COMPLETED,
+            PayPalCaptureStatus::PARTIALLY_REFUNDED,
+            PayPalCaptureStatus::REFUND,
+        ];
+
+        $completedCaptures = array_filter($payPalOrderResponse->getCaptures(), function ($capture) use ($capturedStatuses) {
+            return isset($capture['status']) && in_array($capture['status'], $capturedStatuses, true);
         });
 
         $totalCaptured = array_reduce($completedCaptures, function ($totalCaptured, $capture) {
