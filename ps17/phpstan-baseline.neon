@@ -2989,24 +2989,6 @@ parameters:
 			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
 
 		-
-			message: '#^Cannot access offset ''value'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
-
-		-
-			message: '#^Offset ''amount'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: ../core/src/OrderState/Action/SetCompletedOrderStateAction.php
-
-		-
 			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateActionInterface\:\:execute\(\) expects int, int\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -7431,49 +7413,49 @@ parameters:
 		-
 			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetCompletedOrderStateActionTest\:\:\$orderRepositoryMock\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 10
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Access to an undefined property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetCompletedOrderStateActionTest\:\:\$payPalOrderProviderMock\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 10
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction\|null\.$#'
 			identifier: method.nonObject
-			count: 3
+			count: 10
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method expects\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 18
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method getIdByKey\(\) on PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 9
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 18
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method save\(\) on PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\.$#'
 			identifier: method.nonObject
-			count: 2
+			count: 9
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 18
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
