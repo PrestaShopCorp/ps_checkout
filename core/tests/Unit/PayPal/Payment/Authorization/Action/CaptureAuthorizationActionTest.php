@@ -33,9 +33,13 @@ use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryIn
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Log\LoggerInterface;
 
 class CaptureAuthorizationActionTest extends TestCase
 {
+    /** @var LoggerInterface|MockObject */
+    private $logger;
+
     /** @var PaymentHttpClientInterface|MockObject */
     private $paymentHttpClient;
 
@@ -49,10 +53,12 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         parent::setUp();
 
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->paymentHttpClient = $this->createMock(PaymentHttpClientInterface::class);
         $this->authorizationRepository = $this->createMock(PayPalOrderAuthorizationRepositoryInterface::class);
 
         $this->action = new CaptureAuthorizationAction(
+            $this->logger,
             $this->paymentHttpClient,
             $this->authorizationRepository
         );

@@ -96,9 +96,9 @@ final class ReauthorizeAuthorizationAction implements AuthorizationActionInterfa
         }
 
         try {
-            $authorizations = array_filter($payPalOrder->getAuthorizations(), static function (array $authorization) {
+            $authorizations = array_values(array_filter($payPalOrder->getAuthorizations(), static function (array $authorization) {
                 return in_array($authorization['status'], [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PARTIALLY_CAPTURED], true);
-            });
+            }));
         } catch (\Throwable $exception) {
             $this->logger->error('PayPal Order authorizations retrieval failed', ['exception' => $exception, 'order_id' => $payPalOrder->getId()]);
 
