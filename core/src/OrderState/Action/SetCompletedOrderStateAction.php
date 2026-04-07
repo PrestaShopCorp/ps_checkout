@@ -94,9 +94,14 @@ class SetCompletedOrderStateAction implements SetOrderStateActionInterface
         /** @var \Order|null $order */
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        $completedStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+        if (!$order) {
+            return;
+        }
 
-        if (!$order || (int) $order->getCurrentState() === $completedStateId) {
+        $completedStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
+        $hasBeenCompleted = count($order->getHistory($order->id_lang, $completedStateId)) > 0;
+
+        if ($hasBeenCompleted) {
             return;
         }
 
