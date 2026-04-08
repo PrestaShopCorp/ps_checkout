@@ -274,4 +274,4 @@ $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_10803b83a68db8f7e7a33e3b
 $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Telefon';
 $_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc'] = 'Kontaktieren Sie den Kundenservice über %s';
 $_MODULE['<{ps_checkout}prestashop>create_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'Die Zahlung ist ungültig: Der Betrag ist nicht zulässig.';
-$_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'An unexpected refund error occurred.';
+$_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'Ein unerwarteter Rückerstattungsfehler ist aufgetreten.';

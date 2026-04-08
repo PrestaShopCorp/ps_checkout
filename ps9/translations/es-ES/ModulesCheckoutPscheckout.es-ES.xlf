@@ -2465,7 +2465,7 @@
       </trans-unit>
       <trans-unit id="92d485617457c66799814fa3ea9cc50b">
         <source>An unexpected refund error occurred.</source>
-        <target>An unexpected refund error occurred.</target>
+        <target>Se produjo un error inesperado durante el reembolso.</target>
       </trans-unit>
     </body>
   </file>

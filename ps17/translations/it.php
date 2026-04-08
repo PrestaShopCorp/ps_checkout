@@ -268,4 +268,4 @@ $_MODULE['<{ps_checkout}prestashop>translator_f1359dd5749dd996e2506e60bfeb9d05']
 $_MODULE['<{ps_checkout}prestashop>translator_a995e3f4789afc5c69be0f2c4a283fe3'] = 'Per ulteriori informazioni, visita il sito ufficiale di PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee'] = 'Il pagatore ha pagato per un articolo che non ha ricevuto.';
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'Il pagatore non ha autorizzato il pagamento.';
-$_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'An unexpected refund error occurred.';
+$_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'Si è verificato un errore imprevisto durante il rimborso.';
