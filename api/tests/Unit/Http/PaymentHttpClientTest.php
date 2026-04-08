@@ -21,10 +21,13 @@
 namespace PsCheckout\Tests\Api\Unit\Http;
 
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Http\Client\Exception\HttpException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Dto\PayPal\Money;
 use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
+use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\PaymentHttpClient;
@@ -256,5 +259,92 @@ class PaymentHttpClientTest extends TestCase
         $this->expectException(PayPalException::class);
 
         $this->paymentHttpClient->reauthorizeAuthorization($authorizationId);
+    }
+
+    public function testItRethrowsHttpExceptionWhenResponseBodyIsPlainText(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(502, ['Content-Type' => 'text/plain; charset=UTF-8'], 'error code: 502', '1.1', 'Bad Gateway'));
+
+        $httpClient = $this->createClient($psrClient);
+
+        try {
+            $httpClient->sendRequest(new Request('POST', 'trackers'));
+            $this->fail('An HttpException was expected.');
+        } catch (HttpException $exception) {
+            $this->assertSame('Bad Gateway', $exception->getMessage());
+        }
+    }
+
+    public function testItRethrowsHttpExceptionWhenResponseBodyIsJsonScalar(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(400, ['Content-Type' => 'application/json'], '"oops"', '1.1', 'Bad Request'));
+
+        $httpClient = $this->createClient($psrClient);
+
+        try {
+            $httpClient->sendRequest(new Request('POST', 'trackers'));
+            $this->fail('An HttpException was expected.');
+        } catch (HttpException $exception) {
+            $this->assertSame('Bad Request', $exception->getMessage());
+        }
+    }
+
+    public function testItThrowsPayPalExceptionWhenResponseContainsPayPalIssueCode(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn($this->createErrorResponse([
+                'details' => [
+                    [
+                        'issue' => 'INVALID_RESOURCE_ID',
+                    ],
+                ],
+            ]));
+
+        $httpClient = $this->createClient($psrClient);
+
+        try {
+            $httpClient->sendRequest(new Request('POST', 'trackers'));
+            $this->fail('A PayPalException was expected.');
+        } catch (PayPalException $exception) {
+            $this->assertSame(PayPalException::INVALID_RESOURCE_ID, $exception->getCode());
+            $this->assertInstanceOf(HttpException::class, $exception->getPrevious());
+        }
+    }
+
+    private function createClient(ClientInterface $psrClient): PaymentHttpClient
+    {
+        $configurationBuilder = $this->createMock(HttpClientConfigurationBuilderInterface::class);
+        $configurationBuilder->method('build')->willReturn([]);
+        $serializer = PaymentSerializerFactory::create();
+
+        $httpClient = new PaymentHttpClient($configurationBuilder, $serializer, $psrClient);
+
+        return $httpClient;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return Response
+     */
+    private function createErrorResponse(array $payload): Response
+    {
+        $json = json_encode($payload);
+
+        return new Response(
+            422,
+            ['Content-Type' => 'application/json'],
+            is_string($json) ? $json : '',
+            '1.1',
+            'Unprocessable Entity'
+        );
     }
 }
