@@ -228,6 +228,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'isAccountLinked' => $psAccountRepository->isAccountLinked(),
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to get or refresh token: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -253,6 +257,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $status = $webhookSecretTokenService->upsertToken($token);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to upsert secret token: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $status = false;
             $response['errors'] = $exception->getMessage();
         }
@@ -333,6 +341,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
         } catch (OrderStateException $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to get mapped order states: ' . $exception->getMessage(), ['exception' => $exception]);
+
             if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
                 /** @var OrderStateInstaller $orderStateInstaller */
                 $orderStateInstaller = $this->module->getService(OrderStateInstaller::class);
@@ -366,6 +378,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'status' => true,
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to save batch configuration: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -555,6 +571,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ],
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to read log file: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $this->exitWithResponse([
                 'status' => false,
                 'httpCode' => 500,
@@ -704,6 +724,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to fetch PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
+
             http_response_code(500);
             $this->ajaxRender(json_encode([
                 'status' => false,
@@ -774,6 +798,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
             $refundPayPalOrderAction->execute($payPalRefund);
         } catch (\Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to refund PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
+
             /** @var RefundExceptionHandler $refundExceptionHandler */
             $refundExceptionHandler = $this->module->getService(RefundExceptionHandler::class);
 
@@ -882,6 +910,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (\Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to fetch PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -981,6 +1013,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $applePayInstaller->setup();
         } catch (ApplePayInstallerException $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to setup Apple Pay: ' . $e->getMessage(), ['exception' => $e]);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -1077,6 +1113,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
         } catch (\Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to refresh PayPal order data: ' . $exception->getMessage(), ['exception' => $exception]);
+
             $this->exitWithResponse([
                 'httpCode' => 200,
                 'status' => true,
