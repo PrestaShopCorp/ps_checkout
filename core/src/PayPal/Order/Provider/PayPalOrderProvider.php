@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\PayPal\Order\Provider;
 
+use Psr\Log\LoggerInterface;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
@@ -42,15 +43,23 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
     private $orderHttpClient;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param PayPalOrderCacheInterface $payPalOrderCache
      * @param OrderHttpClientInterface $orderHttpClient
+     * @param LoggerInterface $logger
      */
     public function __construct(
         PayPalOrderCacheInterface $payPalOrderCache,
-        OrderHttpClientInterface $orderHttpClient
+        OrderHttpClientInterface $orderHttpClient,
+        LoggerInterface $logger
     ) {
         $this->payPalOrderCache = $payPalOrderCache;
         $this->orderHttpClient = $orderHttpClient;
+        $this->logger = $logger;
     }
 
     /**
@@ -102,6 +111,12 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
                 $data = $responseData;
             }
         } catch (PayPalException $exception) {
+            $this->logger->error('Failed to fetch PayPal order', [
+                'orderId' => $id,
+                'exception' => $exception->getMessage(),
+                'code' => $exception->getCode(),
+            ]);
+
             if ($exception->getCode() === PayPalException::INVALID_RESOURCE_ID) {
                 \Db::getInstance()->update(
                     PayPalOrderRepository::TABLE_NAME,
@@ -110,7 +125,11 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
                     ],
                     'id = "' . pSQL($id) . '"'
                 );
+
+                return $data;
             }
+
+            throw $exception;
         }
 
         return $data;

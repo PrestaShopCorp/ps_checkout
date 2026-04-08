@@ -112,7 +112,7 @@ class DispatchWebhookProcessor implements DispatchWebhookProcessorInterface
             $this->logger->warning(
                 'PayPal order not found',
                 [
-                    $orderId => 'orderId',
+                    'orderId' => $orderId,
                 ]
             );
 
