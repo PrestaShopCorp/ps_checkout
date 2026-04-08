@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Core\Order\Validator;
 
+use PsCheckout\Core\Exception\PsCheckoutException;
+
 interface CheckoutValidatorInterface
 {
     /**
@@ -27,6 +29,8 @@ interface CheckoutValidatorInterface
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws PsCheckoutException
      */
     public function validate(string $id, int $cartId);
 }

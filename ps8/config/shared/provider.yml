@@ -17,6 +17,7 @@ services:
     arguments:
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider:
     class: PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProvider

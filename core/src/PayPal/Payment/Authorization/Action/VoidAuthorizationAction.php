@@ -24,12 +24,19 @@ use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderAuthorizationRepositoryInterface;
 use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use Psr\Log\LoggerInterface;
 
 final class VoidAuthorizationAction implements AuthorizationActionInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var PaymentHttpClientInterface
      */
@@ -41,9 +48,11 @@ final class VoidAuthorizationAction implements AuthorizationActionInterface
     private $authorizationRepository;
 
     public function __construct(
+        LoggerInterface $logger,
         PaymentHttpClientInterface $paymentHttpClient,
         PayPalOrderAuthorizationRepositoryInterface $authorizationRepository
     ) {
+        $this->logger = $logger;
         $this->paymentHttpClient = $paymentHttpClient;
         $this->authorizationRepository = $authorizationRepository;
     }
@@ -62,7 +71,7 @@ final class VoidAuthorizationAction implements AuthorizationActionInterface
     public function execute(PayPalOrderResponse $payPalOrder, array $payload = []): PayPalOrderAuthorization
     {
         // Check intent must be AUTHORIZE
-        if ($payPalOrder->getIntent() !== 'AUTHORIZE') {
+        if ($payPalOrder->getIntent() !== PayPalOrderIntent::AUTHORIZE) {
             throw new PsCheckoutException(
                 sprintf('PayPal Order %s intent must be AUTHORIZE, current intent: %s', $payPalOrder->getId(), $payPalOrder->getIntent()),
                 PsCheckoutException::PAYPAL_ORDER_INTENT_INVALID
@@ -97,7 +106,13 @@ final class VoidAuthorizationAction implements AuthorizationActionInterface
             );
         }
 
-        // Call captureAuthorization in PaymentHttpClient
+        $this->logger->info('Voiding authorization', [
+            'order_id' => $payPalOrder->getId(),
+            'authorization_id' => $authorizationId,
+            'authorization_status' => $authorizationStatus,
+        ]);
+
+        // Call voidAuthorization in PaymentHttpClient
         $voidResponse = $this->paymentHttpClient->voidAuthorization($authorizationId);
 
         /**
@@ -107,11 +122,16 @@ final class VoidAuthorizationAction implements AuthorizationActionInterface
          *      expiration_time: string,
          *      create_time: string,
          *      update_time: string
-         *  }|empty $voidedAuthorization
+         *  }|null $voidedAuthorization
          */
         $voidedAuthorization = json_decode($voidResponse->getBody(), true);
 
         if (empty($voidedAuthorization)) {
+            $this->logger->error('Invalid void response for authorization', [
+                'order_id' => $payPalOrder->getId(),
+                'authorization_id' => $authorizationId,
+            ]);
+
             throw new PsCheckoutException(
                 sprintf('Invalid void response for authorization %s', $authorizationId),
                 PsCheckoutException::PAYPAL_AUTHORIZATION_NOT_FOUND

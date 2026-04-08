@@ -136,7 +136,7 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
 
             throw $exception;
         } catch (\Exception $exception) {
-            throw new PsCheckoutException('Unknown error', PsCheckoutException::UNKNOWN);
+            throw new PsCheckoutException('Unknown error', PsCheckoutException::UNKNOWN, $exception);
         }
 
         /** @var Cart $cart */

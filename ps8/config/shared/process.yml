@@ -179,12 +179,14 @@ services:
   PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction:
     class: PsCheckout\Core\PayPal\Payment\Authorization\Action\CaptureAuthorizationAction
     arguments:
+      - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
 
   PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction:
     class: PsCheckout\Core\PayPal\Payment\Authorization\Action\VoidAuthorizationAction
     arguments:
+      - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Api\Http\PaymentHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
 
