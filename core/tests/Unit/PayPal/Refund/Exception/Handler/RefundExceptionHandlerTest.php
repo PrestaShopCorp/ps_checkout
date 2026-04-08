@@ -100,6 +100,18 @@ class RefundExceptionHandlerTest extends TestCase
         ];
     }
 
+    public function testUnknownPayPalRefundExceptionFallsBackToDefaultMessage(): void
+    {
+        $exception = new PayPalRefundException('UNKNOWN_REFUND_ERROR', 99999);
+
+        /** @var array{httpCode: int, status: bool, errors: array<string>} $result */
+        $result = $this->handler->handle($exception);
+
+        $this->assertSame(400, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame('An unexpected refund error occurred. (UNKNOWN_REFUND_ERROR)', $result['errors'][0]);
+    }
+
     /**
      * @dataProvider payPalExceptionProvider
      */
@@ -223,13 +235,16 @@ class RefundExceptionHandlerTest extends TestCase
         );
     }
 
-    public function testOrderExceptionAlreadyThisStatusReturnsNull(): void
+    public function testOrderExceptionAlreadyThisStatusReturns200(): void
     {
         $exception = new OrderException('Already', OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
 
+        /** @var array{httpCode: int, status: bool, content: string} $result */
         $result = $this->handler->handle($exception);
 
-        $this->assertNull($result);
+        $this->assertSame(200, $result['httpCode']);
+        $this->assertTrue($result['status']);
+        $this->assertSame('Refund has been processed by PayPal.', $result['content']);
     }
 
     public function testOrderExceptionOtherCodeReturns500(): void

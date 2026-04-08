@@ -25,7 +25,7 @@ interface RefundExceptionHandlerInterface
     /**
      * @param \Exception $exception
      *
-     * @return array<string, mixed>|null null when the exception should be silently ignored
+     * @return array<string, mixed>
      */
-    public function handle(\Exception $exception): ?array;
+    public function handle(\Exception $exception): array;
 }

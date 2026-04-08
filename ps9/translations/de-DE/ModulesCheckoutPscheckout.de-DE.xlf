@@ -2487,6 +2487,10 @@
         <source>Contact customer service via %s</source>
         <target>Kontaktieren Sie den Kundenservice über %s</target>
       </trans-unit>
+      <trans-unit id="92d485617457c66799814fa3ea9cc50b">
+        <source>An unexpected refund error occurred.</source>
+        <target>Ein unerwarteter Rückerstattungsfehler ist aufgetreten.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

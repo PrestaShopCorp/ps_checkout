@@ -2463,6 +2463,10 @@
         <source>Delete</source>
         <target>Elimina</target>
       </trans-unit>
+      <trans-unit id="92d485617457c66799814fa3ea9cc50b">
+        <source>An unexpected refund error occurred.</source>
+        <target>Si è verificato un errore imprevisto durante il rimborso.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

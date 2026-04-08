@@ -810,11 +810,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             /** @var RefundExceptionHandler $refundExceptionHandler */
             $refundExceptionHandler = $this->module->getService(RefundExceptionHandler::class);
 
-            $this->exitWithResponse($refundExceptionHandler->handle($exception) ?? [
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [$exception->getMessage()],
-            ]);
+            $this->exitWithResponse($refundExceptionHandler->handle($exception));
         }
 
         $this->exitWithRefreshedOrderData($payPalOrderId, $isProductionEnv, $translator->trans('Refund has been processed by PayPal.'));
