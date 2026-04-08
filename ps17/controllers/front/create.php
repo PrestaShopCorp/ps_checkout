@@ -31,6 +31,7 @@ use PsCheckout\Infrastructure\Action\AddProductToCartAction;
 use PsCheckout\Infrastructure\Adapter\Context;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
+use PsCheckout\Module\Presentation\Translator;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
 
@@ -96,7 +97,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
 
             if ($cartTotal <= 0) {
-                throw new PsCheckoutException($this->module->l('Cart is empty', 'create'), PsCheckoutException::CART_PRODUCT_MISSING);
+                /** @var Translator $translator */
+                $translator = $this->module->getService(Translator::class);
+                throw new PsCheckoutException($translator->trans('Your shopping cart is empty.'), PsCheckoutException::CART_PRODUCT_MISSING);
             }
 
             // Validate PUI amount limits (5 EUR < amount < 2500 EUR)
