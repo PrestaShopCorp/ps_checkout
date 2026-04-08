@@ -71,6 +71,9 @@ class Translator implements TranslatorInterface
             '100% secure payments' => $this->module->l('100% secure payments', 'Translator'),
             'or' => $this->module->l('or', 'Translator'),
             'Express Checkout' => $this->module->l('Express Checkout', 'Translator'),
+            'Please wait, loading additional payment methods.' => $this->module->l('Please wait, loading additional payment methods.', 'Translator'),
+            'You have selected your %s PayPal account to proceed to the payment.' => $this->module->l('You have selected your %s PayPal account to proceed to the payment.', 'Translator'),
+            'Warning' => $this->module->l('Warning', 'Translator'),
 
             'Card' => $this->module->l('Card', 'Translator'),
             'Pay by Card - 100% secure payments' => $this->module->l('Pay by Card - 100% secure payments', 'Translator'),
