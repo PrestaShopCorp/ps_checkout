@@ -71,7 +71,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             } else {
                 $bodyValues = [
                     'orderID' => $tools->getValue('token'),
-                    'payerID' => $tools->getValue('token')('PayerID'),
                 ];
             }
 
