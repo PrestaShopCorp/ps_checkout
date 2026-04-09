@@ -2467,6 +2467,18 @@
         <source>An unexpected refund error occurred.</source>
         <target>Une erreur inattendue s'est produite lors du remboursement.</target>
       </trans-unit>
+      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
+        <source>Authorization captured successfully.</source>
+        <target>L'autorisation a été capturée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
+        <source>Authorization voided successfully.</source>
+        <target>L'autorisation a été annulée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="d7711b029221c7de1444292a4068bfee">
+        <source>Authorization reauthorized successfully.</source>
+        <target>L'autorisation a été renouvelée avec succès.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -275,3 +275,6 @@ $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_10803b83a68db8f7e7a33e3b
 $_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Phone Number';
 $_MODULE['<{ps_checkout}prestashop>create_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'The payment is not valid: the amount is not eligible.';
 $_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'An unexpected refund error occurred.';
+$_MODULE['<{ps_checkout}prestashop>translator_3369ba2ed7cf53ddee6687b80ca28724'] = 'Authorization captured successfully.';
+$_MODULE['<{ps_checkout}prestashop>translator_46b0801bbbd67d6f88169ac8d958176d'] = 'Authorization voided successfully.';
+$_MODULE['<{ps_checkout}prestashop>translator_d7711b029221c7de1444292a4068bfee'] = 'Authorization reauthorized successfully.';

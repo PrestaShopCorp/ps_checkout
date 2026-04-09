@@ -1060,7 +1060,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
-        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization captured successfully.'));
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization captured successfully.'));
     }
 
     public function ajaxProcessVoidAuthorization()
@@ -1077,7 +1080,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
-        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization voided successfully.'));
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization voided successfully.'));
     }
 
     public function ajaxProcessReauthorizeAuthorization()
@@ -1094,7 +1100,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $this->exitWithResponse($result);
         }
 
-        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $this->module->l('Authorization reauthorized successfully.'));
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization reauthorized successfully.'));
     }
 
     /**

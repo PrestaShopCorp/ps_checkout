@@ -2491,6 +2491,18 @@
         <source>An unexpected refund error occurred.</source>
         <target>An unexpected refund error occurred.</target>
       </trans-unit>
+      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
+        <source>Authorization captured successfully.</source>
+        <target>Authorization captured successfully.</target>
+      </trans-unit>
+      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
+        <source>Authorization voided successfully.</source>
+        <target>Authorization voided successfully.</target>
+      </trans-unit>
+      <trans-unit id="d7711b029221c7de1444292a4068bfee">
+        <source>Authorization reauthorized successfully.</source>
+        <target>Authorization reauthorized successfully.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
