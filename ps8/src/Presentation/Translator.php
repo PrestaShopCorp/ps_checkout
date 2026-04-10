@@ -186,6 +186,9 @@ class Translator implements TranslatorInterface
             'No PrestaShop Order identifier received' => $this->translator->trans('No PrestaShop Order identifier received', $parameters, 'Modules.Checkout.Pscheckout'),
             'Unable to find PayPal Order associated to this PrestaShop Order %s' => $this->translator->trans('Unable to find PayPal Order associated to this PrestaShop Order %s', $parameters, 'Modules.Checkout.Pscheckout'),
             'PayPal Order %s is not in the same environment as PrestaShop Checkout' => $this->translator->trans('PayPal Order %s is not in the same environment as PrestaShop Checkout', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Authorization captured successfully.' => $this->translator->trans('Authorization captured successfully.', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Authorization voided successfully.' => $this->translator->trans('Authorization voided successfully.', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Authorization reauthorized successfully.' => $this->translator->trans('Authorization reauthorized successfully.', $parameters, 'Modules.Checkout.Pscheckout'),
 
             'Eligible' => $this->translator->trans('Eligible', $parameters, 'Modules.Checkout.Pscheckout'),
             'Partially eligible' => $this->translator->trans('Partially eligible', $parameters, 'Modules.Checkout.Pscheckout'),
