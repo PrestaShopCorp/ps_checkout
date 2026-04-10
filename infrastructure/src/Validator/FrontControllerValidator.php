@@ -32,10 +32,17 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
      */
     private $configuration;
 
+    /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
+
     public function __construct(
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->configuration = $configuration;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -46,10 +53,10 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
         switch ($controller) {
             // Homepage
             case 'index':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER);
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
                 // Category
             case 'category':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER);
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('category');
                 // Payment step
             case 'orderopc':
             case 'order':
@@ -74,22 +81,21 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
         switch ($controller) {
             // Homepage
             case 'index':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER);
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
                 // Category
             case 'category':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER);
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('category');
             case 'orderopc':
             case 'order':
                 return true;
             case 'product':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE)
-                    || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
+                return
+                    $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('product')
                     || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON)
                     || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE)
                     || $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
             case 'cart':
-                return $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE)
-                    || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('cart')
                     || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON)
                     || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE)
                     || $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);
@@ -114,5 +120,22 @@ class FrontControllerValidator implements FrontControllerValidatorInterface
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isExpressCheckoutEnabled(): bool
+    {
+        if (!$this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_GUEST_CHECKOUT_ENABLED)) {
+            return false;
+        }
+
+        return $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE)
+            || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE)
+            || $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE)
+            || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON)
+            || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON)
+            || $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON);
     }
 }

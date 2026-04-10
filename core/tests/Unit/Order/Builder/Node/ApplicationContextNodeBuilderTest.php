@@ -46,7 +46,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout($isExpressCheckout);
+        $builder->setShippingAddressExists($isExpressCheckout);
 
         // Act
         $result = $builder->build();
@@ -62,13 +62,13 @@ class ApplicationContextNodeBuilderTest extends TestCase
     public function applicationContextDataProvider(): array
     {
         return [
-            'Express Checkout' => [
+            'Shipping address is set' => [
                 true,
-                'GET_FROM_FILE',
-            ],
-            'Regular Checkout' => [
-                false,
                 'SET_PROVIDED_ADDRESS',
+            ],
+            'Shipping address is not set' => [
+                false,
+                'GET_FROM_FILE',
             ],
         ];
     }
@@ -89,7 +89,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(false);
+        $builder->setShippingAddressExists(false);
 
         // Act
         $result = $builder->build();
@@ -97,7 +97,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
         // Assert
         $this->assertArrayHasKey('application_context', $result);
         $this->assertEquals('', $result['application_context']['brand_name']); // Expect empty brand name
-        $this->assertEquals('SET_PROVIDED_ADDRESS', $result['application_context']['shipping_preference']);
+        $this->assertEquals('GET_FROM_FILE', $result['application_context']['shipping_preference']);
         $this->assertEquals('https://example.com/validate', $result['application_context']['return_url']);
         $this->assertEquals('https://example.com/cancel', $result['application_context']['cancel_url']);
     }
@@ -118,7 +118,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(true);
+        $builder->setShippingAddressExists(true);
 
         // Act
         $result = $builder->build();
@@ -126,7 +126,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
         // Assert
         $this->assertArrayHasKey('application_context', $result);
         $this->assertNull($result['application_context']['brand_name']); // Expect null brand name
-        $this->assertEquals('GET_FROM_FILE', $result['application_context']['shipping_preference']);
+        $this->assertEquals('SET_PROVIDED_ADDRESS', $result['application_context']['shipping_preference']);
         $this->assertEquals('https://example.com/validate', $result['application_context']['return_url']);
         $this->assertEquals('https://example.com/cancel', $result['application_context']['cancel_url']);
     }
@@ -147,7 +147,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
             ]);
 
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
-        $builder->setIsExpressCheckout(false);
+        $builder->setShippingAddressExists(false);
 
         // Act
         $result = $builder->build();
@@ -155,7 +155,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
         // Assert
         $this->assertArrayHasKey('application_context', $result);
         $this->assertEquals('Custom Shop', $result['application_context']['brand_name']);
-        $this->assertEquals('SET_PROVIDED_ADDRESS', $result['application_context']['shipping_preference']);
+        $this->assertEquals('GET_FROM_FILE', $result['application_context']['shipping_preference']);
         $this->assertEquals('https://custom.com/validate', $result['application_context']['return_url']);
         $this->assertEquals('https://custom.com/cancel', $result['application_context']['cancel_url']);
     }
@@ -169,7 +169,7 @@ class ApplicationContextNodeBuilderTest extends TestCase
         $builder = new ApplicationContextNodeBuilder($configurationMock, $linkMock);
 
         // Act
-        $result = $builder->setIsExpressCheckout(true);
+        $result = $builder->setShippingAddressExists(true);
 
         // Assert
         $this->assertInstanceOf(ApplicationContextNodeBuilder::class, $result);

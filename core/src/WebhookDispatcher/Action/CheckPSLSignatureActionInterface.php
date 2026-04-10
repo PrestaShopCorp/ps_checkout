@@ -18,23 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-$rootDirectory = __DIR__ . '/../../../../../';
-$projectDir = __DIR__ . '/../../../';
+namespace PsCheckout\Core\WebhookDispatcher\Action;
 
-if (!getenv('IS_CI')) {
-    define('_PS_IN_TEST_', true);
-}
-
-require_once $projectDir . 'vendor/autoload.php';
-
-if (file_exists($rootDirectory . 'vendor/autoload.php')) {
-    require_once $rootDirectory . 'vendor/autoload.php';
-}
-
-if (file_exists($rootDirectory . 'autoload.php')) {
-    require_once $rootDirectory . 'autoload.php';
-}
-
-if (!defined('_PS_VERSION_')) {
-    define('_PS_VERSION_', AppKernel::VERSION);
+// TODO: Remove this class and references when maasland webhooks are no longer needed
+interface CheckPSLSignatureActionInterface
+{
+    /**
+     * @param array<string, mixed> $bodyValues
+     *
+     * @return bool
+     */
+    public function execute(array $bodyValues): bool;
 }

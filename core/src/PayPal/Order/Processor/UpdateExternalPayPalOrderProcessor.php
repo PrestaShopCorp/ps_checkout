@@ -26,12 +26,14 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CheckPayPalOrderRequest;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 use PsCheckout\Utility\Common\ArrayUtility;
+use PsCheckout\Utility\Payload\OrderPayloadUtility;
 
 class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderProcessorInterface
 {
@@ -107,6 +109,10 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
             return;
         }
 
+        if ($paypalOrderResponse->getStatus() === PayPalOrderStatus::COMPLETED) {
+            return;
+        }
+
         if (!$paypalOrderResponse->getPurchaseUnits()) {
             return;
         }
@@ -123,7 +129,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
         $needToUpdate = false;
 
         if ($paypalOrderResponse->getOrderAmount() && isset($payload['purchase_units'][0]['amount'])) {
-            $amountDiff = ArrayUtility::arrayRecursiveDiff($paypalOrderResponse->getOrderAmount(), $payload['purchase_units'][0]['amount']);
+            $amountDiff = OrderPayloadUtility::amountWithBreakdownDiff($paypalOrderResponse->getOrderAmount(), $payload['purchase_units'][0]['amount']);
             if (!empty($amountDiff)) {
                 $needToUpdate = true;
             }
@@ -154,7 +160,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
                 'op' => 'replace',
                 'path' => "/purchase_units/@reference_id=='$purchaseUnitReferenceId'",
                 'value' => $payload['purchase_units'],
-            ]
+            ],
         ];
 
         $response = $this->httpClient->updateOrder($request->getOrderId(), $payloadToSend);

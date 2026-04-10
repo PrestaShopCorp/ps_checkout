@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\OrderState\Action;
 
@@ -71,54 +89,54 @@ class SetReversedOrderStateActionTest extends BaseTestCase
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING
-                ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_PENDING,
+                ],
             ],
             'non-existent order should throw exception' => [
                 [
                     'expectException' => PsCheckoutException::class,
                     'expectExceptionCode' => PsCheckoutException::ORDER_NOT_FOUND,
-                    'payPalOrderId' => 'NON-EXISTENT-ORDER'
-                ]
+                    'payPalOrderId' => 'NON-EXISTENT-ORDER',
+                ],
             ],
             'already paid order should not change state' => [
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED,
+                ],
             ],
             'refunded order should not change state' => [
                 [
                     'payPalOrder' => [
                         'status' => PayPalOrderStatus::APPROVED,
-                        'id_cart' => 123
+                        'id_cart' => 123,
                     ],
                     'order' => [
                         'id_cart' => 123,
                         'current_state' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED,
-                        'valid' => 1
+                        'valid' => 1,
                     ],
                     'payPalOrderId' => 'TEST-ORDER-123',
-                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED
-                ]
-            ]
+                    'expectedState' => OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED,
+                ],
+            ],
         ];
     }
 }

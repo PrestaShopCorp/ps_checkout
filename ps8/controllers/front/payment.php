@@ -37,6 +37,7 @@ use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\OrderRepository;
 use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
+use PsCheckout\Module\Presentation\Translator;
 use Psr\Log\LoggerInterface;
 
 class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
@@ -68,7 +69,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     public function initContent()
     {
-        $this->orderPageUrl = $this->context->link->getPageLink('order');
         parent::initContent();
         $this->setTemplate('module:' . $this->module->name . '/views/templates/front/payment.tpl');
 
@@ -92,6 +92,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     public function postProcess()
     {
+        $this->orderPageUrl = $this->context->link->getPageLink('order');
         /** @var Tools $tools */
         $tools = $this->module->getService(Tools::class);
         /** @var LoggerInterface $logger */
@@ -136,9 +137,18 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             $payPalOrderResponse = $payPalOrderProvider->getById($this->paypalOrderId);
             $this->handleOrderStatus($payPalOrderResponse, $payPalOrder);
-        } catch (Exception $exception) {
-            $logger->error('Error processing PayPal Order: ' . $exception->getMessage());
-            $this->context->smarty->assign('error', $exception->getMessage());
+        } catch (Throwable $exception) {
+            $logger->error(
+                sprintf(
+                    'PaymentController - Exception %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception]
+            );
+            /** @var Translator $translator **/
+            $translator = $this->module->getService(Translator::class);
+            $this->context->smarty->assign('error', $translator->trans('There was an error during the payment. Please try again or contact the support.'));
         }
     }
 
@@ -269,9 +279,16 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      */
     private function createOrder(PayPalOrderResponse $payPalOrderResponse, PayPalOrder $payPalOrder)
     {
-        /** @var CreateOrderAction $createOrderAction */
-        $createOrderAction = $this->module->getService(CreateOrderAction::class);
-        $createOrderAction->execute($payPalOrderResponse);
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $this->module->getService(OrderRepository::class);
+
+        $orders = $orderRepository->getAllBy(['id_cart' => $payPalOrder->getIdCart()]);
+
+        if (empty($orders)) {
+            /** @var CreateOrderAction $createOrderAction */
+            $createOrderAction = $this->module->getService(CreateOrderAction::class);
+            $createOrderAction->execute($payPalOrderResponse);
+        }
 
         if ($payPalOrder->getPaymentTokenId() && $payPalOrder->checkCustomerIntent(PayPalConfiguration::PS_CHECKOUT_CUSTOMER_INTENT_FAVORITE)) {
             /** @var PaymentTokenRepository $paymentTokenRepository */

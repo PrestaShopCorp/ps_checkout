@@ -1,9 +1,28 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\PayPal\Order\Action;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
 use PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository;
 
@@ -26,7 +45,7 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $orderResponse = new PayPalOrderResponse(
             'PAY-123',
             'COMPLETED',
-            'CAPTURE',
+            PayPalOrderIntent::CAPTURE,
             [], // payer
             [], // payment_source
             [
@@ -38,9 +57,9 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
                             'quantity' => '1',
                             'unit_amount' => [
                                 'currency_code' => 'EUR',
-                                'value' => '10.00'
-                            ]
-                        ]
+                                'value' => '10.00',
+                            ],
+                        ],
                     ],
                     'payments' => [
                         'captures' => [
@@ -51,11 +70,11 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
                                 'update_time' => '2024-01-01T10:01:00Z',
                                 'seller_protection' => ['status' => 'ELIGIBLE'],
                                 'seller_receivable_breakdown' => ['gross_amount' => ['value' => '10.00']],
-                                'final_capture' => true
-                            ]
-                        ]
-                    ]
-                ]
+                                'final_capture' => true,
+                            ],
+                        ],
+                    ],
+                ],
             ],
             [], // links
             '2024-01-01T10:00:00Z' // create_time
@@ -68,9 +87,9 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $query->select('*')
             ->from(PayPalOrderPurchaseUnitRepository::TABLE_NAME)
             ->where('id_order = "' . pSQL('PAY-123') . '"');
-        
+
         $result = $this->db->getRow($query);
-        
+
         $this->assertNotEmpty($result);
         $this->assertEquals('default', $result['reference_id']);
         $this->assertNotEmpty($result['items']);
@@ -80,7 +99,7 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $query->select('*')
             ->from('pscheckout_capture')
             ->where('id = "' . pSQL('CAP-123') . '"');
-        
+
         $capture = $this->db->getRow($query);
         $this->assertNotEmpty($capture);
         $this->assertEquals('COMPLETED', $capture['status']);
@@ -103,9 +122,9 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
                             'quantity' => '1',
                             'unit_amount' => [
                                 'currency_code' => 'EUR',
-                                'value' => '10.00'
-                            ]
-                        ]
+                                'value' => '10.00',
+                            ],
+                        ],
                     ],
                     'payments' => [
                         'authorizations' => [
@@ -113,11 +132,11 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
                                 'id' => 'AUTH-123',
                                 'status' => 'CREATED',
                                 'expiration_time' => '2024-02-01T10:00:00Z',
-                                'seller_protection' => ['status' => 'ELIGIBLE']
-                            ]
-                        ]
-                    ]
-                ]
+                                'seller_protection' => ['status' => 'ELIGIBLE'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             [], // links
             '2024-01-01T10:00:00Z' // create_time
@@ -130,9 +149,9 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $query->select('*')
             ->from(PayPalOrderPurchaseUnitRepository::TABLE_NAME)
             ->where('id_order = "' . pSQL('PAY-123') . '"');
-        
+
         $result = $this->db->getRow($query);
-        
+
         $this->assertNotEmpty($result);
         $this->assertEquals('default', $result['reference_id']);
 
@@ -141,7 +160,7 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
         $query->select('*')
             ->from('pscheckout_authorization')
             ->where('id = "' . pSQL('AUTH-123') . '"');
-        
+
         $authorization = $this->db->getRow($query);
         $this->assertNotEmpty($authorization);
         $this->assertEquals('CREATED', $authorization['status']);

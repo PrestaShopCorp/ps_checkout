@@ -16,70 +16,73 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
-<section id="ps_checkout-displayOrderDetail" class="box">
-  <h3 class="h1 card-title">
-      {$translations.blockTitle|escape:'html':'UTF-8'}
-  </h3>
 
-    {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
-      <div class="alert alert-danger">
-          {$translations.notificationFailed|escape:'html':'UTF-8'}
-      </div>
-    {/if}
+<section id="ps_checkout-displayOrderDetail">
+    <div class="card border-1 mb-4">
+        <div class="card-body">
+            <h2 class="h2 mb-4">
+                {$translations.blockTitle|escape:'html':'UTF-8'}
+            </h2>
 
-    {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
-      <div class="alert alert-warning">
-          {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
-      </div>
-    {/if}
+            {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
+                <div class="alert alert-danger">
+                    {$translations.notificationFailed|escape:'html':'UTF-8'}
+                </div>
+            {/if}
 
-    {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
-      <div class="alert alert-warning">
-          {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
-      </div>
-    {/if}
+            {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
+                <div class="alert alert-warning">
+                    {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
+                </div>
+            {/if}
 
-  <div class="definition-list">
-    <dl>
-      <dt>{$translations.fundingSource|escape:'html':'UTF-8'}</dt>
-      <dd>{$orderPayPalFundingSourceTranslated|escape:'html':'UTF-8'}</dd>
-        {if $orderPayPalTransactionId}
-          <dt>{$translations.transactionIdentifier|escape:'html':'UTF-8'}</dt>
-          <dd>{$orderPayPalTransactionId|escape:'html':'UTF-8'}</dd>
-          <dt>{$translations.transactionStatus|escape:'html':'UTF-8'}</dt>
-          <dd>{$orderPayPalTransactionStatusTranslated|escape:'html':'UTF-8'}</dd>
-          <dt>{$translations.amountPaid|escape:'html':'UTF-8'}</dt>
-          <dd>{$orderPayPalTransactionAmount|escape:'html':'UTF-8'}</dd>
-        {else}
-          <dt>{$translations.orderIdentifier|escape:'html':'UTF-8'}</dt>
-          <dd>{$orderPayPalId|escape:'html':'UTF-8'}</dd>
-          <dt>{$translations.orderStatus|escape:'html':'UTF-8'}</dt>
-          <dd>{$orderPayPalStatus|escape:'html':'UTF-8'}</dd>
-        {/if}
-    </dl>
-  </div>
+            {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
+                <div class="alert alert-warning">
+                    {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
+                </div>
+            {/if}
 
-  {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
-    <p>
-      <a class="btn btn-primary" href="{$approvalLink|escape:'html':'UTF-8'}">
-          {$translations.buttonApprove|escape:'html':'UTF-8'}
-      </a>
-        {$translations.externalRedirection|escape:'html':'UTF-8'}
-    </p>
-  {/if}
+            <ul>
+                <li>
+                    {$translations.fundingSource|escape:'html':'UTF-8'}: {$orderPayPalFundingSourceTranslated|escape:'html':'UTF-8'}
+                </li>
+                {if $orderPayPalTransactionId}
+                    <li>{$translations.transactionIdentifier|escape:'html':'UTF-8'}: {$orderPayPalTransactionId|escape:'html':'UTF-8'}</li>
+                    <li>{$translations.transactionStatus|escape:'html':'UTF-8'}: {$orderPayPalTransactionStatusTranslated|escape:'html':'UTF-8'}</li>
+                    <li>{$translations.amountPaid|escape:'html':'UTF-8'}: {$orderPayPalTransactionAmount|escape:'html':'UTF-8'}</li>
+                {else}
+                    <li>{$translations.orderIdentifier|escape:'html':'UTF-8'}: {$orderPayPalId|escape:'html':'UTF-8'}</li>
+                    <li>{$translations.orderStatus|escape:'html':'UTF-8'}: {$orderPayPalStatus|escape:'html':'UTF-8'}</li>
+                {/if}
+            </ul>
 
-  {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
-    <p>
-      <a class="btn btn-primary" href="{$payerActionLink|escape:'html':'UTF-8'}">
-          {$translations.buttonPayerAction|escape:'html':'UTF-8'}
-      </a>
-        {$translations.externalRedirection|escape:'html':'UTF-8'}
-    </p>
-  {/if}
+            {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
+                <div class="alert alert-warning">
+                    {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
+                </div>
+                <p>
+                    <a class="btn btn-primary" href="{$approvalLink|escape:'html':'UTF-8'}">
+                        {$translations.buttonApprove|escape:'html':'UTF-8'}
+                    </a>
+                    {$translations.externalRedirection|escape:'html':'UTF-8'}
+                </p>
+            {/if}
 
-  <p>
-    <a href="{$contactUsLink|escape:'html':'UTF-8'}" class="contact-us">
-        {$translations.contactLink|escape:'html':'UTF-8'}
-    </a>
-  </p>
+            {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED' }
+                <div class="alert alert-warning">
+                    {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
+                </div>
+                <p>
+                    <a class="btn btn-primary" href="{$payerActionLink|escape:'html':'UTF-8'}">
+                        {$translations.buttonPayerAction|escape:'html':'UTF-8'}
+                    </a>
+                    {$translations.externalRedirection|escape:'html':'UTF-8'}
+                </p>
+            {/if}
+
+            <a href="{$contactUsLink|escape:'html':'UTF-8'}" class="contact-us">
+                {$translations.contactLink|escape:'html':'UTF-8'}
+            </a>
+        </div>
+    </div>
 </section>

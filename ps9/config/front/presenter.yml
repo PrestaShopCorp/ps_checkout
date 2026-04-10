@@ -40,6 +40,8 @@ services:
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
       - '@PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
+      - '@PsCheckout\Infrastructure\Validator\PayLaterValidator'
 
   PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule:
     class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule
@@ -52,6 +54,7 @@ services:
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Infrastructure\Adapter\Tools'
 
   PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule:
     class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule

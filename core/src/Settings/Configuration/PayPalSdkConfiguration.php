@@ -21,9 +21,11 @@
 namespace PsCheckout\Core\Settings\Configuration;
 
 use Exception;
-use PsCheckout\Core\FundingSource\Constraint\FundingSourceConstraint;
+use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityServiceInterface;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\OAuth\OAuthServiceInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
+use PsCheckout\Core\Util\CountryResolverInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
@@ -37,10 +39,10 @@ class PayPalSdkConfiguration
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
     /**
-     * google_pay and apple_pay are not considered funding sources
+     * google_pay, apple_pay and pui are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK
      */
-    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay'];
+    const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay', 'pay_upon_invoice'];
 
     /**
      * @var ContextInterface
@@ -83,6 +85,16 @@ class PayPalSdkConfiguration
     private $logger;
 
     /**
+     * @var FundingSourceEligibilityServiceInterface
+     */
+    private $eligibilityService;
+
+    /**
+     * @var CountryResolverInterface
+     */
+    private $countryResolver;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
@@ -98,18 +110,24 @@ class PayPalSdkConfiguration
         PayPalConfiguration $payPalConfiguration,
         EnvInterface $env,
         FundingSourcePresenterInterface $fundingSourcePresenter,
+        FundingSourceEligibilityServiceInterface $eligibilityService,
+        CountryResolverInterface $countryResolver,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
         $this->payPalConfiguration = $payPalConfiguration;
         $this->env = $env;
         $this->fundingSourcePresenter = $fundingSourcePresenter;
+        $this->eligibilityService = $eligibilityService;
+        $this->countryResolver = $countryResolver;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
+        $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
 
     /**
@@ -134,19 +152,13 @@ class PayPalSdkConfiguration
             $components[] = 'messages';
         }
 
-        if ($this->shouldIncludeGooglePayComponent()) {
-            $components[] = 'googlepay';
-        }
-
-        if ($this->shouldIncludeApplePayComponent()) {
-            $components[] = 'applepay';
-        }
+        $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
 
         $params = [
             'clientId' => $this->env->getPaypalClientId(),
             'merchantId' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
             'currency' => $this->context->getCurrencyIsoCode(),
-            'intent' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ? strtolower($this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT)) : 'capture',
+            'intent' => strtolower($intent),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
             'integrationDate' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTEGRATION_DATE) ?: '2024-04-01',
@@ -154,15 +166,14 @@ class PayPalSdkConfiguration
             'dataCspNonce' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_CSP_NONCE) ?: '',
         ];
 
+        $customer = $this->context->getCustomer();
         if (
-            $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_VAULTING) &&
-            $this->context->getCustomer() &&
-            $this->context->getCustomer()->isLogged() &&
-            $this->context->getCustomer()->id &&
-            'order' === $this->getPageName()
+            $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_VAULTING)
+            && $customer && $customer->isLogged() && $customer->id
+            && 'order' === $this->getPageName()
         ) {
             try {
-                $payPalCustomerId = $this->payPalCustomerRepository->getPayPalCustomerIdByCustomerId($this->context->getCustomer()->id);
+                $payPalCustomerId = $this->payPalCustomerRepository->getPayPalCustomerIdByCustomerId($customer->id);
                 $merchantId = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
 
                 $userIdToken = $this->oAuthService->getUserIdToken($merchantId, $payPalCustomerId);
@@ -178,7 +189,7 @@ class PayPalSdkConfiguration
         }
 
         if (PayPalConfiguration::MODE_SANDBOX === $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE)) {
-            $params['buyerCountry'] = $this->getCountryIsoCode();
+            $params['buyerCountry'] = $this->countryResolver->getBuyerCountryIsoCode();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
@@ -187,7 +198,22 @@ class PayPalSdkConfiguration
             $params['disableFunding'] = implode(',', $fundingSourcesDisabled);
         }
 
-        $eligibleAlternativePaymentMethods = $this->getEligibleAlternativePaymentMethods();
+        $eligibleAlternativePaymentMethods = $this->eligibilityService->getEligibleFundingSources();
+
+        if (array_key_exists('google_pay', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['google_pay']);
+            $components[] = 'googlepay';
+        }
+
+        if (array_key_exists('apple_pay', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['apple_pay']);
+            $components[] = 'applepay';
+        }
+
+        if (array_key_exists('pay_upon_invoice', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['pay_upon_invoice']);
+            $components[] = 'legal';
+        }
 
         if (!empty($eligibleAlternativePaymentMethods) && $this->shouldIncludeButtonsComponent()) {
             $locale = $this->getLocale();
@@ -199,12 +225,10 @@ class PayPalSdkConfiguration
             $components[] = 'payment-fields';
         }
 
-        if ($this->isPayLaterEnabled()) {
-            $eligibleAlternativePaymentMethods[] = 'paylater';
-        }
-
         if (!empty($eligibleAlternativePaymentMethods)) {
-            $params['enableFunding'] = implode(',', $eligibleAlternativePaymentMethods);
+            $params['enableFunding'] = implode(',', array_map(static function ($fundingSource) {
+                return $fundingSource->getName();
+            }, $eligibleAlternativePaymentMethods));
         }
 
         $params['components'] = implode(',', $components);
@@ -261,65 +285,22 @@ class PayPalSdkConfiguration
     {
         $pageName = $this->getPageName();
 
-        if ('index' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER)) {
-            return true;
+        switch ($pageName) {
+            case 'cart':
+            case 'category':
+            case 'product':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled($pageName);
+            case 'order':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('checkout');
+            case 'index':
+                return $this->payPalPayLaterConfiguration->isPayLaterMessagingEnabled('homepage');
+            default:
+                return false;
         }
-
-        if ('category' === $pageName && $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER)) {
-            return true;
-        }
-
-        if (
-            in_array($pageName, ['cart', 'order']) &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        if (
-            'product' === $pageName &&
-            (
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER)
-            )
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function shouldIncludeGooglePayComponent(): bool
-    {
-        $countryIso = $this->getCountryIsoCode();
-        $fundingSource = $this->fundingSourcePresenter->getOneBy(['name' => 'google_pay', 'id_shop' => $this->context->getShop()->id]);
-
-        return
-            $fundingSource &&
-            $fundingSource->getIsEnabled() &&
-            $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY) &&
-            in_array($countryIso, FundingSourceConstraint::getCountries('google_pay'), true) &&
-            in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('google_pay'), true);
-    }
-
-    private function shouldIncludeApplePayComponent(): bool
-    {
-        $countryIso = $this->getCountryIsoCode();
-        $fundingSource = $this->fundingSourcePresenter->getOneBy(['name' => 'apple_pay', 'id_shop' => $this->context->getShop()->id]);
-
-        return $fundingSource &&
-            $fundingSource->getIsEnabled() &&
-            $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_APPLE_PAY) &&
-            $this->isApplePayDomainRegistered() &&
-            in_array($countryIso, FundingSourceConstraint::getCountries('apple_pay'), true) &&
-            in_array($this->context->getCurrencyIsoCode(), FundingSourceConstraint::getCurrencies('apple_pay'), true);
     }
 
     /**
-     * @see https://developer.paypal.com/docs/checkout/reference/customize-sdk/#disable-funding
+     * @see https://developer.paypal.com/sdk/js/configuration/#disable-funding
      *
      * @return array
      */
@@ -336,52 +317,6 @@ class PayPalSdkConfiguration
         }
 
         return $fundingSourcesDisabled;
-    }
-
-    private function getEligibleAlternativePaymentMethods(): array
-    {
-        $fundingSourcesEnabled = [];
-
-        $fundingSources = $this->fundingSourcePresenter->getAllForSpecificShop($this->context->getShop()->id);
-
-        $countryIso = $this->getCountryIsoCode();
-        $currencyIso = $this->context->getCurrencyIsoCode();
-
-        foreach ($fundingSources as $fundingSource) {
-            if (!$fundingSource->getIsEnabled()) {
-                continue;
-            }
-
-            switch (true) {
-                case $fundingSource->getName() === 'bancontact' && $countryIso === 'BE' && $currencyIso === 'EUR':
-                case $fundingSource->getName() === 'blik' && $countryIso === 'PL' && $currencyIso === 'PLN':
-                case $fundingSource->getName() === 'eps' && $countryIso === 'AT' && $currencyIso === 'EUR':
-                case $fundingSource->getName() === 'ideal' && $countryIso === 'NL' && $currencyIso === 'EUR':
-                case $fundingSource->getName() === 'mybank' && $countryIso === 'IT' && $currencyIso === 'EUR':
-                case $fundingSource->getName() === 'p24' && $countryIso === 'PL' && in_array($currencyIso, ['EUR', 'PLN'], true):
-                    $fundingSourcesEnabled[] = $fundingSource->getName();
-
-                    break;
-            }
-        }
-
-        return $fundingSourcesEnabled;
-    }
-
-    private function isApplePayDomainRegistered(): bool
-    {
-        return $this->configuration->getBoolean(
-            $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE) === PayPalConfiguration::MODE_SANDBOX ?
-                PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX :
-                PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE
-        );
-    }
-
-    private function isPayLaterEnabled(): bool
-    {
-        $fundingSource = $this->fundingSourcePresenter->getOneBy(['name' => 'paylater', 'id_shop' => $this->context->getShop()->id]);
-
-        return $fundingSource && $fundingSource->getIsEnabled();
     }
 
     /**
@@ -405,40 +340,9 @@ class PayPalSdkConfiguration
     /**
      * @return string
      */
-    private function getCountryIsoCode(): string
-    {
-        $code = '';
-
-        if (\Validate::isLoadedObject($this->context->getCountry())) {
-            $code = strtoupper($this->context->getCountry()->iso_code);
-        }
-
-        $cart = $this->context->getCart();
-
-        if (\Validate::isLoadedObject($cart)) {
-            $taxAddressType = $this->configuration->get('PS_TAX_ADDRESS_TYPE');
-            $taxAddressId = property_exists($cart, $taxAddressType) ? $cart->{$taxAddressType} : $cart->id_address_delivery;
-            $address = new \Address($taxAddressId);
-            $country = new \Country($address->id_country);
-
-            if ($country->id && $country->iso_code) {
-                $code = strtoupper($country->iso_code);
-            }
-        }
-
-        if ($code === 'UK') {
-            $code = 'GB';
-        }
-
-        return $code;
-    }
-
-    /**
-     * @return string
-     */
     private function getLocale(): string
     {
-        $countryIso = $this->getCountryIsoCode();
+        $countryIso = $this->countryResolver->getBuyerCountryIsoCode();
         $languageIso = $this->context->getLanguage() ? strtoupper($this->context->getLanguage()->iso_code) : '';
 
         switch ($countryIso) {

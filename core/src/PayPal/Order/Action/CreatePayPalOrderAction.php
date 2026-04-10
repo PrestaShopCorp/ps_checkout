@@ -29,6 +29,7 @@ use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
@@ -116,7 +117,9 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             ->setIsExpressCheckout($request->isExpressCheckout())
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
-            ->setIsVault($request->getVaultId() || $request->isVault());
+            ->setIsVault($request->getVaultId() || $request->isVault())
+            ->setCustomerBirthDay($request->getBirthDate())
+            ->setCustomerPhone($request->getPhone());
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());
@@ -135,7 +138,11 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $payload = $this->orderPayloadBuilder->build();
 
         try {
-            $orderResponse = $this->createPayPalOrder($payload);
+            $clientMetadataId = $request->getFundingSource() === 'pay_upon_invoice' && $request->getMetaDataId()
+                ? $request->getMetaDataId()
+                : null;
+
+            $orderResponse = $this->createPayPalOrder($payload, null, $clientMetadataId);
         } catch (PayPalException $exception) {
             if ($request->getVaultId() && $exception->getCode() === PayPalException::CARD_CLOSED) {
                 $this->deletePaymentTokenAction->execute(
@@ -147,7 +154,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             throw $exception;
         }
 
-        $this->deleteExistingPayPalOrder($cartId);
+        $this->softDeleteExistingPayPalOrder($cartId);
 
         $this->payPalOrderCache->updateOrderCache($orderResponse);
 
@@ -175,7 +182,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      *
      * @throws PsCheckoutException
      */
-    private function createPayPalOrder(array $payload, string $paypalRequestId = null, string $clientMetadataId = null): CreatePayPalOrderResponse
+    private function createPayPalOrder(array $payload, ?string $paypalRequestId = null, ?string $clientMetadataId = null): CreatePayPalOrderResponse
     {
         try {
             $response = $this->orderHttpClient->createOrder($payload, $paypalRequestId, $clientMetadataId);
@@ -199,6 +206,23 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $existingOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
         if ($existingOrder) {
             $this->payPalOrderRepository->deletePayPalOrder($existingOrder->getId());
+        }
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     * @throws PsCheckoutException
+     */
+    private function softDeleteExistingPayPalOrder(int $cartId)
+    {
+        $existingOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
+        if ($existingOrder) {
+            $existingOrder->addTag(PayPalOrder::DELETED);
+            $this->payPalOrderRepository->save($existingOrder);
         }
     }
 }

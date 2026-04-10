@@ -6,6 +6,7 @@ services:
     class: PsCheckout\Infrastructure\Validator\FrontControllerValidator
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
 
   PsCheckout\Core\Order\Validator\OrderAuthorizationValidator:
     class: PsCheckout\Core\Order\Validator\OrderAuthorizationValidator
@@ -48,6 +49,19 @@ services:
 
   PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidator:
     class: PsCheckout\Core\PayPal\Order\Validator\CreatedPayPalOrderValidator
+    arguments:
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@=service("ps_checkout.module").id'
+
+  PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction:
+    class: PsCheckout\Core\WebhookDispatcher\Action\CheckPSLSignatureAction
+    arguments:
+      - '@PsCheckout\Api\Http\MaaslandOrderHttpClient'
+
+  PsCheckout\Core\PayPal\Order\Validator\CreatedPayUponInvoiceOrderValidator:
+    class: PsCheckout\Core\PayPal\Order\Validator\CreatedPayUponInvoiceOrderValidator
     arguments:
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'

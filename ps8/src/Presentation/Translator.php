@@ -78,6 +78,9 @@ class Translator implements TranslatorInterface
             'Pay in installments with PayPal Pay Later' => $this->translator->trans('Pay in installments with PayPal Pay Later', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay by %s' => $this->translator->trans('Pay by %s', $parameters, 'Modules.Checkout.Pscheckout'),
             'Pay with %s' => $this->translator->trans('Pay with %s', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Pay later with invoice' => $this->translator->trans('Pay later with invoice', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Pay upon Invoice' => $this->translator->trans('Pay upon Invoice', $parameters, 'Modules.Checkout.Pscheckout'),
+            'Contact customer service via %s' => $this->translator->trans('Contact customer service via %s', $parameters, 'Modules.Checkout.Pscheckout'),
 
             'Card holder name' => $this->translator->trans('Card holder name', $parameters, 'Modules.Checkout.Pscheckout'),
             'Card number' => $this->translator->trans('Card number', $parameters, 'Modules.Checkout.Pscheckout'),
@@ -191,6 +194,9 @@ class Translator implements TranslatorInterface
             'For more information, please go to the official PayPal website.' => $this->translator->trans('For more information, please go to the official PayPal website.', $parameters, 'Modules.Checkout.Pscheckout'),
             'The payer paid for an item that they did not receive.' => $this->translator->trans('The payer paid for an item that they did not receive.', $parameters, 'Modules.Checkout.Pscheckout'),
             'The payer did not authorize the payment.' => $this->translator->trans('The payer did not authorize the payment.', $parameters, 'Modules.Checkout.Pscheckout'),
+
+            'The authorization has been successfully captured.' => $this->translator->trans('The authorization has been successfully captured.', $parameters, 'Modules.Checkout.Pscheckout'),
+            'An error occurred during the capture of the authorization.' => $this->translator->trans('An error occurred during the capture of the authorization.', $parameters, 'Modules.Checkout.Pscheckout')
         ];
 
         return $map[$key] ?? $key;

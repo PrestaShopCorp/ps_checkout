@@ -268,3 +268,9 @@ $_MODULE['<{ps_checkout}prestashop>translator_f1359dd5749dd996e2506e60bfeb9d05']
 $_MODULE['<{ps_checkout}prestashop>translator_a995e3f4789afc5c69be0f2c4a283fe3'] = 'For more information, please go to the official PayPal website.';
 $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee'] = 'The payer paid for an item that they did not receive.';
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'The payer did not authorize the payment.';
+$_MODULE['<{ps_checkout}prestashop>translator_c49fbef53ae687dd6866e9075f23e83d'] = 'Pay later with invoice';
+$_MODULE['<{ps_checkout}prestashop>translator_9976a3ca5309b7639b4a8d54561f2ca9'] = 'Pay upon Invoice';
+$_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc'] = 'Contact customer service via %s';
+$_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_10803b83a68db8f7e7a33e3b41e184d0'] = 'Date of Birth';
+$_MODULE['<{ps_checkout}prestashop>payuponinvoicefields_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Phone Number';
+$_MODULE['<{ps_checkout}prestashop>create_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'The payment is not valid: the amount is not eligible.';

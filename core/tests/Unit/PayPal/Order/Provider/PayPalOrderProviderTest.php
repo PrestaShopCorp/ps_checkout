@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Tests\Unit\PayPal\Order\Provider;
 
@@ -8,6 +26,7 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
@@ -44,9 +63,7 @@ class PayPalOrderProviderTest extends TestCase
         $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
 
         $this->provider = new PayPalOrderProvider(
-            $this->configuration,
             $this->orderPayPalCache,
-            $this->payPalOrderRepository,
             $this->orderHttpClient
         );
     }
@@ -66,7 +83,7 @@ class PayPalOrderProviderTest extends TestCase
         $cachedData = [
             'id' => $orderId,
             'status' => 'COMPLETED',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalOrderIntent::CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',
@@ -95,7 +112,7 @@ class PayPalOrderProviderTest extends TestCase
         $orderData = [
             'id' => $orderId,
             'status' => 'PENDING',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalOrderIntent::CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',
@@ -149,7 +166,7 @@ class PayPalOrderProviderTest extends TestCase
         $orderData = [
             'id' => $orderId,
             'status' => 'PENDING',
-            'intent' => 'CAPTURE',
+            'intent' => PayPalOrderIntent::CAPTURE,
             'purchase_units' => [],
             'links' => [],
             'create_time' => '2024-01-01T00:00:00Z',

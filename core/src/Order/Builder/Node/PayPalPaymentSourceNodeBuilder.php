@@ -43,7 +43,12 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     /**
      * @var bool
      */
-    private $isExpressCheckout;
+    private $shippingAddressExists;
+
+    /**
+     * @var bool
+     */
+    private $isVirtualCart;
 
     /**
      * @var ConfigurationInterface
@@ -87,11 +92,10 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
 
         $data['experience_context'] = [
             'brand_name' => $this->configuration->get('PS_SHOP_NAME'),
-            'shipping_preference' => $this->isExpressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
+            'shipping_preference' => $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
             'return_url' => $this->link->getModuleLink('validate'),
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
-
 
         if (empty($data)) {
             return [];
@@ -129,9 +133,17 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     }
 
     /** {@inheritDoc} */
-    public function setExpressCheckout(bool $expressCheckout): self
+    public function setShippingAddressExists(bool $shippingAddressExists): self
     {
-        $this->isExpressCheckout = $expressCheckout;
+        $this->shippingAddressExists = $shippingAddressExists;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setVirtualCart(bool $isVirtualCart): self
+    {
+        $this->isVirtualCart = $isVirtualCart;
 
         return $this;
     }

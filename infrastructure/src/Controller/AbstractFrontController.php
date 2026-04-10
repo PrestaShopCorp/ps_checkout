@@ -20,10 +20,46 @@
 
 namespace PsCheckout\Infrastructure\Controller;
 
+use Connection;
 use Exception;
+use ModuleFrontController;
+use Ps_Checkout;
+use Psr\Log\LoggerInterface;
 
-class AbstractFrontController extends \ModuleFrontController
+class AbstractFrontController extends ModuleFrontController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
+    /**
+     * Override checkAccess to block access for bots and invalid token
+     *
+     * @see FrontController::checkAccess()
+     */
+    public function checkAccess()
+    {
+        return !$this->isBot() && !($this->context->customer->isLogged() && !$this->isTokenValid());
+    }
+
+    /**
+     * Override initCursedPage to return json response with 403 code on POST request
+     *
+     * @see FrontController::initCursedPage()
+     */
+    public function initCursedPage()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 403,
+                'body' => 'Forbidden',
+            ]);
+        }
+
+        parent::initCursedPage();
+    }
+
     /**
      * @param array $response
      *
@@ -48,12 +84,32 @@ class AbstractFrontController extends \ModuleFrontController
     }
 
     /**
+     * Check if the current visitor is a bot, available since PrestaShop 8.0.0
+     *
+     * @return bool
+     */
+    public function isBot()
+    {
+        return method_exists(Connection::class, 'isBot') && Connection::isBot();
+    }
+
+    /**
      * @param Exception $exception
      *
      * @return void
      */
     protected function exitWithExceptionMessage(Exception $exception)
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->error(
+            $exception->getMessage(),
+            [
+                'controller' => static::class,
+                'exception' => $exception,
+            ]
+        );
+
         $this->exitWithResponse([
             'status' => false,
             'httpCode' => 500,

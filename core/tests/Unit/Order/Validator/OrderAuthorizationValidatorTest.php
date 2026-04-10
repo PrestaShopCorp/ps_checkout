@@ -137,7 +137,7 @@ class OrderAuthorizationValidatorTest extends TestCase
         $cart = $this->getMockBuilder(\Cart::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProducts', 'isAllProductsInStock', 'checkAllProductsAreStillAvailableInThisState',
-                         'checkAllProductsHaveMinimalQuantities', 'isVirtualCart', 'getDeliveryOptionList', 'getOrderTotal'])
+                         'checkAllProductsHaveMinimalQuantities', 'isVirtualCart', 'getDeliveryOptionList', 'getOrderTotal', ])
             ->getMock();
 
         $cart->id = 1;
@@ -213,6 +213,56 @@ class OrderAuthorizationValidatorTest extends TestCase
                 'expectedExceptionMessage' => 'No liability shift to card issuer',
                 'expectedExceptionCode' => PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN,
             ],
+        ];
+    }
+
+    public function testItThrowsExceptionWhenPayUponInvoiceStatusInvalid(): void
+    {
+        $payPalOrder = $this->createMock(PayPalOrderResponse::class);
+        $payPalOrder->method('getStatus')->willReturn('CREATED');
+        $payPalOrder->method('getFundingSource')->willReturn('pay_upon_invoice');
+        $payPalOrder->method('getId')->willReturn('ORDER-456');
+
+        $this->customer->method('customerHasAddress')
+            ->willReturn(true);
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionMessage('Pay Upon Invoice Order ORDER-456 status is invalid');
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
+
+
+
+        $this->validator->validate(1, $payPalOrder);
+    }
+
+    /**
+     * @dataProvider providePayUponInvoiceValidStatuses
+     */
+    public function testItAllowsPayUponInvoiceWhenStatusValid(string $status): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $payPalOrder = $this->createMock(PayPalOrderResponse::class);
+        $payPalOrder->method('getStatus')->willReturn($status);
+        $payPalOrder->method('getFundingSource')->willReturn('pay_upon_invoice');
+        $payPalOrder->method('getId')->willReturn('ORDER-789');
+        $payPalOrder->method('getPaymentSource')->willReturn(['pay_upon_invoice' => []]);
+        $payPalOrder->method('getOrderAmountValue')->willReturn(100.00);
+
+        $this->customer->method('customerHasAddress')
+            ->willReturn(true);
+
+        $cart = $this->createCartMock(true);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+
+        $this->validator->validate(1, $payPalOrder);
+    }
+
+    public function providePayUponInvoiceValidStatuses(): array
+    {
+        return [
+            ['PENDING_APPROVAL'],
+            ['APPROVED'],
         ];
     }
 

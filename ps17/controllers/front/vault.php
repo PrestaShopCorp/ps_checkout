@@ -21,6 +21,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
@@ -89,6 +90,7 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
                 ],
             ]);
         } catch (Exception $exception) {
+
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(
@@ -100,6 +102,12 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
             );
 
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the vault request.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 }

@@ -39,4 +39,13 @@ interface PayPalOrderCaptureRepositoryInterface
      * @return PayPalOrderCapture[]
      */
     public function getByOrderId(string $payPalOrderId): array;
+
+    /**
+     * Get a capture by ID
+     *
+     * @param string $captureId
+     *
+     * @return PayPalOrderCapture|null
+     */
+    public function getById(string $captureId): ?PayPalOrderCapture;
 }

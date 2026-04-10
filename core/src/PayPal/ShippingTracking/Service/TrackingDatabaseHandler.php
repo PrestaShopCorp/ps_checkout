@@ -21,10 +21,9 @@
 namespace PsCheckout\Core\PayPal\ShippingTracking\Service;
 
 use PsCheckout\Core\PayPal\ShippingTracking\Repository\ShippingTrackingRepositoryInterface;
+use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingRecord;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingStatus;
-use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
-
 use Psr\Log\LoggerInterface;
 
 class TrackingDatabaseHandler implements TrackingDatabaseHandlerInterface
@@ -121,7 +120,7 @@ class TrackingDatabaseHandler implements TrackingDatabaseHandlerInterface
     ) {
         // Set SENT status for successful ADD operations, FAILED for unsuccessful ones
         $status = $result->isSuccess() ? TrackingStatus::SENT : TrackingStatus::FAILED;
-        
+
         $this->shippingTrackingRepository->saveComplete(
             $trackingData->getOrderId(),
             $trackingData->getPayPalOrderId(),

@@ -28,11 +28,11 @@ interface ApplicationContextNodeBuilderInterface
     public function build(): array;
 
     /**
-     * @param bool $isExpressCheckout
+     * @param bool $shippingAddressExists
      *
      * @return $this
      */
-    public function setIsExpressCheckout(bool $isExpressCheckout): ApplicationContextNodeBuilder;
+    public function setShippingAddressExists(bool $shippingAddressExists): ApplicationContextNodeBuilder;
 
     /**
      * @param bool $isVirtualCart

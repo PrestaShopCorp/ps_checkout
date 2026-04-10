@@ -1,0 +1,39 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '5.*'
+
+jobs:
+  php-cs-fixer:
+    name: PHP CS Fixer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: cs2pr
+      - run: composer install
+      - run: composer cs:ci | cs2pr
+
+  phpstan:
+    name: PHPStan / ${{ matrix.ps-version }}
+    strategy:
+      matrix:
+        ps-version: ['ps17', 'ps8', 'ps9']
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+      - run: composer install
+      - run: |
+          composer install --ignore-platform-reqs
+          composer phpstan:ci
+        working-directory: ${{ matrix.ps-version }}

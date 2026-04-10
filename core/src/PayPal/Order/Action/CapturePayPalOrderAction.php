@@ -29,7 +29,6 @@ use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Response\PayPalProcessorResponse;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 
 class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
@@ -143,7 +142,7 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
         ) {
             $payPalProcessorResponse = new PayPalProcessorResponse(
                 $payPalOrderResponse->getCard()['brand'] ?: null,
-                $payPalOrderResponse->getCard()['brand']['type'] ?: null,
+                $payPalOrderResponse->getCard()['type'] ?: null,
                 $payPalOrderResponse->getCapture()['processor_response']['avs_code'] ?? null,
                 $payPalOrderResponse->getCapture()['processor_response']['cvv_code'] ?? null,
                 $payPalOrderResponse->getCapture()['processor_response']['payment_advice_code'] ?? null,

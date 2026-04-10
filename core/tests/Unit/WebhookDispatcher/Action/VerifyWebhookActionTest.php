@@ -49,16 +49,10 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-                'message' => 'VERIFIED',
-            ]);
+            ->willReturn(true);
 
         // Act
-        $result = $this->action->execute($rawBody, []);
-
-        // Assert
-        $this->assertTrue($result);
+        $this->action->execute($rawBody, []);
     }
 
     public function testItThrowsExceptionWhenSignatureIsInvalid(): void
@@ -68,14 +62,11 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 401,
-                'message' => 'INVALID',
-            ]);
+            ->willReturn(false);
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act
@@ -89,14 +80,11 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-                'message' => 'INVALID',
-            ]);
+            ->willThrowException(new WebhookException('Invalid Webhook signature', 401));
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act
@@ -110,13 +98,11 @@ class VerifyWebhookActionTest extends TestCase
         $this->webhookHttpClient->expects($this->once())
             ->method('verifyWebhook')
             ->with($rawBody, [])
-            ->willReturn([
-                'statusCode' => 200,
-            ]);
+            ->willThrowException(new WebhookException('Invalid Webhook signature', 401));
 
         // Assert
         $this->expectException(WebhookException::class);
-        $this->expectExceptionMessage('Invalid PSL signature');
+        $this->expectExceptionMessage('Invalid Webhook signature');
         $this->expectExceptionCode(401);
 
         // Act

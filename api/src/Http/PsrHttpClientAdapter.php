@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Api\Http;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Ring\Exception\ConnectException;
 use GuzzleHttp\Ring\Exception\RingException;
 use Http\Client\Exception\HttpException;
@@ -39,10 +40,13 @@ class PsrHttpClientAdapter implements HttpClientInterface
 
     /**
      * @param array $configuration
+     * @param ClientInterface $client
      */
-    public function __construct(array $configuration)
-    {
-        $this->client = (new ClientFactory())->getClient($configuration);
+    public function __construct(
+        array $configuration,
+        ?ClientInterface $client = null
+    ) {
+        $this->client = $client ?? (new ClientFactory())->getClient($configuration);
     }
 
     /**
@@ -52,12 +56,14 @@ class PsrHttpClientAdapter implements HttpClientInterface
     {
         try {
             $response = $this->client->sendRequest($request);
-        } catch (ConnectException $exception) { // @phpstan-ignore-line
+        } catch (ConnectException $exception) {
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new NetworkException($exception->getMessage(), $request, $exception); // @phpstan-ignore-line
-        } catch (RingException $exception) { // @phpstan-ignore-line
+            throw new NetworkException($exception->getMessage(), $request, $exception);
+        } catch (RingException $exception) {
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new TransferException($exception->getMessage(), 0, $exception); // @phpstan-ignore-line
+            throw new TransferException($exception->getMessage(), 0, $exception);
+        } catch (ClientException $exception) {
+            throw $exception;
         }
 
         // Guzzle 5.3 does not throw exceptions on 4xx and 5xx status codes

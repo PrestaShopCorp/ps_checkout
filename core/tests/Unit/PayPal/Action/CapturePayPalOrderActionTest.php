@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Action;
 
@@ -12,7 +30,6 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
 use PsCheckout\Core\PayPal\Order\Handler\EventHandlerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderFactory;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use PsCheckout\Core\Tests\Integration\Response\CaptureOrderResponse;
@@ -83,10 +100,10 @@ class CapturePayPalOrderActionTest extends TestCase
         // Setup HTTP client response
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->expects($this->once())
             ->method('captureOrder')
             ->willReturn($httpResponse);
@@ -95,15 +112,15 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->payPalOrderCache->expects($this->once())
             ->method('getValue')
             ->willReturn([]);
-        
+
         $this->payPalOrderCache->expects($this->once())
             ->method('set');
 
         // Setup provider response
         $capturedResponse = PayPalOrderResponseFactory::create([
-            'status' => PayPalCaptureStatus::COMPLETED
+            'status' => PayPalCaptureStatus::COMPLETED,
         ]);
-        
+
         $this->payPalOrderProvider->expects($this->once())
             ->method('getById')
             ->willReturn($capturedResponse);
@@ -112,14 +129,14 @@ class CapturePayPalOrderActionTest extends TestCase
         $this->orderCompletedEventHandler->expects($this->once())
             ->method('handle')
             ->with($capturedResponse);
-        
+
         $this->paymentCompletedEventHandler->expects($this->once())
             ->method('handle')
             ->with($capturedResponse);
 
         // Execute and verify
         $result = $this->action->execute($initialResponse);
-        
+
         $this->assertInstanceOf(PayPalOrderResponse::class, $result);
         $this->assertEquals(PayPalCaptureStatus::COMPLETED, $result->getStatus());
     }
@@ -134,12 +151,12 @@ class CapturePayPalOrderActionTest extends TestCase
 
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
-        
+
         $this->payPalOrderCache->method('getValue')->willReturn([]);
 
         // Create a declined response instead of returning null
@@ -149,21 +166,83 @@ class CapturePayPalOrderActionTest extends TestCase
                 [
                     'payments' => [
                         'captures' => [
-                            ['status' => PayPalCaptureStatus::DECLINED]
-                        ]
-                    ]
-                ]
-            ]
+                            ['status' => PayPalCaptureStatus::DECLINED],
+                        ],
+                    ],
+                ],
+            ],
         ]);
-        
+
         $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
-        
+
         $this->paymentDeniedEventHandler->expects($this->once())
             ->method('handle')
             ->with($declinedResponse);
 
         $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         $this->expectExceptionMessage('PayPal declined the capture');
+
+        $this->action->execute($initialResponse);
+    }
+
+    public function testCardCaptureDeclined(): void
+    {
+        $initialResponse = PayPalOrderResponseFactory::create();
+        $payPalOrder = PayPalOrderFactory::create();
+
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
+        $this->configuration->method('get')->willReturn('TEST_MERCHANT_ID');
+
+        $responseBody = $this->createMock(StreamInterface::class);
+        $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
+
+        $httpResponse = $this->createMock(ResponseInterface::class);
+        $httpResponse->method('getBody')->willReturn($responseBody);
+
+        $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
+
+        $this->payPalOrderCache->method('getValue')->willReturn([]);
+
+        // Create a declined response instead of returning null
+        $declinedResponse = PayPalOrderResponseFactory::create([
+            'status' => PayPalCaptureStatus::DECLINED,
+            'payment_source' => [
+                'card' => [
+                    'name' => 'John Doe',
+                    'last_digits' => '1111',
+                    'brand' => 'VISA',
+                    'type' => 'UNKNOWN',
+                    'bin_details' => [],
+                ]
+            ],
+            'purchase_units' => [
+                [
+                    'payments' => [
+                        'captures' => [
+                            [
+                                'status' => PayPalCaptureStatus::DECLINED,
+                                'processor_response' => [
+                                    'avs_code' => 'N',
+                                    'cvv_code' => 'N',
+                                    'payment_advice_code' => '123',
+                                    'response_code' => '2000',
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->payPalOrderProvider->method('getById')->willReturn($declinedResponse);
+
+        $this->paymentDeniedEventHandler->expects($this->once())
+            ->method('handle')
+            ->with($declinedResponse);
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR);
 
         $this->action->execute($initialResponse);
     }
@@ -174,30 +253,30 @@ class CapturePayPalOrderActionTest extends TestCase
         $payPalOrder = PayPalOrderFactory::create();
 
         $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
-        
+
         $capturedResponse = PayPalOrderResponseFactory::create([
             'purchase_units' => [
                 [
                     'payments' => [
                         'captures' => [
-                            ['status' => PayPalCaptureStatus::PENDING]
-                        ]
-                    ]
-                ]
-            ]
+                            ['status' => PayPalCaptureStatus::PENDING],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $responseBody = $this->createMock(StreamInterface::class);
         $responseBody->method('__toString')->willReturn(json_encode(CaptureOrderResponse::getSuccessResponse()));
-        
+
         $httpResponse = $this->createMock(ResponseInterface::class);
         $httpResponse->method('getBody')->willReturn($responseBody);
-        
+
         $this->orderHttpClient->method('captureOrder')->willReturn($httpResponse);
 
         // Fix: Return empty array instead of null for cache->getValue()
         $this->payPalOrderCache->method('getValue')->willReturn([]);
-        
+
         $this->payPalOrderProvider->method('getById')->willReturn($capturedResponse);
 
         $this->paymentPendingEventHandler->expects($this->once())

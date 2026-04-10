@@ -40,6 +40,7 @@ services:
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
       - '@PsCheckout\Core\Order\Validator\OrderAmountValidator'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
 
   PsCheckout\Core\Order\Action\ValidateOrderAction:
     class: PsCheckout\Core\Order\Action\ValidateOrderAction
@@ -154,6 +155,7 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\Order\Action\CreateOrderPaymentAction'
       - '@PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
 
   PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler
@@ -210,26 +212,17 @@ services:
       - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
 
-  PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
-
-  PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction:
-    class: PsCheckout\Core\OrderState\Action\SetDeclinedOrderStateAction
-    arguments:
-      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
-      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
-      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
-      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
-      - '@PsCheckout\Infrastructure\Adapter\Configuration'
-
   PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction:
     class: PsCheckout\Core\OrderState\Action\SetReversedOrderStateAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
+      - '@PsCheckout\Core\OrderState\Action\ChangeOrderStateAction'
+
+  PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction:
+    class: PsCheckout\Core\OrderState\Action\SetPendingOrderStateAction
     arguments:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
@@ -248,3 +241,18 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler'
       - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovalReversedEventHandler'
+
+  PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver:
+    class: PsCheckout\Core\Webhook\Service\WebhookOrderIdResolver
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+
+  PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor:
+    class: PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Core\PayPal\Order\Handler\PayPalEventDispatcher'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'

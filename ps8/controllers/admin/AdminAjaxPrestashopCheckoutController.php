@@ -22,12 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
-use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
 use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
@@ -35,12 +36,12 @@ use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration;
 use PsCheckout\Core\Webhook\Service\WebhookSecretToken;
+use PsCheckout\Infrastructure\Action\SaveBatchConfigurationActionInterface;
 use PsCheckout\Infrastructure\Adapter\Configuration;
 use PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstaller;
 use PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstallerException;
 use PsCheckout\Infrastructure\Bootstrap\Install\OrderStateInstaller;
 use PsCheckout\Infrastructure\Controller\AbstractAdminController;
-use PsCheckout\Infrastructure\Enum\PermissionType;
 use PsCheckout\Infrastructure\Logger\LoggerFileFinder;
 use PsCheckout\Infrastructure\Logger\LoggerFileReader;
 use PsCheckout\Infrastructure\Repository\FundingSourceRepository;
@@ -166,7 +167,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $paymentMode = Tools::getValue('paymentMode');
 
         if (!in_array($paymentMode, [PayPalConfiguration::MODE_LIVE, PayPalConfiguration::MODE_SANDBOX])) {
-            throw new \UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
+            throw new UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
         }
 
         $this->setConfiguration(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE, $paymentMode);
@@ -351,17 +352,13 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessBatchSaveConfiguration()
     {
-        /** @var Configuration $configurationService */
-        $configurationService = $this->module->getService(Configuration::class);
+        /** @var SaveBatchConfigurationActionInterface $saveBatchConfigurationAction */
+        $saveBatchConfigurationAction = $this->module->getService(SaveBatchConfigurationActionInterface::class);
 
         $configuration = json_decode(Tools::getValue('configuration'), true);
 
         try {
-            $this->validateBatchConfiguration($configuration);
-
-            foreach ($configuration as $configurationItem) {
-                $configurationService->set(pSQL($configurationItem['name']), pSQL($configurationItem['value']));
-            }
+            $saveBatchConfigurationAction->execute($configuration);
 
             $this->exitWithResponse([
                 'status' => true,
@@ -533,21 +530,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
      */
     public function ajaxProcessGetLogs()
     {
-        header('Content-type: application/json');
-
         $filename = Tools::getValue('file');
         $offset = (int) Tools::getValue('offset');
         $limit = (int) Tools::getValue('limit');
-
-        if (empty($filename) || false === Validate::isFileName($filename)) {
-            http_response_code(400);
-            $this->ajaxRender(json_encode([
-                'status' => false,
-                'errors' => [
-                    'Filename is invalid.',
-                ],
-            ]));
-        }
 
         /** @var LoggerFileReader $loggerFileReader */
         $loggerFileReader = $this->module->getService(LoggerFileReader::class);
@@ -555,21 +540,29 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         try {
             $fileData = $loggerFileReader->read(
-                new SplFileObject(LoggerFileFinder::LOGGER_DIRECTORY_PATH . $filename),
+                $filename,
                 $offset,
                 $limit
             );
-        } catch (Exception $exception) {
-            http_response_code(500);
-            $this->ajaxRender(json_encode([
+        } catch (InvalidArgumentException $exception) {
+            $this->exitWithResponse([
                 'status' => false,
+                'httpCode' => 400,
                 'errors' => [
                     $exception->getMessage(),
                 ],
-            ]));
+            ]);
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ]);
         }
 
-        $this->ajaxRender(json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'file' => $fileData['filename'],
             'offset' => $fileData['offset'],
@@ -577,7 +570,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             'currentOffset' => $fileData['currentOffset'],
             'eof' => (int) $fileData['eof'],
             'lines' => $fileData['lines'],
-        ]));
+        ]);
     }
 
     /**
@@ -606,56 +599,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     public function ajaxProcessToggleECProductPage()
     {
         $this->setConfiguration(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later message on order page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later message on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageMessage()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on home page
-     */
-    public function ajaxProcessTogglePayLaterHomePageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on cart page
-     */
-    public function ajaxProcessTogglePayLaterOrderPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER, (bool) Tools::getValue('status'));
-
-        $this->ajaxRender(json_encode(true));
-    }
-
-    /**
-     * AJAX: Toggle pay later banner on product page
-     */
-    public function ajaxProcessTogglePayLaterProductPageBanner()
-    {
-        $this->setConfiguration(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER, (bool) Tools::getValue('status'));
 
         $this->ajaxRender(json_encode(true));
     }
@@ -718,8 +661,8 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 if ($migrationSuccessful) {
                     $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
                 }
-            } catch (\Exception $e) {
-                $logger = $this->module->getService(LoggerInterface::class);
+            } catch (Exception $e) {
+                    $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(
                     'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
                     [
@@ -903,34 +846,6 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     }
 
     /**
-     * @param array $configuration
-     *
-     * @throws PsCheckoutException
-     */
-    private function validateBatchConfiguration(array $configuration)
-    {
-        $blacklistedConfigurationKeys = [
-            PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-            PayPalConfiguration::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-            PayPalConfiguration::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-        ];
-
-        if (empty($configuration)) {
-            throw new PsCheckoutException("Config can't be empty");
-        }
-
-        foreach ($configuration as $configurationItem) {
-            if (empty($configurationItem['name']) || 0 !== strpos($configurationItem['name'], 'PS_CHECKOUT_')) {
-                throw new PsCheckoutException('Received invalid configuration key');
-            }
-
-            if (array_search($configurationItem['name'], $blacklistedConfigurationKeys)) {
-                throw new PsCheckoutException('Received blacklisted configuration key');
-            }
-        }
-    }
-
-    /**
      * @param array $response
      *
      * @return void
@@ -960,12 +875,16 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     {
         $filename = Tools::getValue('file');
 
-        if (empty($filename) || false === Validate::isFileName($filename)) {
+        try {
+            /** @var LoggerFileReader $loggerFileReader */
+            $loggerFileReader = $this->module->getService(LoggerFileReader::class);
+            $loggerFileReader->validateFilename($filename);
+        } catch (InvalidArgumentException $exception) {
             $this->exitWithResponse([
                 'status' => false,
                 'httpCode' => 400,
                 'errors' => [
-                    'Filename is invalid.',
+                    $exception->getMessage(),
                 ],
             ]);
         }

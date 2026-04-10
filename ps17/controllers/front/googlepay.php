@@ -21,6 +21,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\GooglePay\Builder\GooglePayPaymentRequestDataBuilder;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Utility\Common\InputStreamUtility;
@@ -30,11 +31,6 @@ use PsCheckout\Utility\Common\InputStreamUtility;
  */
 class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      */
@@ -59,7 +55,14 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
                 $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
             }
         } catch (Exception $exception) {
+
             $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the Google Pay request.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

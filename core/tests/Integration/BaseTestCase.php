@@ -1,10 +1,29 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Adapter\ContainerBuilder;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class BaseTestCase extends TestCase
 {
@@ -105,7 +124,7 @@ class BaseTestCase extends TestCase
             'CONF_PS_CHECKOUT_VAR' => 2,
             'CONF_PS_CHECKOUT_FIXED_FOREIGN' => 0.2,
             'CONF_PS_CHECKOUT_VAR_FOREIGN' => 2,
-            'PS_CHECKOUT_INTENT' => 'CAPTURE',
+            'PS_CHECKOUT_INTENT' => PayPalOrderIntent::CAPTURE,
             'PS_CHECKOUT_MODE' => 'SANDBOX',
             'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => 'HDVL5SJRCQVGL',
             'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => 'CheckoutSandbox@business.example.com',
@@ -121,7 +140,7 @@ class BaseTestCase extends TestCase
             'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => 1,
             'PS_CHECKOUT_DISPLAY_LOGO_CART' => 1,
             'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
-            'PS_CHECKOUT_PAYPAL_BUTTON' => json_encode(["shape" => "pill", "label" => "pay", "color" => "gold"]),
+            'PS_CHECKOUT_PAYPAL_BUTTON' => json_encode(['shape' => 'pill', 'label' => 'pay', 'color' => 'gold']),
             'PS_CHECKOUT_STATE_COMPLETED' => 2,
             'PS_CHECKOUT_STATE_CANCELED' => 6,
             'PS_CHECKOUT_STATE_ERROR' => 8,
@@ -138,7 +157,7 @@ class BaseTestCase extends TestCase
             'PS_CHECKOUT_CUSTOM_CARD' => 1,
             'PS_CHECKOUT_GOOGLE_PAY' => 1,
             'PS_CHECKOUT_APPLE_PAY' => 1,
-            'PS_CHECKOUT_test' => 1
+            'PS_CHECKOUT_test' => 1,
         ];
 
         foreach ($configurations as $key => $value) {

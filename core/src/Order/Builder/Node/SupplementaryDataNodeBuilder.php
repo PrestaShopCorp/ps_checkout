@@ -62,7 +62,9 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
         $address = $this->cart['addresses']['invoice'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $this->stateRepository->getNameById($address->id_state);
+        $stateName = $countryIso === 'US' ?
+            $this->stateRepository->getIsoById($address->id_state)
+            : $this->stateRepository->getNameById($address->id_state);
 
         $node = [
             'supplementary_data' => [
@@ -83,7 +85,6 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
                 ],
             ],
         ];
-
 
         if (!$this->cart['cart']['is_virtual']) {
             $node['supplementary_data']['card']['level_3']['shipping_address'] = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);

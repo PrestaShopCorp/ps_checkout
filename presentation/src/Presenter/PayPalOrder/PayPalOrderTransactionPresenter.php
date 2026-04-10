@@ -74,7 +74,7 @@ class PayPalOrderTransactionPresenter implements PayPalOrderPresenterInterface
 
             if (!empty($purchase['payments']['refunds'])) {
                 foreach ($purchase['payments']['refunds'] as $refund) {
-                    $totalRefunded += $refund['amount']['value'];
+                    $totalRefunded += (float) $refund['amount']['value'];
                     $transactions[] = [
                         'type' => $this->getTransactionType('refund'),
                         'id' => $refund['id'],

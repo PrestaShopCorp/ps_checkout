@@ -20,13 +20,17 @@
 
 namespace PsCheckout\Core\WebhookDispatcher\Action;
 
+use PsCheckout\Core\Webhook\WebhookException;
+
 interface VerifyWebhookActionInterface
 {
     /**
      * @param string $rawBody
      * @param array $webhookHeaders
      *
-     * @return bool
+     * @throws WebhookException
+     *
+     * @return void
      */
-    public function execute(string $rawBody, array $webhookHeaders): bool;
+    public function execute(string $rawBody, array $webhookHeaders): void;
 }

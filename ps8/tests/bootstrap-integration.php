@@ -23,7 +23,6 @@ $projectDir = __DIR__ . '/../';
 
 if (!getenv('IS_CI')) {
     define('_PS_IN_TEST_', true);
-    define('_DB_NAME_', 'prestashop'); // todo remove once test database is created.
 }
 
 require_once $projectDir . 'vendor/autoload.php';

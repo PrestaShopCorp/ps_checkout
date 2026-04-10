@@ -39,4 +39,12 @@ class Tools implements ToolsInterface
     {
         PrestaShopTools::redirect($url);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getToken(bool $page): string
+    {
+        return PrestaShopTools::getToken($page);
+    }
 }

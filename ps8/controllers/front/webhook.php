@@ -35,11 +35,6 @@ use Psr\Log\LoggerInterface;
 class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_Checkout
-     */
-    public $module;
-
-    /**
      * @var bool If set to true, will be redirected to authentication page
      */
     public $auth = false;
@@ -49,6 +44,13 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
      */
     public function postProcess()
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->exitWithResponse([
+                'httpCode' => 405,
+                'body' => 'Method Not Allowed',
+            ]);
+        }
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
@@ -109,6 +111,12 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
             ]);
 
             exit;
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the webhook.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
     }
 

@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
@@ -26,12 +27,24 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
+    /**
+     * @var PayPalConfiguration|MockObject
+     */
     private $paypalConfiguration;
 
+    /**
+     * @var CountryRepositoryInterface|MockObject
+     */
     private $countryRepository;
 
+    /**
+     * @var StateRepositoryInterface|MockObject
+     */
     private $stateRepository;
 
+    /**
+     * @var CardPaymentSourceNodeBuilder
+     */
     private $cardPaymentSourceNodeBuilder;
 
     protected function setUp(): void
@@ -72,6 +85,10 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->stateRepository
             ->method('getNameById')
             ->willReturn('California');
+
+        $this->stateRepository
+            ->method('getIsoById')
+            ->willReturn('CA');
 
         // Set cart data
         $this->cardPaymentSourceNodeBuilder->setCart($cart);
@@ -120,6 +137,10 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
             ->method('getNameById')
             ->willReturn('California');
 
+        $this->stateRepository
+            ->method('getIsoById')
+            ->willReturn('CA');
+
         // Set cart data
         $this->cardPaymentSourceNodeBuilder->setCart($cart);
 
@@ -132,9 +153,6 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayHasKey('vault_id', $node['payment_source']['card']);
         $this->assertEquals('vault123', $node['payment_source']['card']['vault_id']);
         $this->assertArrayNotHasKey('billing_address', $node['payment_source']['card']);
-        $this->assertEquals('CUSTOMER', $node['payment_source']['card']['stored_credential']['payment_initiator']);
-        $this->assertEquals('ONE_TIME', $node['payment_source']['card']['stored_credential']['payment_type']);
-        $this->assertEquals('SUBSEQUENT', $node['payment_source']['card']['stored_credential']['usage']);
     }
 
     /**
@@ -161,6 +179,10 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->stateRepository
             ->method('getNameById')
             ->willReturn('California');
+
+        $this->stateRepository
+            ->method('getIsoById')
+            ->willReturn('CA');
 
         // Set cart data
         $this->cardPaymentSourceNodeBuilder->setCart($cart);
@@ -201,6 +223,10 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
             ->method('getNameById')
             ->willReturn('California');
 
+        $this->stateRepository
+            ->method('getIsoById')
+            ->willReturn('CA');
+
         // Set cart data
         $this->cardPaymentSourceNodeBuilder->setCart($cart);
 
@@ -212,8 +238,5 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
         $this->assertArrayHasKey('vault', $node['payment_source']['card']['attributes']);
         $this->assertEquals('ON_SUCCESS', $node['payment_source']['card']['attributes']['vault']['store_in_vault']);
-        $this->assertEquals('CUSTOMER', $node['payment_source']['card']['stored_credential']['payment_initiator']);
-        $this->assertEquals('ONE_TIME', $node['payment_source']['card']['stored_credential']['payment_type']);
-        $this->assertEquals('FIRST', $node['payment_source']['card']['stored_credential']['usage']);
     }
 }

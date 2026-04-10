@@ -26,3 +26,8 @@ services:
     class: PsCheckout\Api\Http\WebhookHttpClient
     arguments:
       - '@PsCheckout\Api\Http\Configuration\WebhookHttpClientConfigurationBuilder'
+
+  PsCheckout\Api\Http\MaaslandOrderHttpClient:
+    class: PsCheckout\Api\Http\MaaslandOrderHttpClient
+    arguments:
+      - '@PsCheckout\Api\Http\Configuration\MaaslandOrderHttpClientConfigurationBuilder'

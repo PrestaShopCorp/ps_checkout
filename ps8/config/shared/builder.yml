@@ -13,7 +13,6 @@ services:
   PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder
     arguments:
-      - '@PsCheckout\Infrastructure\Repository\GenderRepository'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\StateRepository'
 
@@ -50,10 +49,26 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
 
+  PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+
   PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder
     arguments:
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+
+  PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder:
+    class: PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder
+    arguments:
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Validate'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@PsCheckout\Module\Presentation\Translator'
 
   PsCheckout\Core\Order\Builder\OrderPayloadBuilder:
     class: PsCheckout\Core\Order\Builder\OrderPayloadBuilder
@@ -67,6 +82,8 @@ services:
       - '@PsCheckout\Core\Order\Builder\Node\ApplicationContextNodeBuilder'
       - '@PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder'
       - '@PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder'
 
   PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder:
     class: PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder
@@ -110,6 +127,16 @@ services:
 
   PsCheckout\Api\Http\Configuration\WebhookHttpClientConfigurationBuilder:
     class: 'PsCheckout\Api\Http\Configuration\WebhookHttpClientConfigurationBuilder'
+    arguments:
+      - '@PsCheckout\Infrastructure\Environment\Env'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Link'
+      - '@=service("ps_checkout.module").version'
+
+  PsCheckout\Api\Http\Configuration\MaaslandOrderHttpClientConfigurationBuilder:
+    class: 'PsCheckout\Api\Http\Configuration\MaaslandOrderHttpClientConfigurationBuilder'
     arguments:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'

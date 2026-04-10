@@ -2,6 +2,129 @@ services:
   _defaults:
     public: true
 
+  PsCheckout\Core\Util\CountryResolver:
+    class: PsCheckout\Core\Util\CountryResolver
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService:
+    class: PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      -
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
   PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration:
     class: PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration
     arguments:
@@ -10,6 +133,9 @@ services:
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter'
+      - '@PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService'
+      - '@PsCheckout\Core\Util\CountryResolver'
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
       - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'

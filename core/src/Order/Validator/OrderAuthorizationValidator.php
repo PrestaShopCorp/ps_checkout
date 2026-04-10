@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\Order\Validator;
 
+use Cart as PrestaShopCart;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
@@ -30,7 +31,6 @@ use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\CustomerInterface;
 use Psr\Log\LoggerInterface;
-use Cart as PrestaShopCart;
 
 class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterface
 {
@@ -80,6 +80,10 @@ class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterfac
     {
         if ($payPalOrder->getStatus() === 'COMPLETED') {
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $payPalOrder->getId()), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
+        }
+
+        if ($payPalOrder->getFundingSource() === 'pay_upon_invoice' && !in_array($payPalOrder->getStatus(), ['PENDING_APPROVAL', 'APPROVED'], true)) {
+            throw new PsCheckoutException(sprintf('Pay Upon Invoice Order %s status is invalid', $payPalOrder->getId()), PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
         }
 
         $contingencies = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES);

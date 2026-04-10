@@ -73,14 +73,14 @@ class AddTrackingAction implements AddTrackingActionInterface
             $this->logger->error('Shipping tracking error: ' . $exception->getMessage(), [
                 'order_id' => $order->id,
                 'carrier_id' => $carrier->id,
-                'exception' => $exception
+                'exception' => $exception,
             ]);
         } catch (\Exception $exception) {
             // Log unexpected errors
             $this->logger->error('Unexpected shipping tracking error: ' . $exception->getMessage(), [
                 'order_id' => $order->id,
                 'carrier_id' => $carrier->id,
-                'exception' => $exception
+                'exception' => $exception,
             ]);
         }
     }

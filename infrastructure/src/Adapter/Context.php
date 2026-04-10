@@ -140,9 +140,6 @@ class Context implements ContextInterface
     public function updateCustomer(\Customer $customer)
     {
         $this->context->updateCustomer($customer);
-
-        $this->context->cookie->__set('paypalEmail', $customer->email);
-        $this->context->cookie->write();
     }
 
     /**
@@ -153,5 +150,28 @@ class Context implements ContextInterface
         $this->context->cart->id_address_delivery = 0;
         $this->context->cart->id_address_invoice = 0;
         $this->context->cart->save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPayPalEmail(string $email): void
+    {
+        if (\Validate::isEmail($email)) {
+            $this->context->cookie->__set('paypalEmail', $email);
+            $this->context->cookie->write();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCartOrderTotal(): ?float
+    {
+        $cart = $this->context->cart;
+
+        return ($cart !== null && \Validate::isLoadedObject($cart))
+            ? (float) $cart->getOrderTotal(true, \Cart::BOTH)
+            : null;
     }
 }

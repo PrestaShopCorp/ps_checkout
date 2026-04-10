@@ -63,10 +63,6 @@ class OrderApprovalReversedEventHandler implements EventHandlerInterface
 
         $payPalOrder->setStatus($payPalOrderResponse->getStatus());
 
-        if ($payPalOrderResponse->getFundingSource()) {
-            $payPalOrder->setFundingSource($payPalOrderResponse->getFundingSource());
-        }
-
         if ($payPalOrderResponse->getPaymentSource()) {
             $payPalOrder->setPaymentSource($payPalOrderResponse->getPaymentSource());
         }

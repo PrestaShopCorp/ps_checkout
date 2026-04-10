@@ -34,7 +34,7 @@ class WebhookHeaderProviderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->provider = $this->createTestableWebhookHeaderProvider();
+        $this->provider = new WebhookHeaderProvider();
         $this->originalServer = $_SERVER;
     }
 
@@ -44,7 +44,7 @@ class WebhookHeaderProviderTest extends TestCase
         parent::tearDown();
     }
 
-    public function testItGetsHeadersFromServerWhenGetallheadersNotAvailable(): void
+    public function testItGetsHeadersFromServer(): void
     {
         // Arrange
         $this->mockServerHeaders([
@@ -61,34 +61,22 @@ class WebhookHeaderProviderTest extends TestCase
             'Shop-Id' => 'shop-123',
             'Merchant-Id' => 'merchant-456',
             'Psx-Id' => 'psx-789',
+            'Svix-Id' => null,
+            'Svix-Timestamp' => null,
+            'Svix-Signature' => null,
+            'User-Agent' => null,
         ], $result);
     }
 
-    public function testItReturnsNullForMissingHeaders(): void
+    public function testItGetsSvixHeaders(): void
     {
         // Arrange
-        $_SERVER = []; // Clear all server variables
+        $_SERVER = [];
         $this->mockServerHeaders([
-            'HTTP_SHOP_ID' => 'shop-123',
-            'HTTP_PSX_ID' => 'psx-789',
+            'HTTP_SVIX_ID' => 'msg_abc123',
+            'HTTP_SVIX_TIMESTAMP' => '1677812345',
+            'HTTP_SVIX_SIGNATURE' => 'v1,base64signature==',
         ]);
-
-        // Act
-        $result = $this->provider->getHeaders();
-
-        // Assert
-        $this->assertArrayHasKey('Shop-Id', $result);
-        $this->assertArrayHasKey('Merchant-Id', $result);
-        $this->assertArrayHasKey('Psx-Id', $result);
-        $this->assertEquals('shop-123', $result['Shop-Id']);
-        $this->assertNull($result['Merchant-Id']);
-        $this->assertEquals('psx-789', $result['Psx-Id']);
-    }
-
-    public function testItHandlesEmptyServerVariables(): void
-    {
-        // Arrange
-        $_SERVER = []; // Clear all server variables
 
         // Act
         $result = $this->provider->getHeaders();
@@ -98,53 +86,112 @@ class WebhookHeaderProviderTest extends TestCase
             'Shop-Id' => null,
             'Merchant-Id' => null,
             'Psx-Id' => null,
+            'Svix-Id' => 'msg_abc123',
+            'Svix-Timestamp' => '1677812345',
+            'Svix-Signature' => 'v1,base64signature==',
+            'User-Agent' => null,
         ], $result);
     }
 
-    public function testItGetsHeadersFromGetallheadersWhenAvailable(): void
+    public function testItGetsBothMaaslandAndSvixHeaders(): void
     {
         // Arrange
-        $expectedHeaders = [
+        $_SERVER = [];
+        $this->mockServerHeaders([
+            'HTTP_SHOP_ID' => 'shop-123',
+            'HTTP_MERCHANT_ID' => 'merchant-456',
+            'HTTP_PSX_ID' => 'psx-789',
+            'HTTP_SVIX_ID' => 'msg_abc123',
+            'HTTP_SVIX_TIMESTAMP' => '1677812345',
+            'HTTP_SVIX_SIGNATURE' => 'v1,base64signature==',
+            'HTTP_USER_AGENT' => 'Svix-Webhooks/1.0',
+        ]);
+
+        // Act
+        $result = $this->provider->getHeaders();
+
+        // Assert
+        $this->assertEquals([
             'Shop-Id' => 'shop-123',
             'Merchant-Id' => 'merchant-456',
             'Psx-Id' => 'psx-789',
-        ];
-
-        // Create a testable provider that simulates getallheaders() being available
-        $provider = new class() extends WebhookHeaderProvider {
-            public function getHeaders(): array
-            {
-                return [
-                    'Shop-Id' => 'shop-123',
-                    'Merchant-Id' => 'merchant-456',
-                    'Psx-Id' => 'psx-789',
-                ];
-            }
-        };
-
-        // Act
-        $result = $provider->getHeaders();
-
-        // Assert
-        $this->assertEquals($expectedHeaders, $result);
+            'Svix-Id' => 'msg_abc123',
+            'Svix-Timestamp' => '1677812345',
+            'Svix-Signature' => 'v1,base64signature==',
+            'User-Agent' => 'Svix-Webhooks/1.0',
+        ], $result);
     }
 
-    /**
-     * Creates a testable version of WebhookHeaderProvider that doesn't use getallheaders()
-     */
-    private function createTestableWebhookHeaderProvider(): WebhookHeaderProvider
+    public function testItReturnsNullForMissingSvixHeaders(): void
     {
-        return new class() extends WebhookHeaderProvider {
-            public function getHeaders(): array
-            {
-                // Always use $_SERVER fallback for testing
-                return [
-                    'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
-                    'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
-                    'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,
-                ];
-            }
-        };
+        // Arrange
+        $_SERVER = [];
+        $this->mockServerHeaders([
+            'HTTP_SVIX_ID' => 'msg_abc123',
+            // HTTP_SVIX_TIMESTAMP and HTTP_SVIX_SIGNATURE intentionally absent
+        ]);
+
+        // Act
+        $result = $this->provider->getHeaders();
+
+        // Assert
+        $this->assertSame('msg_abc123', $result['Svix-Id']);
+        $this->assertNull($result['Svix-Timestamp']);
+        $this->assertNull($result['Svix-Signature']);
+    }
+
+    public function testItReturnsNullForMissingMaaslandHeaders(): void
+    {
+        // Arrange
+        $_SERVER = [];
+        $this->mockServerHeaders([
+            'HTTP_SHOP_ID' => 'shop-123',
+            // HTTP_MERCHANT_ID and HTTP_PSX_ID intentionally absent
+        ]);
+
+        // Act
+        $result = $this->provider->getHeaders();
+
+        // Assert
+        $this->assertSame('shop-123', $result['Shop-Id']);
+        $this->assertNull($result['Merchant-Id']);
+        $this->assertNull($result['Psx-Id']);
+    }
+
+    public function testItGetsUserAgentHeader(): void
+    {
+        // Arrange
+        $_SERVER = [];
+        $this->mockServerHeaders([
+            'HTTP_USER_AGENT' => 'Svix-Webhooks/1.0',
+        ]);
+
+        // Act
+        $result = $this->provider->getHeaders();
+
+        // Assert
+        $this->assertSame('Svix-Webhooks/1.0', $result['User-Agent']);
+    }
+
+    public function testItReturnsAllExpectedHeaderKeys(): void
+    {
+        // Arrange
+        $_SERVER = [];
+
+        // Act
+        $result = $this->provider->getHeaders();
+
+        // Assert
+        $expectedKeys = [
+            'Shop-Id',
+            'Merchant-Id',
+            'Psx-Id',
+            'Svix-Id',
+            'Svix-Timestamp',
+            'Svix-Signature',
+            'User-Agent',
+        ];
+        $this->assertSame($expectedKeys, array_keys($result));
     }
 
     /**

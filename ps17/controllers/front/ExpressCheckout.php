@@ -23,9 +23,11 @@ if (!defined('_PS_VERSION_')) {
 
 use PsCheckout\Core\Customer\Action\ExpressCheckoutAction;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
+use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
 
@@ -37,53 +39,63 @@ use Psr\Log\LoggerInterface;
 class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
-     */
-    public $module;
-
-    /**
      * {@inheritdoc}
      */
     public function postProcess()
     {
-        $logger = $this->module->getService(LoggerInterface::class);
+        /** @var FrontControllerValidator $frontControllerValidator */
+        $frontControllerValidator = $this->module->getService(FrontControllerValidator::class);
+
+        if (!$frontControllerValidator->isExpressCheckoutEnabled()) {
+            $this->exitWithResponse([
+                'httpCode' => 403,
+                'body' => 'Forbidden',
+            ]);
+        }
+
+        // We receive data in a payload not in GET/POST
+        /** @var InputStreamUtility $inputStreamUtility */
+        $inputStreamUtility = $this->module->getService(InputStreamUtility::class);
+        $bodyContent = $inputStreamUtility->getBodyContent();
+
+        if (empty($bodyContent)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'Payload invalid',
+            ]);
+        }
+
+        $requestData = json_decode($bodyContent, true);
+
+        if (empty($requestData)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'Payload invalid',
+            ]);
+        }
+
+        $expressCheckoutRequest = new ExpressCheckoutRequest($requestData);
+
+        if (!$expressCheckoutRequest->getOrderId()) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'Payload invalid',
+            ]);
+        }
 
         try {
-            // We receive data in a payload not in GET/POST
-            /** @var InputStreamUtility $inputStreamUtility */
-            $inputStreamUtility = $this->module->getService(InputStreamUtility::class);
-            $bodyContent = $inputStreamUtility->getBodyContent();
-
-            if (empty($bodyContent)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Payload invalid',
-                ]);
-            }
-
-            $requestData = json_decode($bodyContent, true);
-
-            if (empty($requestData)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Payload invalid',
-                ]);
-            }
-
-            $expressCheckoutRequest = new ExpressCheckoutRequest($requestData);
-
-            if (!$expressCheckoutRequest->getOrderId()) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Payload invalid',
-                ]);
-            }
-
             /** @var PayPalOrderRepository $payPalOrderReposistory */
             $payPalOrderReposistory = $this->module->getService(PayPalOrderRepository::class);
 
             /** @var PayPalOrder|null $psCheckoutCart */
             $payPalOrder = $payPalOrderReposistory->getOneBy(['id' => $expressCheckoutRequest->getOrderId()]);
+
+            if (!$payPalOrder || $payPalOrder->getIdCart() !== $this->context->cart->id) {
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
+            }
 
             if ($payPalOrder) {
                 $payPalOrder->setFundingSource($expressCheckoutRequest->getFundingSource())
@@ -97,6 +109,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $expressCheckoutAction = $this->module->getService(ExpressCheckoutAction::class);
             $expressCheckoutAction->execute($expressCheckoutRequest);
         } catch (Exception $exception) {
+
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(
                 sprintf(
                     'ExpressCheckoutController - Exception %s : %s',
@@ -105,16 +120,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 ),
                 [
                     'paypal_order' => $expressCheckoutRequest->getOrderId(),
+                    'exception' => $exception,
                 ]
             );
 
-            $this->exitWithResponse([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => $expressCheckoutRequest->getPayload(),
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]);
+            $this->exitWithExceptionMessage($exception);
+        } catch (Throwable $exception) {
+            $this->exitWithExceptionMessage(new PsCheckoutException(
+                'An error occurred while processing the express checkout.',
+                PsCheckoutException::UNKNOWN,
+                $exception
+            ));
         }
 
         $this->exitWithResponse([

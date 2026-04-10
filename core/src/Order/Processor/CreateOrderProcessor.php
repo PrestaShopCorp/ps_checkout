@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Processor;
 
 use Cart;
 use PsCheckout\Api\Http\Exception\PayPalException;
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Request\ValueObject\ValidateOrderRequest;
@@ -150,19 +151,29 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
             throw $exception;
         }
 
+        $this->capturePayPalOrder($request->getOrderId(), $payPalOrderResponse);
+    }
+
+    private function capturePayPalOrder(string $orderId, PayPalOrderResponse $payPalOrderResponse)
+    {
         try {
+            if (!$this->orderNeedsCapture($payPalOrderResponse)) {
+                throw new PayPalException('Order doesn\'t need capture', PayPalException::ORDER_REQUIRES_ASYNC_CAPTURE);
+            }
+
             $capturedOrderResponse = $this->capturePayPalOrderAction->execute($payPalOrderResponse);
 
             $this->savePaymentTokenAction->execute($capturedOrderResponse);
         } catch (PayPalException $exception) {
             switch ($exception->getCode()) {
                 case PayPalException::ORDER_NOT_APPROVED:
+                case PayPalException::ORDER_REQUIRES_ASYNC_CAPTURE:
                     $this->createOrderAction->execute($payPalOrderResponse);
 
                     return;
 
                 case PayPalException::RESOURCE_NOT_FOUND:
-                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $request->getOrderId()]);
+                    $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
 
                     if ($payPalOrder) {
                         $payPalOrder->setStatus(PayPalOrderStatus::CANCELED);
@@ -171,12 +182,12 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
 
                     throw $exception;
                 case PayPalException::ORDER_ALREADY_CAPTURED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->createOrderAction->execute($capturedOrderResponse);
 
                     return;
                 case PayPalException::CARD_CLOSED:
-                    $capturedOrderResponse = $this->payPalOrderProvider->getById($request->getOrderId());
+                    $capturedOrderResponse = $this->payPalOrderProvider->getById($orderId);
                     $this->deletePaymentTokenAction->execute(
                         $capturedOrderResponse->getVault()['id'],
                         $this->context->getCustomer()->id
@@ -186,5 +197,10 @@ class CreateOrderProcessor implements CreateOrderProcessorInterface
                     throw $exception;
             }
         }
+    }
+
+    private function orderNeedsCapture(PayPalOrderResponse $payPalOrderResponse): bool
+    {
+        return $payPalOrderResponse->getFundingSource() !== 'pay_upon_invoice';
     }
 }

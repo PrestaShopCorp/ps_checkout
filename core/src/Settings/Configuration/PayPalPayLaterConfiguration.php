@@ -20,23 +20,94 @@
 
 namespace PsCheckout\Core\Settings\Configuration;
 
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+
 class PayPalPayLaterConfiguration
 {
+    /** @deprecated used only as fallback */
     const PS_CHECKOUT_PAY_LATER_ORDER_PAGE = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE';
 
+    /** @deprecated used only as fallback */
     const PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE';
 
-    const PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER';
-
+    /** @deprecated used only as fallback */
     const PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER';
 
+    /** @deprecated used only as fallback */
     const PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER';
-
-    const PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER';
 
     const PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON';
 
     const PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON';
 
     const PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON';
+
+    const PS_CHECKOUT_PAY_LATER_CONFIG = 'PS_CHECKOUT_PAY_LATER_CONFIG';
+
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    /**
+     * @var array|null
+     */
+    private $config;
+
+    public function __construct(ConfigurationInterface $configuration)
+    {
+        $this->configuration = $configuration;
+        $this->config = $this->configuration->getDeserializedRaw(self::PS_CHECKOUT_PAY_LATER_CONFIG);
+    }
+
+    /**
+     * Returns Pay Later customization, with fallback from old configuration values for banner and message statuses
+     *
+     * @return array[]
+     */
+    public function getPayLaterMessagingConfiguration(): array
+    {
+        if (!$this->config) {
+            return $this->getPayLaterMessagingConfigurationLegacy();
+        }
+
+        return $this->config;
+    }
+
+    /**
+     * Returns the default Pay Later configuration
+     *
+     * @return array[]
+     */
+    public function getPayLaterMessagingConfigurationDefault(): array
+    {
+        return [
+            'product' => ['status' => 'disabled'],
+            'homepage' => ['status' => 'disabled'],
+            'category' => ['status' => 'disabled'],
+            'checkout' => ['status' => 'disabled'],
+            'cart' => ['status' => 'disabled'],
+        ];
+    }
+
+    public function isPayLaterMessagingEnabled($page): bool
+    {
+        return isset($this->config[$page]) && $this->config[$page]['status'] === 'enabled';
+    }
+
+    /**
+     * Returns Pay Later customization from legacy configuration values
+     *
+     * @return array[]
+     */
+    private function getPayLaterMessagingConfigurationLegacy(): array
+    {
+        return [
+            'product' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE) ? 'enabled': 'disabled'],
+            'homepage' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER) ? 'enabled': 'disabled'],
+            'category' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER) ? 'enabled': 'disabled'],
+            'checkout' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ? 'enabled': 'disabled'],
+            'cart' => ['status' => $this->configuration->getBoolean(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE) ? 'enabled': 'disabled'],
+        ];
+    }
 }

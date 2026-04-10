@@ -25,6 +25,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -89,11 +90,7 @@ class OrderCompletedEventHandler implements EventHandlerInterface
         }
 
         $payPalOrder->setStatus($payPalOrderResponse->getStatus());
-        $payPalOrder->setIntent($payPalOrderResponse->getIntent() ?? 'CAPTURE');
-
-        if ($payPalOrderResponse->getFundingSource()) {
-            $payPalOrder->setFundingSource($payPalOrderResponse->getFundingSource());
-        }
+        $payPalOrder->setIntent($payPalOrderResponse->getIntent() ?? PayPalOrderIntent::CAPTURE);
 
         if ($payPalOrderResponse->getPaymentSource()) {
             $payPalOrder->setPaymentSource($payPalOrderResponse->getPaymentSource());

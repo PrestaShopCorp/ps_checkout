@@ -24,14 +24,17 @@ use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClientInterface
 {
-    public function __construct(HttpClientConfigurationBuilderInterface $configurationBuilder)
-    {
-        parent::__construct($configurationBuilder->build());
+    public function __construct(
+        HttpClientConfigurationBuilderInterface $configurationBuilder,
+        ?ClientInterface $client = null
+    ) {
+        parent::__construct($configurationBuilder->build(), $client);
     }
 
     /**
@@ -59,7 +62,9 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
      */
     public function refundOrder(string $captureId, array $payload): ResponseInterface
     {
-        return $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], json_encode($payload)));
+        $body = $this->generatePayloadString($payload);
+
+        return $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], $body));
     }
 
     /**
@@ -90,5 +95,23 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
         }
 
         return '';
+    }
+
+    /**
+     * @param array<mixed> $payload
+     * @return string
+     */
+    private function generatePayloadString(array $payload): string
+    {
+        $body = '{}';
+        if (!empty($payload)) {
+            $encoded = json_encode($payload);
+            if ($encoded === false) {
+                throw new \RuntimeException('Failed to encode payload to JSON');
+            }
+            $body = $encoded;
+        }
+
+        return $body;
     }
 }

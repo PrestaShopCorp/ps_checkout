@@ -167,4 +167,16 @@ class Env implements EnvInterface
 
         return $this->getEnv('WEBHOOK_API_URL_LIVE');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMaaslandOrderApiUrl(): string
+    {
+        if (PayPalConfiguration::MODE_SANDBOX === $this->mode) {
+            return $this->getEnv('MAASLAND_ORDER_API_URL_SANDBOX');
+        }
+
+        return $this->getEnv('MAASLAND_ORDER_API_URL_LIVE');
+    }
 }

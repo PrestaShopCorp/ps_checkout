@@ -2,15 +2,30 @@
     "name": "ps_checkout/prestashop",
     "license": "AFL-3.0",
     "description": "PrestaShop module",
+    "type": "prestashop-module",
+    "author": {
+        "name": "PrestaShop SA",
+        "email": "contact@prestashop.com"
+    },
+    "scripts": {
+        "cs": "php-cs-fixer check -vvv --config=.php-cs-fixer.php",
+        "cs:fix": "php-cs-fixer fix -vvv --config=.php-cs-fixer.php",
+        "cs:ci": "@cs:fix --no-interaction --using-cache=no --format=checkstyle"
+    },
     "require-dev": {
-        "beberlei/composer-monorepo-plugin": "dev-master@dev"
+        "php": "^8.1",
+        "beberlei/composer-monorepo-plugin": "dev-master@dev",
+        "friendsofphp/php-cs-fixer": "^3.92",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0"
     },
     "config": {
         "prepend-autoloader": false,
         "allow-plugins": {
-            "beberlei/composer-monorepo-plugin": true
+            "beberlei/composer-monorepo-plugin": true,
+            "phpstan/extension-installer": true
         }
-    },
-    "type": "prestashop-module",
-    "author": "PrestaShop"
+    }
 }

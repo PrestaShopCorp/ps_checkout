@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\Order\Action;
 
@@ -42,7 +60,6 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
         $cart->total = $data['cart_total'];
         $cart->secure_key = 'test-secure-key';
 
-
         // Set cart in context
         $this->context->setCurrentCart($cart);
 
@@ -84,14 +101,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'partially paid order should be set to partially paid state' => [
                 [
@@ -109,14 +126,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '15.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '15.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'overpaid order should be set to completed state' => [
                 [
@@ -134,14 +151,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '35.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '35.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'pending order should be set to pending state' => [
                 [
@@ -158,14 +175,14 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'PENDING',
-                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                            'amount' => ['currency_code' => 'EUR', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'order with different currency should use correct currency ID' => [
                 [
@@ -183,15 +200,15 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
                                         [
                                             'id' => 'TEST-CAPTURE-123',
                                             'status' => 'COMPLETED',
-                                            'amount' => ['currency_code' => 'USD', 'value' => '29.00']
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                            'amount' => ['currency_code' => 'USD', 'value' => '29.00'],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

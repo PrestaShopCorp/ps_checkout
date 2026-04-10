@@ -3,8 +3,13 @@
   ],
   "autoload": {
     "psr-4": {
-      "PsCheckout\\Core\\": "src/",
-      "PsCheckout\\Tests\\Core\\Integration\\": "tests/"
+      "PsCheckout\\Core\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PsCheckout\\Tests\\Core\\Integration\\": "tests/Integration/",
+      "PsCheckout\\Tests\\Core\\Unit\\": "tests/Unit/"
     }
   }
 }

@@ -20,13 +20,6 @@
 
 namespace PsCheckout\Api\Http;
 
-use Psr\Http\Message\ResponseInterface;
-use Http\Client\Exception\NetworkException;
-use Http\Client\Exception\HttpException;
-use Http\Client\Exception\RequestException;
-use Http\Client\Exception\TransferException;
-use PsCheckout\Api\Http\Exception\PayPalException;
-
 interface WebhookHttpClientInterface
 {
     /**
@@ -35,7 +28,7 @@ interface WebhookHttpClientInterface
      * @param string $rawBody
      * @param array $headers
      *
-     * @return array
+     * @return bool
      */
-    public function verifyWebhook(string $rawBody, array $headers): array;
+    public function verifyWebhook(string $rawBody, array $headers): bool;
 }

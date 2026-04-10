@@ -57,7 +57,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function createOrder(array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
+    public function createOrder(array $payload, ?string $requestId, ?string $clientMetadataId): ResponseInterface
     {
         $headers = [];
 
@@ -83,7 +83,7 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     /**
      * {@inheritdoc}
      */
-    public function captureOrder(string $orderId, array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface
+    public function captureOrder(string $orderId, array $payload, ?string $requestId = null, ?string $clientMetadataId = null): ResponseInterface
     {
         $headers = [];
 
@@ -104,6 +104,14 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     public function updateOrder(string $orderId, array $payload): ResponseInterface
     {
         return $this->sendRequest(new Request('PATCH', "orders/$orderId", [], json_encode($payload)));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authorizeOrder(string $orderId, array $payload): ResponseInterface
+    {
+        return $this->sendRequest(new Request('POST', "orders/$orderId/authorize", [], json_encode($payload)));
     }
 
     /**

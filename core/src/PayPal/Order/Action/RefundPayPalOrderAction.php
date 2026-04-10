@@ -24,7 +24,6 @@ use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
 use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
-use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 
 class RefundPayPalOrderAction implements RefundPayPalOrderActionInterface

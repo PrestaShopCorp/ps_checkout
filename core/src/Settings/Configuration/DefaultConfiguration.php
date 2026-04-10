@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\Settings\Configuration;
 
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
+
 class DefaultConfiguration
 {
     const DEFAULT_CONFIGURATION_VALUES = [
-        'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_INTENT' => PayPalOrderIntent::CAPTURE,
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
@@ -47,5 +49,6 @@ class DefaultConfiguration
         'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
         'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES' => 'SCA_WHEN_REQUIRED',
         'PS_CHECKOUT_PAYPAL_BUTTON' => '{"shape":"pill","label":"pay","color":"gold"}',
+        'PS_CHECKOUT_PAY_LATER_CONFIG' => '{"cart":{"placement":"cart","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"},"category":{"placement":"category","status":"disabled","color":"white","layout":"flex","ratio":"8x1"},"checkout":{"placement":"checkout","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"},"homepage":{"placement":"homepage","status":"disabled","color":"white","layout":"flex","ratio":"8x1"},"product":{"placement":"product","status":"enabled","layout":"text","logo-type":"inline","text-color":"black","text-size":"12"}}',
     ];
 }

@@ -1,22 +1,40 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\OrderState\Action;
 
 use OrderState;
-use PrestaShop\PrestaShop\Core\Addon\Theme\Theme;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\Action\ChangeOrderStateAction;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
-use PsCheckout\Core\Tests\Integration\Factory\CartFactory;
 use PsCheckout\Core\Tests\Integration\Factory\OrderFactory;
 use PsCheckout\Infrastructure\Repository\OrderStateRepository;
 
 class ChangeOrderStateActionTest extends BaseTestCase
 {
     private ?OrderStateMapper $orderStateMapper;
+
     private ?OrderStateRepository $orderStateRepository;
+
     private ?ChangeOrderStateAction $changeOrderStateAction;
 
     protected function setUp(): void
@@ -38,7 +56,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 
@@ -51,7 +69,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
 
     public function testChangeOrderState(): void
     {
-        //Order state 0 is PENDING
+        // Order state 0 is PENDING
         $order = OrderFactory::create(['current_state' => 0]);
 
         /** @var OrderState $newOrderState */
@@ -59,7 +77,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 
@@ -67,7 +85,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             $this->changeOrderStateAction->execute($order->id, $newOrderState->id);
         } catch (OrderException $exception) {
             if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                //NOTE: Error due mail sending which does not work with tests
+                // NOTE: Error due mail sending which does not work with tests
                 self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
             }
         }
@@ -77,7 +95,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
     {
         \Configuration::updateValue(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED, 5000);
 
-        //Order state 0 is PENDING
+        // Order state 0 is PENDING
         $order = OrderFactory::create(['current_state' => 0]);
 
         /** @var OrderState $newOrderState */
@@ -85,7 +103,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             [
                 'id_order_state' => $this->orderStateMapper->getIdByKey(
                     OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED
-                )
+                ),
             ]
         );
 
@@ -93,7 +111,7 @@ class ChangeOrderStateActionTest extends BaseTestCase
             $this->changeOrderStateAction->execute($order->id, $newOrderState->id);
         } catch (OrderException $exception) {
             if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                //NOTE: Error due mail sending which does not work with tests
+                // NOTE: Error due mail sending which does not work with tests
                 self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
             }
         }

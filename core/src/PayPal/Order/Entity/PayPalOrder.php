@@ -28,6 +28,8 @@ class PayPalOrder
 
     const THREE_D_SECURE_NOT_REQUIRED = '3DS_NOT_REQUIRED';
 
+    const DELETED = 'DELETED';
+
     /**
      * @var string
      */
@@ -368,5 +370,15 @@ class PayPalOrder
     public function addTag($tag)
     {
         $this->tags[] = $tag;
+    }
+
+    /**
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasTag($tag)
+    {
+        return in_array($tag, $this->tags, true);
     }
 }

@@ -20,6 +20,7 @@
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Utility\Common\NumberUtility;
@@ -45,17 +46,26 @@ class BaseNodeBuilderTest extends TestCase
             ->setPaypalOrderId($paypalOrderId);
 
         $result = $builder->build();
+
+        $customId = $result['purchase_units'][0]['custom_id'];
+        $expectedCartId = $cartData['cart']['id'];
+        $this->assertRegExp(
+            '/^' . $expectedCartId . '@\d+$/',
+            $customId
+        );
+
+        $result['purchase_units'][0]['custom_id'] = $expected['purchase_units'][0]['custom_id'];
         $this->assertEquals($expected, $result);
     }
 
     public function buildDataProvider(): array
     {
         return [
-            'new_order_without_vault' => [
+            'new_order_without_vault_capture' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Test Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalOrderIntent::CAPTURE,
                     PayPalConfiguration::PS_ROUND_TYPE => 'round',
                     PayPalConfiguration::PS_PRICE_ROUND_MODE => 'up',
                 ],
@@ -76,7 +86,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => false,
                 'paypalOrderId' => null,
                 'expected' => [
-                    'intent' => 'CAPTURE',
+                    'intent' => PayPalOrderIntent::CAPTURE,
                     'purchase_units' => [
                         [
                             'custom_id' => '123',
@@ -93,11 +103,11 @@ class BaseNodeBuilderTest extends TestCase
                     ],
                 ],
             ],
-            'update_order_with_vault' => [
+            'update_order_with_vault_capture' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Test Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT123',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'AUTHORIZE',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
                 ],
                 'cartData' => [
                     'cart' => [
@@ -116,7 +126,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => true,
                 'paypalOrderId' => 'PAYPAL123',
                 'expected' => [
-                    'intent' => 'AUTHORIZE',
+                    'intent' => 'CAPTURE',
                     'purchase_units' => [
                         [
                             'custom_id' => '456',
@@ -134,11 +144,11 @@ class BaseNodeBuilderTest extends TestCase
                     'id' => 'PAYPAL123',
                 ],
             ],
-            'new_order_with_vault' => [
+            'new_order_with_vault_capture' => [
                 'configurationData' => [
                     'PS_SHOP_NAME' => 'Another Shop',
                     PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT => 'MERCHANT456',
-                    PayPalConfiguration::PS_CHECKOUT_INTENT => 'CAPTURE',
+                    PayPalConfiguration::PS_CHECKOUT_INTENT => PayPalOrderIntent::CAPTURE,
                     PayPalConfiguration::PS_ROUND_TYPE => 'round',
                     PayPalConfiguration::PS_PRICE_ROUND_MODE => 'down',
                 ],
@@ -159,7 +169,7 @@ class BaseNodeBuilderTest extends TestCase
                 'isUpdate' => false,
                 'paypalOrderId' => null,
                 'expected' => [
-                    'intent' => 'CAPTURE',
+                    'intent' => PayPalOrderIntent::CAPTURE,
                     'purchase_units' => [
                         [
                             'custom_id' => '789',

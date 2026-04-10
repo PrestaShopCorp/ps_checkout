@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PsCheckout\Core\Tests\Integration\OrderState\Action;
 
@@ -18,8 +36,11 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 class SetDeclinedOrderStateActionTest extends BaseTestCase
 {
     private ?SetDeclinedOrderStateAction $setDeclinedOrderStateAction;
+
     private ?ChangeOrderStateAction $changeOrderStateAction;
+
     private ?OrderStateMapper $orderStateMapper;
+
     private ?PayPalOrderRepository $payPalOrderRepository;
 
     protected function setUp(): void
@@ -39,17 +60,17 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $payPalOrder = PayPalOrderFactory::create(['id_cart' => $order->id_cart]);
         $this->payPalOrderRepository->save($payPalOrder);
 
         try {
             $this->setDeclinedOrderStateAction->execute($payPalOrder->getId());
-        }  catch (OrderException $exception) {
+        } catch (OrderException $exception) {
             if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                //NOTE: Error due mail sending which does not work with tests
+                // NOTE: Error due mail sending which does not work with tests
                 self::assertEquals(
                     $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_ERROR),
                     (new \Order($order->id))->current_state
@@ -65,8 +86,8 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $history = new OrderHistory();
         $history->id_order = $order->id;
@@ -91,8 +112,8 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         $cart = CartFactory::create();
         $order = OrderFactory::create([
             'current_state' => $orderStateId,
-            'id_cart' => $cart->id
-        ]) ;
+            'id_cart' => $cart->id,
+        ]);
 
         $history = new OrderHistory();
         $history->id_order = $order->id;

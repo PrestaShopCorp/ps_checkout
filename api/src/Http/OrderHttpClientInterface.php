@@ -38,7 +38,7 @@ interface OrderHttpClientInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function createOrder(array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface;
+    public function createOrder(array $payload, ?string $requestId, ?string $clientMetadataId): ResponseInterface;
 
     /**
      * @param string $orderId
@@ -60,7 +60,7 @@ interface OrderHttpClientInterface
      *
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
-    public function captureOrder(string $orderId, array $payload, string $requestId = null, string $clientMetadataId = null): ResponseInterface;
+    public function captureOrder(string $orderId, array $payload, ?string $requestId = null, ?string $clientMetadataId = null): ResponseInterface;
 
     /**
      * @param array $payload
@@ -71,4 +71,14 @@ interface OrderHttpClientInterface
      * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
      */
     public function updateOrder(string $orderId, array $payload): ResponseInterface;
+
+    /**
+     * @param array $payload
+     * @param string $orderId
+     *
+     * @return ResponseInterface
+     *
+     * @throws NetworkException|HttpException|RequestException|TransferException|PayPalException
+     */
+    public function authorizeOrder(string $orderId, array $payload): ResponseInterface;
 }
