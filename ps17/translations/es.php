@@ -15,7 +15,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_ccf338e772778287ddef6911855e5ba3']
 $_MODULE['<{ps_checkout}prestashop>translator_bc06e3a40808fc7351ff8f57b3bad7cf'] = 'Transacción de PayPal no válida.';
 $_MODULE['<{ps_checkout}prestashop>translator_da74acca9d5669367fa982b7694f5303'] = 'Divisa de reembolso de PayPal no válida.';
 $_MODULE['<{ps_checkout}prestashop>translator_5825dada06af7bef8ae4db80c2c5aeba'] = 'Importe de reembolso de PayPal no válido.';
-$_MODULE['<{ps_checkout}prestashop>translator_c7908a2ddbd02129b4de84d2141ea180'] = 'PayPal refund failed.';
+$_MODULE['<{ps_checkout}prestashop>translator_c7908a2ddbd02129b4de84d2141ea180'] = 'El reembolso de PayPal ha fallado.';
 $_MODULE['<{ps_checkout}prestashop>translator_785e1b8c2c57d4ad6ed603778b4f6ba9'] = 'El reembolso ha sido procesado por PayPal, pero el cambio de estado del pedido o el envío del correo fallaron.';
 $_MODULE['<{ps_checkout}prestashop>translator_ee6403a0a4d60590a6b6634df2fdce3f'] = 'PayPal no pudo efectuar el reembolso.';
 $_MODULE['<{ps_checkout}prestashop>translator_d1a7ac6d45dcb4a782b441e29380056a'] = 'PayPal no efectuó el reembolso.';
@@ -202,7 +202,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_78432b718ec482b7211e1a45785087f1']
 $_MODULE['<{ps_checkout}prestashop>translator_39dc86ebdd6c930447215d738bc4d15f'] = 'Se ha producido un error en la autentificación del titular de la tarjeta, por favor, elige otro método de pago o inténtalo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>translator_816565ccf105493c7b15166627f6fc16'] = 'Autenticación del titular de la tarjeta cancelada, por favor, elige otro método de pago o inténtalo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>translator_52afb370f87a4acfe4f1aaee204835eb'] = 'Autenticación del titular de la tarjeta no puede ser verificada, por favor, elige otro método de pago o inténtalo de nuevo.';
-$_MODULE['<{ps_checkout}prestashop>translator_73f9b9812ae06d85ba2e015622a48ad5'] = 'No podemos procesar su pago con Apple Pay en este momento. Esto podría deberse a un problema al verificar la configuración de pago de este sitio web. Inténtelo de nuevo más tarde o elija otro método de pago.';
+$_MODULE['<{ps_checkout}prestashop>translator_333c40471aae73aa1ef94fd513b0cc54'] = 'No podemos procesar su pago con Apple Pay en este momento. Esto podría deberse a un problema al verificar la configuración de pago de este sitio web. Inténtelo de nuevo más tarde o elija otro método de pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_3aa23f90376bc10782584d22a91aae97'] = 'Hemos encontrado un problema al procesar su pago con Apple Pay. Verifique los detalles de su pedido e inténtelo de nuevo, o utilice otro método de pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_e1c709bbd92871a57367a9f923874278'] = 'Error en el procesamiento del pago, puede que se haya efectuado el cobro. Comprueba tu historial de pedidos en tu cuenta para verificar el estado del pedido o ponte en contacto con nuestro servicio de atención al cliente para obtener más información.';
 $_MODULE['<{ps_checkout}prestashop>translator_fb970bdd962fa85ffc3459b4d5312b10'] = 'La transacción ha fallado. Prueba con otra tarjeta.';
@@ -269,3 +269,15 @@ $_MODULE['<{ps_checkout}prestashop>translator_a995e3f4789afc5c69be0f2c4a283fe3']
 $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee'] = 'El pagador pagó por un artículo que no recibió.';
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'El pagador no autorizó el pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'Se produjo un error inesperado durante el reembolso.';
+$_MODULE['<{ps_checkout}prestashop>translator_9976a3ca5309b7639b4a8d54561f2ca9'] = 'Pagar mediante factura';
+$_MODULE['<{ps_checkout}prestashop>translator_c49fbef53ae687dd6866e9075f23e83d'] = 'Pagar más tarde con factura';
+$_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc'] = 'Contacte con el servicio de atención al cliente a través de %s';
+$_MODULE['<{ps_checkout}prestashop>translator_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Número de teléfono';
+$_MODULE['<{ps_checkout}prestashop>translator_10803b83a68db8f7e7a33e3b41e184d0'] = 'Fecha de nacimiento';
+$_MODULE['<{ps_checkout}prestashop>translator_6fd5e95dc0bce8329da87e1152677b48'] = 'No requerido';
+$_MODULE['<{ps_checkout}prestashop>translator_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'El pago no es válido: el importe no es elegible.';
+$_MODULE['<{ps_checkout}prestashop>translator_3369ba2ed7cf53ddee6687b80ca28724'] = 'Autorización capturada correctamente.';
+$_MODULE['<{ps_checkout}prestashop>translator_46b0801bbbd67d6f88169ac8d958176d'] = 'Autorización anulada correctamente.';
+$_MODULE['<{ps_checkout}prestashop>translator_d7711b029221c7de1444292a4068bfee'] = 'Autorización reautorizada correctamente.';
+$_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'La autorización ha sido capturada correctamente.';
+$_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Se produjo un error durante la captura de la autorización.';

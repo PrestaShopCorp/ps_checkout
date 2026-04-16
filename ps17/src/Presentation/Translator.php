@@ -44,164 +44,309 @@ class Translator implements TranslatorInterface
      */
     public function trans(string $key, array $parameters = []): string
     {
-        $map = [
-            'Checkout' => $this->module->l('Checkout', 'Translator'),
-            'Go back to the Checkout' => $this->module->l('Go back to the Checkout', 'Translator'),
-            'Card payment' => $this->module->l('Card payment', 'Translator'),
-            'Order summary' => $this->module->l('Order summary', 'Translator'),
-            'Your shopping cart is empty.' => $this->module->l('Your shopping cart is empty.', 'Translator'),
-            'PayPal' => $this->module->l('PayPal', 'Translator'),
-            'You have chosen to pay by Card.' => $this->module->l('You have chosen to pay by Card.', 'Translator'),
-            'You have chosen to pay by PayPal.' => $this->module->l('You have chosen to pay by PayPal.', 'Translator'),
-            'Here is a short summary of your order:' => $this->module->l('Here is a short summary of your order:', 'Translator'),
-            'The total amount of your order comes to' => $this->module->l('The total amount of your order comes to', 'Translator'),
-            '(tax incl.)' => $this->module->l('(tax incl.)', 'Translator'),
-            'Please confirm your order by clicking "I confirm my order".' => $this->module->l('Please confirm your order by clicking "I confirm my order".', 'Translator'),
-            'Delete this payment method?' => $this->module->l('Delete this payment method?', 'Translator'),
-            'The following payment method will be deleted from your account:' => $this->module->l('The following payment method will be deleted from your account:', 'Translator'),
-            'Delete payment method' => $this->module->l('Delete payment method', 'Translator'),
-            'Please wait, we are processing your request' => $this->module->l('Please wait, we are processing your request', 'Translator'),
-            'Other payment methods' => $this->module->l('Other payment methods', 'Translator'),
-            'I confirm my order' => $this->module->l('I confirm my order', 'Translator'),
-            'Thanks for your purchase!' => $this->module->l('Thanks for your purchase!', 'Translator'),
-            'Please wait, we are processing your payment' => $this->module->l('Please wait, we are processing your payment', 'Translator'),
-            'This is taking longer than expected. Please wait...' => $this->module->l('This is taking longer than expected. Please wait...', 'Translator'),
-            'Ok' => $this->module->l('Ok', 'Translator'),
-            'Cancel' => $this->module->l('Cancel', 'Translator'),
-            'Secure payments' => $this->module->l('Secure payments', 'Translator'),
-            'or' => $this->module->l('or', 'Translator'),
-            'Express Checkout' => $this->module->l('Express Checkout', 'Translator'),
-            'Please wait, loading additional payment methods.' => $this->module->l('Please wait, loading additional payment methods.', 'Translator'),
-            'You have selected your %s PayPal account to proceed to the payment.' => $this->module->l('You have selected your %s PayPal account to proceed to the payment.', 'Translator'),
-            'Warning' => $this->module->l('Warning', 'Translator'),
-
-            'Card' => $this->module->l('Card', 'Translator'),
-            'Pay by Card - Secure payments' => $this->module->l('Pay by Card - Secure payments', 'Translator'),
-            'Pay with a PayPal account' => $this->module->l('Pay with a PayPal account', 'Translator'),
-            'Pay in installments with PayPal Pay Later' => $this->module->l('Pay in installments with PayPal Pay Later', 'Translator'),
-            'Pay by %s' => $this->module->l('Pay by %s', 'Translator'),
-            'Pay with %s' => $this->module->l('Pay with %s', 'Translator'),
-            'Pay later with invoice' => $this->module->l('Pay later with invoice', 'Translator'),
-            'Pay upon Invoice' => $this->module->l('Pay upon Invoice', 'Translator'),
-            'Contact customer service via %s' => $this->module->l('Contact customer service via %s', 'Translator'),
-
-            'Card holder name' => $this->module->l('Card holder name', 'Translator'),
-            'Card number' => $this->module->l('Card number', 'Translator'),
-            'Expiry date' => $this->module->l('Expiry date', 'Translator'),
-            'MM/YY' => $this->module->l('MM/YY', 'Translator'),
-            'CVC' => $this->module->l('CVC', 'Translator'),
-            'XXX' => $this->module->l('XXX', 'Translator'),
-
-            'Created' => $this->module->l('Created', 'Translator'),
-            'Saved' => $this->module->l('Saved', 'Translator'),
-            'Approved' => $this->module->l('Approved', 'Translator'),
-            'Voided' => $this->module->l('Voided', 'Translator'),
-            'Completed' => $this->module->l('Completed', 'Translator'),
-            'Declined' => $this->module->l('Declined', 'Translator'),
-            'Pending' => $this->module->l('Pending', 'Translator'),
-            'Partially refunded' => $this->module->l('Partially refunded', 'Translator'),
-            'Refunded' => $this->module->l('Refunded', 'Translator'),
-            'Failed' => $this->module->l('Failed', 'Translator'),
-
-            'There was an error during the payment. Please try again or contact the support.' => $this->module->l('There was an error during the payment. Please try again or contact the support.', 'Translator'),
-            'No PayPal Javascript SDK Instance' => $this->module->l('No PayPal Javascript SDK Instance', 'Translator'),
-            'No Google Pay Javascript SDK Instance' => $this->module->l('No Google Pay Javascript SDK Instance', 'Translator'),
-            'No Apple Pay Javascript SDK Instance' => $this->module->l('No Apple Pay Javascript SDK Instance', 'Translator'),
-            'An error occurred fetching Google Pay transaction info' => $this->module->l('An error occurred fetching Google Pay transaction info', 'Translator'),
-            'An error occurred fetching Apple Pay payment request' => $this->module->l('An error occurred fetching Apple Pay payment request', 'Translator'),
-            'Card holder authentication canceled, please choose another payment method or try again.' => $this->module->l('Card holder authentication canceled, please choose another payment method or try again.', 'Translator'),
-            'An error occurred on card holder authentication, please choose another payment method or try again.' => $this->module->l('An error occurred on card holder authentication, please choose another payment method or try again.', 'Translator'),
-            'Card holder authentication failed, please choose another payment method or try again.' => $this->module->l('Card holder authentication failed, please choose another payment method or try again.', 'Translator'),
-            'Card holder authentication cannot be checked, please choose another payment method or try again.' => $this->module->l('Card holder authentication cannot be checked, please choose another payment method or try again.', 'Translator'),
-            'We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.' => $this->module->l('We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.', 'Translator'),
-            'We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.' => $this->module->l('We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.', 'Translator'),
-
-            // Exception messages
-            'Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.' => $this->module->l('Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.', 'Translator'),
-            'The transaction failed. Please try a different card.' => $this->module->l('The transaction failed. Please try a different card.', 'Translator'),
-            'The transaction was refused.' => $this->module->l('The transaction was refused.', 'Translator'),
-            'This payment method is unavailable' => $this->module->l('This payment method is unavailable', 'Translator'),
-            'Unable to call API' => $this->module->l('Unable to call API', 'Translator'),
-            'PayPal order identifier is missing' => $this->module->l('PayPal order identifier is missing', 'Translator'),
-            'PayPal payment method is missing' => $this->module->l('PayPal payment method is missing', 'Translator'),
-            'Cart is invalid' => $this->module->l('Cart is invalid', 'Translator'),
-            'Order cannot be saved' => $this->module->l('Order cannot be saved', 'Translator'),
-            'OrderState cannot be saved' => $this->module->l('OrderState cannot be saved', 'Translator'),
-            'OrderPayment cannot be saved' => $this->module->l('OrderPayment cannot be saved', 'Translator'),
-            'The transaction amount doesn\'t match with the cart amount.' => $this->module->l('The transaction amount doesn\'t match with the cart amount.', 'Translator'),
-            'Cart doesn\'t contains product.' => $this->module->l('Cart doesn\'t contains product.', 'Translator'),
-            'Cart contains product unavailable.' => $this->module->l('Cart contains product unavailable.', 'Translator'),
-            'Cart invoice address is invalid.' => $this->module->l('Cart invoice address is invalid.', 'Translator'),
-            'Cart delivery address is invalid.' => $this->module->l('Cart delivery address is invalid.', 'Translator'),
-            'Cart delivery option is unavailable.' => $this->module->l('Cart delivery option is unavailable.', 'Translator'),
-            'Processing of this card type is not supported. Use another card type.' => $this->module->l('Processing of this card type is not supported. Use another card type.', 'Translator'),
-            'The CVC code length is invalid for the specified card type.' => $this->module->l('The CVC code length is invalid for the specified card type.', 'Translator'),
-            'Your card cannot be used to pay in this currency, please try another payment method.' => $this->module->l('Your card cannot be used to pay in this currency, please try another payment method.', 'Translator'),
-            'Your country is not supported by this payment method, please try to select another.' => $this->module->l('Your country is not supported by this payment method, please try to select another.', 'Translator'),
-            'The transaction failed. Please try a different payment method.' => $this->module->l('The transaction failed. Please try a different payment method.', 'Translator'),
-            'Transaction expired, please try again.' => $this->module->l('Transaction expired, please try again.', 'Translator'),
-            'Order is already captured.' => $this->module->l('Order is already captured.', 'Translator'),
-            'This payment method has been refused by the payment platform, please use another payment method.' => $this->module->l('This payment method has been refused by the payment platform, please use another payment method.', 'Translator'),
-
-            // Notify customer error message
-            'This message is sent automatically by module PrestaShop Checkout' => $this->module->l('This message is sent automatically by module PrestaShop Checkout', 'Translator'),
-            'A customer encountered a processing payment error :' => $this->module->l('A customer encountered a processing payment error :', 'Translator'),
-            'Customer identifier:' => $this->module->l('Customer identifier:', 'Translator'),
-            'Cart identifier:' => $this->module->l('Cart identifier:', 'Translator'),
-            'PayPal order identifier:' => $this->module->l('PayPal order identifier:', 'Translator'),
-            'Exception identifier:' => $this->module->l('Exception identifier:', 'Translator'),
-            'Exception detail:' => $this->module->l('Exception detail:', 'Translator'),
-            'If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.' => $this->module->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', 'Translator'),
-
-            'Payment gateway information' => $this->module->l('Payment gateway information', 'Translator'),
-            'Order identifier' => $this->module->l('Order identifier', 'Translator'),
-            'Order status' => $this->module->l('Order status', 'Translator'),
-            'Transaction identifier' => $this->module->l('Transaction identifier', 'Translator'),
-            'Transaction status' => $this->module->l('Transaction status', 'Translator'),
-            'Funding source' => $this->module->l('Funding source', 'Translator'),
-            'Amount paid' => $this->module->l('Amount paid', 'Translator'),
-            'Approve payment' => $this->module->l('Approve payment', 'Translator'),
-            'Authenticate payment' => $this->module->l('Authenticate payment', 'Translator'),
-            'Your payment has been declined by our payment gateway, please contact us via the link below.' => $this->module->l('Your payment has been declined by our payment gateway, please contact us via the link below.', 'Translator'),
-            'Your payment needs to be approved, please click the button below.' => $this->module->l('Your payment needs to be approved, please click the button below.', 'Translator'),
-            'Your payment needs to be authenticated, please click the button below.' => $this->module->l('Your payment needs to be authenticated, please click the button below.', 'Translator'),
-            'You will be redirected to an external secured page of our payment gateway.' => $this->module->l('You will be redirected to an external secured page of our payment gateway.', 'Translator'),
-            'If you have any question, please contact us.' => $this->module->l('If you have any question, please contact us.', 'Translator'),
-            'Payment method status' => $this->module->l('Payment method status', 'Translator'),
-            'was saved for future purchases' => $this->module->l('was saved for future purchases', 'Translator'),
-            'was not saved for future purchases' => $this->module->l('was not saved for future purchases', 'Translator'),
-            'Total ApplePay' => $this->module->l('Total', 'Translator'),
-            'Total GooglePay' => $this->module->l('Total', 'Translator'),
-            'Payment' => $this->module->l('Payment', 'Translator'),
-            'Refund' => $this->module->l('Refund', 'Translator'),
-            'You are not authorized to refund this order.' => $this->module->l('You are not authorized to refund this order.', 'Translator'),
-            'PayPal Order is invalid.' => $this->module->l('PayPal Order is invalid.', 'Translator'),
-            'PayPal Transaction is invalid.' => $this->module->l('PayPal Transaction is invalid.', 'Translator'),
-            'PayPal refund currency is invalid.' => $this->module->l('PayPal refund currency is invalid.', 'Translator'),
-            'PayPal refund amount is invalid.' => $this->module->l('PayPal refund amount is invalid.', 'Translator'),
-            'PayPal refund failed.' => $this->module->l('PayPal refund failed.', 'Translator'),
-            'Refund has been processed by PayPal, but order status change or email sending failed.' => $this->module->l('Refund has been processed by PayPal, but order status change or email sending failed.', 'Translator'),
-            'Refund cannot be processed by PayPal.' => $this->module->l('Refund cannot be processed by PayPal.', 'Translator'),
-            'Refund has been processed by PayPal.' => $this->module->l('Refund has been processed by PayPal.', 'Translator'),
-            'No PrestaShop Order identifier received' => $this->module->l('No PrestaShop Order identifier received', 'Translator'),
-            'Unable to find PayPal Order associated to this PrestaShop Order %s' => $this->module->l('Unable to find PayPal Order associated to this PrestaShop Order %s', 'Translator'),
-            'PayPal Order %s is not in the same environment as PrestaShop Checkout' => $this->module->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', 'Translator'),
-            'Authorization captured successfully.' => $this->module->l('Authorization captured successfully.', 'Translator'),
-            'Authorization voided successfully.' => $this->module->l('Authorization voided successfully.', 'Translator'),
-            'Authorization reauthorized successfully.' => $this->module->l('Authorization reauthorized successfully.', 'Translator'),
-
-            'Eligible' => $this->module->l('Eligible', 'Translator'),
-            'Partially eligible' => $this->module->l('Partially eligible', 'Translator'),
-            'Not eligible' => $this->module->l('Not eligible', 'Translator'),
-            'Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.' => $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.', 'Translator'),
-            'Your PayPal balance remains intact if the customer claims that they did not receive an item.' => $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item.', 'Translator'),
-            'Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.' => $this->module->l('Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.', 'Translator'),
-            'Dispute categories covered:' => $this->module->l('Dispute categories covered:', 'Translator'),
-            'For more information, please go to the official PayPal website.' => $this->module->l('For more information, please go to the official PayPal website.', 'Translator'),
-            'The payer paid for an item that they did not receive.' => $this->module->l('The payer paid for an item that they did not receive.', 'Translator'),
-            'The payer did not authorize the payment.' => $this->module->l('The payer did not authorize the payment.', 'Translator'),
-        ];
-
-        return isset($map[$key]) && $map[$key] ? $map[$key] : $key;
+        switch ($key) {
+            case 'Total':
+                return $this->module->l('Total', 'Translator');
+            case 'Checkout':
+                return $this->module->l('Checkout', 'Translator');
+            case 'Go back to the Checkout':
+                return $this->module->l('Go back to the Checkout', 'Translator');
+            case 'Card payment':
+                return $this->module->l('Card payment', 'Translator');
+            case 'Order summary':
+                return $this->module->l('Order summary', 'Translator');
+            case 'Your shopping cart is empty.':
+                return $this->module->l('Your shopping cart is empty.', 'Translator');
+            case 'PayPal':
+                return $this->module->l('PayPal', 'Translator');
+            case 'You have chosen to pay by Card.':
+                return $this->module->l('You have chosen to pay by Card.', 'Translator');
+            case 'You have chosen to pay by PayPal.':
+                return $this->module->l('You have chosen to pay by PayPal.', 'Translator');
+            case 'Here is a short summary of your order:':
+                return $this->module->l('Here is a short summary of your order:', 'Translator');
+            case 'The total amount of your order comes to':
+                return $this->module->l('The total amount of your order comes to', 'Translator');
+            case '(tax incl.)':
+                return $this->module->l('(tax incl.)', 'Translator');
+            case 'Please confirm your order by clicking "I confirm my order".':
+                return $this->module->l('Please confirm your order by clicking "I confirm my order".', 'Translator');
+            case 'Delete this payment method?':
+                return $this->module->l('Delete this payment method?', 'Translator');
+            case 'The following payment method will be deleted from your account:':
+                return $this->module->l('The following payment method will be deleted from your account:', 'Translator');
+            case 'Delete payment method':
+                return $this->module->l('Delete payment method', 'Translator');
+            case 'Please wait, we are processing your request':
+                return $this->module->l('Please wait, we are processing your request', 'Translator');
+            case 'Other payment methods':
+                return $this->module->l('Other payment methods', 'Translator');
+            case 'I confirm my order':
+                return $this->module->l('I confirm my order', 'Translator');
+            case 'Thanks for your purchase!':
+                return $this->module->l('Thanks for your purchase!', 'Translator');
+            case 'Please wait, we are processing your payment':
+                return $this->module->l('Please wait, we are processing your payment', 'Translator');
+            case 'This is taking longer than expected. Please wait...':
+                return $this->module->l('This is taking longer than expected. Please wait...', 'Translator');
+            case 'Ok':
+                return $this->module->l('Ok', 'Translator');
+            case 'Cancel':
+                return $this->module->l('Cancel', 'Translator');
+            case 'Secure payments':
+                return $this->module->l('Secure payments', 'Translator');
+            case 'or':
+                return $this->module->l('or', 'Translator');
+            case 'Express Checkout':
+                return $this->module->l('Express Checkout', 'Translator');
+            case 'Please wait, loading additional payment methods.':
+                return $this->module->l('Please wait, loading additional payment methods.', 'Translator');
+            case 'You have selected your %s PayPal account to proceed to the payment.':
+                return $this->module->l('You have selected your %s PayPal account to proceed to the payment.', 'Translator');
+            case 'Warning':
+                return $this->module->l('Warning', 'Translator');
+            case 'Card':
+                return $this->module->l('Card', 'Translator');
+            case 'Pay by Card - Secure payments':
+                return $this->module->l('Pay by Card - Secure payments', 'Translator');
+            case 'Pay with a PayPal account':
+                return $this->module->l('Pay with a PayPal account', 'Translator');
+            case 'Pay in installments with PayPal Pay Later':
+                return $this->module->l('Pay in installments with PayPal Pay Later', 'Translator');
+            case 'Pay by %s':
+                return $this->module->l('Pay by %s', 'Translator');
+            case 'Pay with %s':
+                return $this->module->l('Pay with %s', 'Translator');
+            case 'Pay later with invoice':
+                return $this->module->l('Pay later with invoice', 'Translator');
+            case 'Pay upon Invoice':
+                return $this->module->l('Pay upon Invoice', 'Translator');
+            case 'Contact customer service via %s':
+                return $this->module->l('Contact customer service via %s', 'Translator');
+            case 'Card holder name':
+                return $this->module->l('Card holder name', 'Translator');
+            case 'Card number':
+                return $this->module->l('Card number', 'Translator');
+            case 'Expiry date':
+                return $this->module->l('Expiry date', 'Translator');
+            case 'MM/YY':
+                return $this->module->l('MM/YY', 'Translator');
+            case 'CVC':
+                return $this->module->l('CVC', 'Translator');
+            case 'XXX':
+                return $this->module->l('XXX', 'Translator');
+            case 'Phone Number':
+                return $this->module->l('Phone Number', 'Translator');
+            case 'Date of Birth':
+                return $this->module->l('Date of Birth', 'Translator');
+            case 'Not required':
+                return $this->module->l('Not required', 'Translator');
+            case 'Created':
+                return $this->module->l('Created', 'Translator');
+            case 'Saved':
+                return $this->module->l('Saved', 'Translator');
+            case 'Approved':
+                return $this->module->l('Approved', 'Translator');
+            case 'Voided':
+                return $this->module->l('Voided', 'Translator');
+            case 'Completed':
+                return $this->module->l('Completed', 'Translator');
+            case 'Declined':
+                return $this->module->l('Declined', 'Translator');
+            case 'Pending':
+                return $this->module->l('Pending', 'Translator');
+            case 'Partially refunded':
+                return $this->module->l('Partially refunded', 'Translator');
+            case 'Refunded':
+                return $this->module->l('Refunded', 'Translator');
+            case 'Failed':
+                return $this->module->l('Failed', 'Translator');
+            case 'There was an error during the payment. Please try again or contact the support.':
+                return $this->module->l('There was an error during the payment. Please try again or contact the support.', 'Translator');
+            case 'No PayPal Javascript SDK Instance':
+                return $this->module->l('No PayPal Javascript SDK Instance', 'Translator');
+            case 'No Google Pay Javascript SDK Instance':
+                return $this->module->l('No Google Pay Javascript SDK Instance', 'Translator');
+            case 'No Apple Pay Javascript SDK Instance':
+                return $this->module->l('No Apple Pay Javascript SDK Instance', 'Translator');
+            case 'An error occurred fetching Google Pay transaction info':
+                return $this->module->l('An error occurred fetching Google Pay transaction info', 'Translator');
+            case 'An error occurred fetching Apple Pay payment request':
+                return $this->module->l('An error occurred fetching Apple Pay payment request', 'Translator');
+            case 'Card holder authentication canceled, please choose another payment method or try again.':
+                return $this->module->l('Card holder authentication canceled, please choose another payment method or try again.', 'Translator');
+            case 'An error occurred on card holder authentication, please choose another payment method or try again.':
+                return $this->module->l('An error occurred on card holder authentication, please choose another payment method or try again.', 'Translator');
+            case 'Card holder authentication failed, please choose another payment method or try again.':
+                return $this->module->l('Card holder authentication failed, please choose another payment method or try again.', 'Translator');
+            case 'Card holder authentication cannot be checked, please choose another payment method or try again.':
+                return $this->module->l('Card holder authentication cannot be checked, please choose another payment method or try again.', 'Translator');
+            case 'We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.':
+                return $this->module->l('We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.', 'Translator');
+            case 'We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.':
+                return $this->module->l('We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.', 'Translator');
+            case 'Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.':
+                return $this->module->l('Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.', 'Translator');
+            case 'The transaction failed. Please try a different card.':
+                return $this->module->l('The transaction failed. Please try a different card.', 'Translator');
+            case 'The transaction was refused.':
+                return $this->module->l('The transaction was refused.', 'Translator');
+            case 'This payment method is unavailable':
+                return $this->module->l('This payment method is unavailable', 'Translator');
+            case 'Unable to call API':
+                return $this->module->l('Unable to call API', 'Translator');
+            case 'PayPal order identifier is missing':
+                return $this->module->l('PayPal order identifier is missing', 'Translator');
+            case 'PayPal payment method is missing':
+                return $this->module->l('PayPal payment method is missing', 'Translator');
+            case 'Cart is invalid':
+                return $this->module->l('Cart is invalid', 'Translator');
+            case 'Order cannot be saved':
+                return $this->module->l('Order cannot be saved', 'Translator');
+            case 'OrderState cannot be saved':
+                return $this->module->l('OrderState cannot be saved', 'Translator');
+            case 'OrderPayment cannot be saved':
+                return $this->module->l('OrderPayment cannot be saved', 'Translator');
+            case 'The transaction amount doesn\'t match with the cart amount.':
+                return $this->module->l('The transaction amount doesn\'t match with the cart amount.', 'Translator');
+            case 'Cart doesn\'t contains product.':
+                return $this->module->l('Cart doesn\'t contains product.', 'Translator');
+            case 'Cart contains product unavailable.':
+                return $this->module->l('Cart contains product unavailable.', 'Translator');
+            case 'Cart invoice address is invalid.':
+                return $this->module->l('Cart invoice address is invalid.', 'Translator');
+            case 'Cart delivery address is invalid.':
+                return $this->module->l('Cart delivery address is invalid.', 'Translator');
+            case 'Cart delivery option is unavailable.':
+                return $this->module->l('Cart delivery option is unavailable.', 'Translator');
+            case 'Processing of this card type is not supported. Use another card type.':
+                return $this->module->l('Processing of this card type is not supported. Use another card type.', 'Translator');
+            case 'The CVC code length is invalid for the specified card type.':
+                return $this->module->l('The CVC code length is invalid for the specified card type.', 'Translator');
+            case 'Your card cannot be used to pay in this currency, please try another payment method.':
+                return $this->module->l('Your card cannot be used to pay in this currency, please try another payment method.', 'Translator');
+            case 'Your country is not supported by this payment method, please try to select another.':
+                return $this->module->l('Your country is not supported by this payment method, please try to select another.', 'Translator');
+            case 'The transaction failed. Please try a different payment method.':
+                return $this->module->l('The transaction failed. Please try a different payment method.', 'Translator');
+            case 'Transaction expired, please try again.':
+                return $this->module->l('Transaction expired, please try again.', 'Translator');
+            case 'Order is already captured.':
+                return $this->module->l('Order is already captured.', 'Translator');
+            case 'The payment is not valid: the amount is not eligible.':
+                return $this->module->l('The payment is not valid: the amount is not eligible.', 'Translator');
+            case 'This payment method has been refused by the payment platform, please use another payment method.':
+                return $this->module->l('This payment method has been refused by the payment platform, please use another payment method.', 'Translator');
+            case 'This message is sent automatically by module PrestaShop Checkout':
+                return $this->module->l('This message is sent automatically by module PrestaShop Checkout', 'Translator');
+            case 'A customer encountered a processing payment error :':
+                return $this->module->l('A customer encountered a processing payment error :', 'Translator');
+            case 'Customer identifier:':
+                return $this->module->l('Customer identifier:', 'Translator');
+            case 'Cart identifier:':
+                return $this->module->l('Cart identifier:', 'Translator');
+            case 'PayPal order identifier:':
+                return $this->module->l('PayPal order identifier:', 'Translator');
+            case 'Exception identifier:':
+                return $this->module->l('Exception identifier:', 'Translator');
+            case 'Exception detail:':
+                return $this->module->l('Exception detail:', 'Translator');
+            case 'If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.':
+                return $this->module->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', 'Translator');
+            case 'Payment gateway information':
+                return $this->module->l('Payment gateway information', 'Translator');
+            case 'Order identifier':
+                return $this->module->l('Order identifier', 'Translator');
+            case 'Order status':
+                return $this->module->l('Order status', 'Translator');
+            case 'Transaction identifier':
+                return $this->module->l('Transaction identifier', 'Translator');
+            case 'Transaction status':
+                return $this->module->l('Transaction status', 'Translator');
+            case 'Funding source':
+                return $this->module->l('Funding source', 'Translator');
+            case 'Amount paid':
+                return $this->module->l('Amount paid', 'Translator');
+            case 'Approve payment':
+                return $this->module->l('Approve payment', 'Translator');
+            case 'Authenticate payment':
+                return $this->module->l('Authenticate payment', 'Translator');
+            case 'Your payment has been declined by our payment gateway, please contact us via the link below.':
+                return $this->module->l('Your payment has been declined by our payment gateway, please contact us via the link below.', 'Translator');
+            case 'Your payment needs to be approved, please click the button below.':
+                return $this->module->l('Your payment needs to be approved, please click the button below.', 'Translator');
+            case 'Your payment needs to be authenticated, please click the button below.':
+                return $this->module->l('Your payment needs to be authenticated, please click the button below.', 'Translator');
+            case 'You will be redirected to an external secured page of our payment gateway.':
+                return $this->module->l('You will be redirected to an external secured page of our payment gateway.', 'Translator');
+            case 'If you have any question, please contact us.':
+                return $this->module->l('If you have any question, please contact us.', 'Translator');
+            case 'Payment method status':
+                return $this->module->l('Payment method status', 'Translator');
+            case 'was saved for future purchases':
+                return $this->module->l('was saved for future purchases', 'Translator');
+            case 'was not saved for future purchases':
+                return $this->module->l('was not saved for future purchases', 'Translator');
+            case 'Payment':
+                return $this->module->l('Payment', 'Translator');
+            case 'Refund':
+                return $this->module->l('Refund', 'Translator');
+            case 'You are not authorized to refund this order.':
+                return $this->module->l('You are not authorized to refund this order.', 'Translator');
+            case 'PayPal Order is invalid.':
+                return $this->module->l('PayPal Order is invalid.', 'Translator');
+            case 'PayPal Transaction is invalid.':
+                return $this->module->l('PayPal Transaction is invalid.', 'Translator');
+            case 'PayPal refund currency is invalid.':
+                return $this->module->l('PayPal refund currency is invalid.', 'Translator');
+            case 'PayPal refund amount is invalid.':
+                return $this->module->l('PayPal refund amount is invalid.', 'Translator');
+            case 'PayPal refund failed.':
+                return $this->module->l('PayPal refund failed.', 'Translator');
+            case 'Refund has been processed by PayPal, but order status change or email sending failed.':
+                return $this->module->l('Refund has been processed by PayPal, but order status change or email sending failed.', 'Translator');
+            case 'Refund cannot be processed by PayPal.':
+                return $this->module->l('Refund cannot be processed by PayPal.', 'Translator');
+            case 'Refund has been processed by PayPal.':
+                return $this->module->l('Refund has been processed by PayPal.', 'Translator');
+            case 'No PrestaShop Order identifier received':
+                return $this->module->l('No PrestaShop Order identifier received', 'Translator');
+            case 'Unable to find PayPal Order associated to this PrestaShop Order %s':
+                return $this->module->l('Unable to find PayPal Order associated to this PrestaShop Order %s', 'Translator');
+            case 'PayPal Order %s is not in the same environment as PrestaShop Checkout':
+                return $this->module->l('PayPal Order %s is not in the same environment as PrestaShop Checkout', 'Translator');
+            case 'Authorization captured successfully.':
+                return $this->module->l('Authorization captured successfully.', 'Translator');
+            case 'Authorization voided successfully.':
+                return $this->module->l('Authorization voided successfully.', 'Translator');
+            case 'Authorization reauthorized successfully.':
+                return $this->module->l('Authorization reauthorized successfully.', 'Translator');
+            case 'Eligible':
+                return $this->module->l('Eligible', 'Translator');
+            case 'Partially eligible':
+                return $this->module->l('Partially eligible', 'Translator');
+            case 'Not eligible':
+                return $this->module->l('Not eligible', 'Translator');
+            case 'Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.':
+                return $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.', 'Translator');
+            case 'Your PayPal balance remains intact if the customer claims that they did not receive an item.':
+                return $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item.', 'Translator');
+            case 'Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.':
+                return $this->module->l('Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.', 'Translator');
+            case 'Dispute categories covered:':
+                return $this->module->l('Dispute categories covered:', 'Translator');
+            case 'For more information, please go to the official PayPal website.':
+                return $this->module->l('For more information, please go to the official PayPal website.', 'Translator');
+            case 'The payer paid for an item that they did not receive.':
+                return $this->module->l('The payer paid for an item that they did not receive.', 'Translator');
+            case 'The payer did not authorize the payment.':
+                return $this->module->l('The payer did not authorize the payment.', 'Translator');
+            case 'The authorization has been successfully captured.':
+                return $this->module->l('The authorization has been successfully captured.', 'Translator');
+            case 'An error occurred during the capture of the authorization.':
+                return $this->module->l('An error occurred during the capture of the authorization.', 'Translator');
+            default:
+                return $key;
+        }
     }
 }

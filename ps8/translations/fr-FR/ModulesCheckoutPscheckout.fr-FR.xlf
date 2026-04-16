@@ -17,11 +17,11 @@
         <target>Le remboursement a été traité par PayPal, mais le changement de statut de la commande ou l'envoi de l'e-mail a échoué.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
-        <source>PayPal refund failed.</source>
-        <target>PayPal refund failed.</target>
-        <note>Line: </note>
-      </trans-unit>
+    <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
+      <source>PayPal refund failed.</source>
+      <target>Le remboursement PayPal a échoué.</target>
+      <note>Line: </note>
+    </trans-unit>
       <trans-unit id="5825dada06af7bef8ae4db80c2c5aeba">
         <source>PayPal refund amount is invalid.</source>
         <target>Montant de remboursement PayPal invalide.</target>
@@ -42,16 +42,16 @@
         <target>Commande PayPal invalide.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
-        <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
-        <target>PayPal Order %s is not in the same environment as PrestaShop Checkout</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
-        <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
-        <target>Unable to find PayPal Order associated to this PrestaShop Order %s</target>
-        <note>Line: </note>
-      </trans-unit>
+    <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
+      <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
+      <target>La commande PayPal %s n'est pas dans le même environnement que PrestaShop Checkout</target>
+      <note>Line: </note>
+    </trans-unit>
+    <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
+      <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
+      <target>Impossible de trouver la commande PayPal associée à cette commande PrestaShop %s</target>
+      <note>Line: </note>
+    </trans-unit>
       <trans-unit id="1b43db46cf115ecaf2b2e79c780b5266">
         <source>No PrestaShop Order identifier received</source>
         <target>Aucune référence de commande PrestaShop reçue</target>
@@ -62,11 +62,11 @@
         <target>Fournissez les moyens de paiement les plus couramment utilisés à vos clients dans ce module tout-en-un, et gérez toutes vos ventes dans une interface centralisée.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="94e99b8ebfc769e4d94736e575bfbe0b">
-        <source>PrestaShop Checkout</source>
-        <target>PrestaShop Checkout</target>
-        <note>Line: </note>
-      </trans-unit>
+    <trans-unit id="94e99b8ebfc769e4d94736e575bfbe0b">
+      <source>PrestaShop Checkout</source>
+      <target>PrestaShop Checkout</target>
+      <note>Line: </note>
+    </trans-unit>
       <trans-unit id="0c27df1feb8791f6c99a775a03b3293b">
         <source>The payer did not authorize the payment.</source>
         <target>Le payeur n'a pas autorisé le paiement.</target>
@@ -117,11 +117,11 @@
         <target>Éligible</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
-        <source>You are not authorized to refund this order.</source>
-        <target>You are not authorized to refund this order.</target>
-        <note>Line: </note>
-      </trans-unit>
+    <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
+      <source>You are not authorized to refund this order.</source>
+      <target>Vous n'êtes pas autorisé à rembourser cette commande.</target>
+      <note>Line: </note>
+    </trans-unit>
       <trans-unit id="76f0ed934de85cc7131910b32ede7714">
         <source>Refund</source>
         <target>Remboursement</target>
@@ -392,8 +392,8 @@
         <target>Un problème est survenu lors du traitement de votre paiement Apple Pay. Veuillez vérifier les détails de votre commande et réessayer, ou utilisez un autre mode de paiement.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
-        <source>We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.</target>
         <note>Line: </note>
       </trans-unit>
@@ -867,10 +867,10 @@
         <source>Status</source>
         <target>Statut</target>
       </trans-unit>
-      <trans-unit id="ecfa6e92f6b49a55e336afde4c64aa14">
-        <source>3D Secure</source>
-        <target>3D Secure</target>
-      </trans-unit>
+    <trans-unit id="ecfa6e92f6b49a55e336afde4c64aa14">
+      <source>3D Secure</source>
+      <target>Vérification 3D Secure</target>
+    </trans-unit>
       <trans-unit id="ef93d2efbc5c9bdb02f807dd2c9337fb">
         <source>Net amount to refund</source>
         <target>Montant net à rembourser</target>
@@ -1003,10 +1003,10 @@
         <source>The card number, the expiry date or the CVV is invalid. Please verify all three and try again.</source>
         <target>Le numéro de carte, la date d'expiration ou le code de sécurité est invalide. Vérifiez les et essayez de nouveau.</target>
       </trans-unit>
-      <trans-unit id="66ee09a7e80eb7b54cf0a676b0a15ead">
-        <source>The amount cannot be updated as the `payer` has chosen and approved a specific financing offer for a given amount. Please Create a new Order with the updated Order amount and have the `payer` approve the new payment terms. </source>
-        <target>The amount cannot be updated as the `payer` has chosen and approved a specific financing offer for a given amount. Please Create a new Order with the updated Order amount and have the `payer` approve the new payment terms. </target>
-      </trans-unit>
+    <trans-unit id="66ee09a7e80eb7b54cf0a676b0a15ead">
+      <source>The amount cannot be updated as the `payer` has chosen and approved a specific financing offer for a given amount. Please Create a new Order with the updated Order amount and have the `payer` approve the new payment terms. </source>
+      <target>Le montant ne peut pas être mis à jour car le `payer` a choisi et approuvé une offre de financement spécifique pour un montant donné. Veuillez créer une nouvelle commande avec le montant mis à jour et demander au `payer` d'approuver les nouvelles conditions de paiement.</target>
+    </trans-unit>
       <trans-unit id="6a5ff55a65a1abc268f70656bec2c3fd">
         <source>That transaction has been blocked by Fraud Protection rules. Please try another card or contact customer service to process your order or change their Fraud Protection rules.</source>
         <target>Cette transaction a été bloquée par les règles de protection anti-fraude. Veuillez utiliser une autre carte ou contacter le service client pour traiter votre commande ou pour changer les règles anti-fraude du compte bancaire.</target>
@@ -1035,10 +1035,10 @@
         <source>Order does not have a corresponding matching reference_id. Please provide a valid reference_id and try again.</source>
         <target>La commande ne détient pas un reference_id correspondant. Veuillez fournir a reference_id valide et essayer de nouveau.</target>
       </trans-unit>
-      <trans-unit id="8ed07718eb6855adc71cbe4b728d1ecf">
-        <source>The parameter value does not conform to the expected `YYYY-MM` format.</source>
-        <target>The parameter value does not conform to the expected `YYYY-MM` format.</target>
-      </trans-unit>
+    <trans-unit id="8ed07718eb6855adc71cbe4b728d1ecf">
+      <source>The parameter value does not conform to the expected `YYYY-MM` format.</source>
+      <target>La valeur du paramètre ne correspond pas au format attendu `YYYY-MM`.</target>
+    </trans-unit>
       <trans-unit id="8fda8956e53ffe823578bbda98463743">
         <source>Specified resource ID does not exist. Please check the resource ID and try again.</source>
         <target>La référence de ressource spécifiée n'existe pas. Vérifier la référence de ressource et essayer de nouveau.</target>
@@ -1047,10 +1047,10 @@
         <source>Order already authorized. Only one authorization per order is allowed. Please contact customer service to check that your order has successfully been validated.</source>
         <target>Commande déjà autorisée. Seulement une autorisation par commande est possible. Contacter le service client pour vérifier que votre commande a bien été validée avec succès.</target>
       </trans-unit>
-      <trans-unit id="9ad86067ac993ba83c58dd98951564b2">
-        <source>This payment instruction is supported only when `intent=CAPTURE`. If intent is `AUTHORIZE`, you must provide the payment instruction when the authorization is captured. For details, see Capture authorization.</source>
-        <target>This payment instruction is supported only when `intent=CAPTURE`. If intent is `AUTHORIZE`, you must provide the payment instruction when the authorization is captured. For details, see Capture authorization.</target>
-      </trans-unit>
+    <trans-unit id="9ad86067ac993ba83c58dd98951564b2">
+      <source>This payment instruction is supported only when `intent=CAPTURE`. If intent is `AUTHORIZE`, you must provide the payment instruction when the authorization is captured. For details, see Capture authorization.</source>
+      <target>Cette instruction de paiement est prise en charge uniquement lorsque `intent=CAPTURE`. Si l'intention est `AUTHORIZE`, vous devez fournir l'instruction de paiement lors de la capture de l'autorisation. Pour plus de détails, consultez Capture authorization.</target>
+    </trans-unit>
       <trans-unit id="9d30ce7114a0cf491695a5f01d78927d">
         <source>A required parameter is missing. Please check that every personnal and delivery details are filled and try again.</source>
         <target>Un paramètre requis est manquant. Veuillez vérifier que tous les champs d'informations personnelles et de livraison sont remplis et essayer de nouveau.</target>
@@ -1067,10 +1067,10 @@
         <source>Processing of this card brand is not supported. Use another type of card.</source>
         <target>Le traitement de ce type de carte n'est pas pris en charge. Utiliser un autre type de carte.</target>
       </trans-unit>
-      <trans-unit id="ab1d627fef1887867cc20cb003bc85a4">
-        <source>Threeds Secure Parameters are empty.</source>
-        <target>Threeds Secure Parameters are empty.</target>
-      </trans-unit>
+    <trans-unit id="ab1d627fef1887867cc20cb003bc85a4">
+      <source>Threeds Secure Parameters are empty.</source>
+      <target>Les paramètres Threeds Secure sont vides.</target>
+    </trans-unit>
       <trans-unit id="bb13604185380c5e2aee9423146f3380">
         <source>Currency code not supported for direct card payments using this card type. Please refer https://developer.paypal.com/docs/integration/direct/rest/currency-codes/ for list of supported currency codes.</source>
         <target>Devise non prise en charge pour les paiements par carte pour ce type de carte. Se référer à https://developer.paypal.com/docs/integration/direct/rest/currency-codes/ pour la liste des devises supportées.</target>
@@ -1111,10 +1111,10 @@
         <source>The customer has not approved payment.</source>
         <target>Le client n'a pas approuvé le paiement.</target>
       </trans-unit>
-      <trans-unit id="e229686c76660524e7c83d4fda4a2b48">
-        <source>Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.</source>
-        <target>Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.</target>
-      </trans-unit>
+    <trans-unit id="e229686c76660524e7c83d4fda4a2b48">
+      <source>Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.</source>
+      <target>Le payeur n'a pas encore approuvé la commande pour le paiement. Veuillez rediriger le payeur vers l'URL `rel`:`approve` renvoyée dans les liens HATEOAS de l'appel Create Order, ou fournir un payment_source valide dans la requête.</target>
+    </trans-unit>
       <trans-unit id="e39b765a3de4545e91f889374c84535c">
         <source>The option to save an order is only available if the `intent` is AUTHORIZE and `processing_instruction` is ORDER_SAVED_EXPLICITLY. Please change the `intent` to AUTHORIZE, `processing_instruction` to ORDER_SAVED_EXPLICITLY and try again.</source>
         <target>L'option pour enregistrer la commande est seulement disponible si le 'intent' est AUTHORIZE et le "processing_instruction" est ORDER_SAVED_EXPLICITY. Veuillez changer le "intent" en AUTHORIZE, "processing_instruction" en "ORDER_SAVED_EXPLICITY" et essayer de nouveau.</target>
@@ -1127,14 +1127,14 @@
         <source>The shipping address is required. Please check that shipping address fields are completed and try again.</source>
         <target>L'adresse de livraison est requis. Veuillez vérifier les champs d'adresse de livraison et essayer de nouveau.</target>
       </trans-unit>
-      <trans-unit id="ecb1bec859ca59e1f4cf6935743ddad4">
-        <source>An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.</source>
-        <target>An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.</target>
-      </trans-unit>
-      <trans-unit id="fd62bf85c1f7c9f7bb4257cafcb0e944">
-        <source>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</source>
-        <target>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</target>
-      </trans-unit>
+    <trans-unit id="ecb1bec859ca59e1f4cf6935743ddad4">
+      <source>An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.</source>
+      <target>Un montant d'autorisation ne peut être spécifié que si une commande a été enregistrée en appelant /v2/checkout/orders/{order_id}/save. Veuillez enregistrer la commande et réessayer.</target>
+    </trans-unit>
+    <trans-unit id="fd62bf85c1f7c9f7bb4257cafcb0e944">
+      <source>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</source>
+      <target>La commande a été créée avec l'intention `AUTHORIZE`. Pour finaliser l'autorisation, utilisez `/v2/checkout/orders/{order_id}/authorize`. Ou créez une commande avec l'intention `CAPTURE`.</target>
+    </trans-unit>
       <trans-unit id="a3f312477f380a6715ff7610ff290529">
         <source>PrestaShop Checkout transactions won't work in some of your configured countries, but there is a solution !</source>
         <target>PrestaShop Checkout ne fonctionnera pas dans certains de vos pays configurés, mais il y a une solution !</target>
@@ -1195,9 +1195,9 @@
         <source>Warning</source>
         <target>Attention</target>
       </trans-unit>
-      <trans-unit id="2347172eb56070e194a4a9367d2b0b2f">
-        <source>You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.</source>
-        <target>Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.</target>
+      <trans-unit id="3086ae26fec0e87976eff9849d83c97b">
+        <source>You have selected your %s PayPal account to proceed to the payment.</source>
+        <target>Vous avez choisi le compte PayPal %s pour effectuer le paiement.</target>
       </trans-unit>
       <trans-unit id="aec47b33255dfc9e90e269930c428c40">
         <source>Please wait, loading additional payment methods.</source>
@@ -1783,10 +1783,10 @@
         <source>Details for Bank statements</source>
         <target>Details pour relevés bancaires</target>
       </trans-unit>
-      <trans-unit id="7a4711bc25b9893e1092c166e726b084">
-        <source>(merchant ID {0})</source>
-        <target>(merchant ID {0})</target>
-      </trans-unit>
+    <trans-unit id="7a4711bc25b9893e1092c166e726b084">
+      <source>(merchant ID {0})</source>
+      <target>(ID marchand {0})</target>
+    </trans-unit>
       <trans-unit id="7c6c2e5d48ab37a007cbf70d3ea25fa4">
         <source>pending</source>
         <target>En attente</target>
@@ -1903,10 +1903,10 @@
         <source>We will send you a link to reset your password.</source>
         <target>Nous allons vous envoyer un lien pour réinitialiser votre mot de passe.</target>
       </trans-unit>
-      <trans-unit id="9345d00abe16aac0416b99818a56aabc">
-        <source>PrestaShop Checkout 2.0</source>
-        <target>PrestaShop Checkout 2.0</target>
-      </trans-unit>
+    <trans-unit id="9345d00abe16aac0416b99818a56aabc">
+      <source>PrestaShop Checkout 2.0</source>
+      <target>Paiement PrestaShop 2.0</target>
+    </trans-unit>
       <trans-unit id="934c4326dcfdd3a2f62aaef1c13cb464">
         <source>Setup fraud tool</source>
         <target>Configurer l'outil de fraude</target>
@@ -2479,6 +2479,46 @@
         <source>Authorization reauthorized successfully.</source>
         <target>L'autorisation a été renouvelée avec succès.</target>
       </trans-unit>
+    <trans-unit id="9976a3ca5309b7639b4a8d54561f2ca9">
+      <source>Pay upon Invoice</source>
+      <target>Payer sur facture</target>
+    </trans-unit>
+    <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
+      <source>Pay later with invoice</source>
+      <target>Payer plus tard par facture</target>
+    </trans-unit>
+    <trans-unit id="853e088f85c693c3c6ab297971b4aecc">
+      <source>Contact customer service via %s</source>
+      <target>Contactez le service client via %s</target>
+    </trans-unit>
+    <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
+      <source>Phone Number</source>
+      <target>Numéro de téléphone</target>
+    </trans-unit>
+    <trans-unit id="10803b83a68db8f7e7a33e3b41e184d0">
+      <source>Date of Birth</source>
+      <target>Date de naissance</target>
+    </trans-unit>
+    <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
+      <source>Not required</source>
+      <target>Non requis</target>
+    </trans-unit>
+    <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+      <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+      <target>Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration de paiement de ce site web. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.</target>
+    </trans-unit>
+    <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
+      <source>The payment is not valid: the amount is not eligible.</source>
+      <target>Le paiement n'est pas valide : le montant n'est pas éligible.</target>
+    </trans-unit>
+    <trans-unit id="3253bd5ea8ec8be1fd8679a3a9e1fb4f">
+      <source>The authorization has been successfully captured.</source>
+      <target>L'autorisation a été capturée avec succès.</target>
+    </trans-unit>
+    <trans-unit id="9242a892e473073c133a71a50eb29b99">
+      <source>An error occurred during the capture of the authorization.</source>
+      <target>Une erreur s'est produite lors de la capture de l'autorisation.</target>
+    </trans-unit>
     </body>
   </file>
 </xliff>

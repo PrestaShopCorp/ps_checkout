@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
         <source>PayPal refund failed.</source>
-        <target>PayPal refund failed.</target>
+        <target>Rimborso PayPal non riuscito.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="5825dada06af7bef8ae4db80c2c5aeba">
@@ -44,12 +44,12 @@
       </trans-unit>
       <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
         <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
-        <target>PayPal Order %s is not in the same environment as PrestaShop Checkout</target>
+        <target>L'ordine PayPal %s non si trova nello stesso ambiente di PrestaShop Checkout</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
         <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
-        <target>Unable to find PayPal Order associated to this PrestaShop Order %s</target>
+        <target>Impossibile trovare l'ordine PayPal associato a questo ordine PrestaShop %s</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1b43db46cf115ecaf2b2e79c780b5266">
@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
         <source>You are not authorized to refund this order.</source>
-        <target>You are not authorized to refund this order.</target>
+        <target>Non sei autorizzato a rimborsare questo ordine.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="76f0ed934de85cc7131910b32ede7714">
@@ -392,8 +392,8 @@
         <target>Abbiamo riscontrato un problema durante l’elaborazione del tuo pagamento Apple Pay. Verifica i dettagli del tuo ordine e riprova o utilizza un altro metodo di pagamento.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
-        <source>We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>Non possiamo elaborare il tuo pagamento Apple Pay al momento. Questo potrebbe essere dovuto a un problema di verifica della configurazione del pagamento per questo sito. Riprova più tardi o scegli un altro metodo di pagamento.</target>
         <note>Line: </note>
       </trans-unit>
@@ -1195,9 +1195,9 @@
         <source>Warning</source>
         <target>Attenzione!</target>
       </trans-unit>
-      <trans-unit id="2347172eb56070e194a4a9367d2b0b2f">
-        <source>You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.</source>
-        <target>Hai scelto il conto PayPal [PAYPAL_ACCOUNT] per effettuare il pagamento.</target>
+      <trans-unit id="3086ae26fec0e87976eff9849d83c97b">
+        <source>You have selected your %s PayPal account to proceed to the payment.</source>
+        <target>Hai scelto il conto PayPal %s per effettuare il pagamento.</target>
       </trans-unit>
       <trans-unit id="aec47b33255dfc9e90e269930c428c40">
         <source>Please wait, loading additional payment methods.</source>
@@ -2466,6 +2466,58 @@
       <trans-unit id="92d485617457c66799814fa3ea9cc50b">
         <source>An unexpected refund error occurred.</source>
         <target>Si è verificato un errore imprevisto durante il rimborso.</target>
+      </trans-unit>
+      <trans-unit id="9976a3ca5309b7639b4a8d54561f2ca9">
+        <source>Pay upon Invoice</source>
+        <target>Paga tramite fattura</target>
+      </trans-unit>
+      <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
+        <source>Pay later with invoice</source>
+        <target>Paga più tardi con fattura</target>
+      </trans-unit>
+      <trans-unit id="853e088f85c693c3c6ab297971b4aecc">
+        <source>Contact customer service via %s</source>
+        <target>Contatta il servizio clienti tramite %s</target>
+      </trans-unit>
+      <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
+        <source>Phone Number</source>
+        <target>Numero di telefono</target>
+      </trans-unit>
+      <trans-unit id="10803b83a68db8f7e7a33e3b41e184d0">
+        <source>Date of Birth</source>
+        <target>Data di nascita</target>
+      </trans-unit>
+      <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
+        <source>Not required</source>
+        <target>Non richiesto</target>
+      </trans-unit>
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+        <target>Al momento non siamo in grado di elaborare il pagamento tramite Apple Pay. Ciò potrebbe essere dovuto a un problema nella verifica della configurazione del pagamento per questo sito web. Riprova più tardi o scegli un altro metodo di pagamento.</target>
+      </trans-unit>
+      <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
+        <source>The payment is not valid: the amount is not eligible.</source>
+        <target>Il pagamento non è valido: l'importo non è idoneo.</target>
+      </trans-unit>
+      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
+        <source>Authorization captured successfully.</source>
+        <target>Autorizzazione acquisita con successo.</target>
+      </trans-unit>
+      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
+        <source>Authorization voided successfully.</source>
+        <target>Autorizzazione annullata con successo.</target>
+      </trans-unit>
+      <trans-unit id="d7711b029221c7de1444292a4068bfee">
+        <source>Authorization reauthorized successfully.</source>
+        <target>Autorizzazione ri-autorizzata con successo.</target>
+      </trans-unit>
+      <trans-unit id="3253bd5ea8ec8be1fd8679a3a9e1fb4f">
+        <source>The authorization has been successfully captured.</source>
+        <target>L'autorizzazione è stata acquisita con successo.</target>
+      </trans-unit>
+      <trans-unit id="9242a892e473073c133a71a50eb29b99">
+        <source>An error occurred during the capture of the authorization.</source>
+        <target>Si è verificato un errore durante l'acquisizione dell'autorizzazione.</target>
       </trans-unit>
     </body>
   </file>
