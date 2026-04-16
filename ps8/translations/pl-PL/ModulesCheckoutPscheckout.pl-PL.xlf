@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
         <source>PayPal refund failed.</source>
-        <target>PayPal refund failed.</target>
+        <target>Zwrot PayPal nie powiódł się.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="5825dada06af7bef8ae4db80c2c5aeba">
@@ -44,12 +44,12 @@
       </trans-unit>
       <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
         <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
-        <target>PayPal Order %s is not in the same environment as PrestaShop Checkout</target>
+        <target>Zamówienie PayPal %s nie znajduje się w tym samym środowisku co PrestaShop Checkout</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
         <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
-        <target>Unable to find PayPal Order associated to this PrestaShop Order %s</target>
+        <target>Nie można znaleźć zamówienia PayPal powiązanego z tym zamówieniem PrestaShop %s</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1b43db46cf115ecaf2b2e79c780b5266">
@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
         <source>You are not authorized to refund this order.</source>
-        <target>You are not authorized to refund this order.</target>
+        <target>Nie masz uprawnień do zwrotu środków za to zamówienie.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="76f0ed934de85cc7131910b32ede7714">
@@ -534,7 +534,7 @@
       </trans-unit>
       <trans-unit id="f990493af3321939ca512f8f2cace108">
         <source>Pay by %s</source>
-        <target>Pay by %s</target>
+        <target>Zapłać przez %s</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="fc9b4762660906602b63bcd99e5e9747">
@@ -549,7 +549,7 @@
       </trans-unit>
       <trans-unit id="c5ddac9cef20e114d7fd3e5897125bc4">
         <source>Pay by Card - Secure payments</source>
-        <target>Pay by Card - Secure payments</target>
+        <target>Zapłać kartą - Bezpieczne płatności</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1d565b9e5303987bb1b1938d5d458bca">

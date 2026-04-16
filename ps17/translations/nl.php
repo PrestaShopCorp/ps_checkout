@@ -15,7 +15,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_ccf338e772778287ddef6911855e5ba3']
 $_MODULE['<{ps_checkout}prestashop>translator_bc06e3a40808fc7351ff8f57b3bad7cf'] = 'Ongeldige PayPal-transactie.';
 $_MODULE['<{ps_checkout}prestashop>translator_da74acca9d5669367fa982b7694f5303'] = 'Ongeldige PayPal-restitutievaluta.';
 $_MODULE['<{ps_checkout}prestashop>translator_5825dada06af7bef8ae4db80c2c5aeba'] = 'Ongeldig PayPal-restitutiebedrag.';
-$_MODULE['<{ps_checkout}prestashop>translator_c7908a2ddbd02129b4de84d2141ea180'] = 'PayPal refund failed.';
+$_MODULE['<{ps_checkout}prestashop>translator_c7908a2ddbd02129b4de84d2141ea180'] = 'PayPal-terugbetaling mislukt.';
 $_MODULE['<{ps_checkout}prestashop>translator_785e1b8c2c57d4ad6ed603778b4f6ba9'] = 'De terugbetaling is door PayPal verwerkt, maar het wijzigen van de bestelstatus of het verzenden van de e-mail is mislukt.';
 $_MODULE['<{ps_checkout}prestashop>translator_ee6403a0a4d60590a6b6634df2fdce3f'] = 'De terugbetaling kon niet worden gedaan via PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translator_d1a7ac6d45dcb4a782b441e29380056a'] = 'De terugbetaling is gedaan via PayPal.';
