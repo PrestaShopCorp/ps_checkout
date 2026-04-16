@@ -167,11 +167,11 @@ $_MODULE['<{ps_checkout}prestashop>translator_b4a89c5a9a46cf77f29e1c2d42af9083']
 $_MODULE['<{ps_checkout}prestashop>translator_e8780ac6730b52a2ebe7d18f308ff411'] = 'This is taking longer than expected. Please wait...';
 $_MODULE['<{ps_checkout}prestashop>translator_a60852f204ed8028c1c58808b746d115'] = 'Ok';
 $_MODULE['<{ps_checkout}prestashop>translator_ea4788705e6873b424c65e91c2846b19'] = 'Cancel';
-$_MODULE['<{ps_checkout}prestashop>translator_2f2401d57093e7d31bf2689fb87f72f6'] = '100% secure payments';
+$_MODULE['<{ps_checkout}prestashop>translator_90882b25ee7a8a13908647d038ea9420'] = 'Secure payments';
 $_MODULE['<{ps_checkout}prestashop>translator_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'or';
 $_MODULE['<{ps_checkout}prestashop>translator_2e3e721e530a957f81d5b5dcff0bf0e1'] = 'Express Checkout';
 $_MODULE['<{ps_checkout}prestashop>translator_1d565b9e5303987bb1b1938d5d458bca'] = 'Card';
-$_MODULE['<{ps_checkout}prestashop>translator_983fe12e91079dcb00c74772b50747a3'] = 'Pay by Card - 100% secure payments';
+$_MODULE['<{ps_checkout}prestashop>translator_c5ddac9cef20e114d7fd3e5897125bc4'] = 'Pay by Card - Secure payments';
 $_MODULE['<{ps_checkout}prestashop>translator_34ace703adbf14df140d3c02234f67bd'] = 'Pay with a PayPal account';
 $_MODULE['<{ps_checkout}prestashop>translator_fc9b4762660906602b63bcd99e5e9747'] = 'Pay in installments with PayPal Pay Later';
 $_MODULE['<{ps_checkout}prestashop>translator_f990493af3321939ca512f8f2cace108'] = 'Pay by %s';

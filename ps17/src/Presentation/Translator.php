@@ -68,7 +68,7 @@ class Translator implements TranslatorInterface
             'This is taking longer than expected. Please wait...' => $this->module->l('This is taking longer than expected. Please wait...', 'Translator'),
             'Ok' => $this->module->l('Ok', 'Translator'),
             'Cancel' => $this->module->l('Cancel', 'Translator'),
-            '100% secure payments' => $this->module->l('100% secure payments', 'Translator'),
+            'Secure payments' => $this->module->l('Secure payments', 'Translator'),
             'or' => $this->module->l('or', 'Translator'),
             'Express Checkout' => $this->module->l('Express Checkout', 'Translator'),
             'Please wait, loading additional payment methods.' => $this->module->l('Please wait, loading additional payment methods.', 'Translator'),
@@ -76,7 +76,7 @@ class Translator implements TranslatorInterface
             'Warning' => $this->module->l('Warning', 'Translator'),
 
             'Card' => $this->module->l('Card', 'Translator'),
-            'Pay by Card - 100% secure payments' => $this->module->l('Pay by Card - 100% secure payments', 'Translator'),
+            'Pay by Card - Secure payments' => $this->module->l('Pay by Card - Secure payments', 'Translator'),
             'Pay with a PayPal account' => $this->module->l('Pay with a PayPal account', 'Translator'),
             'Pay in installments with PayPal Pay Later' => $this->module->l('Pay in installments with PayPal Pay Later', 'Translator'),
             'Pay by %s' => $this->module->l('Pay by %s', 'Translator'),

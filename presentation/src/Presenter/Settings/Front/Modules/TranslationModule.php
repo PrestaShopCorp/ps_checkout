@@ -74,7 +74,7 @@ class TranslationModule implements PresenterInterface
                 'loader-component.label.header' => $this->translator->trans('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->translator->trans('Please wait, we are processing your payment'),
                 'loader-component.label.body.longer' => $this->translator->trans('This is taking longer than expected. Please wait...'),
-                'payment-method-logos.title' => $this->translator->trans('100% secure payments'),
+                'payment-method-logos.title' => $this->translator->trans('Secure payments'),
                 'express-button.cart.separator' => $this->translator->trans('or'),
                 'express-button.checkout.express-checkout' => $this->translator->trans('Express Checkout'),
                 'ok' => $this->translator->trans('Ok'),
