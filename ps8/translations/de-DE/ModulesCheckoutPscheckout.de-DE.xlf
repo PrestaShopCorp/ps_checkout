@@ -2495,10 +2495,6 @@
         <source>Not required</source>
         <target>Nicht erforderlich</target>
       </trans-unit>
-      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
-        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
-        <target>Wir können Ihre Apple Pay-Zahlung derzeit nicht verarbeiten. Dies könnte auf ein Problem bei der Überprüfung der Zahlungseinrichtung für diese Website zurückzuführen sein. Bitte versuchen Sie es später erneut oder wählen Sie eine andere Zahlungsmethode.</target>
-      </trans-unit>
       <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
         <source>Authorization captured successfully.</source>
         <target>Autorisierung erfolgreich erfasst.</target>

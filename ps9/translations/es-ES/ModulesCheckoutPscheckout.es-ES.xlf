@@ -2491,10 +2491,6 @@
         <source>Not required</source>
         <target>No requerido</target>
       </trans-unit>
-      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
-        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
-        <target>No podemos procesar su pago con Apple Pay en este momento. Esto podría deberse a un problema al verificar la configuración de pago para este sitio web. Por favor, inténtelo de nuevo más tarde o elija otro método de pago.</target>
-      </trans-unit>
       <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
         <source>The payment is not valid: the amount is not eligible.</source>
         <target>El pago no es válido: el importe no es elegible.</target>

@@ -2515,10 +2515,6 @@
         <source>An error occurred during the capture of the authorization.</source>
         <target>An error occurred during the capture of the authorization.</target>
       </trans-unit>
-      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
-        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
-        <target>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</target>
-      </trans-unit>
     </body>
   </file>
 </xliff>

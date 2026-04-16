@@ -1127,11 +1127,6 @@
         <source>The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.</source>
         <target>La commande a été créée avec l'intention `AUTHORIZE`. Pour finaliser l'autorisation, utilisez `/v2/checkout/orders/{order_id}/authorize`. Ou créez une commande avec l'intention `CAPTURE`.</target>
       </trans-unit>
-      <trans-unit id="fb970bdd962fa85ffc3459b4d5312b10">
-        <source>The transaction failed. Please try a different card.</source>
-        <target>La transaction a échoué. Veuillez essayer une carte différente.</target>
-        <note>Line: </note>
-      </trans-unit>
       <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
         <source>Pay later with invoice</source>
         <target>Payer plus tard par facture</target>
@@ -1151,10 +1146,6 @@
       <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
         <source>Not required</source>
         <target>Non requis</target>
-      </trans-unit>
-      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
-        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
-        <target>Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration de paiement de ce site web. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.</target>
       </trans-unit>
       <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
         <source>The payment is not valid: the amount is not eligible.</source>
