@@ -202,7 +202,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_78432b718ec482b7211e1a45785087f1']
 $_MODULE['<{ps_checkout}prestashop>translator_39dc86ebdd6c930447215d738bc4d15f'] = 'Une erreur est survenue lors de l\'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>translator_816565ccf105493c7b15166627f6fc16'] = 'Echec de l\'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>translator_52afb370f87a4acfe4f1aaee204835eb'] = 'L\'identité du titulaire de la carte n\'a pas pu être vérifiée, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
-$_MODULE['<{ps_checkout}prestashop>translator_73f9b9812ae06d85ba2e015622a48ad5'] = 'Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.';
+$_MODULE['<{ps_checkout}prestashop>translator_333c40471aae73aa1ef94fd513b0cc54'] = 'Nous ne pouvons pas traiter votre paiement Apple Pay pour le moment. Cela peut être dû à un problème de vérification de la configuration du paiement pour ce site. Veuillez réessayer plus tard ou choisir un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>translator_3aa23f90376bc10782584d22a91aae97'] = 'Un problème est survenu lors du traitement de votre paiement Apple Pay. Veuillez vérifier les détails de votre commande et réessayer, ou utilisez un autre mode de paiement.';
 $_MODULE['<{ps_checkout}prestashop>translator_e1c709bbd92871a57367a9f923874278'] = 'Erreur lors du processus de paiement, vous avez peut être été débité. Veuillez vérifier votre historique de commande dans votre compte client. Contactez le service client pour en savoir plus.';
 $_MODULE['<{ps_checkout}prestashop>translator_fb970bdd962fa85ffc3459b4d5312b10'] = 'La transaction a échoué. Veuillez essayer une carte différente.';
@@ -272,3 +272,12 @@ $_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b']
 $_MODULE['<{ps_checkout}prestashop>translator_3369ba2ed7cf53ddee6687b80ca28724'] = 'L\'autorisation a été capturée avec succès.';
 $_MODULE['<{ps_checkout}prestashop>translator_46b0801bbbd67d6f88169ac8d958176d'] = 'L\'autorisation a été annulée avec succès.';
 $_MODULE['<{ps_checkout}prestashop>translator_d7711b029221c7de1444292a4068bfee'] = 'L\'autorisation a été renouvelée avec succès.';
+$_MODULE['<{ps_checkout}prestashop>translator_9976a3ca5309b7639b4a8d54561f2ca9'] = 'Paiement par facture';
+$_MODULE['<{ps_checkout}prestashop>translator_c49fbef53ae687dd6866e9075f23e83d'] = 'Payer plus tard par facture';
+$_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc'] = 'Contactez le service client via %s';
+$_MODULE['<{ps_checkout}prestashop>translator_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Numéro de téléphone';
+$_MODULE['<{ps_checkout}prestashop>translator_10803b83a68db8f7e7a33e3b41e184d0'] = 'Date de naissance';
+$_MODULE['<{ps_checkout}prestashop>translator_6fd5e95dc0bce8329da87e1152677b48'] = 'Non requis';
+$_MODULE['<{ps_checkout}prestashop>translator_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'Le paiement n\'est pas valide : le montant n\'est pas éligible.';
+$_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'L\'autorisation a été capturée avec succès.';
+$_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Une erreur est survenue lors de la capture de l\'autorisation.';

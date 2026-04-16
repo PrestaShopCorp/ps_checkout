@@ -202,7 +202,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_78432b718ec482b7211e1a45785087f1']
 $_MODULE['<{ps_checkout}prestashop>translator_39dc86ebdd6c930447215d738bc4d15f'] = 'Er is een fout opgetreden bij de verificatie van de kaarthouder, kies een andere betaalmethode of probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>translator_816565ccf105493c7b15166627f6fc16'] = 'Verificatie van kaarthouder is mislukt, kies een andere betaalmethode of probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>translator_52afb370f87a4acfe4f1aaee204835eb'] = 'De verificatie van kaarthouder kan niet worden gecontroleerd, kies een andere betaalmethode of probeer het opnieuw.';
-$_MODULE['<{ps_checkout}prestashop>translator_73f9b9812ae06d85ba2e015622a48ad5'] = 'We kunnen je Apple Pay-betaling momenteel niet verwerken. Dit kan komen door een probleem met het verifiëren van de betalingsinstellingen voor deze website. Probeer het later opnieuw of kies een andere betaalmethode.';
+$_MODULE['<{ps_checkout}prestashop>translator_333c40471aae73aa1ef94fd513b0cc54'] = 'We kunnen je Apple Pay-betaling momenteel niet verwerken. Dit kan komen door een probleem met het verifiëren van de betalingsinstellingen voor deze website. Probeer het later opnieuw of kies een andere betaalmethode.';
 $_MODULE['<{ps_checkout}prestashop>translator_3aa23f90376bc10782584d22a91aae97'] = 'We hebben een probleem ondervonden bij het verwerken van je Apple Pay-betaling. Controleer je bestelgegevens en probeer het opnieuw, of gebruik een andere betaalmethode.';
 $_MODULE['<{ps_checkout}prestashop>translator_e1c709bbd92871a57367a9f923874278'] = 'Foutieve verwerking van de betaling, u had kunnen worden gefactureerd. Controleer alstublieft uw bestelgeschiedenis in uw account om de status van de bestelling te controleren of neem contact op met onze klantenservice om meer te weten te komen.';
 $_MODULE['<{ps_checkout}prestashop>translator_fb970bdd962fa85ffc3459b4d5312b10'] = 'De transactie is mislukt. Probeer alstublieft een andere kaart.';
@@ -269,3 +269,15 @@ $_MODULE['<{ps_checkout}prestashop>translator_a995e3f4789afc5c69be0f2c4a283fe3']
 $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee'] = 'De betaler heeft betaald voor een artikel dat hij niet heeft ontvangen.';
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'De betaler heeft de betaling niet geautoriseerd.';
 $_MODULE['<{ps_checkout}prestashop>translator_92d485617457c66799814fa3ea9cc50b'] = 'Er is een onverwachte fout opgetreden bij de terugbetaling.';
+$_MODULE['<{ps_checkout}prestashop>translator_9976a3ca5309b7639b4a8d54561f2ca9'] = 'Betalen op factuur';
+$_MODULE['<{ps_checkout}prestashop>translator_c49fbef53ae687dd6866e9075f23e83d'] = 'Later betalen met factuur';
+$_MODULE['<{ps_checkout}prestashop>translator_853e088f85c693c3c6ab297971b4aecc'] = 'Neem contact op met de klantenservice via %s';
+$_MODULE['<{ps_checkout}prestashop>translator_1e4dbc7eaa78468a3bc1448a3d68d906'] = 'Telefoonnummer';
+$_MODULE['<{ps_checkout}prestashop>translator_10803b83a68db8f7e7a33e3b41e184d0'] = 'Geboortedatum';
+$_MODULE['<{ps_checkout}prestashop>translator_6fd5e95dc0bce8329da87e1152677b48'] = 'Niet vereist';
+$_MODULE['<{ps_checkout}prestashop>translator_ae5057b6f8ec245f3ab53add8cee8bbe'] = 'De betaling is niet geldig: het bedrag komt niet in aanmerking.';
+$_MODULE['<{ps_checkout}prestashop>translator_3369ba2ed7cf53ddee6687b80ca28724'] = 'Autorisatie succesvol vastgelegd.';
+$_MODULE['<{ps_checkout}prestashop>translator_46b0801bbbd67d6f88169ac8d958176d'] = 'Autorisatie succesvol geannuleerd.';
+$_MODULE['<{ps_checkout}prestashop>translator_d7711b029221c7de1444292a4068bfee'] = 'Autorisatie succesvol opnieuw geautoriseerd.';
+$_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'De autorisatie is succesvol vastgelegd.';
+$_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Er is een fout opgetreden tijdens het vastleggen van de autorisatie.';

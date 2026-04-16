@@ -393,7 +393,7 @@
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
-        <source>We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>Wir können Ihre Apple Pay-Zahlung derzeit nicht verarbeiten. Dies könnte an einem Problem bei der Überprüfung der Zahlungseinrichtung für diese Website liegen. Bitte versuchen Sie es später erneut oder wählen Sie eine andere Zahlungsmethode.</target>
         <note>Line: </note>
       </trans-unit>
@@ -1195,9 +1195,9 @@
         <source>Warning</source>
         <target>Warnung</target>
       </trans-unit>
-      <trans-unit id="2347172eb56070e194a4a9367d2b0b2f">
-        <source>You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.</source>
-        <target>Sie haben das PayPal-Konto [PAYPAL_ACCOUNT] gewählt, um die Zahlung vorzunehmen.</target>
+      <trans-unit id="3086ae26fec0e87976eff9849d83c97b">
+        <source>You have selected your %s PayPal account to proceed to the payment.</source>
+        <target>Sie haben das PayPal-Konto %s gewählt, um die Zahlung vorzunehmen.</target>
       </trans-unit>
       <trans-unit id="aec47b33255dfc9e90e269930c428c40">
         <source>Please wait, loading additional payment methods.</source>
@@ -2490,6 +2490,34 @@
       <trans-unit id="92d485617457c66799814fa3ea9cc50b">
         <source>An unexpected refund error occurred.</source>
         <target>Ein unerwarteter Rückerstattungsfehler ist aufgetreten.</target>
+      </trans-unit>
+      <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
+        <source>Not required</source>
+        <target>Nicht erforderlich</target>
+      </trans-unit>
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+        <target>Wir können Ihre Apple Pay-Zahlung derzeit nicht verarbeiten. Dies könnte auf ein Problem bei der Überprüfung der Zahlungseinrichtung für diese Website zurückzuführen sein. Bitte versuchen Sie es später erneut oder wählen Sie eine andere Zahlungsmethode.</target>
+      </trans-unit>
+      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
+        <source>Authorization captured successfully.</source>
+        <target>Autorisierung erfolgreich erfasst.</target>
+      </trans-unit>
+      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
+        <source>Authorization voided successfully.</source>
+        <target>Autorisierung erfolgreich storniert.</target>
+      </trans-unit>
+      <trans-unit id="d7711b029221c7de1444292a4068bfee">
+        <source>Authorization reauthorized successfully.</source>
+        <target>Autorisierung erfolgreich erneut autorisiert.</target>
+      </trans-unit>
+      <trans-unit id="3253bd5ea8ec8be1fd8679a3a9e1fb4f">
+        <source>The authorization has been successfully captured.</source>
+        <target>Die Autorisierung wurde erfolgreich erfasst.</target>
+      </trans-unit>
+      <trans-unit id="9242a892e473073c133a71a50eb29b99">
+        <source>An error occurred during the capture of the authorization.</source>
+        <target>Beim Erfassen der Autorisierung ist ein Fehler aufgetreten.</target>
       </trans-unit>
     </body>
   </file>
