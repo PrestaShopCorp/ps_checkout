@@ -45,8 +45,7 @@ class Translator implements TranslatorInterface
     public function trans(string $key, array $parameters = []): string
     {
         switch ($key) {
-            case 'Total ApplePay':
-            case 'Total GooglePay':
+            case 'Total':
                 return $this->module->l('Total', 'Translator');
             case 'Checkout':
                 return $this->module->l('Checkout', 'Translator');

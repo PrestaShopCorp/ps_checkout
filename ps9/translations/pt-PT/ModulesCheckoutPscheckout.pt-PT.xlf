@@ -392,7 +392,7 @@
         <target>Encontramos um problema ao processar o seu pagamento Apple Pay. Verifique os detalhes do seu pedido e tente novamente ou utilize outro método de pagamento.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
         <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>Não conseguimos processar o seu pagamento Apple Pay no momento. Isso pode ser devido a um problema ao verificar a configuração do pagamento para este site. Por favor, tente novamente mais tarde ou escolha outro método de pagamento.</target>
         <note>Line: </note>

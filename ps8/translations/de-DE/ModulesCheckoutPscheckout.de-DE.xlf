@@ -392,7 +392,7 @@
         <target>Beim Verarbeiten Ihrer Apple Pay-Zahlung ist ein Problem aufgetreten. Bitte überprüfen Sie Ihre Bestelldaten und versuchen Sie es erneut oder verwenden Sie eine andere Zahlungsmethode.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
         <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>Wir können Ihre Apple Pay-Zahlung derzeit nicht verarbeiten. Dies könnte an einem Problem bei der Überprüfung der Zahlungseinrichtung für diese Website liegen. Bitte versuchen Sie es später erneut oder wählen Sie eine andere Zahlungsmethode.</target>
         <note>Line: </note>

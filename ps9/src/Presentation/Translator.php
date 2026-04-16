@@ -45,8 +45,7 @@ class Translator implements TranslatorInterface
     public function trans(string $key, array $parameters = []): string
     {
         switch ($key) {
-            case 'Total ApplePay':
-            case 'Total GooglePay':
+            case 'Total':
                 return $this->translator->trans('Total', $parameters, 'Modules.Checkout.Pscheckout');
             case 'If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.':
                 return $this->translator->trans('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', $parameters, 'Modules.Checkout.Pscheckout.support');
