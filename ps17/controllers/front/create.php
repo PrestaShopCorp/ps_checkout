@@ -24,9 +24,7 @@ if (!defined('_PS_VERSION_')) {
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
-use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
-use PsCheckout\Core\PayPal\OrderStatus\Configuration\PayPalOrderStatusConfiguration;
 use PsCheckout\Infrastructure\Action\AddProductToCartAction;
 use PsCheckout\Infrastructure\Adapter\Context;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
@@ -50,6 +48,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             /** @var Context $context */
             $context = $this->module->getService(Context::class);
 
+            /** @var Translator $translator */
+            $translator = $this->module->getService(Translator::class);
+
             // BEGIN Express Checkout
             $requestData = [];
 
@@ -71,7 +72,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     $addProductToCartAction = $this->module->getService(AddProductToCartAction::class);
                     $addProductToCartAction->execute($createPayPalOrderRequest);
                 } catch (PsCheckoutException $exception) {
-
                     $this->exitWithResponse([
                         'status' => false,
                         'httpCode' => 400,
@@ -97,8 +97,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $cartTotal = (float) $cart->getOrderTotal(true, \Cart::BOTH);
 
             if ($cartTotal <= 0) {
-                /** @var Translator $translator */
-                $translator = $this->module->getService(Translator::class);
                 throw new PsCheckoutException($translator->trans('Your shopping cart is empty.'), PsCheckoutException::CART_PRODUCT_MISSING);
             }
 
@@ -110,7 +108,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                         'httpCode' => 400,
                         'body' => [
                             'error' => [
-                                'message' => $this->module->l('The payment is not valid: the amount is not eligible.', 'create'),
+                                'message' => $translator->trans('The payment is not valid: the amount is not eligible.'),
                             ],
                         ],
                     ]);
@@ -124,14 +122,14 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $cart->id);
 
                 if ($payPalOrder && $payPalOrder->isExpressCheckout() && in_array(
-                    $payPalOrder->getStatus(),
-                    [
+                        $payPalOrder->getStatus(),
+                        [
                             PayPalOrderStatus::CREATED,
                             PayPalOrderStatus::APPROVED,
                             PayPalOrderStatus::PAYER_ACTION_REQUIRED,
                         ],
-                    true
-                )) {
+                        true
+                    )) {
                     $this->exitWithResponse([
                         'status' => true,
                         'httpCode' => 200,
@@ -176,7 +174,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]
             );
 
-            $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error ocurred.', $exception->getCode()));
+            $this->exitWithExceptionMessage(new PsCheckoutException('Unexpected error occurred.', $exception->getCode()));
         } catch (Throwable $exception) {
             $this->exitWithExceptionMessage(new PsCheckoutException(
                 'An error occurred while creating the PayPal order.',
