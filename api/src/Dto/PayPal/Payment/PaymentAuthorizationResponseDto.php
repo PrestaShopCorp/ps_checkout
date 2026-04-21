@@ -24,6 +24,7 @@ use PsCheckout\Api\Dto\PayPal\LinkDescription;
 use PsCheckout\Api\Dto\PayPal\Money;
 use PsCheckout\Api\Dto\PayPal\NetworkTransaction;
 use PsCheckout\Api\Dto\PayPal\PayeeBase;
+use PsCheckout\Api\Dto\PayPal\RelatedIdentifiers;
 use PsCheckout\Api\Dto\PayPal\SellerProtection;
 
 /**
@@ -438,5 +439,97 @@ class PaymentAuthorizationResponseDto
     public function setPayee(?PayeeBase $payee): void
     {
         $this->payee = $payee;
+    }
+
+    /**
+     * Constructs a PaymentAuthorizationResponseDto from a raw PayPal API response array.
+     * This avoids relying on PHPDoc-based type extraction (PhpDocExtractor) for LinkDescription[].
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromPayPalApiResponse(array $data): self
+    {
+        $links = null;
+        if (isset($data['links']) && is_array($data['links'])) {
+            $links = array_map(static function (array $link) {
+                return new LinkDescription(
+                    (string) $link['href'],
+                    (string) $link['rel'],
+                    isset($link['method']) ? (string) $link['method'] : null
+                );
+            }, $data['links']);
+        }
+
+        $statusDetails = null;
+        if (isset($data['status_details']) && is_array($data['status_details'])) {
+            $statusDetails = new AuthorizationStatusDetails();
+            $statusDetails->setReason(isset($data['status_details']['reason']) ? (string) $data['status_details']['reason'] : null);
+        }
+
+        $amount = null;
+        if (isset($data['amount']) && is_array($data['amount'])) {
+            $amount = new Money(
+                (string) $data['amount']['currency_code'],
+                (string) $data['amount']['value']
+            );
+        }
+
+        $networkTransactionReference = null;
+        if (isset($data['network_transaction_reference']) && is_array($data['network_transaction_reference'])) {
+            $ref = $data['network_transaction_reference'];
+            $networkTransactionReference = new NetworkTransaction();
+            $networkTransactionReference->setId(isset($ref['id']) ? (string) $ref['id'] : null);
+            $networkTransactionReference->setDate(isset($ref['date']) ? (string) $ref['date'] : null);
+            $networkTransactionReference->setNetwork(isset($ref['network']) ? (string) $ref['network'] : null);
+            $networkTransactionReference->setAcquirerReferenceNumber(isset($ref['acquirer_reference_number']) ? (string) $ref['acquirer_reference_number'] : null);
+        }
+
+        $sellerProtection = null;
+        if (isset($data['seller_protection']) && is_array($data['seller_protection'])) {
+            $sellerProtection = new SellerProtection();
+            $sellerProtection->setStatus(isset($data['seller_protection']['status']) ? (string) $data['seller_protection']['status'] : null);
+            $sellerProtection->setDisputeCategories(
+                isset($data['seller_protection']['dispute_categories']) && is_array($data['seller_protection']['dispute_categories'])
+                    ? $data['seller_protection']['dispute_categories']
+                    : null
+            );
+        }
+
+        $supplementaryData = null;
+        if (isset($data['supplementary_data']) && is_array($data['supplementary_data'])) {
+            $supplementaryData = new PaymentSupplementaryData();
+            if (isset($data['supplementary_data']['related_ids']) && is_array($data['supplementary_data']['related_ids'])) {
+                $rids = $data['supplementary_data']['related_ids'];
+                $relatedIds = new RelatedIdentifiers();
+                $relatedIds->setOrderId(isset($rids['order_id']) ? (string) $rids['order_id'] : null);
+                $relatedIds->setAuthorizationId(isset($rids['authorization_id']) ? (string) $rids['authorization_id'] : null);
+                $relatedIds->setCaptureId(isset($rids['capture_id']) ? (string) $rids['capture_id'] : null);
+                $supplementaryData->setRelatedIds($relatedIds);
+            }
+        }
+
+        $payee = null;
+        if (isset($data['payee']) && is_array($data['payee'])) {
+            $payee = new PayeeBase();
+            $payee->setEmailAddress(isset($data['payee']['email_address']) ? (string) $data['payee']['email_address'] : null);
+            $payee->setMerchantId(isset($data['payee']['merchant_id']) ? (string) $data['payee']['merchant_id'] : null);
+        }
+
+        return new self(
+            (string) $data['id'],
+            (string) $data['status'],
+            $links,
+            $statusDetails,
+            isset($data['expiration_time']) ? (string) $data['expiration_time'] : null,
+            isset($data['create_time']) ? (string) $data['create_time'] : null,
+            isset($data['update_time']) ? (string) $data['update_time'] : null,
+            $supplementaryData,
+            $payee,
+            $amount,
+            isset($data['invoice_id']) ? (string) $data['invoice_id'] : null,
+            isset($data['custom_id']) ? (string) $data['custom_id'] : null,
+            $networkTransactionReference,
+            $sellerProtection
+        );
     }
 }

@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Api\Http\Serializer;
 
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -34,21 +32,12 @@ final class PaymentSerializerFactory
 {
     public static function create(): SerializerInterface
     {
-        $phpDocExtractor = new PhpDocExtractor();
-        $typeExtractor = new PropertyInfoExtractor([], [$phpDocExtractor]);
-
         $normalizers = [
-            new ObjectNormalizer(
-                null,
-                new CamelCaseToSnakeCaseNameConverter(),
-                null,
-                $typeExtractor
-            ),
+            new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter()),
             new GetSetMethodNormalizer(),
-            new ArrayDenormalizer()
+            new ArrayDenormalizer(),
         ];
-        $encoders = [new JsonEncoder()];
 
-        return new Serializer($normalizers, $encoders);
+        return new Serializer($normalizers, [new JsonEncoder()]);
     }
 }

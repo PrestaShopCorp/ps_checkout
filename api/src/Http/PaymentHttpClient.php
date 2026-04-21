@@ -106,7 +106,9 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     {
         $response = $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
     }
 
     /**
@@ -122,7 +124,9 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
         }
         $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], empty($payload) ? '{}' : $payload));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
     }
 
     /**
