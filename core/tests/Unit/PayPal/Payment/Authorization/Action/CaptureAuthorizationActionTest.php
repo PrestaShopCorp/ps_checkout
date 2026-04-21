@@ -315,7 +315,7 @@ class CaptureAuthorizationActionTest extends TestCase
     {
         $payPalOrder = PayPalOrderResponseFactory::create([
             'id' => 'ORDER-123',
-            'status' => PayPalOrderStatus::APPROVED,
+            'status' => PayPalOrderStatus::COMPLETED,
             'intent' => 'AUTHORIZE',
             'purchase_units' => [
                 [

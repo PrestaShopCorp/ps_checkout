@@ -277,10 +277,10 @@ class AuthorizePayPalOrderActionTest extends TestCase
 
     public function testThrowsExceptionWhenOrderStatusNotApproved(): void
     {
-        $payPalOrder = $this->createPayPalOrder('ORDER-123', PayPalOrderStatus::CREATED);
+        $payPalOrder = $this->createPayPalOrder('ORDER-123', PayPalOrderStatus::PAYER_ACTION_REQUIRED);
 
         $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('PayPal Order ORDER-123 status must be APPROVED, current status: CREATED');
+        $this->expectExceptionMessage('PayPal Order ORDER-123 status must be APPROVED or CREATED, current status: PAYER_ACTION_REQUIRED');
         $this->expectExceptionCode(PsCheckoutException::PAYPAL_ORDER_STATUS_INVALID);
 
         $this->action->execute($payPalOrder);

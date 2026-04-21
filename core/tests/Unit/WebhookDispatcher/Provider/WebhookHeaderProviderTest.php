@@ -58,6 +58,9 @@ class WebhookHeaderProviderTest extends TestCase
 
         // Assert
         $this->assertEquals([
+            'shopId' => 'shop-123',
+            'merchantId' => 'merchant-456',
+            'firebaseId' => 'psx-789',
             'Shop-Id' => 'shop-123',
             'Merchant-Id' => 'merchant-456',
             'Psx-Id' => 'psx-789',
@@ -83,6 +86,9 @@ class WebhookHeaderProviderTest extends TestCase
 
         // Assert
         $this->assertEquals([
+            'shopId' => null,
+            'merchantId' => null,
+            'firebaseId' => null,
             'Shop-Id' => null,
             'Merchant-Id' => null,
             'Psx-Id' => null,
@@ -112,6 +118,9 @@ class WebhookHeaderProviderTest extends TestCase
 
         // Assert
         $this->assertEquals([
+            'shopId' => 'shop-123',
+            'merchantId' => 'merchant-456',
+            'firebaseId' => 'psx-789',
             'Shop-Id' => 'shop-123',
             'Merchant-Id' => 'merchant-456',
             'Psx-Id' => 'psx-789',
@@ -183,6 +192,9 @@ class WebhookHeaderProviderTest extends TestCase
 
         // Assert
         $expectedKeys = [
+            'shopId',
+            'merchantId',
+            'firebaseId',
             'Shop-Id',
             'Merchant-Id',
             'Psx-Id',
