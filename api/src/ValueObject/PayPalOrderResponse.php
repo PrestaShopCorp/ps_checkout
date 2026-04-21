@@ -479,13 +479,13 @@ class PayPalOrderResponse
      */
     public function getAuthenticationResult()
     {
-        $paymentSource = $this->getPaymentSource();
-        if ($paymentSource === null) {
-            return null;
-        }
-        $fundingSource = key($paymentSource);
+        $fundingSource = $this->getFundingSource();
 
-        return $paymentSource[$fundingSource]['authentication_result'] ?? null;
+        if ($fundingSource) {
+            return $paymentSource[$fundingSource]['authentication_result'] ?? null;
+        }
+
+        return null;
     }
 
     /**

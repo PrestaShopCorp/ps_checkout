@@ -373,12 +373,6 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Cannot access offset ''authentication_result'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -465,12 +459,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getAuthenticationResult\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getAuthenticationResult\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -597,6 +585,12 @@ parameters:
 		-
 			message: '#^Property PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:\$purchaseUnits \(array\<int, array\{reference_id\?\: string, invoice_id\?\: string, custom_id\?\: string, description\?\: string, items\?\: array\<int, array\<string, mixed\>\>, shipping\?\: array\<string, mixed\>, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, network_transaction_reference\?\: array\{id\: string, date\: string, network\: string, acquirer_reference_number\: string\}, \.\.\.\}\>, captures\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, final_capture\?\: bool, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, \.\.\.\}\>, refunds\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, note_to_payer\?\: string, seller_payable_breakdown\?\: array\{gross_amount\?\: array\{value\: string, currency_code\: string\}, paypal_fee\?\: array\{value\: string, currency_code\: string\}, paypal_fee_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, net_amount\?\: array\{value\: string, currency_code\: string\}, net_amount_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, platform_fees\?\: array\{value\: string, currency_code\: string\}, net_amount_breakdown\?\: array\{value\: string, currency_code\: string\}, total_refunded_amount\?\: array\{value\: string, currency_code\: string\}\}, \.\.\.\}\>\}\}\>\) does not accept array\.$#'
 			identifier: assign.propertyType
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Variable \$paymentSource on left side of \?\? is never defined\.$#'
+			identifier: nullCoalesce.variable
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -12443,117 +12437,3 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Presentation/Translator.php
-
-		-
-			message: '#^Access to an undefined property WebhookControllerTest\:\:\$client\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot access property \$link on Context\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot call method getBody\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot call method getModuleLink\(\) on Link\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot call method getStatusCode\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot call method post\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:sendWebhookRequest\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:sendWebhookRequest\(\) has parameter \$expectedResponse with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:sendWebhookRequest\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:testEmptyPayload\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:testMissingPayloadFields\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:testValidWebhook\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Method WebhookControllerTest\:\:testWebhookSecretMismatch\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/Integration/Controller/WebhookControllerTest.php
-
-		-
-			message: '#^Binary operation "\." between ''mysqldump \-hmysql \-u'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: tests/create-test-database.php
-
-		-
-			message: '#^Binary operation "\." between ''test_'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: tests/create-test-database.php
-
-		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 4
-			path: tests/create-test-database.php
-
-		-
-			message: '#^Part \$sourcePassword \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: tests/create-test-database.php
-
-		-
-			message: '#^Part \$sourceUser \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: tests/create-test-database.php
