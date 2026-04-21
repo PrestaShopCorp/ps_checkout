@@ -18,9 +18,7 @@
     "require-dev": {
         "phpunit/phpunit": "^8.5.41",
         "prestashop/php-dev-tools": "~4.0",
-        "stancer/php-stubs-prestashop": "dev-main",
-        "symfony/property-access": "^6.4",
-        "symfony/serializer": "^6.4"
+        "stancer/php-stubs-prestashop": "dev-main"
     },
     "scripts": {
         "phpstan": "../vendor/bin/phpstan analyse --memory-limit=1G",
