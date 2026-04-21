@@ -27,7 +27,11 @@ use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 
-class LoggerHandlerFactory implements LoggerHandlerInterface
+/**
+ * Builds the RotatingFileHandler for the http_client log channel.
+ * Writes to a separate file (ps_checkout-http-{shopId}) to isolate HTTP traffic logs.
+ */
+class HttpLoggerHandlerFactory implements LoggerHandlerInterface
 {
     private $psPath = _PS_ROOT_DIR_;
 
@@ -63,7 +67,7 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
         $handler = new RotatingFileHandler(
             $this->getPath() . $this->getFileName(),
             $this->getMaxFiles(),
-            $this->getLoggerLevel()
+            LoggerConfiguration::LEVEL_DEBUG
         );
         $handler->setFormatter(new JsonFormatter());
 
@@ -71,7 +75,7 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     private function getPath(): string
     {
@@ -87,7 +91,7 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
      */
     private function getFileName(): string
     {
-        return $this->moduleName . '-' . $this->shopId;
+        return $this->moduleName . '-' . $this->shopId . '-http';
     }
 
     /**
@@ -102,19 +106,5 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
         }
 
         return $maxFiles;
-    }
-
-    /**
-     * @return int
-     */
-    private function getLoggerLevel(): int
-    {
-        $loggerLevel = (int) $this->configuration->get(LoggerConfiguration::PS_CHECKOUT_LOGGER_LEVEL);
-
-        if (!$loggerLevel) {
-            return LoggerConfiguration::LEVEL_ERROR;
-        }
-
-        return $loggerLevel;
     }
 }

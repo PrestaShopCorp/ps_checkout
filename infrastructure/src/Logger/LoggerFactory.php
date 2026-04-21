@@ -25,6 +25,7 @@ use Monolog\Logger;
 use Monolog\Processor\ProcessIdProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Infrastructure\Logger\Processor\SensitiveDataProcessor;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -68,6 +69,7 @@ class LoggerFactory implements LoggerFactoryInterface
             [
                 new ProcessIdProcessor(),
                 new PsrLogMessageProcessor(),
+                new SensitiveDataProcessor(),
             ]
         );
     }

@@ -30,8 +30,6 @@ class LoggerConfiguration
 
     const PS_CHECKOUT_LOGGER_HTTP = 'PS_CHECKOUT_LOGGER_HTTP';
 
-    const PS_CHECKOUT_LOGGER_HTTP_FORMAT = 'PS_CHECKOUT_LOGGER_HTTP_FORMAT';
-
     const LEVEL_DEBUG = 100;
 
     /**

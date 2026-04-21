@@ -35,3 +35,30 @@ services:
   Psr\Log\LoggerInterface:
     class: 'Psr\Log\LoggerInterface'
     factory: ['@PsCheckout\Infrastructure\Logger\LoggerFactory', "build"]
+
+  # HTTP client log channel — writes to a separate ps_checkout-http-{shopId} file
+  PsCheckout\Infrastructure\Logger\HttpLoggerHandlerFactory:
+    class: 'PsCheckout\Infrastructure\Logger\HttpLoggerHandlerFactory'
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@=service("ps_checkout.module").name'
+
+  PsCheckout\Infrastructure\Logger\HttpLoggerHandler:
+    class: 'Monolog\Handler\HandlerInterface'
+    factory: ['@PsCheckout\Infrastructure\Logger\HttpLoggerHandlerFactory', "build"]
+
+  PsCheckout\Infrastructure\Logger\HttpLoggerFactory:
+    class: 'PsCheckout\Infrastructure\Logger\LoggerFactory'
+    arguments:
+      - '@=service("ps_checkout.module").name ~ "_http"'
+      - '@PsCheckout\Infrastructure\Logger\HttpLoggerHandler'
+
+  PsCheckout\Infrastructure\Logger\HttpLogger:
+    class: 'Psr\Log\LoggerInterface'
+    factory: ['@PsCheckout\Infrastructure\Logger\HttpLoggerFactory', "build"]
+
+  PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware:
+    class: 'PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
+    arguments:
+      - '@PsCheckout\Infrastructure\Logger\HttpLogger'

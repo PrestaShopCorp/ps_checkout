@@ -20,19 +20,13 @@
 
 namespace PsCheckout\Api\Http\Configuration;
 
-use GuzzleHttp\Event\Emitter;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Subscriber\Log\Formatter;
-use GuzzleHttp\Subscriber\Log\LogSubscriber;
-use GuzzleLogMiddleware\LogMiddleware;
-use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
+use PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware;
 use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
-use Psr\Log\LoggerInterface;
 
-class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class OrderShipmentTrackingConfigurationBuilder extends AbstractHttpClientConfigurationBuilder
 {
     const TIMEOUT = 10;
 
@@ -51,23 +45,20 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
     /** @var PsAccountRepositoryInterface */
     private $psAccountRepository;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     public function __construct(
         string $moduleVersion,
         ConfigurationInterface $configuration,
         LinkInterface $link,
         EnvInterface $env,
         PsAccountRepositoryInterface $psAccountRepository,
-        LoggerInterface $logger
+        HttpLoggingMiddleware $httpLoggingMiddleware
     ) {
         $this->moduleVersion = $moduleVersion;
         $this->configuration = $configuration;
         $this->link = $link;
         $this->env = $env;
         $this->psAccountRepository = $psAccountRepository;
-        $this->logger = $logger;
+        $this->httpLoggingMiddleware = $httpLoggingMiddleware;
     }
 
     /**
@@ -90,30 +81,7 @@ class OrderShipmentTrackingConfigurationBuilder implements HttpClientConfigurati
             ],
         ];
 
-        if (
-            $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP)
-            && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
-            && class_exists(HandlerStack::class)
-            && class_exists(LogMiddleware::class)
-        ) {
-            $handlerStack = HandlerStack::create();
-            $handlerStack->push(new LogMiddleware($this->logger));
-            $configuration['handler'] = $handlerStack;
-        } elseif (
-            $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP)
-            && defined('\GuzzleHttp\ClientInterface::VERSION')
-            && class_exists(Emitter::class)
-            && class_exists(LogSubscriber::class)
-            && class_exists(Formatter::class)
-        ) {
-            $emitter = new Emitter();
-            $emitter->attach(new LogSubscriber(
-                $this->logger,
-                Formatter::DEBUG
-            ));
-
-            $configuration['emitter'] = $emitter;
-        }
+        $this->applyLoggingMiddleware($configuration, $this->configuration);
 
         return $configuration;
     }

@@ -25,6 +25,12 @@ parameters:
 			path: ../api/src/Http/CheckoutHttpClient.php
 
 		-
+			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\AbstractHttpClientConfigurationBuilder\:\:applyLoggingMiddleware\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/Http/Configuration/AbstractHttpClientConfigurationBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\CheckoutClientConfigurationBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -35,6 +41,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../api/src/Http/Configuration/HttpClientConfigurationBuilderInterface.php
+
+		-
+			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\MaaslandOrderHttpClientConfigurationBuilder\:\:build\(\) should return array\<string, mixed\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: ../api/src/Http/Configuration/MaaslandOrderHttpClientConfigurationBuilder.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\OrderHttpClientConfigurationBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
@@ -10309,6 +10321,282 @@ parameters:
 			path: ../infrastructure/src/Environment/EnvLoaderInterface.php
 
 		-
+			message: '#^Cannot call method then\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterRequestHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterRequestHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterResponseHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Middleware\\HttpLoggingMiddleware\:\:filterResponseHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Call to an undefined method object\:\:isSeekable\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to an undefined method object\:\:seek\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to method getException\(\) on an unknown class GuzzleHttp\\Event\\ErrorEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to method getRequest\(\) on an unknown class GuzzleHttp\\Event\\BeforeEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to method getRequest\(\) on an unknown class GuzzleHttp\\Event\\CompleteEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to method getRequest\(\) on an unknown class GuzzleHttp\\Event\\ErrorEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Call to method getResponse\(\) on an unknown class GuzzleHttp\\Event\\CompleteEvent\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getBody\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getHeaders\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getMessage\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getMethod\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getResponse\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getStatusCode\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot call method getUrl\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Cannot cast object to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterRequestHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterRequestHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterResponseHeaders\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterResponseHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:getEvents\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:readBody\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \#1 \$body of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:readBody\(\) expects object\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \#1 \$headers of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterRequestHeaders\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \#1 \$headers of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:filterResponseHeaders\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \#1 \$object of function spl_object_hash expects object, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \#1 \$request of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:getDuration\(\) expects object, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \$event of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:onBefore\(\) has invalid type GuzzleHttp\\Event\\BeforeEvent\.$#'
+			identifier: class.notFound
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \$event of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:onComplete\(\) has invalid type GuzzleHttp\\Event\\CompleteEvent\.$#'
+			identifier: class.notFound
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Parameter \$event of method PsCheckout\\Infrastructure\\Http\\Subscriber\\HttpLoggingSubscriber\:\:onError\(\) has invalid type GuzzleHttp\\Event\\ErrorEvent\.$#'
+			identifier: class.notFound
+			count: 2
+			path: ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''/app/logs/'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''/var/logs/'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Cannot access property \$id on Shop\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Parameter \#1 \$version1 of function version_compare expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Logger\\HttpLoggerHandlerFactory\:\:\$psPath has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Logger\\HttpLoggerHandlerFactory\:\:\$psVersion has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Logger\\HttpLoggerHandlerFactory\:\:\$shopId \(int\) does not accept int\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../infrastructure/src/Logger/HttpLoggerHandlerFactory.php
+
+		-
 			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -10351,8 +10639,20 @@ parameters:
 			path: ../infrastructure/src/Logger/LoggerFileFinder.php
 
 		-
+			message: '#^Method PsCheckout\\Infrastructure\\Logger\\LoggerFileFinder\:\:formatFileDate\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 2
+			path: ../infrastructure/src/Logger/LoggerFileFinder.php
+
+		-
 			message: '#^Method PsCheckout\\Infrastructure\\Logger\\LoggerFileFinder\:\:getFiles\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Logger/LoggerFileFinder.php
+
+		-
+			message: '#^Offset ''date'' on array\{0\: non\-falsy\-string, module\: non\-empty\-string, 1\: non\-empty\-string, id_shop\: numeric\-string, 2\: numeric\-string, channel\: string, 3\: string, date\: non\-falsy\-string, \.\.\.\} in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.offset
 			count: 1
 			path: ../infrastructure/src/Logger/LoggerFileFinder.php
 
@@ -10369,7 +10669,7 @@ parameters:
 			path: ../infrastructure/src/Logger/LoggerFileFinder.php
 
 		-
-			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, mixed given\.$#'
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Logger/LoggerFileFinder.php
@@ -10439,6 +10739,54 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Logger/LoggerHandlerFactory.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:__invoke\(\) has parameter \$record with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:__invoke\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:scrub\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:scrub\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$data of method PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:scrub\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of function in_array expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:\$sensitiveHeaders has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Logger\\Processor\\SensitiveDataProcessor\:\:\$sensitiveKeys has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
