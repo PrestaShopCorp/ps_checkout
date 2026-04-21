@@ -499,7 +499,7 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getFundingSource\(\) should return string\|null but returns mixed\.$#'
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getFundingSource\(\) should return string\|null but returns int\|string\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
@@ -567,18 +567,6 @@ parameters:
 		-
 			message: '#^Offset ''payments'' might not exist on array\{reference_id\?\: string, invoice_id\?\: string, custom_id\?\: string, description\?\: string, items\?\: array\<int, array\<string, mixed\>\>, shipping\?\: array\<string, mixed\>, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, network_transaction_reference\?\: array\{id\: string, date\: string, network\: string, acquirer_reference_number\: string\}, \.\.\.\}\>, captures\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, final_capture\?\: bool, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, \.\.\.\}\>, refunds\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, note_to_payer\?\: string, seller_payable_breakdown\?\: array\{gross_amount\?\: array\{value\: string, currency_code\: string\}, paypal_fee\?\: array\{value\: string, currency_code\: string\}, paypal_fee_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, net_amount\?\: array\{value\: string, currency_code\: string\}, net_amount_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, platform_fees\?\: array\{value\: string, currency_code\: string\}, net_amount_breakdown\?\: array\{value\: string, currency_code\: string\}, total_refunded_amount\?\: array\{value\: string, currency_code\: string\}\}, \.\.\.\}\>\}\}\.$#'
 			identifier: offsetAccess.notFound
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
-			message: '#^Possibly invalid array key type mixed\.$#'
-			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
@@ -11701,6 +11689,12 @@ parameters:
 			path: ../presentation/src/TranslatorInterface.php
 
 		-
+			message: '#^Cannot access offset ''addresses'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
 			message: '#^Cannot access offset ''currency_iso_code'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -11708,6 +11702,12 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''gift'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
@@ -11727,13 +11727,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''id_address_delivery'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
 			message: '#^Cannot access offset ''id_address_invoice'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
@@ -11755,7 +11755,13 @@ parameters:
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
-			message: '#^Cannot access offset ''invoice_address'' on mixed\.$#'
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
@@ -11773,7 +11779,7 @@ parameters:
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
-			message: '#^Cannot access offset ''shipping_address'' on mixed\.$#'
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
@@ -11809,7 +11815,7 @@ parameters:
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
 		-
-			message: '#^Cannot call method willReturnMap\(\) on mixed\.$#'
+			message: '#^Cannot call method willReturnOnConsecutiveCalls\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
@@ -11835,6 +11841,12 @@ parameters:
 		-
 			message: '#^Method CartPresenterTest\:\:testPresentReturnsExpectedData\(\) has parameter \$expectedResult with no type specified\.$#'
 			identifier: missingType.parameter
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Property CartCore\:\:\$gift \(bool\) does not accept mixed\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
@@ -11907,6 +11919,12 @@ parameters:
 		-
 			message: '#^Property CartPresenterTest\:\:\$languageRepository has no type specified\.$#'
 			identifier: missingType.property
+			count: 1
+			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
+
+		-
+			message: '#^Property CurrencyCore\:\:\$iso_code \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: ../presentation/tests/Unit/Presenter/Cart/CartPresenterTest.php
 
