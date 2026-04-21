@@ -113,7 +113,7 @@ class Ps_Checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '7.5.3.1';
+        $this->version = '7.5.3.2';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -1266,8 +1266,19 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
+    /**
+     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int, newOrderStatus: OrderState, oldOrderStatus: OrderState} $params
+     *
+     * @return void
+     */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
+        $order = new Order((int) $params['id_order']);
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return;
+        }
+
         /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
         $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
 

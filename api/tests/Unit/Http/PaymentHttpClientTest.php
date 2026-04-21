@@ -33,7 +33,6 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\PaymentHttpClient;
 use PsCheckout\Api\Http\PaymentHttpClientInterface;
 use Psr\Http\Message\ResponseInterface;
-use PsCheckout\Api\Http\Serializer\PaymentSerializerFactory;
 use Psr\Http\Client\ClientInterface;
 
 /**
@@ -65,7 +64,6 @@ class PaymentHttpClientTest extends TestCase
 
         $this->paymentHttpClient = new PaymentHttpClient(
             $this->paymentHttpClientConfigurationBuilder,
-            PaymentSerializerFactory::create(),
             $this->httpClient
         );
 
@@ -323,11 +321,8 @@ class PaymentHttpClientTest extends TestCase
     {
         $configurationBuilder = $this->createMock(HttpClientConfigurationBuilderInterface::class);
         $configurationBuilder->method('build')->willReturn([]);
-        $serializer = PaymentSerializerFactory::create();
 
-        $httpClient = new PaymentHttpClient($configurationBuilder, $serializer, $psrClient);
-
-        return $httpClient;
+        return new PaymentHttpClient($configurationBuilder, $psrClient);
     }
 
     /**

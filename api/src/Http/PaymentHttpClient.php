@@ -29,24 +29,14 @@ use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClientInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
     public function __construct(
         HttpClientConfigurationBuilderInterface $configurationBuilder,
-        SerializerInterface $serializer,
         ?ClientInterface $client = null
     ) {
         parent::__construct($configurationBuilder->build(), $client);
-        $this->serializer = $serializer;
     }
 
     /**
@@ -106,7 +96,9 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
     {
         $response = $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
     }
 
     /**
@@ -114,15 +106,17 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
      */
     public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto
     {
-        $payload = [];
-        if ($requestDto) {
-            $payload = $this->serializer->serialize($requestDto, JsonEncoder::FORMAT, [
-                AbstractObjectNormalizer::SKIP_NULL_VALUES => true
-            ]);
+        $payload = '{}';
+        if ($requestDto !== null) {
+            $amount = $requestDto->getAmount();
+            $data = $amount !== null ? ['amount' => ['currency_code' => $amount->getCurrencyCode(), 'value' => $amount->getValue()]] : [];
+            $payload = !empty($data) ? (string) json_encode($data) : '{}';
         }
-        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], empty($payload) ? '{}' : $payload));
+        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], $payload));
 
-        return $this->serializer->deserialize($response->getBody(), PaymentAuthorizationResponseDto::class, JsonEncoder::FORMAT);
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
     }
 
     /**

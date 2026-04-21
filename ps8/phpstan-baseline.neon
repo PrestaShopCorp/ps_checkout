@@ -1,6 +1,24 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 23
+			path: ../api/src/Dto/PayPal/Payment/PaymentAuthorizationResponseDto.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: PsCheckout\\Api\\Dto\\PayPal\\LinkDescription given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Dto/PayPal/Payment/PaymentAuthorizationResponseDto.php
+
+		-
+			message: '#^Parameter \#1 \$disputeCategories of method PsCheckout\\Api\\Dto\\PayPal\\SellerProtection\:\:setDisputeCategories\(\) expects array\<string\>\|null, array\<mixed, mixed\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../api/src/Dto/PayPal/Payment/PaymentAuthorizationResponseDto.php
+
+		-
 			message: '#^Parameter \#4 \$body of class GuzzleHttp\\Psr7\\Request constructor expects GuzzleHttp\\Psr7\\StreamInterface\|resource\|string\|null, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -259,6 +277,12 @@ parameters:
 			path: ../api/src/Http/PaymentHttpClient.php
 
 		-
+			message: '#^Parameter \#1 \$data of static method PsCheckout\\Api\\Dto\\PayPal\\Payment\\PaymentAuthorizationResponseDto\:\:fromPayPalApiResponse\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../api/src/Http/PaymentHttpClient.php
+
+		-
 			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 4
@@ -305,18 +329,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/PsrHttpClientAdapter.php
-
-		-
-			message: '#^Parameter \#1 \$normalizers of class Symfony\\Component\\Serializer\\Serializer constructor expects array\<Symfony\\Component\\Serializer\\DenormalizerInterface\|Symfony\\Component\\Serializer\\NormalizerInterface\>, array\<int, Symfony\\Component\\Serializer\\Normalizer\\ArrayDenormalizer\|Symfony\\Component\\Serializer\\Normalizer\\GetSetMethodNormalizer\|Symfony\\Component\\Serializer\\Normalizer\\ObjectNormalizer\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/Serializer/PaymentSerializerFactory.php
-
-		-
-			message: '#^Parameter \#2 \$encoders of class Symfony\\Component\\Serializer\\Serializer constructor expects array\<Symfony\\Component\\Serializer\\DecoderInterface\|Symfony\\Component\\Serializer\\EncoderInterface\>, array\<int, Symfony\\Component\\Serializer\\Encoder\\JsonEncoder\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/Serializer/PaymentSerializerFactory.php
 
 		-
 			message: '#^Method PsCheckout\\Api\\Http\\WebhookHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
@@ -713,12 +725,6 @@ parameters:
 			identifier: phpunit.coversClass
 			count: 1
 			path: ../api/tests/Unit/Http/PaymentHttpClientTest.php
-
-		-
-			message: '#^@coversDefaultClass references an invalid class PaymentSerializerFactory\.$#'
-			identifier: phpunit.coversClass
-			count: 1
-			path: ../api/tests/Unit/Http/Serializer/PaymentSerializerFactoryTest.php
 
 		-
 			message: '#^Binary operation "\." between int\<1, max\> and mixed results in an error\.$#'
