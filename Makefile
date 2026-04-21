@@ -46,16 +46,13 @@ php-unit-presentation:
 
 unit-test: php-unit-api php-unit-utility php-unit-core php-unit-presentation
 
-php-integration:
-	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/tests/bootstrap-integration.php"
-
 php-integration-core:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/core/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/vendor/invertus/core/tests/bootstrap-integration.php"
 
 php-integration-infrastructure:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/infrastructure/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/vendor/invertus/infrastructure/tests/bootstrap-integration.php"
 
-integration-test: php-integration php-integration-core php-integration-infrastructure
+integration-test: php-integration-core php-integration-infrastructure
 
 test: unit-test integration-test
 
