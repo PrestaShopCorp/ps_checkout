@@ -1231,8 +1231,19 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
+    /**
+     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int, newOrderStatus: OrderState, oldOrderStatus: OrderState} $params
+     *
+     * @return void
+     */
     public function hookActionOrderStatusPostUpdate(array $params)
     {
+        $order = new Order((int) $params['id_order']);
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return;
+        }
+
         /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
         $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
 
