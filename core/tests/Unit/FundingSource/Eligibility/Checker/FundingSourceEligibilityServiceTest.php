@@ -104,7 +104,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
             $this->fundingSourcePresenter,
             $this->createMock(LoggerInterface::class),
             array_map(function (string $className) {
-                return new $className($this->context, $this->configuration, $this->countryResolver);
+                return new $className($this->context, $this->configuration, $this->countryResolver, $this->createMock(LoggerInterface::class));
             }, array_values($this->checkers))
         );
     }

@@ -111,7 +111,7 @@ class AuthorizePayPalOrderAction implements AuthorizePayPalOrderActionInterface
         $orderPayPal = json_decode($response->getBody(), true);
         $cachedOrder = $this->payPalOrderCache->getValue($orderId);
 
-        $this->payPalOrderCache->set($orderId, array_replace_recursive($cachedOrder, $orderPayPal));
+        $this->payPalOrderCache->set($orderId, array_replace_recursive($cachedOrder ?? [], $orderPayPal ?? []));
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
 
