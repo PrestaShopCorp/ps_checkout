@@ -26,6 +26,8 @@ services:
         - '@PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker'
         - '@PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker'
         - '@PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker'
+        - '@PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker'
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker
@@ -129,6 +131,26 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker
+    tags:
+      - { name: 'funding_source.eligibility_checker' }
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker
     tags:
       - { name: 'funding_source.eligibility_checker' }
     arguments:
