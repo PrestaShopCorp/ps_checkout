@@ -36,7 +36,6 @@ use PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker;
-use Psr\Log\LoggerInterface;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
@@ -106,9 +105,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
         $this->fundingSourceEligibilityService = new FundingSourceEligibilityService(
             $this->context,
             $this->fundingSourcePresenter,
-            $this->createMock(LoggerInterface::class),
             array_map(function (string $className) {
-                return new $className($this->context, $this->configuration, $this->countryResolver, $this->createMock(LoggerInterface::class));
+                return new $className($this->context, $this->configuration, $this->countryResolver);
             }, array_values($this->checkers))
         );
     }
@@ -152,23 +150,6 @@ class FundingSourceEligibilityServiceTest extends TestCase
         self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
-    public function testIsFundingSourceEligibleReturnsTrueAndLogsWarningWhenNoCheckerFound(): void
-    {
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects(self::once())
-            ->method('warning')
-            ->with(self::stringContains('unknown_source'));
-
-        $service = new FundingSourceEligibilityService(
-            $this->context,
-            $this->fundingSourcePresenter,
-            $logger,
-            []
-        );
-
-        self::assertTrue($service->isFundingSourceEligible(new FundingSource('unknown_source', 'Unknown', 0, true, null)));
-    }
-
     /**
      * @dataProvider fundingSourcesDataProvider
      *
@@ -200,11 +181,18 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 [PayPalConfiguration::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT, 'DE'],
             ]);
 
-        if (!empty($context['configurations'])) {
-            $this->configuration
-                ->method('getBoolean')
-                ->willReturnMap($context['configurations']);
-        }
+        $configurationsMap = $context['configurations'];
+        $this->configuration
+            ->method('getBoolean')
+            ->willReturnCallback(function (string $key) use ($configurationsMap) {
+                foreach ($configurationsMap as [$configKey, $value]) {
+                    if ($configKey === $key) {
+                        return (bool) $value;
+                    }
+                }
+
+                return false;
+            });
 
         $this->countryResolver->method('getBuyerCountryIsoCode')->willReturn($context['country']);
         $this->context->method('getCurrencyIsoCode')->willReturn($context['currency']);

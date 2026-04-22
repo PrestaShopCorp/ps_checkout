@@ -29,7 +29,6 @@ use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Util\CountryResolverInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * @coversDefaultClass \PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker
@@ -57,8 +56,7 @@ class PayPalEligibilityCheckerTest extends TestCase
         $this->checker = new PayPalEligibilityChecker(
             $this->context,
             $this->configuration,
-            $this->countryResolver,
-            $this->createMock(LoggerInterface::class)
+            $this->countryResolver
         );
     }
 
