@@ -119,16 +119,16 @@ class PayLaterValidatorTest extends TestCase
     {
         $this->payPalConfigurationMock
             ->method('getMerchantCountry')
-            ->willReturn('CA'); // Canada is not supported
+            ->willReturn('JP'); // Japan is not supported
 
         $currencyMock = $this->createMock(\stdClass::class);
-        $currencyMock->iso_code = 'CAD';
+        $currencyMock->iso_code = 'JPY';
 
         $languageMock = $this->createMock(\stdClass::class);
-        $languageMock->locale = 'en-CA';
+        $languageMock->locale = 'ja-JP';
 
         $countryMock = $this->createMock(\stdClass::class);
-        $countryMock->iso_code = 'CA';
+        $countryMock->iso_code = 'JP';
 
         $this->contextMock
             ->method('getCurrency')
@@ -143,6 +143,50 @@ class PayLaterValidatorTest extends TestCase
             ->willReturn($countryMock);
 
         $this->assertFalse($this->payLaterValidator->isPayLaterAvailable());
+    }
+
+    public function testIsPayLaterAvailableReturnsTrueForCanadaFrenchLocale(): void
+    {
+        $this->payPalConfigurationMock
+            ->method('getMerchantCountry')
+            ->willReturn('CA');
+
+        $currencyMock = $this->createMock(\stdClass::class);
+        $currencyMock->iso_code = 'CAD';
+
+        $languageMock = $this->createMock(\stdClass::class);
+        $languageMock->locale = 'fr-CA';
+
+        $countryMock = $this->createMock(\stdClass::class);
+        $countryMock->iso_code = 'CA';
+
+        $this->contextMock->method('getCurrency')->willReturn($currencyMock);
+        $this->contextMock->method('getLanguage')->willReturn($languageMock);
+        $this->contextMock->method('getCountry')->willReturn($countryMock);
+
+        $this->assertTrue($this->payLaterValidator->isPayLaterAvailable());
+    }
+
+    public function testIsPayLaterAvailableReturnsTrueForCanadaEnglishLocale(): void
+    {
+        $this->payPalConfigurationMock
+            ->method('getMerchantCountry')
+            ->willReturn('CA');
+
+        $currencyMock = $this->createMock(\stdClass::class);
+        $currencyMock->iso_code = 'CAD';
+
+        $languageMock = $this->createMock(\stdClass::class);
+        $languageMock->locale = 'en-CA';
+
+        $countryMock = $this->createMock(\stdClass::class);
+        $countryMock->iso_code = 'CA';
+
+        $this->contextMock->method('getCurrency')->willReturn($currencyMock);
+        $this->contextMock->method('getLanguage')->willReturn($languageMock);
+        $this->contextMock->method('getCountry')->willReturn($countryMock);
+
+        $this->assertTrue($this->payLaterValidator->isPayLaterAvailable());
     }
 
     public function testIsPayLaterAvailableReturnsFalseForMismatchedMerchantAndCustomerCountry(): void
@@ -245,6 +289,8 @@ class PayLaterValidatorTest extends TestCase
             'Spain scenario' => ['ES', 'ES', 'EUR', 'es-ES'],
             'United Kingdom scenario' => ['GB', 'GB', 'GBP', 'en-GB'],
             'United States scenario' => ['US', 'US', 'USD', 'en-US'],
+            'Canada scenario FR' => ['CA', 'CA', 'CAD', 'fr-CA'],
+            'Canada scenario EN' => ['CA', 'CA', 'CAD', 'en-CA'],
         ];
     }
 
@@ -265,8 +311,13 @@ class PayLaterValidatorTest extends TestCase
             'Wrong locale for Spain' => ['ES', 'ES', 'EUR', 'de-DE'],
             'Wrong locale for UK' => ['GB', 'GB', 'GBP', 'fr-FR'],
             'Wrong locale for US' => ['US', 'US', 'USD', 'de-DE'],
-            'Unsupported merchant country' => ['CA', 'CA', 'CAD', 'en-CA'],
             'Unsupported customer country' => ['US', 'CA', 'USD', 'en-US'],
+            'Wrong currency for Canada (USD)' => ['CA', 'CA', 'USD', 'fr-CA'],
+            'Wrong currency for Canada (EUR)' => ['CA', 'CA', 'EUR', 'en-CA'],
+            'Wrong locale for Canada (de-DE)' => ['CA', 'CA', 'CAD', 'de-DE'],
+            'Wrong locale for Canada (fr-FR)' => ['CA', 'CA', 'CAD', 'fr-FR'],
+            'Wrong locale for Canada (en-US)' => ['CA', 'CA', 'CAD', 'en-US'],
+            'Canada merchant with non-Canada customer' => ['CA', 'FR', 'CAD', 'fr-CA'],
         ];
     }
 }

@@ -10869,19 +10869,19 @@ parameters:
 		-
 			message: '#^Cannot call method isPayLaterAvailable\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 6
+			count: 8
 			path: ../infrastructure/tests/Unit/Validator/PayLaterValidatorTest.php
 
 		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 24
+			count: 32
 			path: ../infrastructure/tests/Unit/Validator/PayLaterValidatorTest.php
 
 		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 24
+			count: 32
 			path: ../infrastructure/tests/Unit/Validator/PayLaterValidatorTest.php
 
 		-

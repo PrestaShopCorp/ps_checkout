@@ -25,12 +25,14 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker;
+use PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\EpsEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\FundingSourceEligibilityCheckerInterface;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\GooglePayEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\IdealEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\MybankEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\P24EligibilityChecker;
+use PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\PaylaterEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker;
@@ -78,6 +80,8 @@ class FundingSourceEligibilityServiceTest extends TestCase
      * @var array<string, class-string<FundingSourceEligibilityCheckerInterface>>
      */
     private $checkers = [
+        'card' => CardEligibilityChecker::class,
+        'paypal' => PayPalEligibilityChecker::class,
         'apple_pay' => ApplePayEligibilityChecker::class,
         'bancontact' => BancontactEligibilityChecker::class,
         'blik' => BlikEligibilityChecker::class,
@@ -109,10 +113,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testEmptyEligibleFundingSources()
+    public function testEmptyEligibleFundingSources(): void
     {
         $shop = $this->createMock(\Shop::class);
         $shop->id = 1;
@@ -122,10 +123,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
         self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
-    /**
-     * @return void
-     */
-    public function testDisabledEligibleFundingSources()
+    public function testDisabledEligibleFundingSources(): void
     {
         $shop = $this->createMock(\Shop::class);
         $shop->id = 1;
@@ -138,19 +136,37 @@ class FundingSourceEligibilityServiceTest extends TestCase
         self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
     }
 
-    /**
-     * @return void
-     */
-    public function testUnknownEligibilityChecker()
+    public function testGetEligibleFundingSourcesReturnsEmptyWhenShopIsNull(): void
+    {
+        $this->context->method('getShop')->willReturn(null);
+
+        self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
+    }
+
+    public function testGetEligibleFundingSourcesReturnsEmptyWhenShopIdIsZero(): void
     {
         $shop = $this->createMock(\Shop::class);
-        $shop->id = 1;
+        $shop->id = 0;
         $this->context->method('getShop')->willReturn($shop);
-        $this->fundingSourcePresenter->method('getAllActiveForSpecificShop')->with(1)->willReturn([
-            new FundingSource('paypal', 'PayPal', 0, true, null),
-        ]);
 
-        self::assertArrayHasKey('paypal', $this->fundingSourceEligibilityService->getEligibleFundingSources());
+        self::assertEmpty($this->fundingSourceEligibilityService->getEligibleFundingSources());
+    }
+
+    public function testIsFundingSourceEligibleReturnsTrueAndLogsWarningWhenNoCheckerFound(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())
+            ->method('warning')
+            ->with(self::stringContains('unknown_source'));
+
+        $service = new FundingSourceEligibilityService(
+            $this->context,
+            $this->fundingSourcePresenter,
+            $logger,
+            []
+        );
+
+        self::assertTrue($service->isFundingSourceEligible(new FundingSource('unknown_source', 'Unknown', 0, true, null)));
     }
 
     /**
@@ -159,19 +175,17 @@ class FundingSourceEligibilityServiceTest extends TestCase
      * @param string $name
      * @param array{
      *     country: string,
-     *     currency: ?string,
+     *     currency: string,
      *     intent: string,
      *     configurations: array<int, array{string, bool}>,
      *     amount?: float
      * } $context
      * @param bool $eligible
-     *
-     * @return void
      */
-    public function testEligibleFundingSources($name, $context, $eligible)
+    public function testEligibleFundingSources(string $name, array $context, bool $eligible): void
     {
-        $fundingSources = array_map(function (string $name) {
-            return new FundingSource($name, ucfirst($name), 0, true, null);
+        $fundingSources = array_map(function (string $fundingSourceName) {
+            return new FundingSource($fundingSourceName, ucfirst($fundingSourceName), 0, true, null);
         }, array_keys($this->checkers));
 
         $shop = $this->createMock(\Shop::class);
@@ -193,15 +207,12 @@ class FundingSourceEligibilityServiceTest extends TestCase
         }
 
         $this->countryResolver->method('getBuyerCountryIsoCode')->willReturn($context['country']);
-
-        $this->context->method('getCurrencyIsoCode')->willReturn($context['currency'] ?: 'EUR');
-
+        $this->context->method('getCurrencyIsoCode')->willReturn($context['currency']);
         $this->context->method('getCartOrderTotal')->willReturn($context['amount'] ?? 100.0);
 
         $eligibleFundingSources = $this->fundingSourceEligibilityService->getEligibleFundingSources();
-        $isEligible = array_key_exists($name, $eligibleFundingSources);
 
-        self::assertSame($eligible, $isEligible);
+        self::assertSame($eligible, array_key_exists($name, $eligibleFundingSources));
     }
 
     /**
@@ -209,7 +220,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
      *     name: string,
      *     context: array{
      *         country: string,
-     *         currency: ?string,
+     *         currency: string,
      *         intent: string,
      *         configurations: array<int, array{string, bool}>,
      *         amount?: float
@@ -217,9 +228,72 @@ class FundingSourceEligibilityServiceTest extends TestCase
      *     eligible: bool
      * }>
      */
-    public function fundingSourcesDataProvider()
+    public function fundingSourcesDataProvider(): array
     {
         return [
+            // card
+            'eligible_card' => [
+                'name' => 'card',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_card_authorize_intent' => [
+                'name' => 'card',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_card_wrong_currency' => [
+                'name' => 'card',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'XXX',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            // paypal
+            'eligible_paypal' => [
+                'name' => 'paypal',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paypal_authorize_intent' => [
+                'name' => 'paypal',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_paypal_wrong_currency' => [
+                'name' => 'paypal',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'XXX',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            // apple_pay
             'eligible_apple_pay' => [
                 'name' => 'apple_pay',
                 'context' => [
@@ -227,94 +301,24 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE, true],
                     ],
                 ],
                 'eligible' => true,
             ],
-            'eligible_bancontact' => [
-                'name' => 'bancontact',
-                'context' => [
-                    'country' => 'BE',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_blik' => [
-                'name' => 'blik',
-                'context' => [
-                    'country' => 'PL',
-                    'currency' => 'PLN',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_eps' => [
-                'name' => 'eps',
-                'context' => [
-                    'country' => 'AT',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_google_pay' => [
-                'name' => 'google_pay',
+            'eligible_apple_pay_authorize_intent' => [
+                'name' => 'apple_pay',
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
                     'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE, true],
                     ],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_ideal' => [
-                'name' => 'ideal',
-                'context' => [
-                    'country' => 'NL',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_mybank' => [
-                'name' => 'mybank',
-                'context' => [
-                    'country' => 'IT',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_p24' => [
-                'name' => 'p24',
-                'context' => [
-                    'country' => 'PL',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_paylater' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'FR',
-                    'currency' => null,
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
                 ],
                 'eligible' => true,
             ],
@@ -325,9 +329,9 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE, true],
                     ],
                 ],
                 'eligible' => false,
@@ -339,38 +343,35 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'currency' => 'XXX',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE, true],
                     ],
                 ],
                 'eligible' => false,
             ],
-            'ineligible_apple_pay_wrong_configuration' => [
+            'ineligible_apple_pay_disabled' => [
                 'name' => 'apple_pay',
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
                         [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, false],
                         [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
+                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_LIVE, true],
                     ],
                 ],
                 'eligible' => false,
             ],
-            'eligible_apple_pay_authorization_intent' => [
-                'name' => 'apple_pay',
+            // bancontact
+            'eligible_bancontact' => [
+                'name' => 'bancontact',
                 'context' => [
-                    'country' => 'FR',
+                    'country' => 'BE',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
-                    ],
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
                 ],
                 'eligible' => true,
             ],
@@ -394,7 +395,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_bancontact_authorization_intent' => [
+            'ineligible_bancontact_authorize_intent' => [
                 'name' => 'bancontact',
                 'context' => [
                     'country' => 'BE',
@@ -403,6 +404,17 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [],
                 ],
                 'eligible' => false,
+            ],
+            // blik
+            'eligible_blik' => [
+                'name' => 'blik',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'PLN',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
             ],
             'ineligible_blik_wrong_country' => [
                 'name' => 'blik',
@@ -424,7 +436,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_blik_authorization_intent' => [
+            'ineligible_blik_authorize_intent' => [
                 'name' => 'blik',
                 'context' => [
                     'country' => 'PL',
@@ -433,6 +445,17 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [],
                 ],
                 'eligible' => false,
+            ],
+            // eps
+            'eligible_eps' => [
+                'name' => 'eps',
+                'context' => [
+                    'country' => 'AT',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
             ],
             'ineligible_eps_wrong_country' => [
                 'name' => 'eps',
@@ -454,7 +477,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_eps_authorization_intent' => [
+            'ineligible_eps_authorize_intent' => [
                 'name' => 'eps',
                 'context' => [
                     'country' => 'AT',
@@ -464,6 +487,31 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
+            // google_pay
+            'eligible_google_pay' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                    ],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_google_pay_authorize_intent' => [
+                'name' => 'google_pay',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [
+                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
+                    ],
+                ],
+                'eligible' => true,
+            ],
             'ineligible_google_pay_wrong_country' => [
                 'name' => 'google_pay',
                 'context' => [
@@ -472,8 +520,6 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
                     ],
                 ],
                 'eligible' => false,
@@ -486,37 +532,30 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
                     ],
                 ],
                 'eligible' => false,
             ],
-            'ineligible_google_pay_wrong_configuration' => [
+            'ineligible_google_pay_disabled' => [
                 'name' => 'google_pay',
                 'context' => [
                     'country' => 'FR',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [
                         [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, false],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
                     ],
                 ],
                 'eligible' => false,
             ],
-            'eligible_google_pay_authorization_intent' => [
-                'name' => 'google_pay',
+            // ideal
+            'eligible_ideal' => [
+                'name' => 'ideal',
                 'context' => [
-                    'country' => 'FR',
+                    'country' => 'NL',
                     'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => [
-                        [PayPalConfiguration::PS_CHECKOUT_GOOGLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_APPLE_PAY, true],
-                        [PayPalConfiguration::PS_CHECKOUT_DOMAIN_REGISTERED_SANDBOX, true],
-                    ],
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
                 ],
                 'eligible' => true,
             ],
@@ -540,7 +579,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_ideal_authorization_intent' => [
+            'ineligible_ideal_authorize_intent' => [
                 'name' => 'ideal',
                 'context' => [
                     'country' => 'NL',
@@ -549,6 +588,17 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [],
                 ],
                 'eligible' => false,
+            ],
+            // mybank
+            'eligible_mybank' => [
+                'name' => 'mybank',
+                'context' => [
+                    'country' => 'IT',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
             ],
             'ineligible_mybank_wrong_country' => [
                 'name' => 'mybank',
@@ -570,7 +620,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_mybank_authorization_intent' => [
+            'ineligible_mybank_authorize_intent' => [
                 'name' => 'mybank',
                 'context' => [
                     'country' => 'IT',
@@ -579,6 +629,17 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'configurations' => [],
                 ],
                 'eligible' => false,
+            ],
+            // p24
+            'eligible_p24' => [
+                'name' => 'p24',
+                'context' => [
+                    'country' => 'PL',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
             ],
             'ineligible_p24_wrong_country' => [
                 'name' => 'p24',
@@ -600,7 +661,7 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_p24_authorization_intent' => [
+            'ineligible_p24_authorize_intent' => [
                 'name' => 'p24',
                 'context' => [
                     'country' => 'PL',
@@ -610,106 +671,18 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_paylater_wrong_country' => [
-                'name' => 'paylater',
+            'ineligible_p24_pln_above_max' => [
+                'name' => 'p24',
                 'context' => [
-                    'country' => 'ZZ',
-                    'currency' => null,
+                    'country' => 'PL',
+                    'currency' => 'PLN',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [],
+                    'amount' => 60000.0,
                 ],
                 'eligible' => false,
             ],
-            'eligible_paylater_wrong_currency' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'FR',
-                    'currency' => 'XXX', // Paylater does not restrict any currencies
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'ineligible_paylater_authorization_intent' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'FR',
-                    'currency' => null,
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => [],
-                ],
-                'eligible' => false,
-            ],
-            'eligible_paylater_de' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'DE',
-                    'currency' => null,
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_paylater_au' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'AU',
-                    'currency' => null,
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'eligible_paylater_ca' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'CA',
-                    'currency' => null,
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => false,
-            ],
-            'eligible_venmo' => [
-                'name' => 'venmo',
-                'context' => [
-                    'country' => 'US',
-                    'currency' => 'USD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => true,
-            ],
-            'ineligible_venmo_wrong_country' => [
-                'name' => 'venmo',
-                'context' => [
-                    'country' => 'FR',
-                    'currency' => 'USD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_venmo_wrong_currency' => [
-                'name' => 'venmo',
-                'context' => [
-                    'country' => 'US',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_venmo_authorize_intent' => [
-                'name' => 'venmo',
-                'context' => [
-                    'country' => 'US',
-                    'currency' => 'USD',
-                    'intent' => PayPalOrderIntent::AUTHORIZE,
-                    'configurations' => [],
-                ],
-                'eligible' => false,
-            ],
+            // pay_upon_invoice
             'eligible_pay_upon_invoice' => [
                 'name' => 'pay_upon_invoice',
                 'context' => [
@@ -718,6 +691,28 @@ class FundingSourceEligibilityServiceTest extends TestCase
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [],
                     'amount' => 100.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_pay_upon_invoice_at_min' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 5.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_pay_upon_invoice_at_max' => [
+                'name' => 'pay_upon_invoice',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 2500.0,
                 ],
                 'eligible' => true,
             ],
@@ -776,14 +771,250 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_p24_pln_above_max' => [
-                'name' => 'p24',
+            // paylater
+            'eligible_paylater_fr_eur' => [
+                'name' => 'paylater',
                 'context' => [
-                    'country' => 'PL',
-                    'currency' => 'PLN',
+                    'country' => 'FR',
+                    'currency' => 'EUR',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [],
-                    'amount' => 60000.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_de_eur' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'DE',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_au_aud' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'AU',
+                    'currency' => 'AUD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_ca_cad' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'CAD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_ca_cad_at_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'CAD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 30.0,
+                ],
+                'eligible' => true,
+            ],
+            'eligible_paylater_ca_cad_at_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'CAD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 1500.0,
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_paylater_wrong_buyer_country' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'ZZ',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_authorize_intent' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_unsupported_currency' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'XXX',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 100.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_ca_cad_below_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'CAD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 10.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_ca_cad_above_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'CA',
+                    'currency' => 'CAD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 2000.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_eur_below_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 10.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_eur_above_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 3000.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_gbp_below_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'GB',
+                    'currency' => 'GBP',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 5.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_gbp_above_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'GB',
+                    'currency' => 'GBP',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 5000.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_usd_below_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 10.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_usd_above_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 15000.0,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_aud_below_min' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'AU',
+                    'currency' => 'AUD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 0.5,
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_paylater_aud_above_max' => [
+                'name' => 'paylater',
+                'context' => [
+                    'country' => 'AU',
+                    'currency' => 'AUD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                    'amount' => 2500.0,
+                ],
+                'eligible' => false,
+            ],
+            // venmo
+            'eligible_venmo' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => true,
+            ],
+            'ineligible_venmo_wrong_country' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'FR',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_venmo_wrong_currency' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'EUR',
+                    'intent' => PayPalOrderIntent::CAPTURE,
+                    'configurations' => [],
+                ],
+                'eligible' => false,
+            ],
+            'ineligible_venmo_authorize_intent' => [
+                'name' => 'venmo',
+                'context' => [
+                    'country' => 'US',
+                    'currency' => 'USD',
+                    'intent' => PayPalOrderIntent::AUTHORIZE,
+                    'configurations' => [],
                 ],
                 'eligible' => false,
             ],

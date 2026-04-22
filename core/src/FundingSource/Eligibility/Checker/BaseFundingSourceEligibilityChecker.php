@@ -69,7 +69,7 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
     {
         $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
         if (!in_array($intent, $this->getSupportedIntents(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] intent not supported');
+            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] intent not supported', ['intent' => $intent, 'allowedIntents' => $this->getSupportedIntents()]);
 
             return false;
         }
@@ -77,7 +77,7 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         if (!empty($this->getSupportedMerchantCountries())) {
             $merchantCountry = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
             if (!in_array($merchantCountry, $this->getSupportedMerchantCountries(), true)) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] merchant country not supported');
+                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] merchant country not supported', ['merchantCountry' => $merchantCountry, 'allowedCountries' => $this->getSupportedMerchantCountries()]);
 
                 return false;
             }
@@ -87,21 +87,23 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
             return $this->configuration->getBoolean($assertion);
         }, $this->assertConfigurations());
         if (!empty($configurations) && in_array(false, $configurations, true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] configuration check failed');
+            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] configuration check failed', ['failedAssertions' => array_filter($this->assertConfigurations(), function ($key) use ($configurations) {
+                return !$configurations[$key];
+            }, ARRAY_FILTER_USE_KEY)]);
 
             return false;
         }
 
         $country = $this->countryResolver->getBuyerCountryIsoCode();
         if (!empty($fundingSource->getCountries()) && !in_array($country, $fundingSource->getCountries(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] buyer country not supported');
+            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] buyer country not supported', ['country' => $country, 'allowedCountries' => $fundingSource->getCountries()]);
 
             return false;
         }
 
         $currency = $this->context->getCurrencyIsoCode();
         if (!empty($this->getAllowedCurrenciesIsoCodes()) && !in_array($currency, $this->getAllowedCurrenciesIsoCodes(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] currency not supported');
+            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] currency not supported', ['currency' => $currency, 'allowedCurrencies' => $this->getAllowedCurrenciesIsoCodes()]);
 
             return false;
         }
@@ -110,13 +112,13 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         if ($cartTotal !== null) {
             $minAmount = $this->getMinAmount($currency);
             if ($minAmount !== null && $cartTotal < $minAmount) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] minimum cart total not reached');
+                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] minimum cart total not reached', ['minAmount' => $minAmount, 'cartTotal' => $cartTotal]);
 
                 return false;
             }
             $maxAmount = $this->getMaxAmount($currency);
             if ($maxAmount !== null && $cartTotal > $maxAmount) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] maximum cart total exceeded');
+                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] maximum cart total exceeded', ['maxAmount' => $maxAmount, 'cartTotal' => $cartTotal]);
 
                 return false;
             }
