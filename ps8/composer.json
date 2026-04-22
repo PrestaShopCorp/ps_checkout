@@ -20,6 +20,9 @@
         "prestashop/php-dev-tools": "~4.0",
         "stancer/php-stubs-prestashop": "^8.2.2"
     },
+    "conflict": {
+        "webmozart/assert": "*"
+    },
     "scripts": {
         "phpstan": "../vendor/bin/phpstan analyse --memory-limit=1G",
         "phpstan:baseline": "@phpstan --generate-baseline",
