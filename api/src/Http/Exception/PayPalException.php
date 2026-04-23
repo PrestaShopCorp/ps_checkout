@@ -415,4 +415,6 @@ class PayPalException extends PsCheckoutException
     const CURRENCY_MISMATCH = 195;
 
     const ORDER_REQUIRES_ASYNC_CAPTURE = 196;
+
+    const UNSUPPORTED_PAYEE_CURRENCY = 197;
 }

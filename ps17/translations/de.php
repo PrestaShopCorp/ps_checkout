@@ -281,3 +281,4 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'Der Käufer hat die Zahlung nicht autorisiert.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'Die Autorisierung wurde erfolgreich erfasst.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Beim Erfassen der Autorisierung ist ein Fehler aufgetreten.';
+$_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'Die von Ihnen gewählte Währung wird nicht unterstützt. Bitte versuchen Sie eine andere Zahlungsmethode oder kontaktieren Sie den Support.';

@@ -435,6 +435,8 @@ class PayPalError
                 throw new PayPalException('Platform fees are not enabled for this merchant.', PayPalException::PLATFORM_FEE_NOT_ENABLED, $previous);
             case 'CURRENCY_MISMATCH':
                 throw new PayPalException('The currency does not match the expected currency.', PayPalException::CURRENCY_MISMATCH, $previous);
+            case 'UNSUPPORTED_PAYEE_CURRENCY':
+                throw new PayPalException('The currency is not accepted by payee.', PayPalException::UNSUPPORTED_PAYEE_CURRENCY, $previous);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN, $previous);
         }

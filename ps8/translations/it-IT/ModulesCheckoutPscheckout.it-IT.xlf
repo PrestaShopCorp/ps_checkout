@@ -2515,6 +2515,10 @@
         <source>An error occurred during the capture of the authorization.</source>
         <target>Si è verificato un errore durante l'acquisizione dell'autorizzazione.</target>
       </trans-unit>
+      <trans-unit id="9ff183ca42145195947b05173db23027">
+        <source>The currency you selected is not supported. Please try another payment method or contact support for assistance.</source>
+        <target>La valuta selezionata non è supportata. Si prega di provare un altro metodo di pagamento o contattare l’assistenza.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

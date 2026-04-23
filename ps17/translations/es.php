@@ -281,3 +281,4 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'El pagador no autorizó el pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'La autorización ha sido capturada correctamente.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Se produjo un error durante la captura de la autorización.';
+$_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'La moneda seleccionada no es compatible. Por favor, pruebe otro método de pago o póngase en contacto con el soporte para obtener ayuda.';

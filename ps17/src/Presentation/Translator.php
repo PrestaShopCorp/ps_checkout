@@ -345,6 +345,8 @@ class Translator implements TranslatorInterface
                 return $this->module->l('The authorization has been successfully captured.', 'Translator');
             case 'An error occurred during the capture of the authorization.':
                 return $this->module->l('An error occurred during the capture of the authorization.', 'Translator');
+            case 'The currency you selected is not supported. Please try another payment method or contact support for assistance.':
+                return $this->module->l('The currency you selected is not supported. Please try another payment method or contact support for assistance.', 'Translator');
             default:
                 return $key;
         }

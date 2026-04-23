@@ -339,6 +339,11 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     $exceptionMessageForCustomer = $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.');
 
                     break;
+                case PayPalException::UNSUPPORTED_PAYEE_CURRENCY:
+                    $exceptionMessageForCustomer = $this->translator->trans('The currency you selected is not supported. Please try another payment method or contact support for assistance.');
+
+                    break;
+
             }
         }
 

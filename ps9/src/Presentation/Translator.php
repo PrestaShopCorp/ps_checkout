@@ -345,6 +345,8 @@ class Translator implements TranslatorInterface
                 return $this->translator->trans('The authorization has been successfully captured.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'An error occurred during the capture of the authorization.':
                 return $this->translator->trans('An error occurred during the capture of the authorization.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The currency you selected is not supported. Please try another payment method or contact support for assistance.':
+                return $this->translator->trans('The currency you selected is not supported. Please try another payment method or contact support for assistance.', $parameters, 'Modules.Checkout.Pscheckout');
             default:
                 return $key;
         }
