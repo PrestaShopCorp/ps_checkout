@@ -159,7 +159,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
             [
                 'op' => 'replace',
                 'path' => "/purchase_units/@reference_id=='$purchaseUnitReferenceId'",
-                'value' => $payload['purchase_units'],
+                'value' => $payload['purchase_units'][0],
             ],
         ];
 
