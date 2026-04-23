@@ -199,6 +199,10 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
             return false;
         }
 
+        if ($this->getOneBy(['id' => $psCheckoutCart['paypal_order']])) {
+            return false;
+        }
+
         $psCheckoutOrder = new PayPalOrder(
             $psCheckoutCart['paypal_order'],
             $cartId,
