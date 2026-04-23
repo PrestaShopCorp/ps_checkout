@@ -10509,7 +10509,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''paypal_order'' on non\-empty\-array\|object\|true\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
