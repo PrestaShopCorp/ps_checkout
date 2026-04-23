@@ -138,6 +138,13 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
      */
     private function getPaymentRequest()
     {
+        if (!Validate::isLoadedObject($this->context->cart)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'No cart found.',
+            ]);
+        }
+
         /** @var ApplePayPaymentRequestDataBuilder $applePayPaymentRequestDataBuilder */
         $applePayPaymentRequestDataBuilder = $this->module->getService(ApplePayPaymentRequestDataBuilder::class);
         $paymentRequest = $applePayPaymentRequestDataBuilder->build();
