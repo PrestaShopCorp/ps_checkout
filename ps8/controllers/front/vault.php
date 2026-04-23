@@ -51,6 +51,13 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
 
             $customerId = $this->context->customer->isLogged() ? $this->context->customer->id : null;
 
+            if (empty($customerId)) {
+                $this->exitWithResponse([
+                    'status' => false,
+                    'httpCode' => 400,
+                ]);
+            }
+
             if (isset($bodyValues['action'])) {
                 $action = $bodyValues['action'];
 
