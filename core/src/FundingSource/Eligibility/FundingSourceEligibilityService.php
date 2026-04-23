@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility;
 
-use Psr\Log\LoggerInterface;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\FundingSourceEligibilityCheckerInterface;
 use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -37,21 +36,16 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
     /** @var iterable<FundingSourceEligibilityCheckerInterface> */
     private $checkers;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     /**
      * @param FundingSourceEligibilityCheckerInterface[] $checkers
      */
     public function __construct(
         ContextInterface $context,
         FundingSourcePresenterInterface $fundingSourcePresenter,
-        LoggerInterface $logger,
         iterable $checkers
     ) {
         $this->context = $context;
         $this->fundingSourcePresenter = $fundingSourcePresenter;
-        $this->logger = $logger;
         $this->checkers = $checkers;
     }
 
@@ -89,9 +83,6 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
                 return $checker->isEligible($fundingSource);
             }
         }
-
-        // If no specific checker supports this funding source, consider it eligible by default.
-        $this->logger->warning('No eligibility checker found for funding source: ' . $fundingSource->getName());
 
         return true;
     }

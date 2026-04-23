@@ -26,7 +26,6 @@ use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Util\CountryResolverInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use Psr\Log\LoggerInterface;
 
 abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligibilityCheckerInterface
 {
@@ -39,19 +38,14 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
     /** @var CountryResolverInterface */
     protected $countryResolver;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     public function __construct(
         ContextInterface $context,
         ConfigurationInterface $configuration,
-        CountryResolverInterface $countryResolver,
-        LoggerInterface $logger
+        CountryResolverInterface $countryResolver
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
         $this->countryResolver = $countryResolver;
-        $this->logger = $logger;
     }
 
     /**
@@ -69,16 +63,12 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
     {
         $intent = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_INTENT) ?: PayPalOrderIntent::CAPTURE;
         if (!in_array($intent, $this->getSupportedIntents(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] intent not supported');
-
             return false;
         }
 
         if (!empty($this->getSupportedMerchantCountries())) {
             $merchantCountry = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
             if (!in_array($merchantCountry, $this->getSupportedMerchantCountries(), true)) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] merchant country not supported');
-
                 return false;
             }
         }
@@ -87,22 +77,16 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
             return $this->configuration->getBoolean($assertion);
         }, $this->assertConfigurations());
         if (!empty($configurations) && in_array(false, $configurations, true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] configuration check failed');
-
             return false;
         }
 
         $country = $this->countryResolver->getBuyerCountryIsoCode();
         if (!empty($fundingSource->getCountries()) && !in_array($country, $fundingSource->getCountries(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] buyer country not supported');
-
             return false;
         }
 
         $currency = $this->context->getCurrencyIsoCode();
         if (!empty($this->getAllowedCurrenciesIsoCodes()) && !in_array($currency, $this->getAllowedCurrenciesIsoCodes(), true)) {
-            $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] currency not supported');
-
             return false;
         }
 
@@ -110,14 +94,10 @@ abstract class BaseFundingSourceEligibilityChecker implements FundingSourceEligi
         if ($cartTotal !== null) {
             $minAmount = $this->getMinAmount($currency);
             if ($minAmount !== null && $cartTotal < $minAmount) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] minimum cart total not reached');
-
                 return false;
             }
             $maxAmount = $this->getMaxAmount($currency);
             if ($maxAmount !== null && $cartTotal > $maxAmount) {
-                $this->logger->debug('FundingSourceEligibilityChecker: ['.$fundingSource->getName().'] maximum cart total exceeded');
-
                 return false;
             }
         }

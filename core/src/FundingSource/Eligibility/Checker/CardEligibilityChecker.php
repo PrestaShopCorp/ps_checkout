@@ -22,21 +22,21 @@ namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
-class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
+class CardEligibilityChecker extends BaseFundingSourceEligibilityChecker
 {
     protected function getSupportedName(): string
     {
-        return 'paylater';
+        return 'card';
     }
 
     protected function getAllowedCurrenciesIsoCodes(): array
     {
-        return ['CAD', 'EUR', 'GBP', 'USD', 'AUD'];
+        return ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'JPY', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TWD', 'USD', 'CHF'];
     }
 
     protected function getSupportedIntents(): array
     {
-        return [PayPalOrderIntent::CAPTURE];
+        return [PayPalOrderIntent::CAPTURE, PayPalOrderIntent::AUTHORIZE];
     }
 
     protected function assertConfigurations(): array
@@ -47,15 +47,5 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
     protected function getSupportedMerchantCountries(): array
     {
         return [];
-    }
-
-    public function getMinAmount(string $currency): ?float
-    {
-        return ['AUD' => 1, 'CAD' => 30, 'USD' => 30, 'EUR' => 30, 'GBP' => 20][$currency] ?? null;
-    }
-
-    public function getMaxAmount(string $currency): ?float
-    {
-        return ['AUD' => 1999.99, 'CAD' => 1500, 'USD' => 10000, 'EUR' => 2000, 'GBP' => 3000][$currency] ?? null;
     }
 }

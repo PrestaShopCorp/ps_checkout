@@ -370,6 +370,8 @@ class PayPalSdkConfiguration
                 return 'en_AU';
             case 'AT':
                 return $languageIso === 'DE' ? 'de_AT' : 'en_AT';
+            case 'CA':
+                return $languageIso === 'FR' ? 'fr_CA' : 'en_CA';
             default:
                 return '';
         }
