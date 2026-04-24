@@ -281,4 +281,9 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'De betaler heeft de betaling niet geautoriseerd.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'De autorisatie is succesvol vastgelegd.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Er is een fout opgetreden tijdens het vastleggen van de autorisatie.';
+$_MODULE['<{ps_checkout}prestashop>translator_355b1fcf1c9c3940759af7e0171ddc47'] = 'De geselecteerde betaalmethode ondersteunt dit type transactie niet. Kies een andere betaalmethode of neem contact op met de ondersteuning voor hulp.';
+$_MODULE['<{ps_checkout}prestashop>translator_54fe49d73ccb07edee76f7e0e9ffd46b'] = 'De combinatie van uw naam en adres kon niet worden gevalideerd. Corrigeer uw gegevens en probeer het opnieuw. Meer informatie vindt u in de Ratepay-privacyverklaring of u kunt contact opnemen met Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822'] = 'Het is niet mogelijk om de geselecteerde betaalmethode te gebruiken. Deze beslissing is gebaseerd op geautomatiseerde gegevensverwerking. Meer informatie vindt u in de Ratepay-privacyverklaring of u kunt contact opnemen met Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'Er is een fout in uw factuuradres. Controleer dit en probeer het opnieuw.';
+$_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'Er is een fout in uw verzendadres. Controleer dit en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'De door u geselecteerde valuta wordt niet ondersteund. Probeer een andere betaalmethode of neem contact op met de ondersteuning.';
