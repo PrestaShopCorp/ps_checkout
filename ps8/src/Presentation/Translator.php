@@ -345,6 +345,18 @@ class Translator implements TranslatorInterface
                 return $this->translator->trans('The authorization has been successfully captured.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'An error occurred during the capture of the authorization.':
                 return $this->translator->trans('An error occurred during the capture of the authorization.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Card payment cannot be processed at the moment':
+                return $this->translator->trans('Card payment cannot be processed at the moment', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.':
+                return $this->translator->trans('The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.':
+                return $this->translator->trans('The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.':
+                return $this->translator->trans('It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'There is an error in your billing address. Please check it and try again.':
+                return $this->translator->trans('There is an error in your billing address. Please check it and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'There is an error in your shipping address. Please check it and try again.':
+                return $this->translator->trans('There is an error in your shipping address. Please check it and try again.', $parameters, 'Modules.Checkout.Pscheckout');
             default:
                 return $key;
         }
