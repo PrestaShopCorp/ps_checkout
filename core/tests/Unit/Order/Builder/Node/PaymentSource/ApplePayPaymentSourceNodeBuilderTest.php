@@ -18,16 +18,16 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
+namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
-use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder;
+use PsCheckout\Core\Order\Builder\Node\PaymentSource\ApplePayPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
-class GooglePayPaymentSourceNodeBuilderTest extends TestCase
+class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(bool $is3dSecureEnabled = false, string $contingency = 'SCA_ALWAYS'): GooglePayPaymentSourceNodeBuilder
+    private function makeBuilder(bool $is3dSecureEnabled = false, string $contingency = 'SCA_ALWAYS'): ApplePayPaymentSourceNodeBuilder
     {
         $payPalConfig = $this->createMock(PayPalConfiguration::class);
         $payPalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
@@ -38,7 +38,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action;
         });
 
-        return new GooglePayPaymentSourceNodeBuilder($payPalConfig, $link);
+        return new ApplePayPaymentSourceNodeBuilder($payPalConfig, $link);
     }
 
     public function testAlwaysReturnsExperienceContext(): void
@@ -47,7 +47,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
 
         $this->assertSame([
             'payment_source' => [
-                'google_pay' => [
+                'apple_pay' => [
                     'experience_context' => [
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
@@ -80,7 +80,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
             '3DS disabled returns only experience_context' => [
                 false, 'SCA_ALWAYS', [
                     'payment_source' => [
-                        'google_pay' => [
+                        'apple_pay' => [
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -89,7 +89,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
             '3DS enabled with SCA_ALWAYS' => [
                 true, 'SCA_ALWAYS', [
                     'payment_source' => [
-                        'google_pay' => [
+                        'apple_pay' => [
                             'experience_context' => $experienceContext,
                             'attributes' => [
                                 'verification' => [
@@ -103,7 +103,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
             '3DS enabled with SCA_WHEN_REQUIRED' => [
                 true, 'SCA_WHEN_REQUIRED', [
                     'payment_source' => [
-                        'google_pay' => [
+                        'apple_pay' => [
                             'experience_context' => $experienceContext,
                             'attributes' => [
                                 'verification' => [

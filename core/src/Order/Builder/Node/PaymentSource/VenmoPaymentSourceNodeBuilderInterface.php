@@ -54,4 +54,11 @@ interface VenmoPaymentSourceNodeBuilderInterface
      * @return $this
      */
     public function setCart(array $cart);
+
+    /**
+     * @param bool $isExpressCheckout
+     *
+     * @return VenmoPaymentSourceNodeBuilder
+     */
+    public function setIsExpressCheckout(bool $isExpressCheckout): VenmoPaymentSourceNodeBuilder;
 }
