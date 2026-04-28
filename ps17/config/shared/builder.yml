@@ -137,14 +137,14 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
 
   PsCheckout\Api\Http\Configuration\OrderHttpClientConfigurationBuilder:
     class: 'PsCheckout\Api\Http\Configuration\OrderHttpClientConfigurationBuilder'
     arguments:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@=service("ps_checkout.module").version'
@@ -157,14 +157,14 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
 
   PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder:
     class: 'PsCheckout\Api\Http\Configuration\PaymentHttpClientConfigurationBuilder'
     arguments:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@=service("ps_checkout.module").version'
@@ -174,7 +174,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@=service("ps_checkout.module").version'
@@ -184,7 +184,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Environment\Env'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
-      - '@Psr\Log\LoggerInterface'
+      - '@PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@=service("ps_checkout.module").version'

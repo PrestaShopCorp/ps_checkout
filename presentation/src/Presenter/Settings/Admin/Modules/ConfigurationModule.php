@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Presentation\Presenter\Settings\Admin\Modules;
 
-use Monolog\Logger;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
@@ -103,24 +102,18 @@ class ConfigurationModule implements PresenterInterface
                 ],
                 'logger' => [
                     'levels' => [
-                        Logger::DEBUG => 'DEBUG : Detailed debug information',
-                        // Logger::INFO => 'INFO : Interesting events',
-                        // Logger::NOTICE => 'NOTICE : Normal but significant events',
-                        // Logger::WARNING => 'WARNING : Exceptional occurrences that are not errors',
-                        Logger::ERROR => 'ERROR : Runtime errors that do not require immediate action',
-                        // Logger::CRITICAL => 'CRITICAL : Critical conditions',
-                        // Logger::ALERT => 'ALERT : Action must be taken immediately',
-                        // Logger::EMERGENCY => 'EMERGENCY : system is unusable',
-                    ],
-                    'httpFormats' => [
-                        'CLF' => 'Apache Common Log Format',
-                        'DEBUG' => 'Debug format',
-                        'SHORT' => 'Short format',
+                        LoggerConfiguration::LEVEL_DEBUG => 'DEBUG : Detailed debug information',
+                        // LoggerConfiguration::LEVEL_INFO => 'INFO : Interesting events',
+                        // LoggerConfiguration::LEVEL_NOTICE => 'NOTICE : Normal but significant events',
+                        // LoggerConfiguration::LEVEL_WARNING => 'WARNING : Exceptional occurrences that are not errors',
+                        LoggerConfiguration::LEVEL_ERROR => 'ERROR : Runtime errors that do not require immediate action',
+                        // LoggerConfiguration::LEVEL_CRITICAL => 'CRITICAL : Critical conditions',
+                        // LoggerConfiguration::LEVEL_ALERT => 'ALERT : Action must be taken immediately',
+                        // LoggerConfiguration::LEVEL_EMERGENCY => 'EMERGENCY : system is unusable',
                     ],
                     'level' => $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_LEVEL),
                     'maxFiles' => $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_MAX_FILES),
                     'http' => $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP),
-                    'httpFormat' => $this->configuration->get(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
             ],
         ];
