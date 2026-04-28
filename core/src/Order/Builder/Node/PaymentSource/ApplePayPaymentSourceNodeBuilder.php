@@ -18,12 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node;
+namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
-class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBuilderInterface
+class ApplePayPaymentSourceNodeBuilder implements ApplePayPaymentSourceNodeBuilderInterface
 {
     /**
      * @var PayPalConfiguration
@@ -42,7 +42,7 @@ class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBui
     }
 
     /**
-     * {@inheritDoc}
+     * @return array<string, mixed>
      */
     public function build(): array
     {
@@ -57,6 +57,6 @@ class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBui
             $data['attributes'] = ['verification' => ['method' => $this->payPalConfiguration->getCardFieldsContingencies()]];
         }
 
-        return ['payment_source' => ['google_pay' => $data]];
+        return ['payment_source' => ['apple_pay' => $data]];
     }
 }

@@ -61,4 +61,18 @@ interface PayPalPaymentSourceNodeBuilderInterface
      * @return PayPalPaymentSourceNodeBuilder
      */
     public function setVirtualCart(bool $isVirtualCart): PayPalPaymentSourceNodeBuilder;
+
+    /**
+     * @param array $cart
+     *
+     * @return PayPalPaymentSourceNodeBuilder
+     */
+    public function setCart(array $cart): PayPalPaymentSourceNodeBuilder;
+
+    /**
+     * @param bool $isExpressCheckout
+     *
+     * @return PayPalPaymentSourceNodeBuilder
+     */
+    public function setIsExpressCheckout(bool $isExpressCheckout): PayPalPaymentSourceNodeBuilder;
 }
