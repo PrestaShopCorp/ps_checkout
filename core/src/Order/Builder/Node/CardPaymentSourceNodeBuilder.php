@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Order\Builder\Node;
 
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
@@ -62,14 +63,21 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
      */
     private $stateRepository;
 
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
     public function __construct(
         PayPalConfiguration $paypalConfiguration,
         CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository
+        StateRepositoryInterface $stateRepository,
+        LinkInterface $link
     ) {
         $this->paypalConfiguration = $paypalConfiguration;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
+        $this->link = $link;
     }
 
     /**
@@ -113,6 +121,25 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
                 'store_in_vault' => 'ON_SUCCESS',
             ];
         }
+
+        if ($this->paypalVaultId) {
+            $node['payment_source']['card']['stored_credential'] = [
+                'payment_initiator' => 'CUSTOMER',
+                'payment_type' => 'UNSCHEDULED',
+                'usage' => 'SUBSEQUENT',
+            ];
+        } elseif ($this->savePaymentMethod) {
+            $node['payment_source']['card']['stored_credential'] = [
+                'payment_initiator' => 'CUSTOMER',
+                'payment_type' => 'UNSCHEDULED',
+                'usage' => 'FIRST',
+            ];
+        }
+
+        $node['payment_source']['card']['experience_context'] = [
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
+        ];
 
         return $node;
     }

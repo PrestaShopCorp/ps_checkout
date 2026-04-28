@@ -17,38 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace PsCheckout\Utility\Common;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-class StringUtility
-{
-    /**
-     * @param string $str
-     * @param int $limit
-     *
-     * @return string
-     */
-    public static function truncate(string $str, int $limit): string
-    {
-        if (empty($str) || $limit < 0) {
-            return $str;
-        }
+header('Location: ../');
 
-        return mb_substr($str, 0, $limit);
-    }
-
-    /**
-     * Normalize a PayPal brand_name value: strip control characters (pattern ^.*$ forbids newlines)
-     * and truncate to the 127-character API limit.
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    public static function normalizeBrandName(string $name): string
-    {
-        $normalized = preg_replace('/[\x00-\x1F\x7F]/u', '', $name);
-
-        return self::truncate((string) $normalized, 127);
-    }
-}
+exit;
