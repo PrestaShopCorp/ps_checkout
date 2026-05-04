@@ -22,6 +22,7 @@ namespace PsCheckout\Core\OrderState\Action;
 
 use Order;
 use OrderState;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Infrastructure\Repository\OrderHistoryRepositoryInterface;
@@ -83,6 +84,16 @@ class ChangeOrderStateAction implements ChangeOrderStateActionInterface
             throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $orderId, $newOrderState->id), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
         }
 
-        $this->orderHistoryRepository->create($newOrderState->id, $order->id, !$order->hasInvoice());
+
+        try {
+            $this->orderHistoryRepository->create($newOrderState->id, $order->id, !$order->hasInvoice());
+        } catch (PsCheckoutException $e) {
+            if ($e->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                $currentOrderState = $this->orderHistoryRepository->getCurrentOrderState($orderId);
+                if ($currentOrderState !== (int) $newOrderStateId) {
+                    throw $e;
+                }
+            }
+        }
     }
 }
