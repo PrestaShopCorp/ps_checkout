@@ -23,7 +23,7 @@ namespace PsCheckout\Infrastructure\Action;
 use Address;
 use Country;
 use Exception;
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Adapter\CountryInterface;
@@ -68,14 +68,14 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
     /**
      * {@inheritDoc}
      */
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
+    public function execute(ExpressCheckoutShippingData $shippingData)
     {
-        if (!$expressCheckoutRequest->getShippingAddress()) {
+        if (!$shippingData->getCountryCode()) {
             return false;
         }
 
         // check if country is available for delivery
-        $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($expressCheckoutRequest->getShippingCountryCode());
+        $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($shippingData->getCountryCode());
 
         $idCountry = $this->country->getIdByIsoCode($shopIsoCode);
         $idState = 0;
@@ -90,11 +90,11 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
         }
 
         if ($country->contains_states) {
-            $idState = $this->countryRepository->getStateId((int) $idCountry, $expressCheckoutRequest->getShippingState());
+            $idState = $this->countryRepository->getStateId((int) $idCountry, $shippingData->getState());
         }
 
         // check if a PayPal address already exist for the customer and not used
-        $paypalAddressAlias = 'Paypal ' . $expressCheckoutRequest->getOrderId();
+        $paypalAddressAlias = 'Paypal ' . $shippingData->getOrderId();
         $paypalAddressId = $this->addressRepository->getAddressIdByAliasAndCustomer($paypalAddressAlias, $this->context->getCustomer()->id);
         $paypalAddress = new Address($paypalAddressId);
         $isPaypalValidAddressAndNotUsed = $paypalAddress->id && !$paypalAddress->isUsed();
@@ -107,14 +107,14 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
 
         $address->alias = $paypalAddressAlias;
         $address->id_customer = $this->context->getCustomer()->id;
-        $address->firstname = $expressCheckoutRequest->getPayerFirstName();
-        $address->lastname = $expressCheckoutRequest->getPayerLastName();
-        $address->address1 = $expressCheckoutRequest->getShippingStreet();
-        $address->address2 = $expressCheckoutRequest->getShippingStreet2();
-        $address->postcode = $expressCheckoutRequest->getShippingPostalCode();
-        $address->city = $expressCheckoutRequest->getShippingCity();
+        $address->firstname = $shippingData->getFirstName();
+        $address->lastname = $shippingData->getLastName();
+        $address->address1 = $shippingData->getStreet();
+        $address->address2 = $shippingData->getStreet2();
+        $address->postcode = $shippingData->getPostalCode();
+        $address->city = $shippingData->getCity();
         $address->id_country = $idCountry;
-        $address->phone = $expressCheckoutRequest->getPayerPhone();
+        $address->phone = $shippingData->getPhone();
         $address->id_state = $idState;
 
         if (!$address->validateFields(false)) {

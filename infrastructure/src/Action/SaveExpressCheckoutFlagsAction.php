@@ -20,14 +20,38 @@
 
 namespace PsCheckout\Infrastructure\Action;
 
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 
-interface CreateOrUpdateAddressActionInterface
+class SaveExpressCheckoutFlagsAction
 {
     /**
-     * @param ExpressCheckoutShippingData $shippingData
-     *
-     * @return bool
+     * @var PayPalOrderRepositoryInterface
      */
-    public function execute(ExpressCheckoutShippingData $shippingData);
+    private $payPalOrderRepository;
+
+    public function __construct(PayPalOrderRepositoryInterface $payPalOrderRepository)
+    {
+        $this->payPalOrderRepository = $payPalOrderRepository;
+    }
+
+    /**
+     * @param string $orderId
+     * @param string|null $fundingSource
+     *
+     * @return void
+     */
+    public function execute($orderId, $fundingSource)
+    {
+        $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
+
+        if (!$payPalOrder) {
+            return;
+        }
+
+        $payPalOrder->setFundingSource($fundingSource)
+            ->setIsExpressCheckout(true)
+            ->setIsCardFields(false);
+
+        $this->payPalOrderRepository->save($payPalOrder);
+    }
 }

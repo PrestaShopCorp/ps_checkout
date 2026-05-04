@@ -499,6 +499,18 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPayPalWallet\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
+			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPayPalWallet\(\) should return array\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: ../api/src/ValueObject/PayPalOrderResponse.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\ValueObject\\PayPalOrderResponse\:\:getPayerActionLink\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -691,12 +703,6 @@ parameters:
 			path: ../api/tests/Unit/Http/PaymentHttpClientTest.php
 
 		-
-			message: '#^Binary operation "\." between int\<1, max\> and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../core/src/Customer/Action/ExpressCheckoutAction.php
-
-		-
 			message: '#^Cannot access property \$email on Customer\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -739,12 +745,6 @@ parameters:
 			path: ../core/src/Customer/Action/ExpressCheckoutAction.php
 
 		-
-			message: '#^Constant _COOKIE_KEY_ not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: ../core/src/Customer/Action/ExpressCheckoutAction.php
-
-		-
 			message: '#^Parameter \#1 \$customer of method PsCheckout\\Infrastructure\\Adapter\\ContextInterface\:\:updateCustomer\(\) expects Customer, Customer\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -761,168 +761,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: ../core/src/Customer/Action/ExpressCheckoutAction.php
-
-		-
-			message: '#^Cannot access offset ''address'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''given_name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''payer'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''phone'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''phone_number'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Cannot access offset ''surname'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:__construct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getFundingSource\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getOrderId\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getPayerEmail\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getPayerFirstName\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getPayerLastName\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getPayerPhone\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getPayload\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingAddress\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingAddress\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingCity\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingCountryCode\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingPostalCode\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingState\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingStreet\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:getShippingStreet2\(\) should return string\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutRequest\:\:\$data type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Customer/Request/ValueObject/ExpressCheckoutRequest.php
 
 		-
 			message: '#^Instanceof between PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface and PsCheckout\\Core\\FundingSource\\Eligibility\\Checker\\FundingSourceEligibilityCheckerInterface will always evaluate to true\.$#'
@@ -8095,6 +7933,12 @@ parameters:
 			path: ../core/tests/Integration/Response/CaptureOrderResponse.php
 
 		-
+			message: '#^Property CartCore\:\:\$id_address_delivery \(int\) does not accept null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../core/tests/Unit/Customer/Action/ExpressCheckoutActionTest.php
+
+		-
 			message: '#^Method AmountBreakdownNodeTest\:\:buildDataProvider\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9457,18 +9301,6 @@ parameters:
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
-			message: '#^Method PsCheckout\\Infrastructure\\Action\\CreateOrUpdateAddressAction\:\:execute\(\) with return type void returns bool but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
-
-		-
-			message: '#^Method PsCheckout\\Infrastructure\\Action\\CreateOrUpdateAddressAction\:\:execute\(\) with return type void returns false but should not return anything\.$#'
-			identifier: return.void
-			count: 3
-			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
-
-		-
 			message: '#^Parameter \#1 \$idCountry of method PsCheckout\\Infrastructure\\Adapter\\CountryInterface\:\:isNeedDniByCountryId\(\) expects int, bool\|int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -9488,12 +9320,6 @@ parameters:
 
 		-
 			message: '#^Property AddressCore\:\:\$address1 \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
-
-		-
-			message: '#^Property AddressCore\:\:\$address2 \(string\) does not accept string\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
@@ -9625,6 +9451,264 @@ parameters:
 			path: ../infrastructure/src/Action/CustomerNotifyAction.php
 
 		-
+			message: '#^Cannot access offset ''address_line_1'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''address_line_2'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''admin_area_1'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''admin_area_2'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''country_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''fundingSource'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''given_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''intent'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''links'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''orderID'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''payer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''payment_source'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''postal_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''purchase_units'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Cannot access offset ''surname'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Action\\ProcessExpressCheckoutAction\:\:execute\(\) should return array\{orderID\: string, fundingSource\: string\|null\} but returns array\{orderID\: mixed, fundingSource\: mixed\}\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#1 \$id of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#1 \$orderId of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#1 \$orderId of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Api\\Http\\OrderHttpClient\:\:fetchOrder\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Infrastructure\\Action\\SaveExpressCheckoutFlagsAction\:\:execute\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#10 \$phone of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#2 \$email of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#2 \$firstName of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#2 \$fundingSource of method PsCheckout\\Infrastructure\\Action\\SaveExpressCheckoutFlagsAction\:\:execute\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#3 \$firstName of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#3 \$intent of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#3 \$lastName of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#4 \$lastName of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#4 \$street of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#5 \$phone of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#5 \$street2 of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#6 \$birthDate of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutPayerData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#6 \$postalCode of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#6 \$purchaseUnits of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#7 \$city of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#7 \$links of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#8 \$state of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
+			message: '#^Parameter \#9 \$countryCode of class PsCheckout\\Core\\Customer\\Request\\ValueObject\\ExpressCheckoutShippingData constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
+
+		-
 			message: '#^Cannot access offset ''name'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -9665,6 +9749,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../infrastructure/src/Action/SaveBatchConfigurationActionInterface.php
+
+		-
+			message: '#^Parameter \#1 \$fundingSource of method PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrder\:\:setFundingSource\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/SaveExpressCheckoutFlagsAction.php
 
 		-
 			message: '#^Call to function is_object\(\) with Cart will always evaluate to true\.$#'
@@ -11417,6 +11507,24 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../infrastructure/src/Validator/PayLaterValidator.php
+
+		-
+			message: '#^Parameter \#1 \$isoCode of static method CountryCore\:\:getByIso\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../infrastructure/tests/Unit/Action/CreateOrUpdateAddressActionTest.php
+
+		-
+			message: '#^Parameter \#1 \$frontControllerValidator of class PsCheckout\\Infrastructure\\Action\\ProcessExpressCheckoutAction constructor expects PsCheckout\\Infrastructure\\Validator\\FrontControllerValidator, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Validator\\FrontControllerValidatorInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/tests/Unit/Action/ProcessExpressCheckoutActionTest.php
+
+		-
+			message: '#^Parameter \#4 \$orderHttpClient of class PsCheckout\\Infrastructure\\Action\\ProcessExpressCheckoutAction constructor expects PsCheckout\\Api\\Http\\OrderHttpClient, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Api\\Http\\OrderHttpClientInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/tests/Unit/Action/ProcessExpressCheckoutActionTest.php
 
 		-
 			message: '#^Method Tests\\Unit\\PsCheckout\\Infrastructure\\Action\\SaveBatchConfigurationActionTest\:\:testExecuteSavesValidConfiguration\(\) has no return type specified\.$#'
