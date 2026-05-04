@@ -66,6 +66,6 @@ class OrderHistoryRepository implements OrderHistoryRepositoryInterface
         ->where('id_order = ' . (int) $orderId)
         ->orderBy('id_order_history DESC');
 
-        return (int) $this->db->getValue($query);
+        return (int) $this->db->getValue($query, false);
     }
 }
