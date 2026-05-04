@@ -20,14 +20,16 @@
 
 namespace PsCheckout\Core\Customer\Action;
 
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutPayerData;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 
 interface ExpressCheckoutActionInterface
 {
     /**
-     * @param ExpressCheckoutRequest $expressCheckoutRequest
+     * @param ExpressCheckoutPayerData $payerData
+     * @param ExpressCheckoutShippingData $shippingData
      *
      * @return void
      */
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest);
+    public function execute(ExpressCheckoutPayerData $payerData, ExpressCheckoutShippingData $shippingData);
 }

@@ -132,12 +132,29 @@ services:
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\AddressRepository'
 
+  PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction:
+    class: PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+
   PsCheckout\Core\Customer\Action\ExpressCheckoutAction:
     class: PsCheckout\Core\Customer\Action\ExpressCheckoutAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Action\CustomerAuthenticationAction'
       - '@PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction'
+
+  PsCheckout\Infrastructure\Action\ProcessExpressCheckoutAction:
+    class: PsCheckout\Infrastructure\Action\ProcessExpressCheckoutAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Validator\FrontControllerValidator'
+      - '@PsCheckout\Utility\Common\InputStreamUtility'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Api\Http\OrderHttpClient'
+      - '@PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction'
+      - '@PsCheckout\Core\Customer\Action\ExpressCheckoutAction'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor:
     class: PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor
