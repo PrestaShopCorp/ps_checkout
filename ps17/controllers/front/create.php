@@ -66,6 +66,13 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $requestData['isExpressCheckout'] = (isset($requestData['isExpressCheckout']) && $requestData['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
 
+            if (!empty($requestData['id_product']) && !empty($requestData['group'])) {
+                $requestData['id_product_attribute'] = (int) Product::getIdProductAttributeByIdAttributes(
+                    (int) $requestData['id_product'],
+                    $requestData['group']
+                );
+            }
+
             $createPayPalOrderRequest = new CreatePayPalOrderRequest($requestData);
 
             if ($this->shouldCreateCart($createPayPalOrderRequest)) {
