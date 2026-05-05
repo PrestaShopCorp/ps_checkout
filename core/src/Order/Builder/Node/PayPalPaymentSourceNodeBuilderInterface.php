@@ -75,4 +75,11 @@ interface PayPalPaymentSourceNodeBuilderInterface
      * @return PayPalPaymentSourceNodeBuilder
      */
     public function setIsExpressCheckout(bool $isExpressCheckout): PayPalPaymentSourceNodeBuilder;
+
+    /**
+     * @param string $fundingSource
+     *
+     * @return PayPalPaymentSourceNodeBuilder
+     */
+    public function setFundingSource(string $fundingSource): PayPalPaymentSourceNodeBuilder;
 }

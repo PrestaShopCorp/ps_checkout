@@ -98,6 +98,11 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
      */
     private $stateRepository;
 
+    /**
+     * @var string
+     */
+    private $fundingSource;
+
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -144,10 +149,26 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
             $data = array_merge($data, $this->buildPayerData());
         }
 
+        switch ($this->fundingSource) {
+            case 'paylater':
+                $paymentMethodSelected = 'PAYPAL_PAY_LATER';
+
+                break;
+            case 'credit':
+                $paymentMethodSelected = 'PAYPAL_CREDIT';
+
+                break;
+            default:
+                $paymentMethodSelected = 'PAYPAL';
+        }
+
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
             'shipping_preference' => $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
-            'user_action' => (!$this->isExpressCheckout && $this->cart !== null) ? 'PAY_NOW' : 'CONTINUE',
+            'contact_preference' => $this->isExpressCheckout ? 'UPDATE_CONTACT_INFO' : 'NO_CONTACT_INFO',
+            'landing_page' => 'LOGIN',
+            'payment_method_selected' => $paymentMethodSelected,
+            'user_action' => $this->isExpressCheckout ? 'CONTINUE' : 'PAY_NOW',
             'return_url' => $this->link->getModuleLink('validate'),
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
@@ -215,6 +236,14 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     public function setIsExpressCheckout(bool $isExpressCheckout): self
     {
         $this->isExpressCheckout = $isExpressCheckout;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setFundingSource(string $fundingSource): self
+    {
+        $this->fundingSource = $fundingSource;
 
         return $this;
     }
