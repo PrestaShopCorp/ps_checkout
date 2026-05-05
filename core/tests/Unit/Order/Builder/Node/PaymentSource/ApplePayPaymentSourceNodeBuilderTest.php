@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\ApplePayPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -41,9 +42,21 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
         return new ApplePayPaymentSourceNodeBuilder($payPalConfig, $link);
     }
 
+    private function makeContext(): CheckoutContext
+    {
+        return new CheckoutContext([], 'apple_pay', false, null, null, false, false);
+    }
+
+    public function testSupportsApplePay(): void
+    {
+        $builder = $this->makeBuilder();
+        $this->assertTrue($builder->supports('apple_pay'));
+        $this->assertFalse($builder->supports('paypal'));
+    }
+
     public function testAlwaysReturnsExperienceContext(): void
     {
-        $result = $this->makeBuilder(false)->build();
+        $result = $this->makeBuilder(false)->build($this->makeContext());
 
         $this->assertSame([
             'payment_source' => [
@@ -63,7 +76,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
      */
     public function testBuild(bool $is3dSecureEnabled, string $contingency, array $expected): void
     {
-        $this->assertSame($expected, $this->makeBuilder($is3dSecureEnabled, $contingency)->build());
+        $this->assertSame($expected, $this->makeBuilder($is3dSecureEnabled, $contingency)->build($this->makeContext()));
     }
 
     /**

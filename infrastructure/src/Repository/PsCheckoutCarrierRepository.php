@@ -23,7 +23,9 @@ namespace PsCheckout\Infrastructure\Repository;
 class PsCheckoutCarrierRepository
 {
     const TABLE_NAME = 'pscheckout_carrier';
+
     const TYPE_SHIPPING = 'SHIPPING';
+
     const TYPE_PICKUP = 'PICKUP';
 
     /**

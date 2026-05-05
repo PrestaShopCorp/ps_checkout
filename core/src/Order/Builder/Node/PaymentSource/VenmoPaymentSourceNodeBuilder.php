@@ -20,37 +20,14 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
-class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
+class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $paypalVaultId;
-
-    /**
-     * @var string
-     */
-    private $paypalCustomerId;
-
-    /**
-     * @var bool
-     */
-    private $savePaymentMethod;
-
-    /**
-     * @var bool
-     */
-    private $isExpressCheckout = false;
-
-    /**
-     * @var array|null
-     */
-    private $cart;
-
     /**
      * @var ConfigurationInterface
      */
@@ -61,29 +38,30 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
      */
     private $link;
 
-    /**
-     * @var int|null
-     */
-    private $cartId;
-
     public function __construct(ConfigurationInterface $configuration, LinkInterface $link)
     {
         $this->configuration = $configuration;
         $this->link = $link;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'venmo';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
         $data = [];
 
-        if ($this->cart !== null) {
-            $data['email_address'] = (string) $this->cart['customer']->email;
+        if (!$context->isExpressCheckout() && !$context->isUpdate()) {
+            $cart = $context->getCart();
+            $data['email_address'] = (string) $cart['customer']->email;
         }
 
-        if ($this->savePaymentMethod) {
+        if ($context->isSavePaymentMethod()) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
                 'usage_pattern' => 'IMMEDIATE',
@@ -91,31 +69,29 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
-            if ($this->paypalCustomerId) {
+            if ($context->getPaypalCustomerId()) {
                 $data['attributes']['customer'] = [
-                    'id' => $this->paypalCustomerId,
+                    'id' => $context->getPaypalCustomerId(),
                 ];
             }
         }
 
-        if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
+        if ($context->getPaypalVaultId()) {
+            $data['vault_id'] = $context->getPaypalVaultId();
         }
 
-        $isVirtual = isset($this->cart['cart']['is_virtual']) && (bool) $this->cart['cart']['is_virtual'];
-        $hasShipping = isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
-        $shippingPreference = $isVirtual ? 'NO_SHIPPING' : ($hasShipping ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
+        $shippingPreference = $context->isVirtualCart() ? 'NO_SHIPPING' : ($context->hasShippingAddress() ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
 
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
             'shipping_preference' => $shippingPreference,
-            'user_action' => (!$this->isExpressCheckout && $this->cart !== null) ? 'PAY_NOW' : 'CONTINUE',
+            'user_action' => (!$context->isExpressCheckout() && !$context->isUpdate()) ? 'PAY_NOW' : 'CONTINUE',
         ];
 
-        if ($shippingPreference === 'GET_FROM_FILE' && $this->cartId !== null) {
+        if ($shippingPreference === 'GET_FROM_FILE' && $context->getCartId()) {
             $data['experience_context']['order_update_callback_config'] = [
                 'callback_events' => ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'],
-                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $this->cartId]),
+                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $context->getCartId()]),
             ];
         }
 
@@ -124,53 +100,5 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'venmo' => $data,
             ],
         ];
-    }
-
-    /** {@inheritDoc} */
-    public function setPaypalVaultId($paypalVaultId): self
-    {
-        $this->paypalVaultId = $paypalVaultId;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setPaypalCustomerId($paypalCustomerId): self
-    {
-        $this->paypalCustomerId = $paypalCustomerId;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setSavePaymentMethod(bool $savePaymentMethod): self
-    {
-        $this->savePaymentMethod = $savePaymentMethod;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setCart(array $cart)
-    {
-        $this->cart = $cart;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setIsExpressCheckout(bool $isExpressCheckout): self
-    {
-        $this->isExpressCheckout = $isExpressCheckout;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setCartId(int $cartId): self
-    {
-        $this->cartId = $cartId;
-
-        return $this;
     }
 }

@@ -20,12 +20,14 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
-class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
+class BlikPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var ConfigurationInterface
@@ -42,11 +44,6 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
      */
     private $countryRepository;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private $cart;
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -57,12 +54,18 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
         $this->countryRepository = $countryRepository;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'blik';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
+        $cart = $context->getCart();
+        $invoiceAddress = isset($cart['addresses']['invoice']) ? $cart['addresses']['invoice'] : null;
         $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
         $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
         $countryCode = isset($invoiceAddress->id_country)
@@ -79,8 +82,8 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
             ],
         ];
 
-        if (isset($this->cart['customer']->email) && !empty($this->cart['customer']->email)) {
-            $data['email'] = (string) $this->cart['customer']->email;
+        if (isset($cart['customer']->email) && !empty($cart['customer']->email)) {
+            $data['email'] = (string) $cart['customer']->email;
         }
 
         return [
@@ -88,15 +91,5 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
                 'blik' => $data,
             ],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCart(array $cart)
-    {
-        $this->cart = $cart;
-
-        return $this;
     }
 }

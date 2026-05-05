@@ -20,12 +20,14 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
-class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
+class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var ConfigurationInterface
@@ -42,11 +44,6 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
      */
     private $countryRepository;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private $cart;
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -57,12 +54,18 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
         $this->countryRepository = $countryRepository;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'p24';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
+        $cart = $context->getCart();
+        $invoiceAddress = isset($cart['addresses']['invoice']) ? $cart['addresses']['invoice'] : null;
         $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
         $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
         $countryCode = isset($invoiceAddress->id_country)
@@ -73,7 +76,7 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
             'payment_source' => [
                 'p24' => [
                     'name' => trim($firstName . ' ' . $lastName),
-                    'email' => isset($this->cart['customer']->email) ? (string) $this->cart['customer']->email : '',
+                    'email' => isset($cart['customer']->email) ? (string) $cart['customer']->email : '',
                     'country_code' => $countryCode,
                     'experience_context' => [
                         'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
@@ -83,15 +86,5 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
                 ],
             ],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCart(array $cart)
-    {
-        $this->cart = $cart;
-
-        return $this;
     }
 }

@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -41,9 +42,21 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
         return new GooglePayPaymentSourceNodeBuilder($payPalConfig, $link);
     }
 
+    private function makeContext(): CheckoutContext
+    {
+        return new CheckoutContext([], 'google_pay', false, null, null, false, false);
+    }
+
+    public function testSupportsGooglePay(): void
+    {
+        $builder = $this->makeBuilder();
+        $this->assertTrue($builder->supports('google_pay'));
+        $this->assertFalse($builder->supports('paypal'));
+    }
+
     public function testAlwaysReturnsExperienceContext(): void
     {
-        $result = $this->makeBuilder(false)->build();
+        $result = $this->makeBuilder(false)->build($this->makeContext());
 
         $this->assertSame([
             'payment_source' => [
@@ -63,7 +76,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
      */
     public function testBuild(bool $is3dSecureEnabled, string $contingency, array $expected): void
     {
-        $this->assertSame($expected, $this->makeBuilder($is3dSecureEnabled, $contingency)->build());
+        $this->assertSame($expected, $this->makeBuilder($is3dSecureEnabled, $contingency)->build($this->makeContext()));
     }
 
     /**

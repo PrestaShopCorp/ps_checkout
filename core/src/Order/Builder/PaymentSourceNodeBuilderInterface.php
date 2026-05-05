@@ -18,12 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node;
+namespace PsCheckout\Core\Order\Builder;
 
-interface GooglePayPaymentSourceNodeBuilderInterface
+interface PaymentSourceNodeBuilderInterface
 {
+    public function supports(string $fundingSource): bool;
+
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function build(): array;
+    public function build(CheckoutContextInterface $context): array;
 }

@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -60,12 +61,29 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         return ['addresses' => ['invoice' => $address]];
     }
 
+    /**
+     * @param array<string, mixed> $cart
+     */
+    private function makeContext(array $cart): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'ideal', false, null, null, false, false);
+    }
+
+    public function testSupportsIdeal(): void
+    {
+        /** @var IdealPaymentSourceNodeBuilder $builder */
+        [$builder] = $this->makeBuilder();
+
+        $this->assertTrue($builder->supports('ideal'));
+        $this->assertFalse($builder->supports('blik'));
+    }
+
     public function testBuildReturnsCorrectStructure(): void
     {
         /** @var IdealPaymentSourceNodeBuilder $builder */
         [$builder] = $this->makeBuilder();
 
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -88,7 +106,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         /** @var IdealPaymentSourceNodeBuilder $builder */
         [$builder] = $this->makeBuilder($longName);
 
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['ideal']['experience_context']['brand_name']));
     }
@@ -98,7 +116,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         /** @var IdealPaymentSourceNodeBuilder $builder */
         [$builder] = $this->makeBuilder("My\nShop\r\nName");
 
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame('MyShopName', $result['payment_source']['ideal']['experience_context']['brand_name']);
     }
@@ -109,7 +127,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         [$builder] = $this->makeBuilder();
         $cart = $this->makeCart('Jane', '');
 
-        $result = $builder->setCart($cart)->build();
+        $result = $builder->build($this->makeContext($cart));
 
         $this->assertSame('Jane', $result['payment_source']['ideal']['name']);
     }
@@ -134,7 +152,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         $address->id_country = 42;
 
         $builder = new IdealPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart(['addresses' => ['invoice' => $address]])->build();
+        $result = $builder->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('NL', $result['payment_source']['ideal']['country_code']);
     }
@@ -148,7 +166,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         $address->firstname = 'Jan';
         $address->lastname = 'Bakker';
 
-        $result = $builder->setCart(['addresses' => ['invoice' => $address]])->build();
+        $result = $builder->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('', $result['payment_source']['ideal']['country_code']);
     }

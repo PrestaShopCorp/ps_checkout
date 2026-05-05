@@ -20,12 +20,14 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
-class IdealPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
+class IdealPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var ConfigurationInterface
@@ -42,11 +44,6 @@ class IdealPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterf
      */
     private $countryRepository;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private $cart;
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -57,12 +54,18 @@ class IdealPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterf
         $this->countryRepository = $countryRepository;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'ideal';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
+        $cart = $context->getCart();
+        $invoiceAddress = isset($cart['addresses']['invoice']) ? $cart['addresses']['invoice'] : null;
         $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
         $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
         $countryCode = isset($invoiceAddress->id_country)
@@ -82,15 +85,5 @@ class IdealPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterf
                 ],
             ],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCart(array $cart)
-    {
-        $this->cart = $cart;
-
-        return $this;
     }
 }

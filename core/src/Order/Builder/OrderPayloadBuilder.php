@@ -23,13 +23,6 @@ namespace PsCheckout\Core\Order\Builder;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\AmountBreakdownNodeInterface;
 use PsCheckout\Core\Order\Builder\Node\BaseNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\PaymentSource\ApmPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\PaymentSource\ApplePayPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilderInterface;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilderInterface;
 
@@ -44,10 +37,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var string */
     private $paypalOrderId;
 
-    /** @var string */
+    /** @var string|null */
     private $paypalCustomerId;
 
-    /** @var string */
+    /** @var string|null */
     private $paypalVaultId;
 
     /** @var bool */
@@ -77,85 +70,30 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /** @var ShippingNodeBuilderInterface */
     private $shippingNodeBuilder;
 
-    /** @var CardPaymentSourceNodeBuilderInterface */
-    private $cardPaymentSourceNodeBuilder;
-
     /** @var SupplementaryDataNodeBuilderInterface */
     private $supplementaryDataNodeBuilder;
 
-    /** @var PayPalPaymentSourceNodeBuilderInterface */
-    private $payPalPaymentSourceNodeBuilder;
+    /** @var PaymentSourceNodeBuilderRegistryInterface */
+    private $registry;
 
-    /** @var GooglePayPaymentSourceNodeBuilderInterface */
-    private $googlePayPaymentSourceNodeBuilder;
-
-    /** @var VenmoPaymentSourceNodeBuilderInterface */
-    private $venmoPaymentSourceNodeBuilder;
-
-    /** @var PuiPaymentSourceNodeBuilderInterface */
-    private $puiPaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $idealPaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $mybankPaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $epsPaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $p24PaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $blikPaymentSourceNodeBuilder;
-
-    /** @var ApmPaymentSourceNodeBuilderInterface */
-    private $bancontactPaymentSourceNodeBuilder;
-
-    /** @var ApplePayPaymentSourceNodeBuilderInterface */
-    private $applePayPaymentSourceNodeBuilder;
-
-    /** @var ?string */
+    /** @var string|null */
     private $birthDate;
 
-    /** @var ?string */
+    /** @var string|null */
     private $phone;
 
     public function __construct(
         BaseNodeBuilderInterface $baseNodeBuilder,
         AmountBreakdownNodeInterface $amountBreakdownNodeBuilder,
         ShippingNodeBuilderInterface $shippingNodeBuilder,
-        CardPaymentSourceNodeBuilderInterface $cardPaymentSourceNodeBuilder,
         SupplementaryDataNodeBuilderInterface $supplementaryDataNodeBuilder,
-        PayPalPaymentSourceNodeBuilderInterface $payPalPaymentSourceNodeBuilder,
-        GooglePayPaymentSourceNodeBuilderInterface $googlePayPaymentSourceNodeBuilder,
-        VenmoPaymentSourceNodeBuilderInterface $venmoPaymentSourceNodeBuilder,
-        PuiPaymentSourceNodeBuilderInterface $puiPaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $idealPaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $mybankPaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $epsPaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $p24PaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $blikPaymentSourceNodeBuilder,
-        ApmPaymentSourceNodeBuilderInterface $bancontactPaymentSourceNodeBuilder,
-        ApplePayPaymentSourceNodeBuilderInterface $applePayPaymentSourceNodeBuilder
+        PaymentSourceNodeBuilderRegistryInterface $registry
     ) {
         $this->baseNodeBuilder = $baseNodeBuilder;
         $this->amountBreakdownNodeBuilder = $amountBreakdownNodeBuilder;
         $this->shippingNodeBuilder = $shippingNodeBuilder;
-        $this->cardPaymentSourceNodeBuilder = $cardPaymentSourceNodeBuilder;
         $this->supplementaryDataNodeBuilder = $supplementaryDataNodeBuilder;
-        $this->payPalPaymentSourceNodeBuilder = $payPalPaymentSourceNodeBuilder;
-        $this->googlePayPaymentSourceNodeBuilder = $googlePayPaymentSourceNodeBuilder;
-        $this->venmoPaymentSourceNodeBuilder = $venmoPaymentSourceNodeBuilder;
-        $this->puiPaymentSourceNodeBuilder = $puiPaymentSourceNodeBuilder;
-        $this->idealPaymentSourceNodeBuilder = $idealPaymentSourceNodeBuilder;
-        $this->mybankPaymentSourceNodeBuilder = $mybankPaymentSourceNodeBuilder;
-        $this->epsPaymentSourceNodeBuilder = $epsPaymentSourceNodeBuilder;
-        $this->p24PaymentSourceNodeBuilder = $p24PaymentSourceNodeBuilder;
-        $this->blikPaymentSourceNodeBuilder = $blikPaymentSourceNodeBuilder;
-        $this->bancontactPaymentSourceNodeBuilder = $bancontactPaymentSourceNodeBuilder;
-        $this->applePayPaymentSourceNodeBuilder = $applePayPaymentSourceNodeBuilder;
+        $this->registry = $registry;
     }
 
     /** {@inheritDoc} */
@@ -163,23 +101,15 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     {
         $this->checkPaypalOrderIdWhenUpdate();
 
-        // Build the base payload
         $this->payload = $this->buildBasePayload();
 
-        // Prepare optional payload elements
         $optionalPayload = $this->buildOptionalPayload($isFullPayload);
 
-        // Merge the optional payload elements into the main payload
         $this->mergePayload($optionalPayload);
 
         return $this->payload;
     }
 
-    /**
-     * Builds the base payload using initial settings.
-     *
-     * @return array the base payload array
-     */
     private function buildBasePayload(): array
     {
         return $this->baseNodeBuilder
@@ -190,13 +120,6 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             ->build();
     }
 
-    /**
-     * Builds the optional payload elements based on various conditions.
-     *
-     * @param bool $isFullPayload whether to include the full payload or not
-     *
-     * @return array the optional payload elements
-     */
     private function buildOptionalPayload(bool $isFullPayload): array
     {
         $optionalPayload = [];
@@ -216,15 +139,23 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         }
 
         if ($this->isCard) {
-            $optionalPayload[] = $this->buildCardPaymentSource();
-            $this->payload['purchase_units'][0] = array_merge($this->payload['purchase_units'][0], $this->buildSupplementaryData());
+            $context = $this->buildCheckoutContext('card');
+            $optionalPayload[] = $this->registry->findBuilder('card')->build($context);
+            $this->payload['purchase_units'][0] = array_merge(
+                $this->payload['purchase_units'][0],
+                $this->supplementaryDataNodeBuilder->setCart($this->cart)->setPayload($this->payload)->build()
+            );
         }
 
-        if ($isFullPayload) {
-            $paymentSource = $this->buildPaymentSource();
-
-            if (!empty($paymentSource)) {
-                $optionalPayload[] = $paymentSource;
+        if ($isFullPayload && !$this->isCard) {
+            try {
+                $context = $this->buildCheckoutContext($this->fundingSource);
+                $paymentSource = $this->registry->findBuilder($this->fundingSource)->build($context);
+                if (!empty($paymentSource)) {
+                    $optionalPayload[] = $paymentSource;
+                }
+            } catch (PsCheckoutException $e) {
+                // unknown or unsupported funding source — skip payment_source node
             }
         }
 
@@ -235,40 +166,22 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
         return $optionalPayload;
     }
 
-    /**
-     * Builds the card payment source payload element.
-     *
-     * @return array the card payment source payload
-     */
-    private function buildCardPaymentSource(): array
+    private function buildCheckoutContext(string $fundingSource): CheckoutContextInterface
     {
-        return $this->cardPaymentSourceNodeBuilder
-            ->setCart($this->cart)
-            ->setPaypalVaultId($this->paypalVaultId)
-            ->setPaypalCustomerId($this->paypalCustomerId)
-            ->setSavePaymentMethod($this->savePaymentMethod)
-            ->build();
+        return new CheckoutContext(
+            $this->cart,
+            $fundingSource,
+            $this->savePaymentMethod,
+            $this->paypalCustomerId,
+            $this->paypalVaultId,
+            $this->expressCheckout,
+            $this->isUpdate,
+            $this->birthDate,
+            $this->phone
+        );
     }
 
-    /**
-     * Builds the supplementary data payload element.
-     *
-     * @return array the supplementary data payload
-     */
-    private function buildSupplementaryData(): array
-    {
-        return $this->supplementaryDataNodeBuilder
-            ->setCart($this->cart)
-            ->setPayload($this->payload)
-            ->build();
-    }
-
-    /**
-     * Merges optional payload elements into the main payload.
-     *
-     * @param array $optionalPayload the optional payload elements to merge
-     */
-    private function mergePayload(array $optionalPayload)
+    private function mergePayload(array $optionalPayload): void
     {
         foreach ($optionalPayload as $node) {
             if (!empty($node)) {
@@ -278,80 +191,13 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     }
 
     /**
-     * Ensures PayPal order ID is set when updating.
-     *
      * @throws PsCheckoutException
      */
-    private function checkPaypalOrderIdWhenUpdate()
+    private function checkPaypalOrderIdWhenUpdate(): void
     {
         if ($this->isUpdate && empty($this->paypalOrderId)) {
             throw new PsCheckoutException('PayPal order ID is required when building payload for updating an order');
         }
-    }
-
-    /**
-     * Builds the payment source node based on the funding source.
-     *
-     * @return array|null the payment source node
-     */
-    private function buildPaymentSource()
-    {
-        switch ($this->fundingSource) {
-            case 'google_pay':
-                return $this->googlePayPaymentSourceNodeBuilder->build();
-            case 'paypal':
-            case 'paylater':
-            case 'credit':
-                $paypalBuilder = $this->payPalPaymentSourceNodeBuilder
-                    ->setSavePaymentMethod($this->savePaymentMethod)
-                    ->setPaypalCustomerId($this->paypalCustomerId)
-                    ->setPaypalVaultId($this->paypalVaultId)
-                    ->setShippingAddressExists($this->shippingAddressExists())
-                    ->setVirtualCart((bool) $this->cart['cart']['is_virtual'])
-                    ->setIsExpressCheckout($this->expressCheckout)
-                    ->setFundingSource($this->fundingSource)
-                    ->setCartId((int) $this->cart['cart']['id']);
-
-                if (!$this->expressCheckout && !$this->isUpdate) {
-                    $paypalBuilder->setCart($this->cart);
-                }
-
-                return $paypalBuilder->build();
-            case 'venmo':
-                $venmoBuilder = $this->venmoPaymentSourceNodeBuilder
-                    ->setSavePaymentMethod($this->savePaymentMethod)
-                    ->setPaypalCustomerId($this->paypalCustomerId)
-                    ->setPaypalVaultId($this->paypalVaultId)
-                    ->setIsExpressCheckout($this->expressCheckout)
-                    ->setCartId((int) $this->cart['cart']['id']);
-
-                if (!$this->expressCheckout && !$this->isUpdate) {
-                    $venmoBuilder->setCart($this->cart);
-                }
-
-                return $venmoBuilder->build();
-            case 'pay_upon_invoice':
-                return $this->puiPaymentSourceNodeBuilder->setCart($this->cart)
-                    ->setBirthDate($this->birthDate)
-                    ->setPhone($this->phone)
-                    ->build();
-            case 'ideal':
-                return $this->idealPaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'mybank':
-                return $this->mybankPaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'eps':
-                return $this->epsPaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'p24':
-                return $this->p24PaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'blik':
-                return $this->blikPaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'bancontact':
-                return $this->bancontactPaymentSourceNodeBuilder->setCart($this->cart)->build();
-            case 'apple_pay':
-                return $this->applePayPaymentSourceNodeBuilder->build();
-        }
-
-        return null;
     }
 
     /** {@inheritDoc} */

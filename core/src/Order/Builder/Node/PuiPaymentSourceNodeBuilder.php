@@ -22,6 +22,8 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use libphonenumber\PhoneNumberUtil;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -30,13 +32,8 @@ use PsCheckout\Presentation\TranslatorInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use Psr\Log\LoggerInterface;
 
-class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterface
+class PuiPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
-    /**
-     * @var array
-     */
-    private $cart;
-
     /**
      * @var LoggerInterface
      */
@@ -51,16 +48,6 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      * @var CountryRepositoryInterface
      */
     private $countryRepository;
-
-    /**
-     * @var null|string
-     */
-    private $birthDate;
-
-    /**
-     * @var null|string
-     */
-    private $phone;
 
     /**
      * @var ConfigurationInterface
@@ -93,19 +80,26 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         $this->translator = $translator;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'pay_upon_invoice';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        if (!isset($this->cart['addresses']['invoice'])) {
+        $cart = $context->getCart();
+
+        if (!isset($cart['addresses']['invoice'])) {
             $this->logger->warning('Invoice address is missing in the cart for PUI payment.');
 
             throw new PsCheckoutException('Invoice address is missing in the cart for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
-        $invoiceAddress = $this->cart['addresses']['invoice'];
-        $customer = $this->cart['customer'] ?? null;
+        $invoiceAddress = $cart['addresses']['invoice'];
+        $customer = $cart['customer'] ?? null;
 
         if (!$customer) {
             $this->logger->warning('Customer is missing in the cart for PUI payment.');
@@ -132,8 +126,8 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             throw new PsCheckoutException('Valid email is required for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
         }
 
-        $phone = !empty($this->phone)
-            ? $this->phone
+        $phone = !empty($context->getPhone())
+            ? $context->getPhone()
             : (!empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : ''));
 
         if (!empty($phone)) {
@@ -149,7 +143,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                 }
             } catch (\libphonenumber\NumberParseException $exception) {
                 $this->logger->warning('Invalid phone number format for PUI payment.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
+                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'phone' => $phone,
                     'exception' => $exception,
                 ]);
@@ -157,7 +151,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
                 throw $exception;
             } catch (\Exception $exception) {
                 $this->logger->warning('Unexpected error formatting phone number for PUI payment.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
+                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'phone' => $phone,
                     'exception' => $exception,
                 ]);
@@ -180,14 +174,13 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
 
         $puiData['billing_address'] = $billingAddress;
 
-        if (isset($this->birthDate) && !empty($this->birthDate)) {
-            $birthDate = $this->birthDate;
-
-            if (is_string($birthDate) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $birthDate, $matches)) {
+        $birthDate = $context->getBirthDate();
+        if (isset($birthDate) && !empty($birthDate)) {
+            if (is_string($birthDate) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $birthDate)) {
                 $puiData['birth_date'] = $birthDate;
             } else {
                 $this->logger->warning('Invalid birth_date format for PUI payment. Expected YYYY-MM-DD.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
+                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'birth_date' => $birthDate,
                 ]);
             }
@@ -213,7 +206,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             ),
         ];
 
-        $locale = $this->getLocale();
+        $locale = $this->getLocale($cart);
 
         if (!empty($locale)) {
             $experienceContext['locale'] = $locale;
@@ -229,39 +222,12 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
     }
 
     /**
-     * {@inheritDoc}
+     * @param array<string, mixed> $cart
      */
-    public function setCart(array $cart)
+    private function getLocale(array $cart): string
     {
-        $this->cart = $cart;
-
-        return $this;
-    }
-
-    public function setBirthDate($birthDate): self
-    {
-        $this->birthDate = $birthDate;
-
-        return $this;
-    }
-
-    /**
-     * @param ?string $phone
-     */
-    public function setPhone($phone): self
-    {
-        $this->phone = $phone;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    private function getLocale(): string
-    {
-        if (isset($this->cart['language']->locale) && !empty($this->cart['language']->locale)) {
-            return $this->cart['language']->locale;
+        if (isset($cart['language']->locale) && !empty($cart['language']->locale)) {
+            return $cart['language']->locale;
         }
 
         $this->logger->warning('Language locale is missing in the cart for PUI payment.');

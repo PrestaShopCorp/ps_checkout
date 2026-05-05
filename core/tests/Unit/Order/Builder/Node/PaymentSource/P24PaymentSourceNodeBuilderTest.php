@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\P24PaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -63,9 +64,25 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed> $cart
+     */
+    private function makeContext(array $cart): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'p24', false, null, null, false, false);
+    }
+
+    public function testSupportsP24(): void
+    {
+        $builder = $this->makeBuilder();
+
+        $this->assertTrue($builder->supports('p24'));
+        $this->assertFalse($builder->supports('ideal'));
+    }
+
     public function testBuildReturnsCorrectStructure(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -85,7 +102,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
 
     public function testEmailIsAlwaysIncluded(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('customer@shop.pl'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('customer@shop.pl')));
 
         $this->assertArrayHasKey('email', $result['payment_source']['p24']);
         $this->assertSame('customer@shop.pl', $result['payment_source']['p24']['email']);
@@ -103,7 +120,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
 
         $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['p24']['experience_context']['brand_name']));
     }
@@ -131,10 +148,10 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $customer->email = 'jan@example.com';
 
         $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart([
+        $result = $builder->build($this->makeContext([
             'addresses' => ['invoice' => $address],
             'customer' => $customer,
-        ])->build();
+        ]));
 
         $this->assertSame('PL', $result['payment_source']['p24']['country_code']);
     }

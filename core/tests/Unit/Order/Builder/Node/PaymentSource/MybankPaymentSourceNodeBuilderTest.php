@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\MybankPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -57,9 +58,25 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
         return ['addresses' => ['invoice' => $address]];
     }
 
+    /**
+     * @param array<string, mixed> $cart
+     */
+    private function makeContext(array $cart): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'mybank', false, null, null, false, false);
+    }
+
+    public function testSupportsMybank(): void
+    {
+        $builder = $this->makeBuilder();
+
+        $this->assertTrue($builder->supports('mybank'));
+        $this->assertFalse($builder->supports('ideal'));
+    }
+
     public function testBuildReturnsCorrectStructure(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -88,7 +105,7 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
         $countryRepository->method('getCountryIsoCodeById')->willReturn('IT');
 
         $builder = new MybankPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['mybank']['experience_context']['brand_name']));
     }
@@ -99,7 +116,7 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
         $address->firstname = 'Mario';
         $address->lastname = 'Rossi';
 
-        $result = $this->makeBuilder()->setCart(['addresses' => ['invoice' => $address]])->build();
+        $result = $this->makeBuilder()->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('', $result['payment_source']['mybank']['country_code']);
     }

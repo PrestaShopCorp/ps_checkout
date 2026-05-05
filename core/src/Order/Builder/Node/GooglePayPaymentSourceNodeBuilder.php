@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
-class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBuilderInterface
+class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var PayPalConfiguration
@@ -41,10 +43,15 @@ class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBui
         $this->link = $link;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'google_pay';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
         $data = [
             'experience_context' => [

@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
-class ApplePayPaymentSourceNodeBuilder implements ApplePayPaymentSourceNodeBuilderInterface
+class ApplePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var PayPalConfiguration
@@ -41,10 +43,15 @@ class ApplePayPaymentSourceNodeBuilder implements ApplePayPaymentSourceNodeBuild
         $this->link = $link;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'apple_pay';
+    }
+
     /**
-     * @return array<string, mixed>
+     * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
         $data = [
             'experience_context' => [

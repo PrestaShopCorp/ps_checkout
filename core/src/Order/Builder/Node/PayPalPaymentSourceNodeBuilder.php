@@ -22,6 +22,8 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use libphonenumber\PhoneNumberType;
 use libphonenumber\PhoneNumberUtil;
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -31,43 +33,8 @@ use PsCheckout\Utility\Common\StringUtility;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use Psr\Log\LoggerInterface;
 
-class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderInterface
+class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $paypalVaultId;
-
-    /**
-     * @var string
-     */
-    private $paypalCustomerId;
-
-    /**
-     * @var bool
-     */
-    private $savePaymentMethod;
-
-    /**
-     * @var bool
-     */
-    private $shippingAddressExists;
-
-    /**
-     * @var bool
-     */
-    private $isVirtualCart;
-
-    /**
-     * @var bool
-     */
-    private $isExpressCheckout = false;
-
-    /**
-     * @var array|null
-     */
-    private $cart;
-
     /**
      * @var ConfigurationInterface
      */
@@ -98,16 +65,6 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
      */
     private $stateRepository;
 
-    /**
-     * @var string
-     */
-    private $fundingSource;
-
-    /**
-     * @var int|null
-     */
-    private $cartId;
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -124,18 +81,23 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
         $this->stateRepository = $stateRepository;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return in_array($fundingSource, ['paypal', 'paylater', 'credit'], true);
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
         $data = [];
 
-        if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
+        if ($context->getPaypalVaultId()) {
+            $data['vault_id'] = $context->getPaypalVaultId();
         }
 
-        if ($this->savePaymentMethod) {
+        if ($context->isSavePaymentMethod()) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
                 'usage_pattern' => 'IMMEDIATE',
@@ -143,18 +105,18 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
-            if ($this->paypalCustomerId) {
+            if ($context->getPaypalCustomerId()) {
                 $data['attributes']['customer'] = [
-                    'id' => $this->paypalCustomerId,
+                    'id' => $context->getPaypalCustomerId(),
                 ];
             }
         }
 
-        if ($this->cart !== null) {
-            $data = array_merge($data, $this->buildPayerData());
+        if (!$context->isExpressCheckout() && !$context->isUpdate()) {
+            $data = array_merge($data, $this->buildPayerData($context->getCart()));
         }
 
-        switch ($this->fundingSource) {
+        switch ($context->getFundingSource()) {
             case 'paylater':
                 $paymentMethodSelected = 'PAYPAL_PAY_LATER';
 
@@ -167,23 +129,23 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 $paymentMethodSelected = 'PAYPAL';
         }
 
-        $shippingPreference = $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
+        $shippingPreference = $context->isVirtualCart() ? 'NO_SHIPPING' : ($context->hasShippingAddress() ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
 
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
             'shipping_preference' => $shippingPreference,
-            'contact_preference' => $this->isExpressCheckout ? 'UPDATE_CONTACT_INFO' : 'NO_CONTACT_INFO',
+            'contact_preference' => $context->isExpressCheckout() ? 'UPDATE_CONTACT_INFO' : 'NO_CONTACT_INFO',
             'landing_page' => 'LOGIN',
             'payment_method_selected' => $paymentMethodSelected,
-            'user_action' => $this->isExpressCheckout ? 'CONTINUE' : 'PAY_NOW',
+            'user_action' => $context->isExpressCheckout() ? 'CONTINUE' : 'PAY_NOW',
             'return_url' => $this->link->getModuleLink('validate'),
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
 
-        if ($shippingPreference === 'GET_FROM_FILE' && $this->cartId !== null) {
+        if ($shippingPreference === 'GET_FROM_FILE' && $context->getCartId()) {
             $data['experience_context']['order_update_callback_config'] = [
                 'callback_events' => ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'],
-                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $this->cartId]),
+                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $context->getCartId()]),
             ];
         }
 
@@ -198,92 +160,22 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
         ];
     }
 
-    /** {@inheritDoc} */
-    public function setPaypalVaultId($paypalVaultId): self
-    {
-        $this->paypalVaultId = $paypalVaultId;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setPaypalCustomerId($paypalCustomerId): self
-    {
-        $this->paypalCustomerId = $paypalCustomerId;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setSavePaymentMethod(bool $savePaymentMethod): self
-    {
-        $this->savePaymentMethod = $savePaymentMethod;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setShippingAddressExists(bool $shippingAddressExists): self
-    {
-        $this->shippingAddressExists = $shippingAddressExists;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setVirtualCart(bool $isVirtualCart): self
-    {
-        $this->isVirtualCart = $isVirtualCart;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setCart(array $cart): self
-    {
-        $this->cart = $cart;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setIsExpressCheckout(bool $isExpressCheckout): self
-    {
-        $this->isExpressCheckout = $isExpressCheckout;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setFundingSource(string $fundingSource): self
-    {
-        $this->fundingSource = $fundingSource;
-
-        return $this;
-    }
-
-    /** {@inheritDoc} */
-    public function setCartId(int $cartId): self
-    {
-        $this->cartId = $cartId;
-
-        return $this;
-    }
-
     /**
+     * @param array<string, mixed> $cart
+     *
      * @return array<string, mixed>
      */
-    private function buildPayerData(): array
+    private function buildPayerData(array $cart): array
     {
         $data = [];
 
-        if (!isset($this->cart['addresses']['invoice'])) {
+        if (!isset($cart['addresses']['invoice'])) {
             $this->logger->warning('Invoice address is missing in the cart.');
 
             return $data;
         }
 
-        $invoiceAddress = $this->cart['addresses']['invoice'];
+        $invoiceAddress = $cart['addresses']['invoice'];
         $countryIsoCode = isset($invoiceAddress->id_country)
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
             : '';
@@ -307,12 +199,12 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
             $stateName
         );
 
-        if (isset($this->cart['customer']->email) && $this->validate->isEmail($this->cart['customer']->email)) {
-            $data['email_address'] = (string) $this->cart['customer']->email;
+        if (isset($cart['customer']->email) && $this->validate->isEmail($cart['customer']->email)) {
+            $data['email_address'] = (string) $cart['customer']->email;
         }
 
-        if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
-            $data['birth_date'] = (string) $this->cart['customer']->birthday;
+        if (!empty($cart['customer']->birthday) && $cart['customer']->birthday !== '0000-00-00') {
+            $data['birth_date'] = (string) $cart['customer']->birthday;
         }
 
         $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
@@ -332,14 +224,14 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 }
             } catch (\libphonenumber\NumberParseException $exception) {
                 $this->logger->warning('Invalid phone number format.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
+                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'address_id' => isset($invoiceAddress->id) ? (int) $invoiceAddress->id : null,
                     'phone' => $phone,
                     'exception' => $exception,
                 ]);
             } catch (\Exception $exception) {
                 $this->logger->warning('Unexpected error formatting phone number.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
+                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'address_id' => isset($invoiceAddress->id) ? (int) $invoiceAddress->id : null,
                     'phone' => $phone,
                     'exception' => $exception,

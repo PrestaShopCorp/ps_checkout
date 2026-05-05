@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\EpsPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -57,9 +58,25 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
         return ['addresses' => ['invoice' => $address]];
     }
 
+    /**
+     * @param array<string, mixed> $cart
+     */
+    private function makeContext(array $cart): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'eps', false, null, null, false, false);
+    }
+
+    public function testSupportsEps(): void
+    {
+        $builder = $this->makeBuilder();
+
+        $this->assertTrue($builder->supports('eps'));
+        $this->assertFalse($builder->supports('ideal'));
+    }
+
     public function testBuildReturnsCorrectStructure(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -88,7 +105,7 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
         $countryRepository->method('getCountryIsoCodeById')->willReturn('AT');
 
         $builder = new EpsPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['eps']['experience_context']['brand_name']));
     }
@@ -99,7 +116,7 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
         $address->firstname = 'Hans';
         $address->lastname = 'Müller';
 
-        $result = $this->makeBuilder()->setCart(['addresses' => ['invoice' => $address]])->build();
+        $result = $this->makeBuilder()->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('', $result['payment_source']['eps']['country_code']);
     }

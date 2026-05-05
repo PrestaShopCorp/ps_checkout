@@ -20,34 +20,16 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 
-class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterface
+class CardPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
-    /**
-     * @var array
-     */
-    private $cart;
-
-    /**
-     * @var string
-     */
-    private $paypalVaultId;
-
-    /**
-     * @var string
-     */
-    private $paypalCustomerId;
-
-    /**
-     * @var bool
-     */
-    private $savePaymentMethod;
-
     /**
      * @var PayPalConfiguration
      */
@@ -80,12 +62,18 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $this->link = $link;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'card';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        $address = $this->cart['addresses']['invoice'];
+        $cart = $context->getCart();
+        $address = $cart['addresses']['invoice'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
         $stateName = $countryIso === 'US' ?
@@ -95,7 +83,7 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $node = [
             'payment_source' => [
                 'card' => [
-                    'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
+                    'name' => $cart['addresses']['invoice']->firstname . ' ' . $cart['addresses']['invoice']->lastname,
                     'billing_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
                 ],
             ],
@@ -105,30 +93,30 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             $node['payment_source']['card']['attributes']['verification']['method'] = $this->paypalConfiguration->getCardFieldsContingencies();
         }
 
-        if ($this->paypalVaultId) {
+        if ($context->getPaypalVaultId()) {
             unset($node['payment_source']['card']['billing_address']);
-            $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
+            $node['payment_source']['card']['vault_id'] = $context->getPaypalVaultId();
         }
 
-        if ($this->paypalCustomerId) {
+        if ($context->getPaypalCustomerId()) {
             $node['payment_source']['card']['attributes']['customer'] = [
-                'id' => $this->paypalCustomerId,
+                'id' => $context->getPaypalCustomerId(),
             ];
         }
 
-        if ($this->savePaymentMethod) {
+        if ($context->isSavePaymentMethod()) {
             $node['payment_source']['card']['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
             ];
         }
 
-        if ($this->paypalVaultId) {
+        if ($context->getPaypalVaultId()) {
             $node['payment_source']['card']['stored_credential'] = [
                 'payment_initiator' => 'CUSTOMER',
                 'payment_type' => 'UNSCHEDULED',
                 'usage' => 'SUBSEQUENT',
             ];
-        } elseif ($this->savePaymentMethod) {
+        } elseif ($context->isSavePaymentMethod()) {
             $node['payment_source']['card']['stored_credential'] = [
                 'payment_initiator' => 'CUSTOMER',
                 'payment_type' => 'UNSCHEDULED',
@@ -142,45 +130,5 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         ];
 
         return $node;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCart(array $cart): self
-    {
-        $this->cart = $cart;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setPaypalVaultId($paypalVaultId): self
-    {
-        $this->paypalVaultId = $paypalVaultId;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setPaypalCustomerId($paypalCustomerId): self
-    {
-        $this->paypalCustomerId = $paypalCustomerId;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setSavePaymentMethod(bool $savePaymentMethod): self
-    {
-        $this->savePaymentMethod = $savePaymentMethod;
-
-        return $this;
     }
 }

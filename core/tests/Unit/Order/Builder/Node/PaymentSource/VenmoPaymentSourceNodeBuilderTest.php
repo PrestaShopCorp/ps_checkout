@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -43,14 +44,31 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * @param string $email
+     * @param bool $isVirtual
+     * @param bool $hasShipping
+     * @param bool $savePaymentMethod
+     * @param bool $isExpressCheckout
+     * @param bool $isUpdate
+     * @param string|null $vaultId
+     * @param string|null $customerId
+     * @param int $cartId
      */
-    private function makeCart(string $email = 'customer@example.com', bool $isVirtual = false, bool $hasShipping = false): array
-    {
+    private function makeContext(
+        $email = 'customer@example.com',
+        $isVirtual = false,
+        $hasShipping = false,
+        $savePaymentMethod = false,
+        $isExpressCheckout = false,
+        $isUpdate = false,
+        $vaultId = null,
+        $customerId = null,
+        $cartId = 0
+    ): CheckoutContext {
         $customer = new \stdClass();
         $customer->email = $email;
 
-        $cart = ['customer' => $customer, 'cart' => ['is_virtual' => $isVirtual]];
+        $cart = ['customer' => $customer, 'cart' => ['id' => $cartId, 'is_virtual' => $isVirtual]];
 
         if ($hasShipping) {
             $address = new \stdClass();
@@ -58,7 +76,15 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
             $cart['addresses']['shipping'] = $address;
         }
 
-        return $cart;
+        return new CheckoutContext(
+            $cart,
+            'venmo',
+            $savePaymentMethod,
+            $customerId,
+            $vaultId,
+            $isExpressCheckout,
+            $isUpdate
+        );
     }
 
     /**
@@ -66,23 +92,14 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
      * @param array<string, mixed> $expected
      */
     public function testBuild(
-        ?string $vaultId,
-        ?string $customerId,
+        $vaultId,
+        $customerId,
         bool $savePaymentMethod,
         array $expected
     ): void {
-        $builder = $this->makeBuilder();
-        $builder->setCart($this->makeCart());
+        $context = $this->makeContext('customer@example.com', false, false, $savePaymentMethod, false, false, $vaultId, $customerId);
 
-        if ($vaultId !== null) {
-            $builder->setPaypalVaultId($vaultId);
-        }
-        if ($customerId !== null) {
-            $builder->setPaypalCustomerId($customerId);
-        }
-        $builder->setSavePaymentMethod($savePaymentMethod);
-
-        $this->assertSame($expected, $builder->build());
+        $this->assertSame($expected, $this->makeBuilder()->build($context));
     }
 
     /**
@@ -193,70 +210,49 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
 
     public function testShippingPreferenceIsNoShippingForVirtualCart(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart('customer@example.com', true))
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', true));
 
         $this->assertSame('NO_SHIPPING', $result['payment_source']['venmo']['experience_context']['shipping_preference']);
     }
 
     public function testShippingPreferenceIsSetProvidedAddressWhenShippingExists(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart('customer@example.com', false, true))
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, true));
 
         $this->assertSame('SET_PROVIDED_ADDRESS', $result['payment_source']['venmo']['experience_context']['shipping_preference']);
     }
 
     public function testShippingPreferenceIsGetFromFileByDefault(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertSame('GET_FROM_FILE', $result['payment_source']['venmo']['experience_context']['shipping_preference']);
     }
 
-    public function testUserActionIsPayNowWhenCartIsSet(): void
+    public function testUserActionIsPayNowForStandardCheckout(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertSame('PAY_NOW', $result['payment_source']['venmo']['experience_context']['user_action']);
     }
 
     public function testUserActionIsContinueForExpressCheckout(): void
     {
-        $result = $this->makeBuilder()
-            ->setIsExpressCheckout(true)
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, false, false, true));
 
         $this->assertSame('CONTINUE', $result['payment_source']['venmo']['experience_context']['user_action']);
     }
 
-    public function testUserActionIsContinueWhenNoCart(): void
+    public function testUserActionIsContinueForUpdate(): void
     {
-        $result = $this->makeBuilder()
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, false, false, false, true));
 
         $this->assertSame('CONTINUE', $result['payment_source']['venmo']['experience_context']['user_action']);
     }
 
     public function testBrandNameIsNormalizedFromShopName(): void
     {
-        $result = $this->makeBuilder("My\nShop")
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder("My\nShop")->build($this->makeContext());
 
         $this->assertSame('MyShop', $result['payment_source']['venmo']['experience_context']['brand_name']);
     }
@@ -265,42 +261,50 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
     {
         $customer = new \stdClass();
         $customer->email = 42;
+        $cart = ['customer' => $customer, 'cart' => ['id' => 0, 'is_virtual' => false]];
+        $context = new CheckoutContext($cart, 'venmo', false, null, null, false, false);
 
-        $result = $this->makeBuilder()
-            ->setCart(['customer' => $customer, 'cart' => ['is_virtual' => false]])
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($context);
 
         $this->assertSame('42', $result['payment_source']['venmo']['email_address']);
     }
 
-    public function testEmailAddressOmittedWhenNoCart(): void
+    public function testEmailAddressOmittedWhenExpressCheckout(): void
     {
-        $result = $this->makeBuilder()
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, false, false, true));
+
+        $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
+    }
+
+    public function testEmailAddressOmittedWhenUpdate(): void
+    {
+        $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, false, false, false, true));
 
         $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
     }
 
     public function testCustomerIdIsIgnoredWhenSavePaymentMethodIsFalse(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setPaypalCustomerId('cust_abc')
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext('customer@example.com', false, false, false, false, false, null, 'cust_abc')
+        );
 
         $this->assertArrayNotHasKey('attributes', $result['payment_source']['venmo']);
     }
 
     public function testOrderUpdateCallbackConfigPresentWhenGetFromFile(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->setCartId(7)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext(
+            'customer@example.com',
+            false,
+            false,
+            false,
+            false,
+            false,
+            null,
+            null,
+            7
+        ));
 
         $callbackConfig = $result['payment_source']['venmo']['experience_context']['order_update_callback_config'];
         $this->assertSame(['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'], $callbackConfig['callback_events']);
@@ -313,11 +317,9 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
      */
     public function testOrderUpdateCallbackConfigAbsentWhenNotGetFromFile(bool $isVirtual, bool $hasShipping): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart('customer@example.com', $isVirtual, $hasShipping))
-            ->setSavePaymentMethod(false)
-            ->setCartId(7)
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext('customer@example.com', $isVirtual, $hasShipping, false, false, false, null, null, 7)
+        );
 
         $this->assertArrayNotHasKey(
             'order_update_callback_config',
@@ -336,16 +338,21 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
-    public function testOrderUpdateCallbackConfigAbsentWithoutCartId(): void
+    public function testOrderUpdateCallbackConfigAbsentWhenCartIdIsZero(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setSavePaymentMethod(false)
-            ->build(); // no setCartId()
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertArrayNotHasKey(
             'order_update_callback_config',
             $result['payment_source']['venmo']['experience_context']
         );
+    }
+
+    public function testSupportsVenmo(): void
+    {
+        $builder = $this->makeBuilder();
+        $this->assertTrue($builder->supports('venmo'));
+        $this->assertFalse($builder->supports('paypal'));
+        $this->assertFalse($builder->supports('card'));
     }
 }

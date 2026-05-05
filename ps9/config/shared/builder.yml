@@ -110,25 +110,19 @@ services:
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
 
+  PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderRegistry:
+    class: PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderRegistry
+    arguments:
+      - ['@PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\MybankPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\EpsPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\P24PaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\BlikPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\BancontactPaymentSourceNodeBuilder', '@PsCheckout\Core\Order\Builder\Node\PaymentSource\ApplePayPaymentSourceNodeBuilder']
+
   PsCheckout\Core\Order\Builder\OrderPayloadBuilder:
     class: PsCheckout\Core\Order\Builder\OrderPayloadBuilder
     arguments:
       - '@PsCheckout\Core\Order\Builder\Node\BaseNodeBuilder'
       - '@PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode'
       - '@PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder'
       - '@PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\MybankPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\EpsPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\P24PaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\BlikPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\BancontactPaymentSourceNodeBuilder'
-      - '@PsCheckout\Core\Order\Builder\Node\PaymentSource\ApplePayPaymentSourceNodeBuilder'
+      - '@PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderRegistry'
 
   PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder:
     class: PsCheckout\Api\Http\Configuration\CheckoutClientConfigurationBuilder

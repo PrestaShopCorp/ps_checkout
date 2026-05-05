@@ -18,12 +18,31 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
+namespace PsCheckout\Core\Order\Builder;
 
-interface ApplePayPaymentSourceNodeBuilderInterface
+interface CheckoutContextInterface
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function build(): array;
+    public function getCart(): array;
+
+    public function getFundingSource(): string;
+
+    public function isSavePaymentMethod(): bool;
+
+    public function getPaypalCustomerId(): ?string;
+
+    public function getPaypalVaultId(): ?string;
+
+    public function isExpressCheckout(): bool;
+
+    public function isUpdate(): bool;
+
+    public function getBirthDate(): ?string;
+
+    public function getPhone(): ?string;
+
+    public function getCartId(): int;
+
+    public function isVirtualCart(): bool;
+
+    public function hasShippingAddress(): bool;
 }

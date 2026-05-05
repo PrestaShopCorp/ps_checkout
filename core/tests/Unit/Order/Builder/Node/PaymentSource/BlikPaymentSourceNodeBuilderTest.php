@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\BlikPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -63,9 +64,25 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed> $cart
+     */
+    private function makeContext(array $cart): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'blik', false, null, null, false, false);
+    }
+
+    public function testSupportsBlik(): void
+    {
+        $builder = $this->makeBuilder();
+
+        $this->assertTrue($builder->supports('blik'));
+        $this->assertFalse($builder->supports('ideal'));
+    }
+
     public function testBuildIncludesEmailWhenPresent(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -85,7 +102,7 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
 
     public function testBuildOmitsEmailWhenCustomerEmailIsEmpty(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart(''))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('')));
 
         $this->assertArrayNotHasKey('email', $result['payment_source']['blik']);
     }
@@ -97,14 +114,14 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         $address->lastname = 'Nowak';
         $address->id_country = 1;
 
-        $result = $this->makeBuilder()->setCart(['addresses' => ['invoice' => $address]])->build();
+        $result = $this->makeBuilder()->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertArrayNotHasKey('email', $result['payment_source']['blik']);
     }
 
     public function testBuildReturnsCorrectNameAndCountryCode(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame('Anna Nowak', $result['payment_source']['blik']['name']);
         $this->assertSame('PL', $result['payment_source']['blik']['country_code']);
@@ -122,7 +139,7 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
 
         $builder = new BlikPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
-        $result = $builder->setCart($this->makeCart())->build();
+        $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['blik']['experience_context']['brand_name']));
     }

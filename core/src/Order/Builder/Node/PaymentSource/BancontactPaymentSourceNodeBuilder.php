@@ -20,12 +20,14 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
-class BancontactPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
+class BancontactPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
      * @var ConfigurationInterface
@@ -42,11 +44,6 @@ class BancontactPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderI
      */
     private $countryRepository;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private $cart;
-
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -57,12 +54,18 @@ class BancontactPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderI
         $this->countryRepository = $countryRepository;
     }
 
+    public function supports(string $fundingSource): bool
+    {
+        return $fundingSource === 'bancontact';
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function build(): array
+    public function build(CheckoutContextInterface $context): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
+        $cart = $context->getCart();
+        $invoiceAddress = isset($cart['addresses']['invoice']) ? $cart['addresses']['invoice'] : null;
         $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
         $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
         $countryCode = isset($invoiceAddress->id_country)
@@ -82,15 +85,5 @@ class BancontactPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderI
                 ],
             ],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setCart(array $cart)
-    {
-        $this->cart = $cart;
-
-        return $this;
     }
 }

@@ -18,19 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
+namespace PsCheckout\Core\Order\Builder;
 
-interface ApmPaymentSourceNodeBuilderInterface
+use PsCheckout\Core\Exception\PsCheckoutException;
+
+interface PaymentSourceNodeBuilderRegistryInterface
 {
     /**
-     * @return array<string, mixed>
+     * @throws PsCheckoutException when no builder supports the given funding source
      */
-    public function build(): array;
-
-    /**
-     * @param array<string, mixed> $cart
-     *
-     * @return $this
-     */
-    public function setCart(array $cart);
+    public function findBuilder(string $fundingSource): PaymentSourceNodeBuilderInterface;
 }
