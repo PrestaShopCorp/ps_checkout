@@ -103,6 +103,11 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
      */
     private $fundingSource;
 
+    /**
+     * @var int|null
+     */
+    private $cartId;
+
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
@@ -162,9 +167,11 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 $paymentMethodSelected = 'PAYPAL';
         }
 
+        $shippingPreference = $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
+
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'shipping_preference' => $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
+            'shipping_preference' => $shippingPreference,
             'contact_preference' => $this->isExpressCheckout ? 'UPDATE_CONTACT_INFO' : 'NO_CONTACT_INFO',
             'landing_page' => 'LOGIN',
             'payment_method_selected' => $paymentMethodSelected,
@@ -172,6 +179,13 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
             'return_url' => $this->link->getModuleLink('validate'),
             'cancel_url' => $this->link->getModuleLink('cancel'),
         ];
+
+        if ($shippingPreference === 'GET_FROM_FILE' && $this->cartId !== null) {
+            $data['experience_context']['order_update_callback_config'] = [
+                'callback_events' => ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'],
+                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $this->cartId]),
+            ];
+        }
 
         if (empty($data)) {
             return [];
@@ -244,6 +258,14 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
     public function setFundingSource(string $fundingSource): self
     {
         $this->fundingSource = $fundingSource;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setCartId(int $cartId): self
+    {
+        $this->cartId = $cartId;
 
         return $this;
     }

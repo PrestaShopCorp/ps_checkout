@@ -44,6 +44,7 @@ use PsCheckout\Infrastructure\Controller\AbstractAdminController;
 use PsCheckout\Infrastructure\Logger\LoggerFileFinder;
 use PsCheckout\Infrastructure\Logger\LoggerFileReader;
 use PsCheckout\Infrastructure\Repository\FundingSourceRepository;
+use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
 use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
@@ -1076,6 +1077,63 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $translator = $this->module->getService(Translator::class);
 
         $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization reauthorized successfully.'));
+    }
+
+    public function ajaxProcessGetCarrierTypes(): void
+    {
+        /** @var PsCheckoutCarrierRepository $repository */
+        $repository = $this->module->getService(PsCheckoutCarrierRepository::class);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'carriers' => $repository->getAll(),
+        ]);
+    }
+
+    public function ajaxProcessUpdateCarrierType(): void
+    {
+        $idReference = (int) Tools::getValue('id_reference');
+        $type = Tools::getValue('type');
+
+        if (!$idReference) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'error' => 'Missing id_reference parameter',
+            ]);
+        }
+
+        if (!in_array($type, [PsCheckoutCarrierRepository::TYPE_SHIPPING, PsCheckoutCarrierRepository::TYPE_PICKUP])) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'error' => sprintf('Invalid carrier type "%s". Allowed values: SHIPPING, PICKUP', $type),
+            ]);
+        }
+
+        $disabled = (bool) Tools::getValue('disabled', false);
+
+        /** @var PsCheckoutCarrierRepository $repository */
+        $repository = $this->module->getService(PsCheckoutCarrierRepository::class);
+
+        try {
+            $repository->upsert($idReference, $type, $disabled);
+        } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to update carrier type: ' . $exception->getMessage(), ['exception' => $exception]);
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => 'Failed to update carrier type: ' . $exception->getMessage(),
+            ]);
+        }
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+        ]);
     }
 
     /**

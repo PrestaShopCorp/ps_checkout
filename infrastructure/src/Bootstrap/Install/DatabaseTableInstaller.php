@@ -175,6 +175,13 @@ class DatabaseTableInstaller implements InstallerInterface
             KEY `tracking_number` (`tracking_number`),
             KEY `paypal_order_id` (`paypal_order_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_carrier` (
+            `id_reference` int(10) unsigned NOT NULL,
+            `type` varchar(20) NOT NULL DEFAULT "SHIPPING",
+            `disabled` tinyint(1) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id_reference`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 
         $this->checkTable();
@@ -232,6 +239,22 @@ class DatabaseTableInstaller implements InstallerInterface
 
             if (empty($field)) {
                 $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `tags` varchar(255) DEFAULT NULL;');
+            }
+        }
+
+        $fields = $this->db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_carrier`');
+
+        if (!empty($fields)) {
+            $hasDisabled = false;
+
+            foreach ($fields as $field) {
+                if ($field['Field'] === 'disabled') {
+                    $hasDisabled = true;
+                }
+            }
+
+            if (!$hasDisabled) {
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_carrier` ADD COLUMN `disabled` tinyint(1) NOT NULL DEFAULT 0');
             }
         }
 

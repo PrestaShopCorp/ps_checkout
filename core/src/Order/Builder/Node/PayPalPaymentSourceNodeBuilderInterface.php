@@ -82,4 +82,11 @@ interface PayPalPaymentSourceNodeBuilderInterface
      * @return PayPalPaymentSourceNodeBuilder
      */
     public function setFundingSource(string $fundingSource): PayPalPaymentSourceNodeBuilder;
+
+    /**
+     * @param int $cartId
+     *
+     * @return PayPalPaymentSourceNodeBuilder
+     */
+    public function setCartId(int $cartId): PayPalPaymentSourceNodeBuilder;
 }

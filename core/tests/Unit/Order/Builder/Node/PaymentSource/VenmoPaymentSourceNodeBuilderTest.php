@@ -23,6 +23,7 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
 class VenmoPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -31,7 +32,14 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
-        return new VenmoPaymentSourceNodeBuilder($configuration);
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturnCallback(static function (string $action, array $params = []) {
+            $query = !empty($params) ? '?' . http_build_query($params) : '';
+
+            return 'https://example.com/' . $action . $query;
+        });
+
+        return new VenmoPaymentSourceNodeBuilder($configuration, $link);
     }
 
     /**
@@ -284,5 +292,60 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
             ->build();
 
         $this->assertArrayNotHasKey('attributes', $result['payment_source']['venmo']);
+    }
+
+    public function testOrderUpdateCallbackConfigPresentWhenGetFromFile(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setSavePaymentMethod(false)
+            ->setCartId(7)
+            ->build();
+
+        $callbackConfig = $result['payment_source']['venmo']['experience_context']['order_update_callback_config'];
+        $this->assertSame(['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'], $callbackConfig['callback_events']);
+        $this->assertStringContainsString('id_cart=7', $callbackConfig['callback_url']);
+        $this->assertStringContainsString('shipping', $callbackConfig['callback_url']);
+    }
+
+    /**
+     * @dataProvider noCallbackConfigProvider
+     */
+    public function testOrderUpdateCallbackConfigAbsentWhenNotGetFromFile(bool $isVirtual, bool $hasShipping): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart('customer@example.com', $isVirtual, $hasShipping))
+            ->setSavePaymentMethod(false)
+            ->setCartId(7)
+            ->build();
+
+        $this->assertArrayNotHasKey(
+            'order_update_callback_config',
+            $result['payment_source']['venmo']['experience_context']
+        );
+    }
+
+    /**
+     * @return array<string, array{bool, bool}>
+     */
+    public static function noCallbackConfigProvider(): array
+    {
+        return [
+            'virtual cart → NO_SHIPPING' => [true, false],
+            'shipping address provided → SET_PROVIDED_ADDRESS' => [false, true],
+        ];
+    }
+
+    public function testOrderUpdateCallbackConfigAbsentWithoutCartId(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setSavePaymentMethod(false)
+            ->build(); // no setCartId()
+
+        $this->assertArrayNotHasKey(
+            'order_update_callback_config',
+            $result['payment_source']['venmo']['experience_context']
+        );
     }
 }

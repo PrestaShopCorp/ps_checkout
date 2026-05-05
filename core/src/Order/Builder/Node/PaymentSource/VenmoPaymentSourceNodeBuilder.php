@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
@@ -55,9 +56,20 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
      */
     private $configuration;
 
-    public function __construct(ConfigurationInterface $configuration)
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    /**
+     * @var int|null
+     */
+    private $cartId;
+
+    public function __construct(ConfigurationInterface $configuration, LinkInterface $link)
     {
         $this->configuration = $configuration;
+        $this->link = $link;
     }
 
     /**
@@ -92,11 +104,20 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
 
         $isVirtual = isset($this->cart['cart']['is_virtual']) && (bool) $this->cart['cart']['is_virtual'];
         $hasShipping = isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
+        $shippingPreference = $isVirtual ? 'NO_SHIPPING' : ($hasShipping ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE');
+
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'shipping_preference' => $isVirtual ? 'NO_SHIPPING' : ($hasShipping ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
+            'shipping_preference' => $shippingPreference,
             'user_action' => (!$this->isExpressCheckout && $this->cart !== null) ? 'PAY_NOW' : 'CONTINUE',
         ];
+
+        if ($shippingPreference === 'GET_FROM_FILE' && $this->cartId !== null) {
+            $data['experience_context']['order_update_callback_config'] = [
+                'callback_events' => ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'],
+                'callback_url' => $this->link->getModuleLink('shipping', ['id_cart' => $this->cartId]),
+            ];
+        }
 
         return [
             'payment_source' => [
@@ -141,6 +162,14 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
     public function setIsExpressCheckout(bool $isExpressCheckout): self
     {
         $this->isExpressCheckout = $isExpressCheckout;
+
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    public function setCartId(int $cartId): self
+    {
+        $this->cartId = $cartId;
 
         return $this;
     }

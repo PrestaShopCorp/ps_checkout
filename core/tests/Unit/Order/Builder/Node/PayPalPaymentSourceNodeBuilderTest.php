@@ -87,8 +87,10 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
-            return 'https://example.com/' . $action;
+        $link->method('getModuleLink')->willReturnCallback(static function (string $action, array $params = []) {
+            $query = !empty($params) ? '?' . http_build_query($params) : '';
+
+            return 'https://example.com/' . $action . $query;
         });
 
         return new PayPalPaymentSourceNodeBuilder(
@@ -436,6 +438,64 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             ->build();
 
         $this->assertSame('vault_xyz', $result['payment_source']['paypal']['vault_id']);
+    }
+
+    public function testOrderUpdateCallbackConfigPresentWhenGetFromFile(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setCartId(42)
+            ->build();
+
+        $callbackConfig = $result['payment_source']['paypal']['experience_context']['order_update_callback_config'];
+        $this->assertSame(['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS'], $callbackConfig['callback_events']);
+        $this->assertStringContainsString('id_cart=42', $callbackConfig['callback_url']);
+        $this->assertStringContainsString('shipping', $callbackConfig['callback_url']);
+    }
+
+    /**
+     * @dataProvider noCallbackConfigProvider
+     */
+    public function testOrderUpdateCallbackConfigAbsentWhenNotGetFromFile(bool $isVirtual, bool $hasShipping): void
+    {
+        $result = $this->makeBuilder()
+            ->setVirtualCart($isVirtual)
+            ->setShippingAddressExists($hasShipping)
+            ->setSavePaymentMethod(false)
+            ->setCartId(42)
+            ->build();
+
+        $this->assertArrayNotHasKey(
+            'order_update_callback_config',
+            $result['payment_source']['paypal']['experience_context']
+        );
+    }
+
+    /**
+     * @return array<string, array{bool, bool}>
+     */
+    public static function noCallbackConfigProvider(): array
+    {
+        return [
+            'virtual cart → NO_SHIPPING' => [true, false],
+            'shipping address provided → SET_PROVIDED_ADDRESS' => [false, true],
+        ];
+    }
+
+    public function testOrderUpdateCallbackConfigAbsentWithoutCartId(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->build(); // no setCartId()
+
+        $this->assertArrayNotHasKey(
+            'order_update_callback_config',
+            $result['payment_source']['paypal']['experience_context']
+        );
     }
 
     /**

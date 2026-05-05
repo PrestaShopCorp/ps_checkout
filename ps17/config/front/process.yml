@@ -302,3 +302,11 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderAuthorizationRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@Psr\Log\LoggerInterface'
+
+
+  PsCheckout\Infrastructure\Action\ShippingCallbackProcessor:
+    class: PsCheckout\Infrastructure\Action\ShippingCallbackProcessor
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository'
+      - '@Psr\Log\LoggerInterface'

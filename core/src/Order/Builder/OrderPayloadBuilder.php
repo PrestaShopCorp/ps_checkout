@@ -309,7 +309,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                     ->setShippingAddressExists($this->shippingAddressExists())
                     ->setVirtualCart((bool) $this->cart['cart']['is_virtual'])
                     ->setIsExpressCheckout($this->expressCheckout)
-                    ->setFundingSource($this->fundingSource);
+                    ->setFundingSource($this->fundingSource)
+                    ->setCartId((int) $this->cart['cart']['id']);
 
                 if (!$this->expressCheckout && !$this->isUpdate) {
                     $paypalBuilder->setCart($this->cart);
@@ -321,7 +322,8 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                     ->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
-                    ->setIsExpressCheckout($this->expressCheckout);
+                    ->setIsExpressCheckout($this->expressCheckout)
+                    ->setCartId((int) $this->cart['cart']['id']);
 
                 if (!$this->expressCheckout && !$this->isUpdate) {
                     $venmoBuilder->setCart($this->cart);

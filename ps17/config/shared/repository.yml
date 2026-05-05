@@ -101,3 +101,8 @@ services:
     class: PsCheckout\Infrastructure\Repository\ShippingTrackingRepository
     arguments:
       - '@ps_checkout.db'
+
+  PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository:
+    class: PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository
+    arguments:
+      - '@ps_checkout.db'
