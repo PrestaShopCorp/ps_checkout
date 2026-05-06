@@ -34,4 +34,11 @@ interface OrderHistoryRepositoryInterface
      * @throws OrderException
      */
     public function create(int $orderStateId, int $orderId, bool $useExistingPayments): bool;
+
+    /**
+     * @param int $orderId
+     *
+     * @return int
+     */
+    public function getCurrentOrderState(int $orderId);
 }
