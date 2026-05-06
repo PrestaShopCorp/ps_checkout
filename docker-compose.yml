@@ -68,7 +68,7 @@ services:
       - ps-checkout
     post_start:
       - command: composer install --working-dir=/var/www/html/modules/ps_checkout
-      - command: chmod -R 777 /var/www/html
+      - command: find /var/www/html/modules/ps_checkout/vendor/bin -type f -exec chmod +x {} \;
 
 networks:
   ps-checkout:

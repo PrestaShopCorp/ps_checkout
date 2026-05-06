@@ -7,19 +7,34 @@
 #    ports:
 #      - ${WIREMOCK_PORT}:8080
 #    restart: "no"
+#    networks:
+#      - ps-checkout
+#
+#  adminer:
+#    image: adminer:latest
+#    platform: ${DOCKER_PLATFORM}
+#    container_name: adminer
+#    ports:
+#      - "8082:8080"
+#    environment:
+#      ADMINER_DEFAULT_SERVER: mysql
+#    networks:
+#      - ps-checkout
 #
 #  dozzle:
 #    image: amir20/dozzle:latest
-#    platform: linux/amd64
+#    platform: ${DOCKER_PLATFORM}
 #    container_name: dozzle
 #    volumes:
 #      - /var/run/docker.sock:/var/run/docker.sock
 #    ports:
 #      - "8080:8080"
+#    networks:
+#      - ps-checkout
 #
 #  cloudflared:
 #    image: cloudflare/cloudflared:latest
-#    platform: linux/amd64
+#    platform: ${DOCKER_PLATFORM}
 #    container_name: cloudflared
 #    env_file: ./.env
 #    command: tunnel --config /config.yml run
@@ -35,6 +50,8 @@
 #      nofile:
 #        soft: 65536
 #        hard: 65536
+#    networks:
+#      - ps-checkout
 #
 #  glitchtip-db:
 #    container_name: glitchtip-db
@@ -46,6 +63,8 @@
 #    restart: unless-stopped
 #    volumes:
 #      - glitchtip-db-data:/var/lib/postgresql
+#    networks:
+#      - ps-checkout
 #
 #  glitchtip:
 #    container_name: glitchtip
@@ -68,7 +87,12 @@
 #    restart: unless-stopped
 #    volumes:
 #      - glitchtip-uploads:/code/uploads
+#    networks:
+#      - ps-checkout
 #
 #volumes:
 #  glitchtip-db-data:
 #  glitchtip-uploads:
+#
+#networks:
+#  ps-checkout:
