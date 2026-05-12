@@ -18,16 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder;
+namespace PsCheckout\Core\PayPal\ShippingCallback\Builder;
 
-use PsCheckout\Core\Exception\PsCheckoutException;
-
-interface OrderPayloadBuilderInterface
+interface ShippingOptionsBuilderInterface
 {
     /**
-     * @return array the constructed payload
-     *
-     * @throws PsCheckoutException if required fields are missing
+     * @return array<int, array<string, mixed>>
      */
-    public function build(CheckoutContextInterface $context): array;
+    public function build(int $cartId, ?string $selectedOptionId): array;
+
+    /**
+     * @param array<int, array<string, mixed>> $shippingOptions
+     */
+    public function getSelectedShippingPrice(array $shippingOptions): float;
 }

@@ -23,6 +23,7 @@ namespace PsCheckout\Core\PayPal\Order\Processor;
 use Exception;
 use PsCheckout\Api\Http\HttpClientInterface;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
+use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
@@ -31,7 +32,6 @@ use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CheckPayPalOrderRequest;
-use PsCheckout\Presentation\Presenter\PresenterInterface;
 use PsCheckout\Utility\Common\ArrayUtility;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 
@@ -45,9 +45,9 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
     private $paypalOrderProvider;
 
     /**
-     * @var PresenterInterface
+     * @var CheckoutContextBuilderInterface
      */
-    private $cartPresenter;
+    private $checkoutContextBuilder;
 
     /**
      * @var OrderPayloadBuilderInterface
@@ -76,7 +76,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
 
     public function __construct(
         PayPalOrderProviderInterface $paypalOrderProvider,
-        PresenterInterface $cartPresenter,
+        CheckoutContextBuilderInterface $checkoutContextBuilder,
         OrderPayloadBuilderInterface $orderPayloadBuilder,
         OrderHttpClientInterface $httpClient,
         PayPalOrderRepositoryInterface $paypalOrderRepository,
@@ -84,7 +84,7 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
         UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit
     ) {
         $this->paypalOrderProvider = $paypalOrderProvider;
-        $this->cartPresenter = $cartPresenter;
+        $this->checkoutContextBuilder = $checkoutContextBuilder;
         $this->orderPayloadBuilder = $orderPayloadBuilder;
         $this->httpClient = $httpClient;
         $this->paypalOrderRepository = $paypalOrderRepository;
@@ -117,14 +117,15 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
             return;
         }
 
-        $this->orderPayloadBuilder
-            ->setCart($this->cartPresenter->present())
+        $context = $this->checkoutContextBuilder
             ->setIsUpdate(true)
             ->setPaypalOrderId($request->getOrderId())
+            ->setFundingSource($request->getFundingSource())
             ->setIsCard($request->getFundingSource() === self::FUNDING_SOURCE_CARD && $request->isHostedFields())
-            ->setIsExpressCheckout($request->isExpressCheckout());
+            ->setIsExpressCheckout($request->isExpressCheckout())
+            ->build();
 
-        $payload = $this->orderPayloadBuilder->build();
+        $payload = $this->orderPayloadBuilder->build($context);
 
         $needToUpdate = false;
 

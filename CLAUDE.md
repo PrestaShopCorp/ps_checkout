@@ -30,12 +30,12 @@ Key `.env` variables:
 ```bash
 make lint                  # php-cs-fixer + autoindex
 make php-cs-fixer          # Fix code style only
-make phpstan               # PHPStan static analysis (uses $MODULE_VERSION)
-make phpstan-baseline      # Regenerate PHPStan baseline for current $MODULE_VERSION
-make phpstan-baseline-all  # Regenerate baselines for all versions
+make phpstan               # PHPStan static analysis (uses $MODULE_VERSION), must be run only by developers
+make phpstan-baseline      # Regenerate PHPStan baseline for current $MODULE_VERSION, must be run only by developers
+make phpstan-baseline-all  # Regenerate baselines for all versions, must be run only by developers
 
 make unit-test             # All unit tests (api, utility, core, presentation)
-make integration-test      # All integration tests (module, core, infrastructure)
+make integration-test      # All integration tests (module, core, infrastructure), must be run only by developers
 make test                  # Full test suite
 
 # Run a single test suite directly
@@ -43,9 +43,9 @@ make php-unit-core
 make php-unit-api
 make php-unit-utility
 make php-unit-presentation
-make php-integration
-make php-integration-core
-make php-integration-infrastructure
+make php-integration # must be run only by developers
+make php-integration-core # must be run only by developers
+make php-integration-infrastructure # must be run only by developers
 
 make ssh                   # Shell into the running PrestaShop container
 make install-module        # Install the module in PrestaShop via console
@@ -54,7 +54,7 @@ make install-module        # Install the module in PrestaShop via console
 Module logs (inside project root, not container): `prestashop/<PS_VERSION_TAG>/var/logs/ps_checkout-*-<YYYY-MM-DD>`.
 
 All `make` test commands run inside the Docker container using `$MODULE_VERSION` and `$PS_VERSION_TAG` from `.env`.
-`make phpstan` runs locally without Docker. All `make *-test` commands require a running Docker container (`make up`).
+All `make *-test` commands require a running Docker container (`make up`).
 
 Do not run `phpunit` directly from the host — cross-package autoloading (e.g., `api/` classes in `core/` tests) only resolves inside the Docker container via the module's `vendor/autoload.php`. Always use `make` commands for tests.
 
@@ -121,7 +121,11 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 ### PHPStan workflow
 
-`make phpstan` runs locally (no Docker needed). When modifying shared packages, always run `make phpstan` and fix reported errors. Only regenerate the baseline (`make phpstan-baseline`) if errors are pre-existing or unfixable (e.g., baseline count mismatches from removed code).
+Must be run by developers locally before merging code.
+
+`make phpstan` runs locally (no Docker needed).
+When modifying shared packages, always run `make phpstan` and fix reported errors.
+Only regenerate the baseline (`make phpstan-baseline`) if errors are pre-existing or unfixable (e.g., baseline count mismatches from removed code).
 
 - **Test files**: PHPStan requires explicit return types on test methods (`: void`), `@return` annotations on data providers (e.g., `@return array<string, array{int, string}>`), and `@var` type hints when accessing nested array results from `handle()` methods.
 - `make phpstan` only checks the version set in `$MODULE_VERSION`. To verify all versions, also run `composer phpstan` from within `ps9/` and `ps17/` (or whichever versions aren't the default).

@@ -117,6 +117,8 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
 
         $experienceContext = [
             'brand_name' => 'Test Shop',
+            'return_url' => 'https://example.com/validate',
+            'cancel_url' => 'https://example.com/cancel',
             'shipping_preference' => 'GET_FROM_FILE',
             'user_action' => 'PAY_NOW',
         ];

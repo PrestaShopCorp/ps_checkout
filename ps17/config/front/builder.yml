@@ -2,16 +2,36 @@ services:
   _defaults:
     public: true
 
+  PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder:
+    class: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+      - '@PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository'
+
+  PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface:
+    alias: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder
+
+  PsCheckout\Infrastructure\Builder\CheckoutContextBuilder:
+    class: PsCheckout\Infrastructure\Builder\CheckoutContextBuilder
+    arguments:
+      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
+      - '@PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+
+  PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface:
+    alias: PsCheckout\Infrastructure\Builder\CheckoutContextBuilder
+
   PsCheckout\Core\PayPal\GooglePay\Builder\GooglePayPaymentRequestDataBuilder:
     class: 'PsCheckout\Core\PayPal\GooglePay\Builder\GooglePayPaymentRequestDataBuilder'
     arguments:
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
-      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
       - '@PsCheckout\Module\Presentation\Translator'
 
   PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder:
     class: 'PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder'
     arguments:
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
-      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
       - '@PsCheckout\Module\Presentation\Translator'

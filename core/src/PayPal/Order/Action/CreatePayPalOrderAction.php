@@ -25,9 +25,9 @@ use PrestaShopException;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
-use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
@@ -35,7 +35,6 @@ use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Core\PayPal\Order\Response\ValueObject\CreatePayPalOrderResponse;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Presentation\Presenter\PresenterInterface;
 
 class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 {
@@ -43,11 +42,6 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      * @var ContextInterface
      */
     private $context;
-
-    /**
-     * @var PayPalCustomerRepositoryInterface
-     */
-    private $payPalCustomerRepository;
 
     /**
      * @var PayPalOrderRepositoryInterface
@@ -70,9 +64,9 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
     private $orderPayloadBuilder;
 
     /**
-     * @var PresenterInterface
+     * @var CheckoutContextBuilderInterface
      */
-    private $cartPresenter;
+    private $checkoutContextBuilder;
 
     /**
      * @var PayPalOrderCacheInterface
@@ -86,22 +80,20 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
     public function __construct(
         ContextInterface $context,
-        PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         OrderHttpClientInterface $orderHttpClient,
         OrderPayloadBuilderInterface $orderPayloadBuilder,
-        PresenterInterface $cartPresenter,
+        CheckoutContextBuilderInterface $checkoutContextBuilder,
         CreatePayPalOrderProcessorInterface $createPayPalOrderProcessor,
         PayPalOrderCacheInterface $payPalOrderCache,
         DeletePaymentTokenActionInterface $deletePaymentTokenAction
     ) {
         $this->context = $context;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->orderHttpClient = $orderHttpClient;
         $this->createPayPalOrderProcessor = $createPayPalOrderProcessor;
         $this->orderPayloadBuilder = $orderPayloadBuilder;
-        $this->cartPresenter = $cartPresenter;
+        $this->checkoutContextBuilder = $checkoutContextBuilder;
         $this->payPalOrderCache = $payPalOrderCache;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
     }
@@ -111,31 +103,22 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     public function execute(int $cartId, CreatePayPalOrderRequest $request): bool
     {
-        $this->orderPayloadBuilder
-            ->setCart($this->cartPresenter->present())
+        $this->checkoutContextBuilder
             ->setIsCard($this->isCardPayment($request))
             ->setIsExpressCheckout($request->isExpressCheckout())
             ->setFundingSource($request->getFundingSource())
             ->setSavePaymentMethod($request->isVault())
-            ->setIsVault($request->getVaultId() || $request->isVault())
-            ->setCustomerBirthDay($request->getBirthDate())
-            ->setCustomerPhone($request->getPhone());
+            ->setIsVault((bool) ($request->getVaultId() || $request->isVault()))
+            ->setBirthDate($request->getBirthDate())
+            ->setPhone($request->getPhone());
 
         if ($request->getVaultId()) {
-            $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());
+            $this->checkoutContextBuilder->setPaypalVaultId($request->getVaultId());
         }
 
-        $payPalCustomerId = null;
+        $context = $this->checkoutContextBuilder->build();
 
-        if ($this->context->getCustomer()->id) {
-            $payPalCustomerId = $this->payPalCustomerRepository->getPayPalCustomerIdByCustomerId($this->context->getCustomer()->id);
-        }
-
-        if ($payPalCustomerId) {
-            $this->orderPayloadBuilder->setPaypalCustomerId($payPalCustomerId);
-        }
-
-        $payload = $this->orderPayloadBuilder->build();
+        $payload = $this->orderPayloadBuilder->build($context);
 
         try {
             $clientMetadataId = $request->getFundingSource() === 'pay_upon_invoice' && $request->getMetaDataId()
@@ -163,11 +146,6 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         return true;
     }
 
-    /**
-     * @param CreatePayPalOrderRequest $request
-     *
-     * @return bool
-     */
     private function isCardPayment(CreatePayPalOrderRequest $request): bool
     {
         return $request->getFundingSource() === 'card' && ($request->isCardFields() || $request->getVaultId());
@@ -190,22 +168,6 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {
             throw new PsCheckoutException('Failed to create order', PsCheckoutException::UNKNOWN, $exception);
-        }
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return void
-     *
-     * @throws PrestaShopException
-     * @throws PsCheckoutException
-     */
-    private function deleteExistingPayPalOrder(int $cartId)
-    {
-        $existingOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
-        if ($existingOrder) {
-            $this->payPalOrderRepository->deletePayPalOrder($existingOrder->getId());
         }
     }
 

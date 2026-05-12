@@ -22,11 +22,11 @@ namespace PsCheckout\Infrastructure\Action;
 
 use Cart;
 use Currency;
+use PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Exception\ShippingCallbackException;
 use PsCheckout\Core\PayPal\ShippingCallback\Service\ShippingCallbackProcessorInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
-use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
 use Psr\Log\LoggerInterface;
 use Validate;
 
@@ -38,19 +38,19 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
     private $cartAdapter;
 
     /**
-     * @var PsCheckoutCarrierRepository
+     * @var ShippingOptionsBuilderInterface
      */
-    private $carrierRepository;
+    private $shippingOptionsBuilder;
 
     /**
      * @var LoggerInterface
      */
     private $logger;
 
-    public function __construct(CartInterface $cartAdapter, PsCheckoutCarrierRepository $carrierRepository, LoggerInterface $logger)
+    public function __construct(CartInterface $cartAdapter, ShippingOptionsBuilderInterface $shippingOptionsBuilder, LoggerInterface $logger)
     {
         $this->cartAdapter = $cartAdapter;
-        $this->carrierRepository = $carrierRepository;
+        $this->shippingOptionsBuilder = $shippingOptionsBuilder;
         $this->logger = $logger;
     }
 
@@ -69,7 +69,6 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
         }
 
         $deliveryOptions = $cart->getDeliveryOptionList();
-        $selectedCarrierId = (int) trim((string) current($cart->getDeliveryOption(null, false, false)), ',');
 
         if (empty($deliveryOptions)) {
             $this->logger->warning('No delivery options available for cart', ['id_cart' => $cartId]);
@@ -80,8 +79,8 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
             );
         }
 
-        $shippingOptions = $this->buildShippingOptions($cart, $deliveryOptions, $selectedCarrierId, $payload->getShippingOptionId(), $this->carrierRepository);
-        $selectedPrice = $this->getSelectedShippingPrice($shippingOptions);
+        $shippingOptions = $this->shippingOptionsBuilder->build($cartId, $payload->getShippingOptionId());
+        $selectedPrice = $this->shippingOptionsBuilder->getSelectedShippingPrice($shippingOptions);
         $currencyCode = (new Currency($cart->id_currency))->iso_code;
 
         $total = $cart->getOrderTotal(true, Cart::BOTH);
@@ -115,95 +114,5 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
                 ],
             ],
         ];
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    private function buildShippingOptions(Cart $cart, array $deliveryOptions, int $selectedCarrierId, ?string $selectedOptionId, PsCheckoutCarrierRepository $carrierRepository): array
-    {
-        $shippingOptions = [];
-        $currencyCode = (new Currency($cart->id_currency))->iso_code;
-
-        foreach ($deliveryOptions as $options) {
-            foreach ($options as $optionId => $option) {
-                if (!isset($option['carrier_list'])) {
-                    continue;
-                }
-                foreach ($option['carrier_list'] as $carrierId => $carrierData) {
-                    $carrierType = $carrierRepository->getTypeByCarrierId((int) $carrierId);
-
-                    if ($carrierType === null) {
-                        continue; // carrier disabled for PayPal shipping options
-                    }
-
-                    $price = isset($carrierData['price_with_tax'])
-                        ? (float) $carrierData['price_with_tax']
-                        : (float) ($carrierData['price'] ?? 0);
-
-                    $label = isset($carrierData['instance']) ? (string) $carrierData['instance']->name : (string) $carrierId;
-
-                    $shippingOptions[] = [
-                        'id' => $this->formatShippingOptionIdFromCarrierId((string) $carrierId),
-                        'label' => $label,
-                        'type' => $carrierType,
-                        'amount' => [
-                            'currency_code' => $currencyCode,
-                            'value' => number_format($price, 2, '.', ''),
-                        ],
-                        'selected' => false,
-                    ];
-                }
-            }
-
-            break; // Only process the first address's options
-        }
-
-        if (empty($shippingOptions)) {
-            return [];
-        }
-
-        $marked = false;
-
-        foreach ($shippingOptions as &$option) {
-            if ($selectedOptionId !== null && $option['id'] === $selectedOptionId) {
-                $option['selected'] = true;
-                $marked = true;
-            } elseif ($selectedCarrierId && $option['id'] === $this->formatShippingOptionIdFromCarrierId((string) $selectedCarrierId)) {
-                $option['selected'] = true;
-                $marked = true;
-            }
-        }
-        unset($option);
-
-        if (!$marked) {
-            $shippingOptions[0]['selected'] = true;
-        }
-
-        return $shippingOptions;
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $shippingOptions
-     */
-    private function getSelectedShippingPrice(array $shippingOptions): float
-    {
-        foreach ($shippingOptions as $option) {
-            if ($option['selected']) {
-                return (float) $option['amount']['value'];
-            }
-        }
-
-        return 0.0;
-    }
-
-    /**
-     * @param string $carrierId
-     *
-     * @return string
-     */
-    public function formatShippingOptionIdFromCarrierId(string $carrierId): string
-    {
-        return sprintf('delivery-option-%s', $carrierId);
     }
 }

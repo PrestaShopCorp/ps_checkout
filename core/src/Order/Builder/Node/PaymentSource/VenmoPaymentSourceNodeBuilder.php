@@ -84,6 +84,8 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 
         $data['experience_context'] = [
             'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
             'shipping_preference' => $shippingPreference,
             'user_action' => (!$context->isExpressCheckout() && !$context->isUpdate()) ? 'PAY_NOW' : 'CONTINUE',
         ];

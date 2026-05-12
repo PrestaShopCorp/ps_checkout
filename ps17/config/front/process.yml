@@ -19,11 +19,10 @@ services:
     class: PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
-      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Api\Http\OrderHttpClient'
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
-      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
       - '@PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor'
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
@@ -160,7 +159,7 @@ services:
     class: PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor
     arguments:
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
-      - '@PsCheckout\Presentation\Presenter\Cart\CartPresenter'
+      - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
       - '@PsCheckout\Api\Http\OrderHttpClient'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
@@ -308,5 +307,5 @@ services:
     class: PsCheckout\Infrastructure\Action\ShippingCallbackProcessor
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Cart'
-      - '@PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository'
+      - '@PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface'
       - '@Psr\Log\LoggerInterface'

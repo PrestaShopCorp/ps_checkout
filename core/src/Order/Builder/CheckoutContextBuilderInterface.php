@@ -20,38 +20,27 @@
 
 namespace PsCheckout\Core\Order\Builder;
 
-interface CheckoutContextInterface
+interface CheckoutContextBuilderInterface
 {
-    public function getCart(): array;
+    public function setFundingSource(string $fundingSource): self;
 
-    public function getFundingSource(): string;
+    public function setIsExpressCheckout(bool $isExpressCheckout): self;
 
-    public function isSavePaymentMethod(): bool;
+    public function setSavePaymentMethod(bool $savePaymentMethod): self;
 
-    public function getPaypalCustomerId(): ?string;
+    public function setIsCard(bool $isCard): self;
 
-    public function getPaypalVaultId(): ?string;
+    public function setIsVault(bool $isVault): self;
 
-    public function isExpressCheckout(): bool;
+    public function setPaypalVaultId(string $paypalVaultId): self;
 
-    public function isUpdate(): bool;
+    public function setPaypalOrderId(string $paypalOrderId): self;
 
-    public function getBirthDate(): ?string;
+    public function setIsUpdate(bool $isUpdate): self;
 
-    public function getPhone(): ?string;
+    public function setBirthDate(?string $birthDate): self;
 
-    public function getCartId(): int;
+    public function setPhone(?string $phone): self;
 
-    public function isVirtualCart(): bool;
-
-    public function hasShippingAddress(): bool;
-
-    public function isCard(): bool;
-
-    public function isVault(): bool;
-
-    public function getPaypalOrderId(): ?string;
-
-    /** @return array<int, array<string, mixed>> */
-    public function getShippingOptions(): array;
+    public function build(): CheckoutContextInterface;
 }

@@ -23,11 +23,11 @@ namespace Tests\Unit\PsCheckout\Infrastructure\Action;
 use Cart;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Exception\ShippingCallbackException;
 use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
 use PsCheckout\Infrastructure\Action\ShippingCallbackProcessor;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
-use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
 use Psr\Log\LoggerInterface;
 
 class ShippingCallbackProcessorTest extends TestCase
@@ -35,8 +35,8 @@ class ShippingCallbackProcessorTest extends TestCase
     /** @var CartInterface|MockObject */
     private $cartAdapter;
 
-    /** @var PsCheckoutCarrierRepository|MockObject */
-    private $carrierRepository;
+    /** @var ShippingOptionsBuilderInterface|MockObject */
+    private $shippingOptionsBuilder;
 
     /** @var LoggerInterface|MockObject */
     private $logger;
@@ -47,26 +47,10 @@ class ShippingCallbackProcessorTest extends TestCase
     protected function setUp(): void
     {
         $this->cartAdapter = $this->createMock(CartInterface::class);
-        $this->carrierRepository = $this->createMock(PsCheckoutCarrierRepository::class);
-        $this->carrierRepository->method('getTypeByCarrierId')->willReturn('SHIPPING');
+        $this->shippingOptionsBuilder = $this->createMock(ShippingOptionsBuilderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->processor = new ShippingCallbackProcessor($this->cartAdapter, $this->carrierRepository, $this->logger);
+        $this->processor = new ShippingCallbackProcessor($this->cartAdapter, $this->shippingOptionsBuilder, $this->logger);
     }
-
-    // -------------------------------------------------------------------------
-    // formatShippingOptionIdFromCarrierId
-    // -------------------------------------------------------------------------
-
-    public function testFormatShippingOptionIdFromCarrierId(): void
-    {
-        $this->assertSame('delivery-option-3', $this->processor->formatShippingOptionIdFromCarrierId('3'));
-        $this->assertSame('delivery-option-42', $this->processor->formatShippingOptionIdFromCarrierId('42'));
-        $this->assertSame('delivery-option-0', $this->processor->formatShippingOptionIdFromCarrierId('0'));
-    }
-
-    // -------------------------------------------------------------------------
-    // Guard — cart not found
-    // -------------------------------------------------------------------------
 
     public function testThrowsMethodUnavailableWhenCartNotFound(): void
     {
@@ -80,13 +64,9 @@ class ShippingCallbackProcessorTest extends TestCase
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Guard — no delivery options
-    // -------------------------------------------------------------------------
-
     public function testThrowsAddressErrorWhenNoDeliveryOptions(): void
     {
-        $cart = $this->makeCart([], []);
+        $cart = $this->makeCart([]);
 
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->logger->expects($this->once())->method('warning');
@@ -99,117 +79,18 @@ class ShippingCallbackProcessorTest extends TestCase
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Selection priority: PS cart's selected carrier (SHIPPING_ADDRESS event)
-    // -------------------------------------------------------------------------
-
-    public function testPsSelectedCarrierIsMarkedSelectedOnAddressEvent(): void
-    {
-        // Cart has carriers 3 and 5; carrier 3 is the PS-selected one
-        $carriers = [
-            3 => ['name' => 'La Poste', 'price' => 4.99],
-            5 => ['name' => 'DHL', 'price' => 7.00],
-        ];
-        $cart = $this->makeCart($carriers, [1 => '3,']);
-
-        $this->cartAdapter->method('getCart')->willReturn($cart);
-
-        // Payload has no shippingOptionId → SHIPPING_ADDRESS event
-        $payload = new ShippingCallbackPayload([
-            'id' => 'ORDER-1',
-            'shipping_address' => ['country_code' => 'FR', 'admin_area_1' => '', 'admin_area_2' => 'Paris', 'postal_code' => '75001'],
-        ]);
-
-        $result = $this->processor->process(1, $payload);
-
-        $options = $result['purchase_units'][0]['shipping_options'];
-        $this->assertCount(2, $options);
-
-        $selectedOption = $this->findOptionById($options, 'delivery-option-3');
-        $this->assertNotNull($selectedOption, 'delivery-option-3 should exist');
-        $this->assertTrue($selectedOption['selected']);
-
-        $unselectedOption = $this->findOptionById($options, 'delivery-option-5');
-        $this->assertNotNull($unselectedOption, 'delivery-option-5 should exist');
-        $this->assertFalse($unselectedOption['selected']);
-    }
-
-    // -------------------------------------------------------------------------
-    // Selection priority: PayPal payload option ID takes absolute priority
-    // -------------------------------------------------------------------------
-
-    public function testPayloadOptionIdTakesPriorityOverPsSelection(): void
-    {
-        // Cart has carriers 3 and 5; PS has carrier 3 selected
-        $carriers = [
-            3 => ['name' => 'La Poste', 'price' => 4.99],
-            5 => ['name' => 'DHL', 'price' => 7.00],
-        ];
-        $cart = $this->makeCart($carriers, [1 => '3,']);
-
-        $this->cartAdapter->method('getCart')->willReturn($cart);
-
-        // Payload explicitly selects delivery-option-5 (SHIPPING_OPTIONS event)
-        $payload = new ShippingCallbackPayload([
-            'id' => 'ORDER-1',
-            'shipping_address' => ['country_code' => 'FR', 'admin_area_1' => '', 'admin_area_2' => 'Paris', 'postal_code' => '75001'],
-            'shipping_option' => ['id' => 'delivery-option-5'],
-        ]);
-
-        $result = $this->processor->process(1, $payload);
-
-        $options = $result['purchase_units'][0]['shipping_options'];
-
-        $this->assertFalse($this->findOptionById($options, 'delivery-option-3')['selected']);
-        $this->assertTrue($this->findOptionById($options, 'delivery-option-5')['selected']);
-    }
-
-    // -------------------------------------------------------------------------
-    // Fallback to first option when neither PS nor payload matches
-    // -------------------------------------------------------------------------
-
-    public function testFallsBackToFirstOptionWhenNoPsSelectionAndNoPayloadOption(): void
-    {
-        // Cart has carriers 3 and 5; PS returns 0 (no selection yet)
-        $carriers = [
-            3 => ['name' => 'La Poste', 'price' => 4.99],
-            5 => ['name' => 'DHL', 'price' => 7.00],
-        ];
-        $cart = $this->makeCart($carriers, [1 => '0,']);
-
-        $this->cartAdapter->method('getCart')->willReturn($cart);
-
-        $payload = new ShippingCallbackPayload([
-            'id' => 'ORDER-1',
-            'shipping_address' => ['country_code' => 'FR', 'admin_area_1' => '', 'admin_area_2' => 'Paris', 'postal_code' => '75001'],
-        ]);
-
-        $result = $this->processor->process(1, $payload);
-
-        $options = $result['purchase_units'][0]['shipping_options'];
-
-        // First option (carrier 3) should be selected as fallback
-        $this->assertTrue($options[0]['selected']);
-        $this->assertFalse($options[1]['selected']);
-    }
-
-    // -------------------------------------------------------------------------
-    // Response structure
-    // -------------------------------------------------------------------------
-
     public function testResponseContainsExpectedStructure(): void
     {
-        $carriers = [3 => ['name' => 'La Poste', 'price' => 4.99]];
-        $cart = $this->makeCart($carriers, [1 => '3,']);
-
+        $cart = $this->makeCart(['placeholder' => true]);
         $this->cartAdapter->method('getCart')->willReturn($cart);
 
-        $payload = new ShippingCallbackPayload([
-            'id' => 'ORDER-1',
-            'shipping_address' => ['country_code' => 'FR', 'admin_area_1' => '', 'admin_area_2' => 'Paris', 'postal_code' => '75001'],
-        ]);
+        $shippingOptions = [
+            ['id' => 'delivery-option-3', 'label' => 'La Poste', 'type' => 'SHIPPING', 'amount' => ['currency_code' => 'EUR', 'value' => '4.99'], 'selected' => true],
+        ];
+        $this->shippingOptionsBuilder->method('build')->willReturn($shippingOptions);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
 
-        $result = $this->processor->process(1, $payload);
+        $result = $this->processor->process(1, new ShippingCallbackPayload(['id' => 'ORDER-1']));
 
         $this->assertArrayHasKey('purchase_units', $result);
         $unit = $result['purchase_units'][0];
@@ -222,37 +103,37 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->assertArrayHasKey('tax_total', $unit['amount']['breakdown']);
         $this->assertArrayHasKey('shipping', $unit['amount']['breakdown']);
         $this->assertArrayHasKey('shipping_options', $unit);
+        $this->assertSame($shippingOptions, $unit['shipping_options']);
     }
 
-    public function testShippingOptionIdUsesDeliveryOptionFormat(): void
+    public function testBuilderReceivesPayloadShippingOptionId(): void
     {
-        $carriers = [3 => ['name' => 'La Poste', 'price' => 4.99]];
-        $cart = $this->makeCart($carriers, [1 => '3,']);
-
+        $cart = $this->makeCart(['placeholder' => true]);
         $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-5', 'label' => 'DHL', 'type' => 'SHIPPING', 'amount' => ['currency_code' => 'EUR', 'value' => '7.00'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(7.00);
 
-        $payload = new ShippingCallbackPayload(['id' => 'ORDER-1']);
+        $payload = new ShippingCallbackPayload([
+            'id' => 'ORDER-1',
+            'shipping_option' => ['id' => 'delivery-option-5'],
+        ]);
 
-        $result = $this->processor->process(1, $payload);
+        $this->shippingOptionsBuilder
+            ->expects($this->once())
+            ->method('build')
+            ->with(1, 'delivery-option-5');
 
-        $option = $result['purchase_units'][0]['shipping_options'][0];
-        $this->assertSame('delivery-option-3', $option['id']);
-        $this->assertSame('La Poste', $option['label']);
-        $this->assertSame('SHIPPING', $option['type']);
-        $this->assertSame('4.99', $option['amount']['value']);
+        $this->processor->process(1, $payload);
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     /**
-     * @param array<int, array{name: string, price: float}> $carriers
-     * @param array<int, string> $selectedDeliveryOption [addressId => 'carrierId,']
+     * @param array<string, mixed> $deliveryOptions non-empty to simulate available options
      *
      * @return Cart|MockObject
      */
-    private function makeCart(array $carriers, array $selectedDeliveryOption): Cart
+    private function makeCart(array $deliveryOptions): Cart
     {
         $cart = $this->getMockBuilder(Cart::class)
             ->disableOriginalConstructor()
@@ -261,44 +142,10 @@ class ShippingCallbackProcessorTest extends TestCase
         $cart->id = 1;
         $cart->id_currency = 0;
 
-        $deliveryOptionList = [];
-        if (!empty($carriers)) {
-            $carrierList = [];
-            foreach ($carriers as $carrierId => $data) {
-                $instance = new \stdClass();
-                $instance->name = $data['name'];
-                $carrierList[$carrierId] = [
-                    'price_with_tax' => $data['price'],
-                    'instance' => $instance,
-                ];
-            }
-            $deliveryOptionList = [
-                1 => [
-                    'carrier_option' => ['carrier_list' => $carrierList],
-                ],
-            ];
-        }
-
-        $cart->method('getDeliveryOptionList')->willReturn($deliveryOptionList);
-        $cart->method('getDeliveryOption')->willReturn($selectedDeliveryOption);
+        $cart->method('getDeliveryOptionList')->willReturn($deliveryOptions);
+        $cart->method('getDeliveryOption')->willReturn([1 => '3,']);
         $cart->method('getOrderTotal')->willReturn(100.00);
 
         return $cart;
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $options
-     *
-     * @return array<string, mixed>|null
-     */
-    private function findOptionById(array $options, string $id): ?array
-    {
-        foreach ($options as $option) {
-            if ($option['id'] === $id) {
-                return $option;
-            }
-        }
-
-        return null;
     }
 }

@@ -20,10 +20,10 @@
 
 namespace PsCheckout\Core\PayPal\ApplePay\Builder;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\ApplePay\ValueObject\ApplePayPaymentRequestData;
 use PsCheckout\Core\PayPal\ApplePay\ValueObject\ApplePayTotalData;
-use PsCheckout\Presentation\Presenter\PresenterInterface;
 use PsCheckout\Presentation\TranslatorInterface;
 
 class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBuilderInterface
@@ -34,9 +34,9 @@ class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBui
     private $orderPayloadBuilder;
 
     /**
-     * @var PresenterInterface
+     * @var CheckoutContextBuilderInterface
      */
-    private $cartPresenter;
+    private $checkoutContextBuilder;
 
     /**
      * @var TranslatorInterface
@@ -45,11 +45,11 @@ class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBui
 
     public function __construct(
         OrderPayloadBuilderInterface $orderPayloadBuilder,
-        PresenterInterface $cartPresenter,
+        CheckoutContextBuilderInterface $checkoutContextBuilder,
         TranslatorInterface $translator
     ) {
         $this->orderPayloadBuilder = $orderPayloadBuilder;
-        $this->cartPresenter = $cartPresenter;
+        $this->checkoutContextBuilder = $checkoutContextBuilder;
         $this->translator = $translator;
     }
 
@@ -58,21 +58,20 @@ class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBui
      */
     public function build(): ApplePayPaymentRequestData
     {
-        $this->orderPayloadBuilder
-            ->setCart($this->cartPresenter->present());
+        $context = $this->checkoutContextBuilder
+            ->setFundingSource('applepay')
+            ->build();
 
-        $payload = $this->orderPayloadBuilder->build();
+        $payload = $this->orderPayloadBuilder->build($context);
 
         $applePayTotal = new ApplePayTotalData(
             $this->translator->trans('Total'),
             $payload['purchase_units'][0]['amount']['value']
         );
 
-        $applePayPaymentRequestData = new ApplePayPaymentRequestData(
+        return new ApplePayPaymentRequestData(
             $payload['purchase_units'][0]['amount']['currency_code'],
             $applePayTotal
         );
-
-        return $applePayPaymentRequestData;
     }
 }

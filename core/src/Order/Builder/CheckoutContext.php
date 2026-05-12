@@ -49,6 +49,18 @@ class CheckoutContext implements CheckoutContextInterface
     /** @var string|null */
     private $phone;
 
+    /** @var bool */
+    private $isCard;
+
+    /** @var bool */
+    private $isVault;
+
+    /** @var string|null */
+    private $paypalOrderId;
+
+    /** @var array<int, array<string, mixed>> */
+    private $shippingOptions;
+
     public function __construct(
         array $cart,
         string $fundingSource,
@@ -58,7 +70,11 @@ class CheckoutContext implements CheckoutContextInterface
         bool $expressCheckout,
         bool $isUpdate,
         ?string $birthDate = null,
-        ?string $phone = null
+        ?string $phone = null,
+        bool $isCard = false,
+        bool $isVault = false,
+        ?string $paypalOrderId = null,
+        array $shippingOptions = []
     ) {
         $this->cart = $cart;
         $this->fundingSource = $fundingSource;
@@ -69,6 +85,10 @@ class CheckoutContext implements CheckoutContextInterface
         $this->isUpdate = $isUpdate;
         $this->birthDate = $birthDate;
         $this->phone = $phone;
+        $this->isCard = $isCard;
+        $this->isVault = $isVault;
+        $this->paypalOrderId = $paypalOrderId;
+        $this->shippingOptions = $shippingOptions;
     }
 
     public function getCart(): array
@@ -130,5 +150,25 @@ class CheckoutContext implements CheckoutContextInterface
     {
         return isset($this->cart['addresses']['shipping'])
             && $this->cart['addresses']['shipping']->id !== null;
+    }
+
+    public function isCard(): bool
+    {
+        return $this->isCard;
+    }
+
+    public function isVault(): bool
+    {
+        return $this->isVault;
+    }
+
+    public function getPaypalOrderId(): ?string
+    {
+        return $this->paypalOrderId;
+    }
+
+    public function getShippingOptions(): array
+    {
+        return $this->shippingOptions;
     }
 }

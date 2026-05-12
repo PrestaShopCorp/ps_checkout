@@ -20,9 +20,9 @@
 
 namespace PsCheckout\Core\PayPal\GooglePay\Builder;
 
+use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\GooglePay\ValueObject\GooglePayPaymentRequestData;
-use PsCheckout\Presentation\Presenter\PresenterInterface;
 use PsCheckout\Presentation\TranslatorInterface;
 
 class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataBuilderInterface
@@ -33,9 +33,9 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
     private $orderPayloadBuilder;
 
     /**
-     * @var PresenterInterface
+     * @var CheckoutContextBuilderInterface
      */
-    private $cartPresenter;
+    private $checkoutContextBuilder;
 
     /**
      * @var TranslatorInterface
@@ -44,11 +44,11 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
 
     public function __construct(
         OrderPayloadBuilderInterface $orderPayloadBuilder,
-        PresenterInterface $cartPresenter,
+        CheckoutContextBuilderInterface $checkoutContextBuilder,
         TranslatorInterface $translator
     ) {
         $this->orderPayloadBuilder = $orderPayloadBuilder;
-        $this->cartPresenter = $cartPresenter;
+        $this->checkoutContextBuilder = $checkoutContextBuilder;
         $this->translator = $translator;
     }
 
@@ -57,10 +57,11 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
      */
     public function build(int $cartId): GooglePayPaymentRequestData
     {
-        $this->orderPayloadBuilder
-            ->setCart($this->cartPresenter->present());
+        $context = $this->checkoutContextBuilder
+            ->setFundingSource('googlepay')
+            ->build();
 
-        $payload = $this->orderPayloadBuilder->build();
+        $payload = $this->orderPayloadBuilder->build($context);
 
         return new GooglePayPaymentRequestData(
             $payload['purchase_units'][0]['amount']['currency_code'],

@@ -24,7 +24,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Order\Builder\OrderPayloadBuilder;
+use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
+use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
+use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
@@ -34,7 +36,6 @@ use PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CheckPayPalOrderRequest;
-use PsCheckout\Presentation\Presenter\PresenterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class UpdateExternalPayPalOrderProcessorTest extends TestCase
@@ -45,10 +46,10 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
     /** @var PayPalOrderProviderInterface|MockObject */
     private $paypalOrderProvider;
 
-    /** @var PresenterInterface|MockObject */
-    private $cartPresenter;
+    /** @var CheckoutContextBuilderInterface|MockObject */
+    private $checkoutContextBuilder;
 
-    /** @var OrderPayloadBuilder|MockObject */
+    /** @var OrderPayloadBuilderInterface|MockObject */
     private $orderPayloadBuilder;
 
     /** @var OrderHttpClientInterface|MockObject */
@@ -66,10 +67,8 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
     protected function setUp(): void
     {
         $this->paypalOrderProvider = $this->createMock(PayPalOrderProviderInterface::class);
-        $this->cartPresenter = $this->createMock(PresenterInterface::class);
-        $this->orderPayloadBuilder = $this->getMockBuilder(OrderPayloadBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutContextBuilder = $this->createMock(CheckoutContextBuilderInterface::class);
+        $this->orderPayloadBuilder = $this->createMock(OrderPayloadBuilderInterface::class);
         $this->httpClient = $this->createMock(OrderHttpClientInterface::class);
         $this->paypalOrderRepository = $this->createMock(PayPalOrderRepositoryInterface::class);
         $this->paypalOrderCache = $this->createMock(PayPalOrderCacheInterface::class);
@@ -77,7 +76,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
         $this->processor = new UpdateExternalPayPalOrderProcessor(
             $this->paypalOrderProvider,
-            $this->cartPresenter,
+            $this->checkoutContextBuilder,
             $this->orderPayloadBuilder,
             $this->httpClient,
             $this->paypalOrderRepository,
@@ -101,16 +100,13 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $this->processor->execute($request);
     }
 
-    public function testItReturnsEarlyWhenNoPurchaseUnits(): void
+    public function testItReturnsEarlyWhenOrderIsCompleted(): void
     {
         $request = $this->createMock(CheckPayPalOrderRequest::class);
         $request->method('getOrderId')->willReturn('ORDER-123');
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
-
-        $this->paypalOrderRepository->expects($this->once())
-            ->method('getOneBy')
-            ->willReturn($payPalOrder);
+        $this->paypalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
 
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
@@ -119,13 +115,9 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             null,
             null,
             [],
-            [],
-            '2024-01-01T00:00:00Z'
+            []
         );
-
-        $this->paypalOrderProvider->expects($this->once())
-            ->method('getById')
-            ->willReturn($paypalOrderResponse);
+        $this->paypalOrderProvider->method('getById')->willReturn($paypalOrderResponse);
 
         $this->orderPayloadBuilder->expects($this->never())->method('build');
 
@@ -134,8 +126,6 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
     public function testItUpdatesOrderWhenChangesDetected(): void
     {
-        $this->markTestSkipped('This test is broken.');
-
         $request = $this->createMock(CheckPayPalOrderRequest::class);
         $request->method('getOrderId')->willReturn('ORDER-123');
         $request->method('getFundingSource')->willReturn('card');
@@ -143,11 +133,10 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $request->method('isExpressCheckout')->willReturn(false);
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
-        $payPalOrder->expects($this->once())->method('setStatus')->with('COMPLETED');
+        $payPalOrder->expects($this->once())->method('setStatus')->with('PENDING');
         $payPalOrder->expects($this->once())->method('setFundingSource')->with('card');
         $payPalOrder->expects($this->once())->method('setIsCardFields')->with(true);
         $payPalOrder->expects($this->once())->method('setIsExpressCheckout')->with(false);
-        $payPalOrder->expects($this->once())->method('setPaymentSource');
 
         $this->paypalOrderRepository->expects($this->once())
             ->method('getOneBy')
@@ -155,52 +144,38 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
-            'COMPLETED',
+            'PENDING',
             PayPalOrderIntent::CAPTURE,
             null,
-            ['card' => []],
+            null,
             [
                 [
-                    'amount' => ['value' => '10.00'],
+                    'reference_id' => 'default',
+                    'amount' => ['currency_code' => 'EUR', 'value' => '10.00'],
                     'items' => [['id' => '1']],
-                    'shipping' => ['old_data'],
                 ],
             ],
             []
         );
+        $this->paypalOrderProvider->method('getById')->willReturn($paypalOrderResponse);
 
-        $this->paypalOrderProvider->expects($this->once())
-            ->method('getById')
-            ->willReturn($paypalOrderResponse);
+        $context = $this->createMock(CheckoutContextInterface::class);
 
-        $this->cartPresenter->expects($this->once())
-            ->method('present')
-            ->willReturn(['cart_data']);
-
-        $this->orderPayloadBuilder
-            ->method('setCart')
-            ->willReturnSelf();
-        $this->orderPayloadBuilder
-            ->method('setIsUpdate')
-            ->willReturnSelf();
-        $this->orderPayloadBuilder
-            ->method('setPaypalOrderId')
-            ->willReturnSelf();
-        $this->orderPayloadBuilder
-            ->method('setIsCard')
-            ->willReturnSelf();
-        $this->orderPayloadBuilder
-            ->method('setIsExpressCheckout')
-            ->willReturnSelf();
+        $this->checkoutContextBuilder->method('setIsUpdate')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setPaypalOrderId')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setFundingSource')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setIsCard')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setIsExpressCheckout')->willReturnSelf();
+        $this->checkoutContextBuilder->method('build')->willReturn($context);
 
         $this->orderPayloadBuilder->expects($this->once())
             ->method('build')
+            ->with($context)
             ->willReturn([
                 'purchase_units' => [
                     [
-                        'amount' => ['value' => '11.00'],
+                        'amount' => ['currency_code' => 'EUR', 'value' => '11.00', 'breakdown' => []],
                         'items' => [['id' => '2']],
-                        'shipping' => ['new_data'],
                     ],
                 ],
             ]);
@@ -229,8 +204,6 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
     public function testItThrowsExceptionWhenUpdateFails(): void
     {
-        $this->markTestSkipped('This test is broken.');
-
         $request = $this->createMock(CheckPayPalOrderRequest::class);
         $request->method('getOrderId')->willReturn('ORDER-123');
         $request->method('getFundingSource')->willReturn('card');
@@ -238,7 +211,6 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $request->method('isExpressCheckout')->willReturn(false);
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
-
         $this->paypalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
 
         $paypalOrderResponse = new PayPalOrderResponse(
@@ -246,50 +218,32 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             'PENDING',
             PayPalOrderIntent::CAPTURE,
             null,
-            ['card' => []],
+            null,
             [
                 [
-                    'amount' => ['value' => '10.00'],
-                    'shipping' => ['old_data'],
+                    'amount' => ['currency_code' => 'EUR', 'value' => '10.00'],
                 ],
             ],
             []
         );
-
         $this->paypalOrderProvider->method('getById')->willReturn($paypalOrderResponse);
 
-        $this->cartPresenter->method('present')->willReturn(['cart_data']);
+        $context = $this->createMock(CheckoutContextInterface::class);
 
-        // Configure the builder to return itself for all chainable methods
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('setCart')
-            ->with(['cart_data'])
-            ->willReturnSelf();
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('setIsUpdate')
-            ->with(true)
-            ->willReturnSelf();
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('setPaypalOrderId')
-            ->with('ORDER-123')
-            ->willReturnSelf();
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('setIsCard')
-            ->with(true)
-            ->willReturnSelf();
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('setIsExpressCheckout')
-            ->with(false)
-            ->willReturnSelf();
-        $this->orderPayloadBuilder->expects($this->once())
-            ->method('build')
-            ->willReturn([
-                'purchase_units' => [
-                    [
-                        'amount' => ['value' => '11.00'],
-                    ],
+        $this->checkoutContextBuilder->method('setIsUpdate')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setPaypalOrderId')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setFundingSource')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setIsCard')->willReturnSelf();
+        $this->checkoutContextBuilder->method('setIsExpressCheckout')->willReturnSelf();
+        $this->checkoutContextBuilder->method('build')->willReturn($context);
+
+        $this->orderPayloadBuilder->method('build')->willReturn([
+            'purchase_units' => [
+                [
+                    'amount' => ['currency_code' => 'EUR', 'value' => '11.00', 'breakdown' => []],
                 ],
-            ]);
+            ],
+        ]);
 
         $response = $this->createMock(ResponseInterface::class);
         $response->method('getStatusCode')->willReturn(400);
