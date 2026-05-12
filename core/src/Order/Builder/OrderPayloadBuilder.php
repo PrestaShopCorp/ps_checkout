@@ -301,13 +301,15 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
             case 'paylater':
+            case 'credit':
                 $paypalBuilder = $this->payPalPaymentSourceNodeBuilder
                     ->setSavePaymentMethod($this->savePaymentMethod)
                     ->setPaypalCustomerId($this->paypalCustomerId)
                     ->setPaypalVaultId($this->paypalVaultId)
                     ->setShippingAddressExists($this->shippingAddressExists())
                     ->setVirtualCart((bool) $this->cart['cart']['is_virtual'])
-                    ->setIsExpressCheckout($this->expressCheckout);
+                    ->setIsExpressCheckout($this->expressCheckout)
+                    ->setFundingSource($this->fundingSource);
 
                 if (!$this->expressCheckout && !$this->isUpdate) {
                     $paypalBuilder->setCart($this->cart);

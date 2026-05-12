@@ -115,7 +115,10 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
                     'experience_context' => [
                         'brand_name' => 'Test Shop',
                         'shipping_preference' => 'GET_FROM_FILE',
-                        'user_action' => 'CONTINUE',
+                        'contact_preference' => 'NO_CONTACT_INFO',
+                        'landing_page' => 'LOGIN',
+                        'payment_method_selected' => 'PAYPAL',
+                        'user_action' => 'PAY_NOW',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -369,7 +372,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayNotHasKey('address', $paypal);
     }
 
-    public function testUserActionIsContinueWithoutCart(): void
+    public function testUserActionIsPayNowWhenNotExpressCheckout(): void
     {
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -377,7 +380,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             ->setSavePaymentMethod(false)
             ->build();
 
-        $this->assertSame('CONTINUE', $result['payment_source']['paypal']['experience_context']['user_action']);
+        $this->assertSame('PAY_NOW', $result['payment_source']['paypal']['experience_context']['user_action']);
     }
 
     public function testUserActionIsContinueWhenExpressCheckout(): void
@@ -433,6 +436,60 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             ->build();
 
         $this->assertSame('vault_xyz', $result['payment_source']['paypal']['vault_id']);
+    }
+
+    /**
+     * @dataProvider fundingSourcePaymentMethodProvider
+     */
+    public function testPaymentMethodSelectedForFundingSource(string $fundingSource, string $expected): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setFundingSource($fundingSource)
+            ->build();
+
+        $this->assertSame($expected, $result['payment_source']['paypal']['experience_context']['payment_method_selected']);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function fundingSourcePaymentMethodProvider(): array
+    {
+        return [
+            'paylater → PAYPAL_PAY_LATER' => ['paylater', 'PAYPAL_PAY_LATER'],
+            'credit → PAYPAL_CREDIT' => ['credit', 'PAYPAL_CREDIT'],
+            'paypal → PAYPAL' => ['paypal', 'PAYPAL'],
+            'unknown → PAYPAL' => ['unknown', 'PAYPAL'],
+        ];
+    }
+
+    /**
+     * @dataProvider contactPreferenceProvider
+     */
+    public function testContactPreference(bool $isExpressCheckout, string $expected): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setIsExpressCheckout($isExpressCheckout)
+            ->build();
+
+        $this->assertSame($expected, $result['payment_source']['paypal']['experience_context']['contact_preference']);
+    }
+
+    /**
+     * @return array<string, array{bool, string}>
+     */
+    public static function contactPreferenceProvider(): array
+    {
+        return [
+            'express checkout → UPDATE_CONTACT_INFO' => [true, 'UPDATE_CONTACT_INFO'],
+            'standard checkout → NO_CONTACT_INFO' => [false, 'NO_CONTACT_INFO'],
+        ];
     }
 
     /**
