@@ -65,6 +65,11 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
      */
     private $stateRepository;
 
+    /**
+     * @var string
+     */
+    private $fundingSource;
+
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
