@@ -116,7 +116,9 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
             );
         }
 
-        return $this->db->insert(self::TABLE_NAME, $data);
+        $data['date_add'] = date('Y-m-d H:i:s');
+
+        return (bool) $this->db->insert(self::TABLE_NAME, $data);
     }
 
     /**
@@ -155,9 +157,10 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
             'customer_intent' => pSQL(implode(',', $payPalOrder->getCustomerIntent())),
             'payment_token_id' => pSQL($payPalOrder->getPaymentTokenId()),
             'tags' => pSQL(implode(',', $payPalOrder->getTags())),
+            'date_add' => date('Y-m-d H:i:s'),
         ];
 
-        return $this->db->insert(self::TABLE_NAME, $data);
+        return (bool) $this->db->insert(self::TABLE_NAME, $data);
     }
 
     /**
@@ -182,7 +185,24 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
             explode(',', $payPalOrderData['tags'])
         );
 
+        if (!empty($payPalOrderData['date_add'])) {
+            try {
+                $payPalOrder->setDateAdd(new \DateTimeImmutable($payPalOrderData['date_add']));
+            } catch (\Exception $e) {
+                // malformed date — expiry check will skip null
+            }
+        }
+
         return $payPalOrder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function softDelete(PayPalOrder $payPalOrder): void
+    {
+        $payPalOrder->addTag(PayPalOrder::DELETED);
+        $this->save($payPalOrder);
     }
 
     public function attemptToMigratePsCheckoutCart(int $cartId): bool
