@@ -25,7 +25,6 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
-use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Infrastructure\Action\AddProductToCartAction;
 use PsCheckout\Infrastructure\Adapter\Context;
@@ -130,15 +129,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
                 $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $cart->id);
 
-                if ($payPalOrder && $payPalOrder->isExpressCheckout() && in_array(
-                    $payPalOrder->getStatus(),
-                    [
-                            PayPalOrderStatus::CREATED,
-                            PayPalOrderStatus::APPROVED,
-                            PayPalOrderStatus::PAYER_ACTION_REQUIRED,
-                        ],
-                    true
-                )) {
+                if ($payPalOrder && $payPalOrder->isReusableForExpressCheckout()) {
                     $this->exitWithResponse([
                         'status' => true,
                         'httpCode' => 200,

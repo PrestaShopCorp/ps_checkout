@@ -20,8 +20,12 @@
 
 namespace PsCheckout\Core\PayPal\Order\Entity;
 
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
+
 class PayPalOrder
 {
+    const PAYPAL_ORDER_EXPIRY_SECONDS = 10800;
+
     const CUSTOMER_INTENT_VAULT = 'VAULT';
 
     const CUSTOMER_INTENT_USES_VAULTING = 'USES_VAULTING';
@@ -89,6 +93,11 @@ class PayPalOrder
      * @var array
      */
     private $tags;
+
+    /**
+     * @var \DateTimeImmutable|null
+     */
+    private $dateAdd;
 
     /**
      * Constructor to initialize PayPalOrder properties
@@ -380,5 +389,52 @@ class PayPalOrder
     public function hasTag($tag)
     {
         return in_array($tag, $this->tags, true);
+    }
+
+    /**
+     * @return \DateTimeImmutable|null
+     */
+    public function getDateAdd()
+    {
+        return $this->dateAdd;
+    }
+
+    /**
+     * @param \DateTimeImmutable|null $dateAdd
+     *
+     * @return self
+     */
+    public function setDateAdd($dateAdd): self
+    {
+        $this->dateAdd = $dateAdd;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpired(): bool
+    {
+        if (!in_array($this->status, PayPalOrderStatus::EXPIRABLE_STATUSES, true)) {
+            return false;
+        }
+
+        if ($this->dateAdd === null) {
+            return false;
+        }
+
+        return (new \DateTimeImmutable())->getTimestamp() - $this->dateAdd->getTimestamp()
+            >= self::PAYPAL_ORDER_EXPIRY_SECONDS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReusableForExpressCheckout(): bool
+    {
+        return $this->isExpressCheckout
+            && !$this->isExpired()
+            && in_array($this->status, PayPalOrderStatus::EXPIRABLE_STATUSES, true);
     }
 }

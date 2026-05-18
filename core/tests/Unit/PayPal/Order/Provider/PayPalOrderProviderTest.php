@@ -29,6 +29,7 @@ use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Exception\PayPalOrderException;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use Psr\Http\Message\ResponseInterface;
@@ -53,7 +54,8 @@ class PayPalOrderProviderTest extends TestCase
         $this->provider = new PayPalOrderProvider(
             $this->orderPayPalCache,
             $this->orderHttpClient,
-            $this->createMock(LoggerInterface::class)
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(PayPalOrderRepositoryInterface::class)
         );
     }
 

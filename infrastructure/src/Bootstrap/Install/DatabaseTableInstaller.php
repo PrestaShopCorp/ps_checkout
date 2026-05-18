@@ -90,6 +90,7 @@ class DatabaseTableInstaller implements InstallerInterface
             `customer_intent` varchar(50),
             `payment_token_id` varchar(50),
             `tags` varchar(255) DEFAULT NULL,
+            `date_add` datetime DEFAULT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
@@ -232,6 +233,14 @@ class DatabaseTableInstaller implements InstallerInterface
 
             if (empty($field)) {
                 $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `tags` varchar(255) DEFAULT NULL;');
+            }
+
+            $field = array_filter($fields, function ($field) {
+                return $field['Field'] === 'date_add';
+            });
+
+            if (empty($field)) {
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `date_add` datetime DEFAULT NULL;');
             }
         }
 
