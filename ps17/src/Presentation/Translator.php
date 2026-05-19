@@ -346,13 +346,13 @@ class Translator implements TranslatorInterface
             case 'An error occurred during the capture of the authorization.':
                 return $this->module->l('An error occurred during the capture of the authorization.', 'Translator');
             case 'Card payment cannot be processed at the moment':
-                return $this->module->l('Card payment cannot be processed at the moment', 'Translator');
+                return $this->module->l('Card payment cannot be processed at the moment, please use another payment method.', 'Translator');
             case 'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.':
                 return $this->module->l('The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.', 'Translator');
-            case 'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.':
-                return $this->module->l('The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.', 'Translator');
-            case 'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.':
-                return $this->module->l('It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay using this contact form.', 'Translator');
+            case 'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.':
+                return $this->module->l('The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.', 'Translator');
+            case 'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.':
+                return $this->module->l('It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.', 'Translator');
             case 'There is an error in your billing address. Please check it and try again.':
                 return $this->module->l('There is an error in your billing address. Please check it and try again.', 'Translator');
             case 'There is an error in your shipping address. Please check it and try again.':

@@ -333,9 +333,6 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     break;
                 case PayPalException::PAYEE_ACCOUNT_LOCKED_OR_CLOSED:
                 case PayPalException::PAYEE_ACCOUNT_RESTRICTED:
-                    $exceptionMessageForCustomer = $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.');
-
-                    break;
                 case PayPalException::TRANSACTION_RECEIVING_LIMIT_EXCEEDED:
                     $exceptionMessageForCustomer = $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.');
 
