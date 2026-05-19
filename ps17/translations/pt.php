@@ -281,6 +281,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'O pagador não autorizou o pagamento.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'A autorização foi capturada com sucesso.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Ocorreu um erro durante a captura da autorização.';
+$_MODULE['<{ps_checkout}prestashop>translator_a922c1da0dc78c78fdf7f6782256bb4d'] = 'O pagamento com cartão não pode ser processado neste momento, por favor utilize outro método de pagamento.';
 $_MODULE['<{ps_checkout}prestashop>translator_355b1fcf1c9c3940759af7e0171ddc47'] = 'O método de pagamento selecionado não suporta este tipo de transação. Por favor, escolha outro método de pagamento ou contacte o suporte para obter assistência.';
 $_MODULE['<{ps_checkout}prestashop>translator_54fe49d73ccb07edee76f7e0e9ffd46b'] = 'A combinação do seu nome e endereço não pôde ser validada. Por favor, corrija os seus dados e tente novamente. Pode encontrar mais informações na Declaração de Privacidade de Dados da Ratepay ou pode contactar a Ratepay.';
 $_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822'] = 'Não é possível utilizar o método de pagamento selecionado. Esta decisão baseia-se no processamento automatizado de dados. Pode encontrar mais informações na Declaração de Privacidade de Dados da Ratepay ou pode contactar a Ratepay.';

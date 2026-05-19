@@ -999,7 +999,14 @@ class Ps_Checkout extends PaymentModule
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
-            'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'orderPayPalBaseUrl' => $this->context->link->getAdminLink(
+                'AdminAjaxPrestashopCheckout',
+                true,
+                [],
+                [
+                    'id_shop' => (int) $order->id_shop,
+                ]
+            ),
             'locale' => $this->context->language->iso_code,
         ]);
 
