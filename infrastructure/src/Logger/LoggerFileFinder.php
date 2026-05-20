@@ -73,7 +73,11 @@ class LoggerFileFinder implements LoggerFileFinderInterface
         // Use Finder to search for files matching the prefix and sort by name
         foreach ($finder->files()->in(self::LOGGER_DIRECTORY_PATH)
             ->name($fileNamePrefix . '*')->sortByName() as $file) {
-            $fileNames[$file->getFilename()] = $this->formatFileDate($file);
+            try {
+                $fileNames[$file->getFilename()] = $this->formatFileDate($file);
+            } catch (\InvalidArgumentException $e) {
+                // Skip files whose name suffix is not a valid date (e.g. channel-based names)
+            }
         }
 
         return $fileNames;
