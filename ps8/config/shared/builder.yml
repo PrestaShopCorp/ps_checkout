@@ -13,6 +13,7 @@ services:
   PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder
     arguments:
+      - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\StateRepository'
 

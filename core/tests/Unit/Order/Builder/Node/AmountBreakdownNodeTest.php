@@ -29,8 +29,6 @@ class AmountBreakdownNodeTest extends TestCase
      */
     public function testBuild(array $cartData, array $expected)
     {
-        $this->markTestSkipped('This test is broken.');
-
         $nodeBuilder = new AmountBreakdownNode();
         $nodeBuilder->setCart($cartData);
 
@@ -134,6 +132,14 @@ class AmountBreakdownNodeTest extends TestCase
                                 'currency_code' => 'USD',
                                 'value' => '15.00', // (5 * 2) + (5 * 1)
                             ],
+                            'insurance' => [
+                                'currency_code' => 'USD',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'USD',
+                                'value' => '0.00',
+                            ],
                             'discount' => [
                                 'currency_code' => 'USD',
                                 'value' => '0.00',
@@ -207,6 +213,14 @@ class AmountBreakdownNodeTest extends TestCase
                             'tax_total' => [
                                 'currency_code' => 'JPY',
                                 'value' => '1000', // 500 * 2
+                            ],
+                            'insurance' => [
+                                'currency_code' => 'JPY',
+                                'value' => '0',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'JPY',
+                                'value' => '0',
                             ],
                             'discount' => [
                                 'currency_code' => 'JPY',
@@ -282,6 +296,14 @@ class AmountBreakdownNodeTest extends TestCase
                                 'currency_code' => 'EUR',
                                 'value' => '5.00',
                             ],
+                            'insurance' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
                             'discount' => [
                                 'currency_code' => 'EUR',
                                 'value' => '0.00',
@@ -289,6 +311,98 @@ class AmountBreakdownNodeTest extends TestCase
                             'handling' => [
                                 'currency_code' => 'EUR',
                                 'value' => '40.00', // remainder (100 - 45 - 5 - 10)
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'cart_with_zero_price_item_filtered_out' => [
+                'cartData' => [
+                    'cart' => [
+                        'totals' => [
+                            'total_including_tax' => [
+                                'amount' => 11.00,
+                            ],
+                        ],
+                        'shipping_cost' => 0.00,
+                        'subtotals' => [
+                            'gift_wrapping' => [
+                                'amount' => 0.00,
+                            ],
+                        ],
+                        'is_virtual' => false,
+                    ],
+                    'currency' => [
+                        'iso_code' => 'EUR',
+                    ],
+                    'products' => [
+                        [
+                            'name' => 'Paid Product',
+                            'total' => 10.00,
+                            'total_wt' => 11.00,
+                            'quantity' => 1,
+                            'reference' => 'PAID001',
+                            'is_virtual' => '0',
+                            'attributes' => '',
+                        ],
+                        [
+                            'name' => 'Free Gift',
+                            'total' => 0.00,
+                            'total_wt' => 0.00,
+                            'quantity' => 1,
+                            'reference' => 'GIFT001',
+                            'is_virtual' => '0',
+                            'attributes' => '',
+                        ],
+                    ],
+                ],
+                'expected' => [
+                    'items' => [
+                        [
+                            'name' => StringUtility::truncate('Paid Product', 127),
+                            'description' => '',
+                            'sku' => StringUtility::truncate('PAID001', 127),
+                            'unit_amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '10.00',
+                            ],
+                            'tax' => [
+                                'currency_code' => 'EUR',
+                                'value' => '1.00',
+                            ],
+                            'quantity' => '1',
+                            'category' => 'PHYSICAL_GOODS',
+                        ],
+                    ],
+                    'amount' => [
+                        'breakdown' => [
+                            'item_total' => [
+                                'currency_code' => 'EUR',
+                                'value' => '10.00',
+                            ],
+                            'shipping' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'tax_total' => [
+                                'currency_code' => 'EUR',
+                                'value' => '1.00',
+                            ],
+                            'insurance' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'shipping_discount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'discount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
+                            ],
+                            'handling' => [
+                                'currency_code' => 'EUR',
+                                'value' => '0.00',
                             ],
                         ],
                     ],
