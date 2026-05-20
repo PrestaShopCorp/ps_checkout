@@ -53,6 +53,7 @@ services:
       - '@PsCheckout\Core\SupportAccess\Service\SupportTokenService'
       - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Environment\Env'
 
   PsCheckout\Core\OrderState\Service\OrderStateMapper:
     class: PsCheckout\Core\OrderState\Service\OrderStateMapper

@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\SupportAccess\Service;
 
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
 
 /**
@@ -33,9 +34,9 @@ use PsCheckout\Infrastructure\Repository\PsAccountRepositoryInterface;
  */
 class SupportRegistrationService
 {
-    const CONFIG_KEY_REGISTER_URL = 'PS_CHECKOUT_SUPPORT_TOOL_REGISTER_URL';
-    const CONFIG_KEY_API_KEY = 'PS_CHECKOUT_SUPPORT_API_KEY';
     const CONFIG_KEY_LAST_REGISTERED = 'PS_CHECKOUT_SUPPORT_REGISTERED_AT';
+    const ENV_KEY_REGISTER_URL = 'PS_CHECKOUT_SUPPORT_TOOL_REGISTER_URL';
+    const ENV_KEY_API_KEY = 'PS_CHECKOUT_SUPPORT_API_KEY';
     const COOLDOWN_SECONDS = 86400; // 24 h
 
     /** @var SupportTokenService */
@@ -47,14 +48,19 @@ class SupportRegistrationService
     /** @var ConfigurationInterface */
     private $configuration;
 
+    /** @var EnvInterface */
+    private $env;
+
     public function __construct(
         SupportTokenService $supportTokenService,
         PsAccountRepositoryInterface $psAccountRepository,
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        EnvInterface $env
     ) {
         $this->supportTokenService = $supportTokenService;
         $this->psAccountRepository = $psAccountRepository;
         $this->configuration = $configuration;
+        $this->env = $env;
     }
 
     /**
@@ -66,7 +72,8 @@ class SupportRegistrationService
      */
     public function tryRegister(string $shopUrl): void
     {
-        $registerUrl = $this->configuration->get(self::CONFIG_KEY_REGISTER_URL);
+        // Read from module .env (packaged at build time) — never exposed to merchants
+        $registerUrl = $this->env->getEnv(self::ENV_KEY_REGISTER_URL);
         if (empty($registerUrl)) {
             return;
         }
@@ -86,7 +93,7 @@ class SupportRegistrationService
             return;
         }
 
-        $apiKey = $this->configuration->get(self::CONFIG_KEY_API_KEY);
+        $apiKey = $this->env->getEnv(self::ENV_KEY_API_KEY);
         $token = $this->supportTokenService->getOrCreateToken();
 
         $payload = json_encode([
