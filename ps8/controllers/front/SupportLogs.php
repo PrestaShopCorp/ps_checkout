@@ -24,8 +24,6 @@ if (!defined('_PS_VERSION_')) {
 
 use PsCheckout\Core\SupportAccess\Service\SupportTokenService;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
-use PsCheckout\Infrastructure\Logger\LoggerFileFinder;
-use PsCheckout\Infrastructure\Logger\LoggerFileReader;
 
 /**
  * Exposes ps_checkout log files to the PrestaShop internal support tool.
@@ -39,6 +37,8 @@ class Ps_CheckoutSupportLogsModuleFrontController extends AbstractFrontControlle
 
     /** @var bool Allow guest access (token-based auth only) */
     public $guestAllowed = true;
+
+    const LOG_DIR = _PS_ROOT_DIR_ . '/var/logs/';
 
     /**
      * @see FrontController::initContent()
@@ -68,38 +68,85 @@ class Ps_CheckoutSupportLogsModuleFrontController extends AbstractFrontControlle
     }
 
     /**
-     * Returns the list of available log files with their dates.
+     * Returns the list of available log files for this shop.
+     * Lists files directly from var/logs to avoid LoggerFileFinder date-parsing issues.
      */
     private function listLogFiles(): void
     {
-        /** @var LoggerFileFinder $loggerFileFinder */
-        $loggerFileFinder = $this->module->getService(LoggerFileFinder::class);
+        $shopId = (int) \Context::getContext()->shop->id;
+        $prefix = 'ps_checkout-' . $shopId . '-';
+        $files = [];
 
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'files' => $loggerFileFinder->getFiles(),
-        ]);
+        if (is_readable(self::LOG_DIR)) {
+            foreach (scandir(self::LOG_DIR, SCANDIR_SORT_DESCENDING) as $name) {
+                if (strpos($name, $prefix) !== 0) {
+                    continue;
+                }
+                $path = self::LOG_DIR . $name;
+                $mtime = filemtime($path);
+                $files[$name] = $mtime ? date('Y-m-d H:i', $mtime) : '';
+            }
+        }
+
+        $this->exitWithResponse(['httpCode' => 200, 'files' => $files]);
     }
 
     /**
      * Returns paginated lines from a specific log file.
+     * Validates the filename against the shop prefix to prevent path traversal.
      */
     private function streamLogFile(string $filename): void
     {
+        $shopId = (int) \Context::getContext()->shop->id;
+        $prefix = 'ps_checkout-' . $shopId . '-';
+
+        // Security: only serve files belonging to this shop, no path traversal
+        if (
+            strpos($filename, $prefix) !== 0
+            || strpos($filename, '/') !== false
+            || strpos($filename, '\\') !== false
+            || strpos($filename, '..') !== false
+        ) {
+            $this->exitWithResponse(['httpCode' => 400, 'error' => 'Invalid filename']);
+        }
+
+        $path = self::LOG_DIR . $filename;
+
+        if (!is_file($path) || !is_readable($path)) {
+            $this->exitWithResponse(['httpCode' => 404, 'error' => 'File not found']);
+        }
+
         $offset = max(0, (int) \Tools::getValue('offset', 0));
         $limit = min(500, max(1, (int) \Tools::getValue('limit', 200)));
 
-        /** @var LoggerFileReader $loggerFileReader */
-        $loggerFileReader = $this->module->getService(LoggerFileReader::class);
+        $fileObj = new \SplFileObject($path);
+        $lines = [];
+        $lineNum = 0;
 
-        try {
-            $data = $loggerFileReader->read($filename, $offset, $limit);
-            $this->exitWithResponse(array_merge(['httpCode' => 200], $data));
-        } catch (\InvalidArgumentException $e) {
-            $this->exitWithResponse(['httpCode' => 400, 'error' => $e->getMessage()]);
-        } catch (\RuntimeException $e) {
-            $this->exitWithResponse(['httpCode' => 404, 'error' => $e->getMessage()]);
+        while ($fileObj->valid()) {
+            $line = $fileObj->fgets();
+            if ($lineNum < $offset) {
+                ++$lineNum;
+                continue;
+            }
+            if (count($lines) >= $limit) {
+                break;
+            }
+            if ($line !== false && $line !== '') {
+                $lines[] = rtrim($line, "\r\n");
+                ++$lineNum;
+            }
         }
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'filename' => $filename,
+            'offset' => $offset,
+            'limit' => $limit,
+            'currentOffset' => $offset + count($lines),
+            'eof' => !$fileObj->valid(),
+            'lines' => $lines,
+        ]);
     }
 
     /**

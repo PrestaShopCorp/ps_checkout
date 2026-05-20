@@ -42,6 +42,18 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
+  PsCheckout\Core\SupportAccess\Service\SupportTokenService:
+    class: PsCheckout\Core\SupportAccess\Service\SupportTokenService
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\SupportAccess\Service\SupportRegistrationService:
+    class: PsCheckout\Core\SupportAccess\Service\SupportRegistrationService
+    arguments:
+      - '@PsCheckout\Core\SupportAccess\Service\SupportTokenService'
+      - '@PsCheckout\Infrastructure\Repository\PsAccountRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
   PsCheckout\Core\OrderState\Service\OrderStateMapper:
     class: PsCheckout\Core\OrderState\Service\OrderStateMapper
     arguments:
