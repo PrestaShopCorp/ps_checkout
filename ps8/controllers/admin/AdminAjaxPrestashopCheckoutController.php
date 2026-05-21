@@ -35,6 +35,7 @@ use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration;
+use PsCheckout\Core\SupportAccess\Service\SupportTokenService;
 use PsCheckout\Core\Webhook\Service\WebhookSecretToken;
 use PsCheckout\Infrastructure\Action\SaveBatchConfigurationActionInterface;
 use PsCheckout\Infrastructure\Adapter\Configuration;
@@ -932,6 +933,34 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         $this->exitWithResponse([
             'status' => true,
+        ]);
+    }
+
+    /**
+     * AJAX: Get the current support access token (visible in debug panel, admin only)
+     */
+    public function ajaxProcessGetSupportToken()
+    {
+        /** @var SupportTokenService $supportTokenService */
+        $supportTokenService = $this->module->getService(SupportTokenService::class);
+
+        $this->exitWithResponse([
+            'status' => true,
+            'token' => $supportTokenService->getOrCreateToken(),
+        ]);
+    }
+
+    /**
+     * AJAX: Rotate the support access token (invalidates previous access)
+     */
+    public function ajaxProcessRotateSupportToken()
+    {
+        /** @var SupportTokenService $supportTokenService */
+        $supportTokenService = $this->module->getService(SupportTokenService::class);
+
+        $this->exitWithResponse([
+            'status' => true,
+            'token' => $supportTokenService->rotateToken(),
         ]);
     }
 }

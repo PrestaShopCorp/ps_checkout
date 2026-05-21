@@ -21,6 +21,7 @@
 namespace PsCheckout\Infrastructure\Bootstrap\Install;
 
 use PsCheckout\Core\Settings\Configuration\DefaultConfiguration;
+use PsCheckout\Core\SupportAccess\Service\SupportTokenService;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Repository\ShopRepositoryInterface;
 
@@ -52,9 +53,14 @@ class ConfigurationInstaller implements InstallerInterface
         foreach ($this->shop->getAll() as $shopId) {
             foreach (DefaultConfiguration::DEFAULT_CONFIGURATION_VALUES as $name => $value) {
                 if (!$this->configuration->getForSpecificShop($name, (int) $shopId)) {
+                    // Support token must be unique per shop — never use the empty default
+                    $actualValue = $name === SupportTokenService::CONFIG_KEY
+                        ? bin2hex(random_bytes(32))
+                        : $value;
+
                     $result = $result && $this->configuration->setForSpecificShop(
                         $name,
-                        $value,
+                        $actualValue,
                         (int) $shopId
                     );
                 }
