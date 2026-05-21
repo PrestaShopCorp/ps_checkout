@@ -38,7 +38,6 @@ use PsCheckout\Infrastructure\Adapter\Link;
 use PsCheckout\Infrastructure\Adapter\ShopContext;
 use PsCheckout\Infrastructure\Bootstrap\Install\Installer;
 use PsCheckout\Infrastructure\Environment\Env;
-use PsCheckout\Core\SupportAccess\Service\SupportRegistrationService;
 use PsCheckout\Infrastructure\Repository\ConfigurationRepository;
 use PsCheckout\Infrastructure\Repository\CountryRepository;
 use PsCheckout\Infrastructure\Repository\CurrencyRepository;
@@ -230,11 +229,6 @@ class Ps_Checkout extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        /** @var SupportRegistrationService $registrationService */
-        $registrationService = $this->getService(SupportRegistrationService::class);
-        $shopUrl = $this->context->shop->getBaseURL(true);
-        $registrationService->tryRegister($shopUrl);
-
         switch (Tools::getValue('controller')) {
             case 'AdminModules':
                 if ($this->name === Tools::getValue('configure')) {
