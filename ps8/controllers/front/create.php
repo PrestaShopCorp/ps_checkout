@@ -167,28 +167,26 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->module->getService(LoggerInterface::class)->error(
-                'CreateController - Exception ' . $exception->getCode(),
-                [
-                    'exception' => $exception,
-                ]
-            );
-
             $previous = $exception->getPrevious();
-
-            if ($previous !== null && $previous instanceof PayPalException) {
-                $exceptionHandler = $this->module->getService(OrderCreationExceptionHandler::class);
-                $fundingSource = $createPayPalOrderRequest ? $createPayPalOrderRequest->getFundingSource() : null;
-                $this->exitWithExceptionMessage($exceptionHandler->handleOrderCreateException($previous, $fundingSource));
-            }
-
-            $this->exitWithExceptionMessage($exception);
+            $exceptionHandler = $this->module->getService(OrderCreationExceptionHandler::class);
+            $fundingSource = $createPayPalOrderRequest ? $createPayPalOrderRequest->getFundingSource() : null;
+            $exceptionToHandle = ($previous instanceof PayPalException) ? $previous : $exception;
+            $this->exitWithResponse($exceptionHandler->handleOrderCreateException($exceptionToHandle, $fundingSource));
         } catch (Throwable $exception) {
-            $this->exitWithExceptionMessage(new PsCheckoutException(
-                'An error occurred while creating the PayPal order.',
-                PsCheckoutException::UNKNOWN,
-                $exception
-            ));
+            $this->module->getService(LoggerInterface::class)->error(
+                'CreateController - Throwable',
+                ['exception' => $exception]
+            );
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'body' => [
+                    'error' => [
+                        'message' => 'An error occurred while creating the PayPal order.',
+                        'code' => PsCheckoutException::UNKNOWN,
+                    ],
+                ],
+            ]);
         }
     }
 

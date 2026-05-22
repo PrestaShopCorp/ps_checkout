@@ -167,4 +167,6 @@ class PsCheckoutException extends \Exception
     const PSCHECKOUT_EXPRESS_CHECKOUT_NOT_ENABLED = 76;
 
     const PSCHECKOUT_EXPRESS_CHECKOUT_INVALID_PAYLOAD = 77;
+
+    const CART_SHIPPING_ADDRESS_INVALID = 78;
 }

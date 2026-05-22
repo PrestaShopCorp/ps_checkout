@@ -83,7 +83,10 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
                 ['id_country' => $address->id_country, 'iso_code' => $countryIso]
             );
 
-            return [];
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: invalid country ISO code',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
         }
 
         $stateName = PaypalAddressRequirementsUtility::usesStateIsoCode($countryIso)
@@ -100,7 +103,10 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
                 ['id_country' => $address->id_country, 'country_code' => $countryIso]
             );
 
-            return [];
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: city is required but missing',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
         }
 
         if (PaypalAddressRequirementsUtility::isPostalCodeRequired($countryIso) && empty($portableAddress['postal_code'])) {
@@ -109,7 +115,10 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
                 ['id_country' => $address->id_country, 'country_code' => $countryIso]
             );
 
-            return [];
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: postal code is required but missing',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
         }
 
         return [

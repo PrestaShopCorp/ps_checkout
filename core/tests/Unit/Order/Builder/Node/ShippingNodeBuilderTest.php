@@ -225,7 +225,7 @@ class ShippingNodeBuilderTest extends TestCase
     /**
      * @dataProvider provideInvalidCountryCodes
      */
-    public function testBuildReturnsEmptyArrayForInvalidCountryCode(string $invalidCode): void
+    public function testBuildThrowsForInvalidCountryCode(string $invalidCode): void
     {
         $address = $this->createMockAddress([
             'id_country' => 99,
@@ -247,14 +247,15 @@ class ShippingNodeBuilderTest extends TestCase
 
         $this->logger->expects($this->once())->method('warning');
 
-        $result = $this->builder
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
             ->setCart([
                 'cart' => ['is_virtual' => false],
                 'addresses' => ['shipping' => $address],
             ])
             ->build();
-
-        $this->assertSame([], $result);
     }
 
     /**
@@ -307,7 +308,7 @@ class ShippingNodeBuilderTest extends TestCase
         $this->assertArrayNotHasKey('address_line_2', $result['shipping']['address']);
     }
 
-    public function testBuildReturnsEmptyArrayWhenRequiredCityIsMissing(): void
+    public function testBuildThrowsWhenRequiredCityIsMissing(): void
     {
         $address = $this->createMockAddress([
             'id_country' => 8,
@@ -332,17 +333,18 @@ class ShippingNodeBuilderTest extends TestCase
 
         $this->logger->expects($this->once())->method('warning');
 
-        $result = $this->builder
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
             ->setCart([
                 'cart' => ['is_virtual' => false],
                 'addresses' => ['shipping' => $address],
             ])
             ->build();
-
-        $this->assertSame([], $result);
     }
 
-    public function testBuildReturnsEmptyArrayWhenRequiredPostalCodeIsMissing(): void
+    public function testBuildThrowsWhenRequiredPostalCodeIsMissing(): void
     {
         $address = $this->createMockAddress([
             'id_country' => 21,
@@ -367,14 +369,15 @@ class ShippingNodeBuilderTest extends TestCase
 
         $this->logger->expects($this->once())->method('warning');
 
-        $result = $this->builder
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
             ->setCart([
                 'cart' => ['is_virtual' => false],
                 'addresses' => ['shipping' => $address],
             ])
             ->build();
-
-        $this->assertSame([], $result);
     }
 
     public function testBuildWithoutSettingCartThrowsException(): void
