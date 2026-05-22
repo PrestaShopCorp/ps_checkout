@@ -195,7 +195,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusAction'
-      - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
+      - '@PsCheckout\Core\Order\Validator\OrderAuthorizationValidator'
       - '@PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction'
       - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
 
