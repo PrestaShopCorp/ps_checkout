@@ -99,4 +99,70 @@ class PaypalStateCodeMapUtilityTest extends TestCase
         $this->assertSame('BC', PaypalStateCodeMapUtility::getPaypalStateCode('mx', 'BCN'));
         $this->assertSame('BUENOS AIRES', PaypalStateCodeMapUtility::getPaypalStateCode('ar', 'B'));
     }
+
+    /**
+     * @dataProvider provideReverseMappedCodes
+     */
+    public function testGetShopStateCodeReturnsMappedPsIsoCode(
+        string $countryCode,
+        string $paypalStateCode,
+        string $expected
+    ): void {
+        $this->assertSame($expected, PaypalStateCodeMapUtility::getShopStateCode($countryCode, $paypalStateCode));
+    }
+
+    /**
+     * @return array<string, array{string, string, string}>
+     */
+    public function provideReverseMappedCodes(): array
+    {
+        return [
+            // Japan: PayPal string → JIS numeric
+            'JP HOKKAIDO → 01'   => ['JP', 'HOKKAIDO', '01'],
+            'JP TOKYO-TO → 13'   => ['JP', 'TOKYO-TO', '13'],
+            'JP OSAKA-FU → 27'   => ['JP', 'OSAKA-FU', '27'],
+            'JP OKINAWA-KEN → 47' => ['JP', 'OKINAWA-KEN', '47'],
+
+            // Mexico: PayPal code → PS iso_code
+            'MX BC → BCN'       => ['MX', 'BC', 'BCN'],
+            'MX CDMX → CMX'     => ['MX', 'CDMX', 'CMX'],
+            'MX Q ROO → ROO'    => ['MX', 'Q ROO', 'ROO'],
+            'MX NL → NLE'       => ['MX', 'NL', 'NLE'],
+
+            // Argentina: full name → single-letter
+            'AR BUENOS AIRES → B'              => ['AR', 'BUENOS AIRES', 'B'],
+            'AR CIUDAD AUTÓNOMA... → C'        => ['AR', 'CIUDAD AUTÓNOMA DE BUENOS AIRES', 'C'],
+            'AR CÓRDOBA → X'                   => ['AR', 'CÓRDOBA', 'X'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideReversePassthroughCodes
+     */
+    public function testGetShopStateCodeReturnsUnchangedWhenNotMapped(
+        string $countryCode,
+        string $paypalStateCode
+    ): void {
+        $this->assertSame($paypalStateCode, PaypalStateCodeMapUtility::getShopStateCode($countryCode, $paypalStateCode));
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public function provideReversePassthroughCodes(): array
+    {
+        return [
+            'US CA (no country map)'  => ['US', 'CA'],
+            'CA ON (no country map)'  => ['CA', 'ON'],
+            'FR some-state'           => ['FR', 'some-state'],
+            'JP UNKNOWN (unmapped)'   => ['JP', 'UNKNOWN-KEN'],
+        ];
+    }
+
+    public function testGetShopStateCodeIsCaseInsensitiveForCountry(): void
+    {
+        $this->assertSame('01', PaypalStateCodeMapUtility::getShopStateCode('jp', 'HOKKAIDO'));
+        $this->assertSame('CMX', PaypalStateCodeMapUtility::getShopStateCode('mx', 'CDMX'));
+        $this->assertSame('B', PaypalStateCodeMapUtility::getShopStateCode('ar', 'BUENOS AIRES'));
+    }
 }

@@ -246,51 +246,85 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // State resolution: getStateId is called only when country contains_states.
+    // State resolution: correct repository method is called based on country type.
     //
     // These cases use the real PrestaShop Country class (available in the Docker
     // test environment). A positive country ID returned by getIdByIsoCode causes
     // new Country($id) to load the row from the PS installation DB.
     //
-    // US / AR have contains_states = true  → getStateId must be called once.
-    // GB / FR / ES / IT have contains_states = false → getStateId must not be called.
+    // US / AR: contains_states = true AND usesStateIsoCode → getStateIdByIsoCode once.
+    // GB / FR / ES / IT: contains_states = false → neither method called.
     //
     // The shop mock is required because Country::__construct reads the shop ID.
     // -------------------------------------------------------------------------
 
     /**
-     * @return array<string, array{string, bool}>
+     * @return array<string, array{string}>
      */
-    public function provideCountryStateMatrix(): array
+    public function provideIsoCodeCountriesWithStates(): array
     {
         return [
-            'US — has states'      => ['US', true],
-            'AR — has states'      => ['AR', true],
-            'GB — no states'       => ['GB', false],
-            'FR — no states'       => ['FR', false],
-            'ES — no states'       => ['ES', false],
-            'IT — no states'       => ['IT', false],
+            'US — ISO code states' => ['US'],
+            'AR — ISO code states' => ['AR'],
         ];
     }
 
     /**
-     * @dataProvider provideCountryStateMatrix
+     * @dataProvider provideIsoCodeCountriesWithStates
      */
-    public function testStateResolutionMatchesCountryDefinition(string $isoCode, bool $hasStates): void
+    public function testStateResolutionUsesIsoCodeLookupForIsoCodeCountries(string $isoCode): void
     {
         $this->setUpActiveCountry();
 
-        if ($hasStates) {
-            $this->countryRepository->expects($this->once())
-                ->method('getStateId');
-        } else {
-            $this->countryRepository->expects($this->never())
-                ->method('getStateId');
-        }
+        $this->countryRepository->expects($this->once())
+            ->method('getStateIdByIsoCode');
+        $this->countryRepository->expects($this->never())
+            ->method('getStateId');
+
+        $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public function provideCountriesWithoutStates(): array
+    {
+        return [
+            'GB — no states' => ['GB'],
+            'FR — no states' => ['FR'],
+            'ES — no states' => ['ES'],
+            'IT — no states' => ['IT'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCountriesWithoutStates
+     */
+    public function testStateResolutionIsSkippedForCountriesWithoutStates(string $isoCode): void
+    {
+        $this->setUpActiveCountry();
+
+        $this->countryRepository->expects($this->never())
+            ->method('getStateId');
+        $this->countryRepository->expects($this->never())
+            ->method('getStateIdByIsoCode');
 
         // execute() may return false (address validation/save failure is fine here;
-        // the assertion is on whether getStateId was called, not the return value).
+        // the assertion is on whether state lookup was called, not the return value).
         $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
+    }
+
+    public function testStateResolutionIsSkippedWhenStateIsNull(): void
+    {
+        $this->setUpActiveCountry();
+
+        $this->countryRepository->expects($this->never())
+            ->method('getStateId');
+        $this->countryRepository->expects($this->never())
+            ->method('getStateIdByIsoCode');
+
+        $shippingData = new ExpressCheckoutShippingData('ORDER-1', 'John', 'Doe', '123 Main St', '', '10001', 'New York', null, 'US', '5551234567');
+        $this->action->execute($shippingData);
     }
 
     // -------------------------------------------------------------------------

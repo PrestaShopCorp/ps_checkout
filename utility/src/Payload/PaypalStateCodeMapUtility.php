@@ -99,4 +99,24 @@ class PaypalStateCodeMapUtility
 
         return $stateCode;
     }
+
+    /**
+     * Returns the PrestaShop ps_state.iso_code for the given PayPal admin_area_1 value.
+     * Returns $paypalStateCode unchanged if no mapping is defined for the country.
+     *
+     * @param string $countryCode     ISO 3166-1 alpha-2 country code
+     * @param string $paypalStateCode Value from PayPal admin_area_1
+     *
+     * @return string
+     */
+    public static function getShopStateCode(string $countryCode, string $paypalStateCode): string
+    {
+        $countryCode = strtoupper($countryCode);
+        if (!isset(self::$map[$countryCode])) {
+            return $paypalStateCode;
+        }
+        $flipped = array_flip(self::$map[$countryCode]);
+
+        return $flipped[$paypalStateCode] ?? $paypalStateCode;
+    }
 }

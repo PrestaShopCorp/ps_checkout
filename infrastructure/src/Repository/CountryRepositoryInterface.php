@@ -54,4 +54,12 @@ interface CountryRepositoryInterface
      * @return int|null
      */
     public function getStateId(int $idCountry, string $state);
+
+    /**
+     * @param int    $idCountry
+     * @param string $isoCode   ps_state.iso_code value
+     *
+     * @return int
+     */
+    public function getStateIdByIsoCode(int $idCountry, string $isoCode): int;
 }
