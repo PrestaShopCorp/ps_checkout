@@ -9273,7 +9273,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Customer\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
@@ -9309,6 +9309,12 @@ parameters:
 		-
 			message: '#^Cannot call method setProductAddressDelivery\(\) on Cart\|null\.$#'
 			identifier: method.nonObject
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
+			message: '#^Parameter \#1 \$idAddress of method PsCheckout\\Infrastructure\\Repository\\PsCheckoutAddressRepositoryInterface\:\:saveAddress\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
@@ -10065,7 +10071,7 @@ parameters:
 		-
 			message: '#^Binary operation "\." between "\\n            CREATE…" and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 11
+			count: 12
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -10083,7 +10089,7 @@ parameters:
 		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 11
+			count: 12
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -11529,7 +11535,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$isoCode of static method CountryCore\:\:getByIso\(\) expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 4
 			path: ../infrastructure/tests/Unit/Action/CreateOrUpdateAddressActionTest.php
 
 		-
@@ -11609,6 +11615,24 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: ../infrastructure/tests/Unit/Logger/LoggerFileReaderTest.php
+
+		-
+			message: '#^Cannot access offset ''checksum'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/tests/Unit/Repository/PsCheckoutAddressRepositoryTest.php
+
+		-
+			message: '#^Cannot access offset ''id_address'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/tests/Unit/Repository/PsCheckoutAddressRepositoryTest.php
+
+		-
+			message: '#^Cannot access offset ''id_customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/tests/Unit/Repository/PsCheckoutAddressRepositoryTest.php
 
 		-
 			message: '#^Cannot call method isPayLaterAvailable\(\) on mixed\.$#'

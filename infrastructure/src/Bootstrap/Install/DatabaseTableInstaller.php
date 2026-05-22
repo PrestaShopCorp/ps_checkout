@@ -183,6 +183,14 @@ class DatabaseTableInstaller implements InstallerInterface
             `disabled` tinyint(1) NOT NULL DEFAULT 0,
             PRIMARY KEY (`id_reference`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_address` (
+            `id_address` int(10) unsigned NOT NULL,
+            `id_customer` int(10) unsigned NOT NULL,
+            `checksum` varchar(32) NOT NULL,
+            PRIMARY KEY (`id_customer`, `checksum`),
+            KEY `id_address` (`id_address`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 
         $this->checkTable();
