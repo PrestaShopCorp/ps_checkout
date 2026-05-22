@@ -56,6 +56,7 @@ services:
       - '@PsCheckout\Core\Order\Action\ValidateOrderAction'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderMatrixRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
 
   PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction

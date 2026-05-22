@@ -23,6 +23,7 @@ namespace PsCheckout\Core\Order\Action;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderMatrixRepositoryInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
 
@@ -53,18 +54,25 @@ class CreateOrderAction implements CreateOrderActionInterface
      */
     private $orderMatrixRepository;
 
+    /**
+     * @var PayPalOrderRepositoryInterface
+     */
+    private $payPalOrderRepository;
+
     public function __construct(
         ContextInterface $context,
         CreateValidateOrderDataActionInterface $createValidateOrderDataAction,
         ValidateOrderActionInterface $validateOrderAction,
         OrderRepositoryInterface $orderRepository,
-        PayPalOrderMatrixRepositoryInterface $orderMatrixRepository
+        PayPalOrderMatrixRepositoryInterface $orderMatrixRepository,
+        PayPalOrderRepositoryInterface $payPalOrderRepository
     ) {
         $this->context = $context;
         $this->createValidateOrderDataAction = $createValidateOrderDataAction;
         $this->validateOrderAction = $validateOrderAction;
         $this->orderRepository = $orderRepository;
         $this->orderMatrixRepository = $orderMatrixRepository;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -72,6 +80,21 @@ class CreateOrderAction implements CreateOrderActionInterface
      */
     public function execute(PayPalOrderResponse $payPalOrder)
     {
+        $localPayPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrder->getId()]);
+        if ($localPayPalOrder !== null) {
+            $expectedCartId = (int) $localPayPalOrder->getIdCart();
+            $contextCart = $this->context->getCart();
+            if ($expectedCartId > 0 && (!$contextCart || (int) $contextCart->id !== $expectedCartId)) {
+                $cart = new \Cart($expectedCartId);
+                if (\Validate::isLoadedObject($cart)) {
+                    $this->context->setCurrentCart($cart);
+                    if ($cart->id_customer) {
+                        $this->context->updateCustomer(new \Customer($cart->id_customer));
+                    }
+                }
+            }
+        }
+
         $cartId = (int) $this->context->getCart()->id;
         $db = null;
 
