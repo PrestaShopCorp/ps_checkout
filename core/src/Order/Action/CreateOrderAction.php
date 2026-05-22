@@ -72,7 +72,24 @@ class CreateOrderAction implements CreateOrderActionInterface
      */
     public function execute(PayPalOrderResponse $payPalOrder)
     {
+        $cartId = (int) $this->context->getCart()->id;
+        $db = null;
+
         try {
+            if ($cartId > 0) {
+                $db = \Db::getInstance();
+                $db->execute('SELECT GET_LOCK("ps_checkout_cart_' . $cartId . '", 10)');
+
+                $existingOrders = $this->orderRepository->getAllBy(['id_cart' => $cartId]);
+                if (!empty($existingOrders)) {
+                    foreach ($existingOrders as $order) {
+                        $this->orderMatrixRepository->upsert((int) $order->id, $cartId);
+                    }
+
+                    return;
+                }
+            }
+
             $validateOrderData = $this->createValidateOrderDataAction->execute($payPalOrder);
 
             $this->validateOrderAction->execute($validateOrderData);
@@ -86,6 +103,10 @@ class CreateOrderAction implements CreateOrderActionInterface
             throw $exception;
         } catch (\Exception $exception) {
             throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::UNKNOWN);
+        } finally {
+            if ($db !== null) {
+                $db->execute('SELECT RELEASE_LOCK("ps_checkout_cart_' . $cartId . '")');
+            }
         }
     }
 }
