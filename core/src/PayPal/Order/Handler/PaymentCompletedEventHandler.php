@@ -24,6 +24,7 @@ use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 
 class PaymentCompletedEventHandler implements EventHandlerInterface
@@ -48,16 +49,23 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     private $context;
 
+    /**
+     * @var PayPalOrderRepositoryInterface
+     */
+    private $payPalOrderRepository;
+
     public function __construct(
         CreateOrderActionInterface $createOrderAction,
         CreateOrderPaymentActionInterface $createOrderPaymentAction,
         SetOrderStateActionInterface $setCompletedOrderStateAction,
-        ContextInterface $context
+        ContextInterface $context,
+        PayPalOrderRepositoryInterface $payPalOrderRepository
     ) {
         $this->createOrderAction = $createOrderAction;
         $this->createOrderPaymentAction = $createOrderPaymentAction;
         $this->setCompletedOrderStateAction = $setCompletedOrderStateAction;
         $this->context = $context;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -65,6 +73,19 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
+        if (!$this->context->getCart()->id) {
+            $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $payPalOrderResponse->getId()]);
+            if ($payPalOrder && $payPalOrder->getIdCart()) {
+                $cart = new \Cart($payPalOrder->getIdCart());
+                if (\Validate::isLoadedObject($cart)) {
+                    $this->context->setCurrentCart($cart);
+                    if ($cart->id_customer) {
+                        $this->context->updateCustomer(new \Customer($cart->id_customer));
+                    }
+                }
+            }
+        }
+
         if ($this->context->getCart()->id) {
             $this->createOrderAction->execute($payPalOrderResponse);
             $this->createOrderPaymentAction->execute($payPalOrderResponse);
