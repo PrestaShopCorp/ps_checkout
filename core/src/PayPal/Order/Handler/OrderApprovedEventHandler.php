@@ -22,7 +22,7 @@ namespace PsCheckout\Core\PayPal\Order\Handler;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
+use PsCheckout\Core\Order\Validator\OrderAuthorizationValidatorInterface;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
@@ -43,9 +43,9 @@ class OrderApprovedEventHandler implements EventHandlerInterface
     private $checkPayPalOrderStatusAction;
 
     /**
-     * @var Card3DSecureValidatorInterface
+     * @var OrderAuthorizationValidatorInterface
      */
-    private $card3DSecureValidator;
+    private $orderAuthorizationValidator;
 
     /**
      * @var CapturePayPalOrderActionInterface
@@ -60,13 +60,13 @@ class OrderApprovedEventHandler implements EventHandlerInterface
     public function __construct(
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         PayPalCheckOrderStatusActionInterface $checkPayPalOrderStatusAction,
-        Card3DSecureValidatorInterface $card3DSecureValidator,
+        OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
         CapturePayPalOrderActionInterface $capturePayPalOrderAction,
         UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit
     ) {
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->checkPayPalOrderStatusAction = $checkPayPalOrderStatusAction;
-        $this->card3DSecureValidator = $card3DSecureValidator;
+        $this->orderAuthorizationValidator = $orderAuthorizationValidator;
         $this->capturePayPalOrderAction = $capturePayPalOrderAction;
         $this->updatePayPalOrderPurchaseUnit = $updatePayPalOrderPurchaseUnit;
     }
@@ -98,7 +98,12 @@ class OrderApprovedEventHandler implements EventHandlerInterface
             return;
         }
 
-        $this->card3DSecureValidator->getAuthorizationDecision($payPalOrderResponse);
+        try {
+            $this->orderAuthorizationValidator->validate($payPalOrder->getIdCart(), $payPalOrderResponse);
+        } catch (PsCheckoutException $e) {
+            return;
+        }
+
         $this->capturePayPalOrderAction->execute($payPalOrderResponse);
     }
 }
