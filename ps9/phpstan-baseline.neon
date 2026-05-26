@@ -3145,12 +3145,6 @@ parameters:
 			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
 
 		-
-			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
-
-		-
 			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -3176,12 +3170,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$totalPrice of class PsCheckout\\Core\\PayPal\\GooglePay\\ValueObject\\GooglePayPaymentRequestData constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
-
-		-
-			message: '#^Parameter \#4 \$merchantName of class PsCheckout\\Core\\PayPal\\GooglePay\\ValueObject\\GooglePayPaymentRequestData constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/GooglePay/Builder/GooglePayPaymentRequestDataBuilder.php
