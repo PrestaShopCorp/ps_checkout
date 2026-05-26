@@ -23,7 +23,9 @@ namespace PsCheckout\Core\PayPal\GooglePay\Builder;
 use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\GooglePay\ValueObject\GooglePayPaymentRequestData;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Presentation\TranslatorInterface;
+use PsCheckout\Utility\Common\StringUtility;
 
 class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataBuilderInterface
 {
@@ -42,14 +44,21 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
      */
     private $translator;
 
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
     public function __construct(
         OrderPayloadBuilderInterface $orderPayloadBuilder,
         CheckoutContextBuilderInterface $checkoutContextBuilder,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ConfigurationInterface $configuration
     ) {
         $this->orderPayloadBuilder = $orderPayloadBuilder;
         $this->checkoutContextBuilder = $checkoutContextBuilder;
         $this->translator = $translator;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -67,7 +76,7 @@ class GooglePayPaymentRequestDataBuilder implements GooglePayPaymentRequestDataB
             $payload['purchase_units'][0]['amount']['currency_code'],
             $payload['purchase_units'][0]['amount']['value'],
             $this->translator->trans('Total'),
-            $payload['application_context']['brand_name']
+            StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME'))
         );
     }
 }

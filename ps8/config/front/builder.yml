@@ -28,6 +28,7 @@ services:
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
       - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
       - '@PsCheckout\Module\Presentation\Translator'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
   PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder:
     class: 'PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder'
