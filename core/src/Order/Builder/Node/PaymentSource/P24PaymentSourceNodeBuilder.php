@@ -20,10 +20,13 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
+use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
 {
@@ -43,6 +46,16 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
     private $countryRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
      * @var array<string, mixed>
      */
     private $cart;
@@ -50,15 +63,21 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        CountryRepositoryInterface $countryRepository
+        CountryRepositoryInterface $countryRepository,
+        LoggerInterface $logger,
+        ValidateInterface $validate
     ) {
         $this->configuration = $configuration;
         $this->link = $link;
         $this->countryRepository = $countryRepository;
+        $this->logger = $logger;
+        $this->validate = $validate;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws PsCheckoutException When no valid email is available for P24 (required by PayPal)
      */
     public function build(): array
     {
@@ -69,11 +88,19 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
             : '';
 
+        $email = isset($this->cart['customer']->email) ? (string) $this->cart['customer']->email : '';
+
+        if (!$this->validate->isPayPalEmail($email)) {
+            $this->logger->warning('Valid email is required for P24 payment.');
+
+            throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+        }
+
         return [
             'payment_source' => [
                 'p24' => [
                     'name' => trim($firstName . ' ' . $lastName),
-                    'email' => isset($this->cart['customer']->email) ? (string) $this->cart['customer']->email : '',
+                    'email' => $email,
                     'country_code' => $countryCode,
                     'experience_context' => [
                         'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),

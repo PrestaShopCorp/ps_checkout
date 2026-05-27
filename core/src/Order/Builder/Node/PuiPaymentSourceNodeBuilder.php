@@ -124,7 +124,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             'surname' => isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '',
         ];
 
-        if (isset($customer->email) && $this->validate->isEmail($customer->email)) {
+        if (isset($customer->email) && $this->validate->isPayPalEmail($customer->email)) {
             $puiData['email'] = (string) $customer->email;
         } else {
             $this->logger->warning('Valid email is required for PUI payment.');

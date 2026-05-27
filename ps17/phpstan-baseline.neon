@@ -1789,7 +1789,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isEmail\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
@@ -1924,6 +1924,12 @@ parameters:
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 3
+			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
 
 		-
@@ -2131,6 +2137,12 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:\$cart type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2257,7 +2269,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isEmail\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
@@ -8331,7 +8343,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''blik'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
+			count: 6
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8367,7 +8379,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 3
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8509,12 +8521,6 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
-			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
-
-		-
 			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 7
@@ -8541,13 +8547,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''venmo'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 10
+			count: 11
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 4
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-

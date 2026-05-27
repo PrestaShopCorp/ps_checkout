@@ -285,7 +285,7 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
             $stateName
         );
 
-        if (isset($this->cart['customer']->email) && $this->validate->isEmail($this->cart['customer']->email)) {
+        if (isset($this->cart['customer']->email) && $this->validate->isPayPalEmail($this->cart['customer']->email)) {
             $data['email_address'] = (string) $this->cart['customer']->email;
         }
 

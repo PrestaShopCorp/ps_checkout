@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
@@ -43,6 +44,11 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
     private $countryRepository;
 
     /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
      * @var array<string, mixed>
      */
     private $cart;
@@ -50,11 +56,13 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        CountryRepositoryInterface $countryRepository
+        CountryRepositoryInterface $countryRepository,
+        ValidateInterface $validate
     ) {
         $this->configuration = $configuration;
         $this->link = $link;
         $this->countryRepository = $countryRepository;
+        $this->validate = $validate;
     }
 
     /**
@@ -79,7 +87,7 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
             ],
         ];
 
-        if (isset($this->cart['customer']->email) && !empty($this->cart['customer']->email)) {
+        if (isset($this->cart['customer']->email) && $this->validate->isPayPalEmail($this->cart['customer']->email)) {
             $data['email'] = (string) $this->cart['customer']->email;
         }
 
