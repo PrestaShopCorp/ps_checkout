@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Action;
 
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Validator\CheckoutValidatorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderMatrixRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
@@ -53,18 +54,25 @@ class CreateOrderAction implements CreateOrderActionInterface
      */
     private $orderMatrixRepository;
 
+    /**
+     * @var CheckoutValidatorInterface
+     */
+    private $checkoutValidator;
+
     public function __construct(
         ContextInterface $context,
         CreateValidateOrderDataActionInterface $createValidateOrderDataAction,
         ValidateOrderActionInterface $validateOrderAction,
         OrderRepositoryInterface $orderRepository,
-        PayPalOrderMatrixRepositoryInterface $orderMatrixRepository
+        PayPalOrderMatrixRepositoryInterface $orderMatrixRepository,
+        CheckoutValidatorInterface $checkoutValidator
     ) {
         $this->context = $context;
         $this->createValidateOrderDataAction = $createValidateOrderDataAction;
         $this->validateOrderAction = $validateOrderAction;
         $this->orderRepository = $orderRepository;
         $this->orderMatrixRepository = $orderMatrixRepository;
+        $this->checkoutValidator = $checkoutValidator;
     }
 
     /**
@@ -73,6 +81,16 @@ class CreateOrderAction implements CreateOrderActionInterface
     public function execute(PayPalOrderResponse $payPalOrder)
     {
         try {
+            // Guard against duplicate PS order creation. This covers both the normal case
+            // where the synchronous front-office path already created the order (CapturePayPalOrderAction
+            // calls PaymentCompletedEventHandler synchronously, then PayPal sends the same event as a webhook)
+            // and the retry-after-partial-failure case.
+            // CheckoutValidator also validates the PayPal order record, cart existence, and cart products.
+            $this->checkoutValidator->validate(
+                $payPalOrder->getId(),
+                (int) $this->context->getCart()->id
+            );
+
             $validateOrderData = $this->createValidateOrderDataAction->execute($payPalOrder);
 
             $this->validateOrderAction->execute($validateOrderData);

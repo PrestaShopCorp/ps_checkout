@@ -1017,7 +1017,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Cart\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 3
 			path: ../core/src/Order/Action/CreateOrderAction.php
 
 		-
@@ -4093,12 +4093,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Handler/PayPalEventDispatcher.php
 
 		-
-			message: '#^Cannot access property \$id on Cart\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Handler/PaymentCompletedEventHandler.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 3
@@ -6559,6 +6553,18 @@ parameters:
 			path: ../core/src/WebhookDispatcher/Action/VerifyWebhookActionInterface.php
 
 		-
+			message: '#^Call to an undefined method PsCheckout\\Infrastructure\\Repository\\CartRepositoryInterface\:\:getOneBy\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
+
+		-
 			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\Processor\\DispatchWebhookProcessor\:\:log\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -6573,6 +6579,12 @@ parameters:
 		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
+			count: 1
+			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Infrastructure\\Adapter\\ContextInterface\:\:loadCartForWebhook\(\) expects Cart, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../core/src/WebhookDispatcher/Processor/DispatchWebhookProcessor.php
 
@@ -6647,6 +6659,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/WebhookDispatcher/Validator/HeaderValuesValidatorInterface.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: ../core/src/WebhookDispatcher/ValueObject/DispatchWebhookRequest.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\WebhookDispatcher\\ValueObject\\DispatchWebhookRequest\:\:__construct\(\) has parameter \$resource with no value type specified in iterable type array\.$#'
@@ -7921,10 +7939,100 @@ parameters:
 			path: ../core/tests/Integration/Response/CaptureOrderResponse.php
 
 		-
+			message: '#^Binary operation "\." between ''SELECT \* FROM `'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../core/tests/Integration/WebhookDispatcher/Repository/WebhookEventRepositoryTest.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\WebhookDispatcher\\Repository\\WebhookEventRepositoryTest\:\:fetchRow\(\) should return array\<string, mixed\>\|null but returns array\|object\|true\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: ../core/tests/Integration/WebhookDispatcher/Repository/WebhookEventRepositoryTest.php
+
+		-
+			message: '#^Offset ''status'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 5
+			path: ../core/tests/Integration/WebhookDispatcher/Repository/WebhookEventRepositoryTest.php
+
+		-
 			message: '#^Property CartCore\:\:\$id_address_delivery \(int\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Unit/Customer/Action/ExpressCheckoutActionTest.php
+
+		-
+			message: '#^Cannot call method execute\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Cannot call method expects\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Cannot call method method\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Cannot call method willThrowException\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$action has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$checkoutValidator has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$context has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$createValidateOrderDataAction has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$orderMatrixRepository has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$orderRepository has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
+
+		-
+			message: '#^Property CreateOrderActionTest\:\:\$validateOrderAction has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
 
 		-
 			message: '#^Method AmountBreakdownNodeTest\:\:buildDataProvider\(\) return type has no value type specified in iterable type array\.$#'
@@ -9063,19 +9171,19 @@ parameters:
 		-
 			message: '#^Cannot call method expects\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 6
+			count: 19
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
 			message: '#^Cannot call method method\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 14
+			count: 54
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
 			message: '#^Cannot call method process\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 7
+			count: 12
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
@@ -9087,13 +9195,31 @@ parameters:
 		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 7
+			count: 31
+			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
+
+		-
+			message: '#^Cannot call method willThrowException\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
 			message: '#^Cannot call method with\(\) on mixed\.$#'
 			identifier: method.nonObject
-			count: 5
+			count: 12
+			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
+
+		-
+			message: '#^Property DispatchWebhookProcessorTest\:\:\$cartRepository has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
+
+		-
+			message: '#^Property DispatchWebhookProcessorTest\:\:\$context has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
@@ -9121,6 +9247,12 @@ parameters:
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
 
 		-
+			message: '#^Property DispatchWebhookProcessorTest\:\:\$payPalOrderRepository has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
+
+		-
 			message: '#^Property DispatchWebhookProcessorTest\:\:\$paymentTokenRepository has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
@@ -9134,6 +9266,12 @@ parameters:
 
 		-
 			message: '#^Property DispatchWebhookProcessorTest\:\:\$savePaymentTokenAction has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
+
+		-
+			message: '#^Property DispatchWebhookProcessorTest\:\:\$webhookEventRepository has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
 			path: ../core/tests/Unit/WebhookDispatcher/Processor/DispatchWebhookProcessorTest.php
@@ -10059,7 +10197,7 @@ parameters:
 		-
 			message: '#^Binary operation "\." between "\\n            CREATE…" and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 12
+			count: 13
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -11495,6 +11633,18 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Repository/StateRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''UPDATE `'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/WebhookEventRepository.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<min, 0\> and 0 is always false\.$#'
+			identifier: greater.alwaysFalse
+			count: 1
+			path: ../infrastructure/src/Repository/WebhookEventRepository.php
 
 		-
 			message: '#^Cannot access property \$iso_code on Country\|null\.$#'

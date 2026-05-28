@@ -42,6 +42,19 @@ function upgrade_module_9_5_5_0(Ps_checkout $module)
             KEY `id_address` (`id_address`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8
         ');
+
+        $db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_webhook_event` (
+            `id` varchar(50) NOT NULL,
+            `event_type` varchar(100) NOT NULL,
+            `resource_id` varchar(50) NOT NULL,
+            `status` varchar(20) NOT NULL DEFAULT \'processing\',
+            `error` text DEFAULT NULL,
+            `date_add` datetime NOT NULL,
+            `date_upd` datetime NOT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
+        ');
     } catch (\Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
