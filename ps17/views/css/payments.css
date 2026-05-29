@@ -275,7 +275,7 @@
   transition: opacity 0.5s linear;
 
   background-color: rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 999;
 }
 
 .ps-checkout.overlay.visible {
