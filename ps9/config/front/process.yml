@@ -55,6 +55,7 @@ services:
       - '@PsCheckout\Core\Order\Action\ValidateOrderAction'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderMatrixRepository'
+      - '@PsCheckout\Core\Order\Validator\CheckoutValidator'
 
   PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction
@@ -172,7 +173,6 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\Order\Action\CreateOrderPaymentAction'
       - '@PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction'
-      - '@PsCheckout\Infrastructure\Adapter\Context'
 
   PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler
@@ -280,6 +280,11 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
 
+  PsCheckout\Infrastructure\Repository\WebhookEventRepository:
+    class: PsCheckout\Infrastructure\Repository\WebhookEventRepository
+    arguments:
+      - '@ps_checkout.db'
+
   PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor:
     class: PsCheckout\Core\WebhookDispatcher\Processor\DispatchWebhookProcessor
     arguments:
@@ -289,6 +294,10 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
       - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Infrastructure\Repository\WebhookEventRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\CartRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
 
   PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction
