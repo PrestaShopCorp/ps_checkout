@@ -104,4 +104,15 @@ interface ContextInterface
      * @return float|null
      */
     public function getCartOrderTotal(): ?float;
+
+    /**
+     * Initialise cart, language, currency, customer, country and shop in the context
+     * for a server-side webhook request that carries no customer session.
+     * Does not update the cart record or write to the response cookie.
+     *
+     * @param \Cart $cart
+     *
+     * @return void
+     */
+    public function loadCartForWebhook(\Cart $cart): void;
 }
