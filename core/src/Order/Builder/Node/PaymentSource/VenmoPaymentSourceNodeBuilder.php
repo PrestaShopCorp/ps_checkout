@@ -24,6 +24,7 @@ use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
@@ -38,10 +39,16 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
      */
     private $link;
 
-    public function __construct(ConfigurationInterface $configuration, LinkInterface $link)
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    public function __construct(ConfigurationInterface $configuration, LinkInterface $link, ValidateInterface $validate)
     {
         $this->configuration = $configuration;
         $this->link = $link;
+        $this->validate = $validate;
     }
 
     public function supports(string $fundingSource): bool
@@ -56,8 +63,11 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
     {
         $data = [];
 
-        if (!$context->isExpressCheckout() && !$context->isUpdate()) {
-            $cart = $context->getCart();
+        $cart = $context->getCart();
+        if (!$context->isExpressCheckout() && !$context->isUpdate()
+            && isset($cart['customer']->email)
+            && $this->validate->isPayPalEmail($cart['customer']->email)
+        ) {
             $data['email_address'] = (string) $cart['customer']->email;
         }
 

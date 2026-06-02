@@ -29,7 +29,9 @@ use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Adapter\CountryInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepositoryInterface;
+use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
 use PsCheckout\Utility\Payload\PaypalCountryCodeUtility;
+use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterface
 {
@@ -90,7 +92,15 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
         }
 
         if ($country->contains_states) {
-            $idState = $this->countryRepository->getStateId((int) $idCountry, $shippingData->getState());
+            $state = $shippingData->getState();
+            if ($state !== null && $state !== '') {
+                if (PaypalAddressRequirementsUtility::usesStateIsoCode($shopIsoCode)) {
+                    $psIsoCode = PaypalStateCodeMapUtility::getShopStateCode($shopIsoCode, $state);
+                    $idState = $this->countryRepository->getStateIdByIsoCode((int) $idCountry, $psIsoCode);
+                } else {
+                    $idState = $this->countryRepository->getStateId((int) $idCountry, $state);
+                }
+            }
         }
 
         $idCustomer = (int) $this->context->getCustomer()->id;

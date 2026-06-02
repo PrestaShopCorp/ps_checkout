@@ -21,11 +21,15 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\P24PaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\Validate;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilderTest extends TestCase
 {
@@ -42,7 +46,16 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
 
-        return new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturnCallback(
+            static function (string $email): bool {
+                return (bool) preg_match(Validate::PAYPAL_EMAIL_PATTERN, $email);
+            }
+        );
+
+        return new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
     }
 
     /**
@@ -100,12 +113,27 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         ], $result);
     }
 
-    public function testEmailIsAlwaysIncluded(): void
+    public function testEmailIsIncludedWhenValid(): void
     {
         $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('customer@shop.pl')));
 
         $this->assertArrayHasKey('email', $result['payment_source']['p24']);
         $this->assertSame('customer@shop.pl', $result['payment_source']['p24']['email']);
+    }
+
+    public function testBuildThrowsExceptionWhenEmailHasNoTld(): void
+    {
+        // Regression: emails without a TLD were silently forwarded to PayPal, causing INVALID_PARAMETER_SYNTAX.
+        $this->expectException(PsCheckoutException::class);
+
+        $this->makeBuilder()->build($this->makeContext($this->makeCart('einkauf@my-shop')));
+    }
+
+    public function testBuildThrowsExceptionWhenEmailIsEmpty(): void
+    {
+        $this->expectException(PsCheckoutException::class);
+
+        $this->makeBuilder()->build($this->makeContext($this->makeCart('')));
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void
@@ -119,7 +147,12 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
 
-        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
+        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
         $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['p24']['experience_context']['brand_name']));
@@ -139,6 +172,11 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
             ->with(55)
             ->willReturn('PL');
 
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
         $address = new \stdClass();
         $address->firstname = 'Jan';
         $address->lastname = 'Kowalski';
@@ -147,7 +185,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = 'jan@example.com';
 
-        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
         $result = $builder->build($this->makeContext([
             'addresses' => ['invoice' => $address],
             'customer' => $customer,

@@ -24,6 +24,7 @@ use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
@@ -47,11 +48,13 @@ class BlikPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        CountryRepositoryInterface $countryRepository
+        CountryRepositoryInterface $countryRepository,
+        ValidateInterface $validate
     ) {
         $this->configuration = $configuration;
         $this->link = $link;
         $this->countryRepository = $countryRepository;
+        $this->validate = $validate;
     }
 
     public function supports(string $fundingSource): bool
@@ -82,7 +85,7 @@ class BlikPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
             ],
         ];
 
-        if (isset($cart['customer']->email) && !empty($cart['customer']->email)) {
+        if (isset($cart['customer']->email) && $this->validate->isPayPalEmail($cart['customer']->email)) {
             $data['email'] = (string) $cart['customer']->email;
         }
 

@@ -25,6 +25,8 @@ use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\Validate;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 
 class VenmoPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -40,7 +42,14 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action . $query;
         });
 
-        return new VenmoPaymentSourceNodeBuilder($configuration, $link);
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturnCallback(
+            static function (string $email): bool {
+                return (bool) preg_match(Validate::PAYPAL_EMAIL_PATTERN, $email);
+            }
+        );
+
+        return new VenmoPaymentSourceNodeBuilder($configuration, $link, $validate);
     }
 
     /**
@@ -259,7 +268,7 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('MyShop', $result['payment_source']['venmo']['experience_context']['brand_name']);
     }
 
-    public function testEmailCastToString(): void
+    public function testEmailOmittedWhenNotValidEmailFormat(): void
     {
         $customer = new \stdClass();
         $customer->email = 42;
@@ -268,7 +277,7 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
 
         $result = $this->makeBuilder()->build($context);
 
-        $this->assertSame('42', $result['payment_source']['venmo']['email_address']);
+        $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
     }
 
     public function testEmailAddressOmittedWhenExpressCheckout(): void
@@ -281,6 +290,18 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
     public function testEmailAddressOmittedWhenUpdate(): void
     {
         $result = $this->makeBuilder()->build($this->makeContext('customer@example.com', false, false, false, false, true));
+
+        $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
+    }
+
+    public function testEmailAddressOmittedWhenEmailHasNoTld(): void
+    {
+        // Regression: emails without a TLD (e.g. einkauf@my-shop) were accepted by
+        // PrestaShop's isEmail() but rejected by PayPal's API with INVALID_PARAMETER_SYNTAX.
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart('einkauf@my-shop'))
+            ->setSavePaymentMethod(false)
+            ->build();
 
         $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
     }

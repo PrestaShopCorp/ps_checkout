@@ -20,9 +20,12 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
+use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
+use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterface
 {
@@ -59,12 +62,41 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
      */
     public function build()
     {
+        if (null === $this->cart || null === $this->payload) {
+            throw new PsCheckoutException('Cart data and payload must be set before building supplementary data');
+        }
+
         $address = $this->cart['addresses']['invoice'];
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $countryIso === 'US' ?
-            $this->stateRepository->getIsoById($address->id_state)
-            : $this->stateRepository->getNameById($address->id_state);
+        $validCountryIso = preg_match('/^[A-Za-z]{2}$/', (string) $countryIso) ? $countryIso : null;
+
+        $stateName = $validCountryIso !== null
+            ? (PaypalAddressRequirementsUtility::usesStateIsoCode($validCountryIso)
+                ? $this->stateRepository->getIsoById($address->id_state)
+                : $this->stateRepository->getNameById($address->id_state))
+            : '';
+
+        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($validCountryIso ?? '', $stateName);
+
+        $level3 = [
+            'shipping_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['shipping'],
+            'duty_amount' => [
+                'currency_code' => $this->payload['purchase_units'][0]['amount']['currency_code'],
+                'value' => $this->payload['purchase_units'][0]['amount']['value'],
+            ],
+            'discount_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['discount'],
+            'line_items' => $this->payload['purchase_units'][0]['items'] ?? [],
+        ];
+
+        if ($validCountryIso !== null) {
+            $portableAddress = OrderPayloadUtility::getAddressPortable($address, $validCountryIso, $stateName);
+            $cityMissing = PaypalAddressRequirementsUtility::isCityRequired($validCountryIso) && empty($portableAddress['admin_area_2']);
+            $postalMissing = PaypalAddressRequirementsUtility::isPostalCodeRequired($validCountryIso) && empty($portableAddress['postal_code']);
+            if (!$cityMissing && !$postalMissing) {
+                $level3['shipping_address'] = $portableAddress;
+            }
+        }
 
         $node = [
             'supplementary_data' => [
@@ -72,24 +104,10 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
                     'level_2' => [
                         'tax_total' => $this->payload['purchase_units'][0]['amount']['breakdown']['tax_total'],
                     ],
-                    'level_3' => [
-                        'shipping_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['shipping'],
-                        'duty_amount' => [
-                            'currency_code' => $this->payload['purchase_units'][0]['amount']['currency_code'],
-                            'value' => $this->payload['purchase_units'][0]['amount']['value'],
-                        ],
-                        'discount_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['discount'],
-                        'shipping_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
-                        'line_items' => $this->payload['purchase_units'][0]['items'],
-                    ],
+                    'level_3' => $level3,
                 ],
             ],
         ];
-
-        if (!$this->cart['cart']['is_virtual']) {
-            $node['supplementary_data']['card']['level_3']['shipping_address'] = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
-            $node['supplementary_data']['card']['level_3']['shipping_amount'] = $this->payload['purchase_units'][0]['amount']['breakdown']['shipping'];
-        }
 
         return $node;
     }

@@ -34,15 +34,16 @@ class NumberUtility
     }
 
     /**
-     * Get decimal to round correspondent to the payment currency used
-     * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
-     * currencies which require a round with 0 decimal
+     * Get decimal to round correspondent to the payment currency used.
+     * PayPal requires 0 decimal places for the currencies listed below;
+     * all others use 2 decimal places.
+     * See: https://developer.paypal.com/docs/api/reference/currency-codes/
      *
      * @return int
      */
     private static function getNbDecimalToRound($isoCode): int
     {
-        if (in_array($isoCode, ['HUF', 'JPY', 'TWD'], true)) {
+        if (in_array($isoCode, ['BHD', 'BIF', 'CLP', 'DJF', 'GNF', 'HUF', 'ISK', 'JPY', 'KMF', 'KRW', 'KWD', 'MGA', 'PYG', 'RWF', 'TWD', 'UGX', 'VND', 'VUV', 'XAF', 'XCD', 'XOF', 'XPF'], true)) {
             return 0;
         }
 
