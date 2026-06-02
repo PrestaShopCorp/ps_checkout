@@ -51,13 +51,19 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
         $breakdownDiscount = 0;
 
         foreach ($this->cart['products'] as $product => $value) {
-            $sku = '';
             $totalWithoutTax = $value['total'];
             $totalWithTax = $value['total_wt'];
             $totalTax = $totalWithTax - $totalWithoutTax;
             $quantity = (string) $value['quantity'];
             $unitPriceWithoutTax = NumberUtility::formatAmount($totalWithoutTax / $quantity, $currencyIsoCode);
             $unitTax = NumberUtility::formatAmount($totalTax / $quantity, $currencyIsoCode);
+
+            // PayPal rejects items with a zero or negative unit_amount; omit them and let
+            // the remainder mechanism absorb the discrepancy into handling/discount.
+            if ((float) $unitPriceWithoutTax <= 0) {
+                continue;
+            }
+
             $breakdownItemTotal += $unitPriceWithoutTax * $quantity;
             $breakdownTaxTotal += $unitTax * $quantity;
 
@@ -96,11 +102,11 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
             ],
             'insurance' => [
                 'currency_code' => $currencyIsoCode,
-                'value' => '0.00',
+                'value' => NumberUtility::formatAmount(0, $currencyIsoCode),
             ],
             'shipping_discount' => [
                 'currency_code' => $currencyIsoCode,
-                'value' => '0.00',
+                'value' => NumberUtility::formatAmount(0, $currencyIsoCode),
             ],
         ];
 

@@ -23,6 +23,7 @@ namespace Tests\PsCheckout\Core\Order\Builder\Node;
 use Address;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
@@ -30,6 +31,9 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class ShippingNodeBuilderTest extends TestCase
 {
+    /** @var LoggerInterface|MockObject */
+    private $logger;
+
     /** @var CountryRepositoryInterface|MockObject */
     private $countryRepository;
 
@@ -41,10 +45,12 @@ class ShippingNodeBuilderTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $this->stateRepository = $this->createMock(StateRepositoryInterface::class);
 
         $this->builder = new ShippingNodeBuilder(
+            $this->logger,
             $this->countryRepository,
             $this->stateRepository
         );
@@ -61,9 +67,10 @@ class ShippingNodeBuilderTest extends TestCase
             ->with($cartData['addresses']['shipping']->id_country)
             ->willReturn($cartData['country_iso']);
 
+        $isoCodeCountries = ['US', 'CA', 'BR', 'IT', 'MX', 'JP', 'CN', 'C2', 'ID', 'AR'];
         $this->stateRepository
             ->expects($this->once())
-            ->method($cartData['country_iso'] === 'US' ? 'getIsoById' : 'getNameById')
+            ->method(in_array($cartData['country_iso'], $isoCodeCountries, true) ? 'getIsoById' : 'getNameById')
             ->with($cartData['addresses']['shipping']->id_state)
             ->willReturn($cartData['state_name']);
 
@@ -162,6 +169,48 @@ class ShippingNodeBuilderTest extends TestCase
                     ],
                 ],
             ],
+            'canadian_customer' => [
+                'cartData' => [
+                    'customer' => (object) [
+                        'id_gender' => 1,
+                    ],
+                    'language' => (object) [
+                        'id' => 1,
+                    ],
+                    'cart' => [
+                        'is_virtual' => false,
+                    ],
+                    'gender_prefix' => 'Mr.',
+                    'country_iso' => 'CA',
+                    'state_name' => 'ON',
+                    'addresses' => [
+                        'shipping' => $this->createMockAddress([
+                            'id_country' => 38,
+                            'id_state' => 12,
+                            'firstname' => 'Jean',
+                            'lastname' => 'Tremblay',
+                            'address1' => '100 King St',
+                            'address2' => '',
+                            'city' => 'Toronto',
+                            'postcode' => 'M5H 1J8',
+                        ]),
+                    ],
+                ],
+                'expectedResult' => [
+                    'shipping' => [
+                        'name' => [
+                            'full_name' => 'Jean Tremblay',
+                        ],
+                        'address' => [
+                            'address_line_1' => '100 King St',
+                            'admin_area_1' => 'ON',
+                            'admin_area_2' => 'Toronto',
+                            'postal_code' => 'M5H 1J8',
+                            'country_code' => 'CA',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -171,6 +220,164 @@ class ShippingNodeBuilderTest extends TestCase
         $result = $this->builder->setCart($cart);
 
         $this->assertSame($this->builder, $result);
+    }
+
+    /**
+     * @dataProvider provideInvalidCountryCodes
+     */
+    public function testBuildThrowsForInvalidCountryCode(string $invalidCode): void
+    {
+        $address = $this->createMockAddress([
+            'id_country' => 99,
+            'id_state' => 0,
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'address1' => '1 Street',
+            'address2' => '',
+            'city' => 'City',
+            'postcode' => '12345',
+        ]);
+
+        $this->countryRepository
+            ->expects($this->once())
+            ->method('getCountryIsoCodeById')
+            ->willReturn($invalidCode);
+
+        $this->stateRepository->expects($this->never())->method($this->anything());
+
+        $this->logger->expects($this->once())->method('warning');
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
+            ->setCart([
+                'cart' => ['is_virtual' => false],
+                'addresses' => ['shipping' => $address],
+            ])
+            ->build();
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public function provideInvalidCountryCodes(): array
+    {
+        return [
+            'empty string' => [''],
+            'three-letter code' => ['FRA'],
+            'full country name' => ['France'],
+            'numeric' => ['12'],
+        ];
+    }
+
+    public function testBuildTrimsWhitespaceFromAddressFields(): void
+    {
+        // IE (Ireland) has optional postal code, so a blank postcode is omitted without triggering a warning
+        $address = $this->createMockAddress([
+            'id_country' => 29,
+            'id_state' => 0,
+            'firstname' => 'Sean',
+            'lastname' => 'Murphy',
+            'address1' => '10 Grafton Street',
+            'address2' => ' ',
+            'city' => ' Dublin ',
+            'postcode' => ' ',
+        ]);
+
+        $this->countryRepository
+            ->expects($this->once())
+            ->method('getCountryIsoCodeById')
+            ->willReturn('IE');
+
+        $this->stateRepository
+            ->expects($this->once())
+            ->method('getNameById')
+            ->willReturn('');
+
+        $result = $this->builder
+            ->setCart([
+                'cart' => ['is_virtual' => false],
+                'addresses' => ['shipping' => $address],
+            ])
+            ->build();
+
+        $this->assertArrayHasKey('shipping', $result);
+        $this->assertSame('Dublin', $result['shipping']['address']['admin_area_2']);
+        $this->assertArrayNotHasKey('postal_code', $result['shipping']['address']);
+        $this->assertArrayNotHasKey('address_line_2', $result['shipping']['address']);
+    }
+
+    public function testBuildThrowsWhenRequiredCityIsMissing(): void
+    {
+        $address = $this->createMockAddress([
+            'id_country' => 8,
+            'id_state' => 0,
+            'firstname' => 'Marie',
+            'lastname' => 'Dubois',
+            'address1' => '15 Rue de la Paix',
+            'address2' => '',
+            'city' => '  ',
+            'postcode' => '75001',
+        ]);
+
+        $this->countryRepository
+            ->expects($this->once())
+            ->method('getCountryIsoCodeById')
+            ->willReturn('FR');
+
+        $this->stateRepository
+            ->expects($this->once())
+            ->method('getNameById')
+            ->willReturn('');
+
+        $this->logger->expects($this->once())->method('warning');
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
+            ->setCart([
+                'cart' => ['is_virtual' => false],
+                'addresses' => ['shipping' => $address],
+            ])
+            ->build();
+    }
+
+    public function testBuildThrowsWhenRequiredPostalCodeIsMissing(): void
+    {
+        $address = $this->createMockAddress([
+            'id_country' => 21,
+            'id_state' => 5,
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'address1' => '123 Main St',
+            'address2' => '',
+            'city' => 'New York',
+            'postcode' => '  ',
+        ]);
+
+        $this->countryRepository
+            ->expects($this->once())
+            ->method('getCountryIsoCodeById')
+            ->willReturn('US');
+
+        $this->stateRepository
+            ->expects($this->once())
+            ->method('getIsoById')
+            ->willReturn('NY');
+
+        $this->logger->expects($this->once())->method('warning');
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID);
+
+        $this->builder
+            ->setCart([
+                'cart' => ['is_virtual' => false],
+                'addresses' => ['shipping' => $address],
+            ])
+            ->build();
     }
 
     public function testBuildWithoutSettingCartThrowsException(): void

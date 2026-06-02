@@ -243,7 +243,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->with(8)->willReturn('FR');
         $this->stateRepository->method('getNameById')->with(0)->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -277,7 +277,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->with(21)->willReturn('US');
         $this->stateRepository->method('getIsoById')->with(5)->willReturn('CA');
-        $this->validate->method('isEmail')->with('john@example.com')->willReturn(true);
+        $this->validate->method('isPayPalEmail')->with('john@example.com')->willReturn(true);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -310,7 +310,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
         $this->stateRepository->method('getIsoById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $phoneNumberMock = $this->createMock(PhoneNumber::class);
         $phoneNumberMock->method('getNationalNumber')->willReturn('2125551234');
@@ -388,7 +388,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $address = $this->createMockAddress(['id_country' => 1, 'id_state' => 0, 'firstname' => 'A', 'lastname' => 'B', 'address1' => '1 St', 'city' => 'City', 'postcode' => '00000']);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('FR');
         $this->stateRepository->method('getNameById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -410,7 +410,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $address = $this->createMockAddress(['id_country' => 1, 'id_state' => 0, 'firstname' => 'A', 'lastname' => 'B', 'address1' => '1 St', 'city' => 'City', 'postcode' => '00000']);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('FR');
         $this->stateRepository->method('getNameById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)

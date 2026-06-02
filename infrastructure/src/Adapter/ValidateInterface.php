@@ -37,4 +37,14 @@ interface ValidateInterface
     public function isGenericName(string $name): bool;
 
     public function isFileName(string $filename): bool;
+
+    /**
+     * Validates an email address against PayPal's required format.
+     * Uses the canonical pattern from the PayPal Orders v2 API spec.
+     *
+     * @param string $email
+     *
+     * @return bool
+     */
+    public function isPayPalEmail(string $email): bool;
 }

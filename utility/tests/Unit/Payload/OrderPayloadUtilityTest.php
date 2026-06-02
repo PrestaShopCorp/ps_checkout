@@ -220,6 +220,65 @@ class OrderPayloadUtilityTest extends TestCase
                 ],
                 'Removed breakdown property with non-zero value should be detected',
             ],
+            'jpy amounts identical integer values' => [
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1500',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1500'],
+                    ],
+                ],
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1500',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1500'],
+                    ],
+                ],
+                [],
+                'Identical JPY amounts should have no difference',
+            ],
+            'jpy amounts equal after zero-decimal normalisation' => [
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1500',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1500'],
+                    ],
+                ],
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1500.00',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1500.00'],
+                    ],
+                ],
+                [],
+                'JPY "1500" and "1500.00" should normalise to the same integer and be equal',
+            ],
+            'jpy amounts that actually differ' => [
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1500',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1500'],
+                    ],
+                ],
+                [
+                    'currency_code' => 'JPY',
+                    'value' => '1501',
+                    'breakdown' => [
+                        'item_total' => ['currency_code' => 'JPY', 'value' => '1501'],
+                    ],
+                ],
+                [
+                    'value' => '1500',
+                    'breakdown' => [
+                        'item_total' => ['value' => '1500'],
+                    ],
+                ],
+                'JPY amounts differing by 1 unit should be detected',
+            ],
             'breakdown property removed but was zero value' => [
                 [
                     'currency_code' => 'USD',

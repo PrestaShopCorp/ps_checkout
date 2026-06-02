@@ -92,4 +92,19 @@ class CountryRepository implements CountryRepositoryInterface
 
         return (int) \Db::getInstance()->getValue($query) ?? null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStateIdByIsoCode(int $idCountry, string $isoCode): int
+    {
+        $query = new DbQuery();
+        $query->select('id_state');
+        $query->from('state');
+        $query->where('iso_code = \'' . pSQL($isoCode) . '\'');
+        $query->where('active = 1');
+        $query->where('id_country = ' . (int) $idCountry);
+
+        return (int) \Db::getInstance()->getValue($query);
+    }
 }

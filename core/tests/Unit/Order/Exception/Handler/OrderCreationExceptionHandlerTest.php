@@ -22,6 +22,7 @@ namespace PsCheckout\Tests\Unit\Order\Exception\Handler;
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\Exception\PayPalException;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler;
 use PsCheckout\Infrastructure\Action\CustomerNotifyActionInterface;
 use PsCheckout\Presentation\TranslatorInterface;
@@ -224,5 +225,88 @@ class OrderCreationExceptionHandlerTest extends TestCase
             'Error processing payment, you could have been charged. Please check your order history in your account to check the status of the order or please contact our customer service to know more.',
             $result['body']['error']['message']
         );
+    }
+
+    /**
+     * @dataProvider provideOrderCreateClientErrorCases
+     */
+    public function testHandleOrderCreateExceptionReturns400ForClientErrors(
+        \Exception $exception,
+        ?string $fundingSource,
+        string $expectedMessage
+    ): void {
+        $this->logger->expects($this->once())->method('notice');
+        $this->logger->expects($this->never())->method('error');
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handleOrderCreateException($exception, $fundingSource);
+
+        $this->assertSame(400, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame($expectedMessage, $result['body']['error']['message']);
+    }
+
+    /**
+     * @return array<string, array{\Exception, string|null, string}>
+     */
+    public function provideOrderCreateClientErrorCases(): array
+    {
+        return [
+            'CART_SHIPPING_ADDRESS_INVALID' => [
+                new PsCheckoutException('internal', PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID),
+                null,
+                'There is an error in your shipping address. Please check it and try again.',
+            ],
+            'SHIPPING_ADDRESS_INVALID' => [
+                new PayPalException('original', PayPalException::SHIPPING_ADDRESS_INVALID),
+                null,
+                'There is an error in your shipping address. Please check it and try again.',
+            ],
+            'BILLING_ADDRESS_INVALID' => [
+                new PayPalException('original', PayPalException::BILLING_ADDRESS_INVALID),
+                null,
+                'There is an error in your billing address. Please check it and try again.',
+            ],
+            'PAYMENT_SOURCE_CANNOT_BE_USED' => [
+                new PayPalException('original', PayPalException::PAYMENT_SOURCE_CANNOT_BE_USED),
+                null,
+                'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.',
+            ],
+            'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED with PUI' => [
+                new PayPalException('original', PayPalException::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED),
+                'pay_upon_invoice',
+                'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.',
+            ],
+            'PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED without PUI' => [
+                new PayPalException('original', PayPalException::PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED),
+                'card',
+                'original',
+            ],
+            'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR with PUI' => [
+                new PayPalException('original', PayPalException::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR),
+                'pay_upon_invoice',
+                'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.',
+            ],
+            'PAYMENT_SOURCE_DECLINED_BY_PROCESSOR without PUI' => [
+                new PayPalException('original', PayPalException::PAYMENT_SOURCE_DECLINED_BY_PROCESSOR),
+                'card',
+                'original',
+            ],
+        ];
+    }
+
+    public function testHandleOrderCreateExceptionReturns500ForUnknownException(): void
+    {
+        $exception = new \RuntimeException('Something went wrong', 999);
+
+        $this->logger->expects($this->never())->method('notice');
+        $this->logger->expects($this->once())->method('error');
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handleOrderCreateException($exception, null);
+
+        $this->assertSame(500, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame('Something went wrong', $result['body']['error']['message']);
     }
 }

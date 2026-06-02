@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
@@ -55,9 +56,15 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
      */
     private $configuration;
 
-    public function __construct(ConfigurationInterface $configuration)
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    public function __construct(ConfigurationInterface $configuration, ValidateInterface $validate)
     {
         $this->configuration = $configuration;
+        $this->validate = $validate;
     }
 
     /**
@@ -67,7 +74,10 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
     {
         $data = [];
 
-        if ($this->cart !== null) {
+        if ($this->cart !== null
+            && isset($this->cart['customer']->email)
+            && $this->validate->isPayPalEmail($this->cart['customer']->email)
+        ) {
             $data['email_address'] = (string) $this->cart['customer']->email;
         }
 
