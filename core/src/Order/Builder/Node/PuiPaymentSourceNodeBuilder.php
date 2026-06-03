@@ -140,6 +140,13 @@ class PuiPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
                         'national_number' => (string) $parsedPhone->getNationalNumber(),
                         'country_code' => (string) $parsedPhone->getCountryCode(),
                     ];
+                } else {
+                    $this->logger->warning('Phone number is not valid for PUI payment.', [
+                        'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
+                        'phone' => $phone,
+                    ]);
+
+                    throw new PsCheckoutException('Phone number is not valid for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
                 }
             } catch (\libphonenumber\NumberParseException $exception) {
                 $this->logger->warning('Invalid phone number format for PUI payment.', [
@@ -183,7 +190,13 @@ class PuiPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
                     'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
                     'birth_date' => $birthDate,
                 ]);
+
+                throw new PsCheckoutException('Invalid birth_date format for PUI payment.', PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID);
             }
+        } else {
+            $this->logger->warning('Birth date is required for PUI payment.');
+
+            throw new PsCheckoutException('Birth date is required for PUI payment.', PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID);
         }
 
         $experienceContext = [];

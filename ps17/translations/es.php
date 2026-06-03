@@ -288,3 +288,5 @@ $_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822']
 $_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'Hay un error en su dirección de facturación. Por favor, revísela e inténtelo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'Hay un error en su dirección de envío. Por favor, revísela e inténtelo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'La moneda seleccionada no es compatible. Por favor, pruebe otro método de pago o póngase en contacto con el soporte para obtener ayuda.';
+$_MODULE['<{ps_checkout}prestashop>translator_4f79a1a6abd72b2db85b046e02ce25e3'] = 'Su número de teléfono no es válido o falta. Por favor, actualice sus datos de contacto e inténtelo de nuevo.';
+$_MODULE['<{ps_checkout}prestashop>translator_a13574ad322f652575df04b1b1b60aa5'] = 'Su fecha de nacimiento no es válida o falta. Por favor, compruébela e inténtelo de nuevo.';

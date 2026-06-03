@@ -420,11 +420,26 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
 
                     break;
             }
-        } elseif ($exception instanceof PsCheckoutException
-            && $exception->getCode() === PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
-        ) {
-            $isClientError = true;
-            $exceptionMessageForCustomer = $this->translator->trans('There is an error in your shipping address. Please check it and try again.');
+        } elseif ($exception instanceof PsCheckoutException) {
+            switch ($exception->getCode()) {
+                case PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID:
+                    $isClientError = true;
+                    $exceptionMessageForCustomer = $this->translator->trans('There is an error in your shipping address. Please check it and try again.');
+
+                    break;
+                case PsCheckoutException::CART_ADDRESS_INVOICE_INVALID:
+                    if ($fundingSource === 'pay_upon_invoice') {
+                        $isClientError = true;
+                        $exceptionMessageForCustomer = $this->translator->trans('Your phone number is invalid or missing. Please update your contact details and try again.');
+                    }
+
+                    break;
+                case PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID:
+                    $isClientError = true;
+                    $exceptionMessageForCustomer = $this->translator->trans('Your date of birth is invalid or missing. Please check and try again.');
+
+                    break;
+            }
         }
 
         if ($isClientError) {

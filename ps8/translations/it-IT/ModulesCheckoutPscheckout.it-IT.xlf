@@ -2535,6 +2535,14 @@
         <source>The currency you selected is not supported. Please try another payment method or contact support for assistance.</source>
         <target>La valuta selezionata non è supportata. Si prega di provare un altro metodo di pagamento o contattare l’assistenza.</target>
       </trans-unit>
+      <trans-unit id="4f79a1a6abd72b2db85b046e02ce25e3">
+        <source>Your phone number is invalid or missing. Please update your contact details and try again.</source>
+        <target>Il numero di telefono non è valido o mancante. Aggiornare i dati di contatto e riprovare.</target>
+      </trans-unit>
+      <trans-unit id="a13574ad322f652575df04b1b1b60aa5">
+        <source>Your date of birth is invalid or missing. Please check and try again.</source>
+        <target>La data di nascita non è valida o mancante. Controllare e riprovare.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

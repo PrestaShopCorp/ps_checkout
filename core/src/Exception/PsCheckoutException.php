@@ -171,4 +171,6 @@ class PsCheckoutException extends \Exception
     const PAYPAL_FUNDING_SOURCE_UNKNOWN = 78;
 
     const CART_SHIPPING_ADDRESS_INVALID = 79;
+
+    const CART_CUSTOMER_BIRTH_DATE_INVALID = 80;
 }
