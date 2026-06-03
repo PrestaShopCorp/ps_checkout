@@ -169,4 +169,6 @@ class PsCheckoutException extends \Exception
     const PSCHECKOUT_EXPRESS_CHECKOUT_INVALID_PAYLOAD = 77;
 
     const CART_SHIPPING_ADDRESS_INVALID = 78;
+
+    const CART_CUSTOMER_BIRTH_DATE_INVALID = 79;
 }

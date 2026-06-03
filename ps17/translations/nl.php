@@ -288,3 +288,5 @@ $_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822']
 $_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'Er is een fout in uw factuuradres. Controleer dit en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'Er is een fout in uw verzendadres. Controleer dit en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'De door u geselecteerde valuta wordt niet ondersteund. Probeer een andere betaalmethode of neem contact op met de ondersteuning.';
+$_MODULE['<{ps_checkout}prestashop>translator_4f79a1a6abd72b2db85b046e02ce25e3'] = 'Uw telefoonnummer is ongeldig of ontbreekt. Werk uw contactgegevens bij en probeer het opnieuw.';
+$_MODULE['<{ps_checkout}prestashop>translator_a13574ad322f652575df04b1b1b60aa5'] = 'Uw geboortedatum is ongeldig of ontbreekt. Controleer dit en probeer het opnieuw.';

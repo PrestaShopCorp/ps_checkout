@@ -292,7 +292,31 @@ class OrderCreationExceptionHandlerTest extends TestCase
                 'card',
                 'original',
             ],
+            'CART_ADDRESS_INVOICE_INVALID with PUI' => [
+                new PsCheckoutException('internal', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID),
+                'pay_upon_invoice',
+                'Your phone number is invalid or missing. Please update your contact details and try again.',
+            ],
+            'CART_CUSTOMER_BIRTH_DATE_INVALID' => [
+                new PsCheckoutException('internal', PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID),
+                'pay_upon_invoice',
+                'Your date of birth is invalid or missing. Please check and try again.',
+            ],
         ];
+    }
+
+    public function testCartAddressInvoiceInvalidWithoutPuiFallsBackToServerError(): void
+    {
+        $exception = new PsCheckoutException('internal', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+
+        $this->logger->expects($this->never())->method('notice');
+        $this->logger->expects($this->once())->method('error');
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handleOrderCreateException($exception, 'card');
+
+        $this->assertSame(500, $result['httpCode']);
+        $this->assertFalse($result['status']);
     }
 
     public function testHandleOrderCreateExceptionReturns500ForUnknownException(): void

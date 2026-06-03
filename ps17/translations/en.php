@@ -288,3 +288,5 @@ $_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822']
 $_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'There is an error in your billing address. Please check it and try again.';
 $_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'There is an error in your shipping address. Please check it and try again.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'The currency you selected is not supported. Please try another payment method or contact support for assistance.';
+$_MODULE['<{ps_checkout}prestashop>translator_4f79a1a6abd72b2db85b046e02ce25e3'] = 'Your phone number is invalid or missing. Please update your contact details and try again.';
+$_MODULE['<{ps_checkout}prestashop>translator_a13574ad322f652575df04b1b1b60aa5'] = 'Your date of birth is invalid or missing. Please check and try again.';
