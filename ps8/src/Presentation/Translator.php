@@ -345,7 +345,7 @@ class Translator implements TranslatorInterface
                 return $this->translator->trans('The authorization has been successfully captured.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'An error occurred during the capture of the authorization.':
                 return $this->translator->trans('An error occurred during the capture of the authorization.', $parameters, 'Modules.Checkout.Pscheckout');
-            case 'Card payment cannot be processed at the moment':
+            case 'Card payment cannot be processed at the moment, please use another payment method.':
                 return $this->translator->trans('Card payment cannot be processed at the moment, please use another payment method.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.':
                 return $this->translator->trans('The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.', $parameters, 'Modules.Checkout.Pscheckout');
@@ -359,6 +359,58 @@ class Translator implements TranslatorInterface
                 return $this->translator->trans('There is an error in your shipping address. Please check it and try again.', $parameters, 'Modules.Checkout.Pscheckout');
             case 'The currency you selected is not supported. Please try another payment method or contact support for assistance.':
                 return $this->translator->trans('The currency you selected is not supported. Please try another payment method or contact support for assistance.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your card cannot be used to pay in our country, please try another payment method.':
+                return $this->translator->trans('Your card cannot be used to pay in our country, please try another payment method.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This payment method declined transaction, please try another.':
+                return $this->translator->trans('This payment method declined transaction, please try another.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'You have exceeded the maximum number of payment attempts.':
+                return $this->translator->trans('You have exceeded the maximum number of payment attempts.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your PayPal account is locked or closed, please try another.':
+                return $this->translator->trans('Your PayPal account is locked or closed, please try another.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'You are not allowed to pay with this PayPal account, please try another.':
+                return $this->translator->trans('You are not allowed to pay with this PayPal account, please try another.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'You are not allowed to pay with this payment method, please try another.':
+                return $this->translator->trans('You are not allowed to pay with this payment method, please try another.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The transaction was blocked by Fraud Protection settings.':
+                return $this->translator->trans('The transaction was blocked by Fraud Protection settings.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This payment method seems not working currently, please try another.':
+                return $this->translator->trans('This payment method seems not working currently, please try another.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your card has expired. Please use another card.':
+                return $this->translator->trans('Your card has expired. Please use another card.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This card has been closed by the issuer. Please use another card.':
+                return $this->translator->trans('This card has been closed by the issuer. Please use another card.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The security code is incorrect. Please check and try again.':
+                return $this->translator->trans('The security code is incorrect. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The expiry date is invalid. Please check and try again.':
+                return $this->translator->trans('The expiry date is invalid. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The card number is invalid. Please check and try again.':
+                return $this->translator->trans('The card number is invalid. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The card expiration year is invalid. Please check and try again.':
+                return $this->translator->trans('The card expiration year is invalid. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The billing address is invalid. Please check and try again.':
+                return $this->translator->trans('The billing address is invalid. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your payment was declined. Please try a different payment method.':
+                return $this->translator->trans('Your payment was declined. Please try a different payment method.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your payment information could not be verified. Please try a different payment method.':
+                return $this->translator->trans('Your payment information could not be verified. Please try a different payment method.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This order has already been processed. Please check your order history.':
+                return $this->translator->trans('This order has already been processed. Please check your order history.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The payment was not approved. Please try again.':
+                return $this->translator->trans('The payment was not approved. Please try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your payment session has expired. Please try again.':
+                return $this->translator->trans('Your payment session has expired. Please try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This order has already been authorized.':
+                return $this->translator->trans('This order has already been authorized.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'This payment method is not available for international transactions. Please try another payment method.':
+                return $this->translator->trans('This payment method is not available for international transactions. Please try another payment method.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'The transaction limit has been exceeded. Please try a smaller amount or another payment method.':
+                return $this->translator->trans('The transaction limit has been exceeded. Please try a smaller amount or another payment method.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Payment cannot be processed at the moment. Please contact our customer service.':
+                return $this->translator->trans('Payment cannot be processed at the moment. Please contact our customer service.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your phone number is invalid or missing. Please update your contact details and try again.':
+                return $this->translator->trans('Your phone number is invalid or missing. Please update your contact details and try again.', $parameters, 'Modules.Checkout.Pscheckout');
+            case 'Your date of birth is invalid or missing. Please check and try again.':
+                return $this->translator->trans('Your date of birth is invalid or missing. Please check and try again.', $parameters, 'Modules.Checkout.Pscheckout');
             default:
                 return $key;
         }
