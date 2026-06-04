@@ -13467,7 +13467,7 @@ parameters:
 		-
 			message: '#^Call to method l\(\) on an unknown class Ps_Checkout\.$#'
 			identifier: class.notFound
-			count: 157
+			count: 183
 			path: src/Presentation/Translator.php
 
 		-
@@ -13479,7 +13479,7 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Module\\Presentation\\Translator\:\:trans\(\) should return string but returns mixed\.$#'
 			identifier: return.type
-			count: 157
+			count: 183
 			path: src/Presentation/Translator.php
 
 		-

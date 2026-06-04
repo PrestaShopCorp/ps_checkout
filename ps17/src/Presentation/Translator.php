@@ -345,7 +345,7 @@ class Translator implements TranslatorInterface
                 return $this->module->l('The authorization has been successfully captured.', 'Translator');
             case 'An error occurred during the capture of the authorization.':
                 return $this->module->l('An error occurred during the capture of the authorization.', 'Translator');
-            case 'Card payment cannot be processed at the moment':
+            case 'Card payment cannot be processed at the moment, please use another payment method.':
                 return $this->module->l('Card payment cannot be processed at the moment, please use another payment method.', 'Translator');
             case 'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.':
                 return $this->module->l('The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.', 'Translator');
@@ -360,6 +360,58 @@ class Translator implements TranslatorInterface
 
             case 'The currency you selected is not supported. Please try another payment method or contact support for assistance.':
                 return $this->module->l('The currency you selected is not supported. Please try another payment method or contact support for assistance.', 'Translator');
+            case 'Your card cannot be used to pay in our country, please try another payment method.':
+                return $this->module->l('Your card cannot be used to pay in our country, please try another payment method.', 'Translator');
+            case 'This payment method declined transaction, please try another.':
+                return $this->module->l('This payment method declined transaction, please try another.', 'Translator');
+            case 'You have exceeded the maximum number of payment attempts.':
+                return $this->module->l('You have exceeded the maximum number of payment attempts.', 'Translator');
+            case 'Your PayPal account is locked or closed, please try another.':
+                return $this->module->l('Your PayPal account is locked or closed, please try another.', 'Translator');
+            case 'You are not allowed to pay with this PayPal account, please try another.':
+                return $this->module->l('You are not allowed to pay with this PayPal account, please try another.', 'Translator');
+            case 'You are not allowed to pay with this payment method, please try another.':
+                return $this->module->l('You are not allowed to pay with this payment method, please try another.', 'Translator');
+            case 'The transaction was blocked by Fraud Protection settings.':
+                return $this->module->l('The transaction was blocked by Fraud Protection settings.', 'Translator');
+            case 'This payment method seems not working currently, please try another.':
+                return $this->module->l('This payment method seems not working currently, please try another.', 'Translator');
+            case 'Your card has expired. Please use another card.':
+                return $this->module->l('Your card has expired. Please use another card.', 'Translator');
+            case 'This card has been closed by the issuer. Please use another card.':
+                return $this->module->l('This card has been closed by the issuer. Please use another card.', 'Translator');
+            case 'The security code is incorrect. Please check and try again.':
+                return $this->module->l('The security code is incorrect. Please check and try again.', 'Translator');
+            case 'The expiry date is invalid. Please check and try again.':
+                return $this->module->l('The expiry date is invalid. Please check and try again.', 'Translator');
+            case 'The card number is invalid. Please check and try again.':
+                return $this->module->l('The card number is invalid. Please check and try again.', 'Translator');
+            case 'The card expiration year is invalid. Please check and try again.':
+                return $this->module->l('The card expiration year is invalid. Please check and try again.', 'Translator');
+            case 'The billing address is invalid. Please check and try again.':
+                return $this->module->l('The billing address is invalid. Please check and try again.', 'Translator');
+            case 'Your payment was declined. Please try a different payment method.':
+                return $this->module->l('Your payment was declined. Please try a different payment method.', 'Translator');
+            case 'Your payment information could not be verified. Please try a different payment method.':
+                return $this->module->l('Your payment information could not be verified. Please try a different payment method.', 'Translator');
+            case 'This order has already been processed. Please check your order history.':
+                return $this->module->l('This order has already been processed. Please check your order history.', 'Translator');
+            case 'The payment was not approved. Please try again.':
+                return $this->module->l('The payment was not approved. Please try again.', 'Translator');
+            case 'Your payment session has expired. Please try again.':
+                return $this->module->l('Your payment session has expired. Please try again.', 'Translator');
+            case 'This order has already been authorized.':
+                return $this->module->l('This order has already been authorized.', 'Translator');
+            case 'This payment method is not available for international transactions. Please try another payment method.':
+                return $this->module->l('This payment method is not available for international transactions. Please try another payment method.', 'Translator');
+            case 'The transaction limit has been exceeded. Please try a smaller amount or another payment method.':
+                return $this->module->l('The transaction limit has been exceeded. Please try a smaller amount or another payment method.', 'Translator');
+            case 'Payment cannot be processed at the moment. Please contact our customer service.':
+                return $this->module->l('Payment cannot be processed at the moment. Please contact our customer service.', 'Translator');
+            case 'Your phone number is invalid or missing. Please update your contact details and try again.':
+                return $this->module->l('Your phone number is invalid or missing. Please update your contact details and try again.', 'Translator');
+            case 'Your date of birth is invalid or missing. Please check and try again.':
+                return $this->module->l('Your date of birth is invalid or missing. Please check and try again.', 'Translator');
             default:
                 return $key;
         }
