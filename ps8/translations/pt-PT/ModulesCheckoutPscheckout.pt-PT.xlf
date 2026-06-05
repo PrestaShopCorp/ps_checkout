@@ -2544,6 +2544,11 @@
         <target>A sua data de nascimento é inválida ou está em falta. Por favor, verifique e tente novamente.</target>
       </trans-unit>
 
+      <trans-unit id="fc722498ed54de1a14cd49b5d80050e4">
+        <source>Your email address is invalid or missing. Please update your contact details and try again.</source>
+        <target>O seu endereço de e-mail é inválido ou está em falta. Por favor, atualize os seus dados de contacto e tente novamente.</target>
+      </trans-unit>
+
       <trans-unit id="9430962be49cde96b3aa6c277aafc7dc">
         <source>Your card has expired. Please use another card.</source>
         <target>O seu cartão expirou. Por favor, use outro cartão.</target>

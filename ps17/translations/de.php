@@ -289,6 +289,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1']
 $_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'Es liegt ein Fehler in Ihrer Lieferadresse vor. Bitte überprüfen Sie diese und versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'Die von Ihnen gewählte Währung wird nicht unterstützt. Bitte versuchen Sie eine andere Zahlungsmethode oder kontaktieren Sie den Support.';
 $_MODULE['<{ps_checkout}prestashop>translator_4f79a1a6abd72b2db85b046e02ce25e3'] = 'Ihre Telefonnummer ist ungültig oder fehlt. Bitte aktualisieren Sie Ihre Kontaktdaten und versuchen Sie es erneut.';
+$_MODULE['<{ps_checkout}prestashop>translator_fc722498ed54de1a14cd49b5d80050e4'] = 'Ihre E-Mail-Adresse ist ungültig oder fehlt. Bitte aktualisieren Sie Ihre Kontaktdaten und versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>translator_a13574ad322f652575df04b1b1b60aa5'] = 'Ihr Geburtsdatum ist ungültig oder fehlt. Bitte überprüfen Sie es und versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>translator_77c9fca2821a98712dab74c2c8148402'] = 'Ihre Karte kann in unserem Land nicht für Zahlungen verwendet werden. Bitte verwenden Sie eine andere Zahlungsmethode.';
 $_MODULE['<{ps_checkout}prestashop>translator_4d8364340cc96b2df8772cdec3e1f64c'] = 'Diese Zahlungsmethode hat die Transaktion abgelehnt. Bitte versuchen Sie eine andere.';

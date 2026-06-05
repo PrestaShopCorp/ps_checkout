@@ -21,20 +21,18 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use Address;
-use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Presentation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 
 class PuiPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -56,11 +54,8 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
     /** @var TranslatorInterface|MockObject */
     private $translator;
 
-    /** @var PhoneNumberUtil|MockObject */
-    private $phoneUtil;
-
-    /** @var PhoneNumberUtil */
-    private $originalPhoneUtil;
+    /** @var PhoneParser|MockObject */
+    private $phoneParser;
 
     protected function setUp(): void
     {
@@ -70,22 +65,7 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->configuration = $this->createMock(ConfigurationInterface::class);
         $this->link = $this->createMock(LinkInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->originalPhoneUtil = PhoneNumberUtil::getInstance();
-        $this->phoneUtil = $this->createMock(PhoneNumberUtil::class);
-
-        $reflection = new ReflectionClass(PhoneNumberUtil::class);
-        $instanceProperty = $reflection->getProperty('instance');
-        $instanceProperty->setAccessible(true);
-        $instanceProperty->setValue(null, $this->phoneUtil);
-    }
-
-    protected function tearDown(): void
-    {
-        $reflection = new ReflectionClass(PhoneNumberUtil::class);
-        $instanceProperty = $reflection->getProperty('instance');
-        $instanceProperty->setAccessible(true);
-        $instanceProperty->setValue(null, $this->originalPhoneUtil);
+        $this->phoneParser = $this->createMock(PhoneParser::class);
     }
 
     private function makeBuilder(): PuiPaymentSourceNodeBuilder
@@ -103,7 +83,8 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
             $this->countryRepository,
             $this->configuration,
             $this->link,
-            $this->translator
+            $this->translator,
+            $this->phoneParser
         );
     }
 
@@ -146,8 +127,7 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $phoneNumber->method('getNationalNumber')->willReturn('1701234567');
         $phoneNumber->method('getCountryCode')->willReturn(49);
 
-        $this->phoneUtil->method('parse')->willReturn($phoneNumber);
-        $this->phoneUtil->method('isValidNumber')->willReturn(true);
+        $this->phoneParser->method('parsePhone')->willReturn($phoneNumber);
     }
 
     public function testBuildSuccessWithValidPhone(): void
@@ -201,7 +181,7 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
 
         $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
         $this->makeBuilder()
             ->setCart($this->makeCart(['phone' => '', 'phone_mobile' => '']))
@@ -212,28 +192,24 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
     {
         $this->validate->method('isPayPalEmail')->willReturn(true);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
-
-        $phoneNumber = $this->createMock(PhoneNumber::class);
-        $this->phoneUtil->method('parse')->willReturn($phoneNumber);
-        $this->phoneUtil->method('isValidNumber')->willReturn(false);
+        $this->phoneParser->method('parsePhone')->willReturn(null);
 
         $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
         $this->makeBuilder()
             ->setCart($this->makeCart(['phone' => '+491']))
             ->build();
     }
 
-    public function testThrowsOnUnparseablePhone(): void
+    public function testThrowsWhenPhoneIsUnparseable(): void
     {
         $this->validate->method('isPayPalEmail')->willReturn(true);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
+        $this->phoneParser->method('parsePhone')->willReturn(null);
 
-        $this->phoneUtil->method('parse')
-            ->willThrowException(new NumberParseException(0, 'Not a valid phone number string'));
-
-        $this->expectException(NumberParseException::class);
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
         $this->makeBuilder()
             ->setCart($this->makeCart(['phone' => 'not-a-phone']))

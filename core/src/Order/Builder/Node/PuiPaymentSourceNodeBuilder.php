@@ -20,8 +20,8 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
-use libphonenumber\PhoneNumberUtil;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -77,13 +77,19 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
      */
     private $translator;
 
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
     public function __construct(
         LoggerInterface $logger,
         ValidateInterface $validate,
         CountryRepositoryInterface $countryRepository,
         ConfigurationInterface $configuration,
         LinkInterface $link,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        PhoneParser $phoneParser
     ) {
         $this->logger = $logger;
         $this->validate = $validate;
@@ -91,6 +97,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
         $this->configuration = $configuration;
         $this->link = $link;
         $this->translator = $translator;
+        $this->phoneParser = $phoneParser;
     }
 
     /**
@@ -132,50 +139,32 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             throw new PsCheckoutException('Valid email is required for PUI payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
         }
 
-        $phone = !empty($this->phone)
+        $rawPhone = !empty($this->phone)
             ? $this->phone
             : (!empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : ''));
 
-        if (!empty($phone)) {
-            try {
-                $phoneUtil = PhoneNumberUtil::getInstance();
-                $parsedPhone = $phoneUtil->parse($phone, $countryIsoCode);
-
-                if ($phoneUtil->isValidNumber($parsedPhone)) {
-                    $puiData['phone'] = [
-                        'national_number' => (string) $parsedPhone->getNationalNumber(),
-                        'country_code' => (string) $parsedPhone->getCountryCode(),
-                    ];
-                } else {
-                    $this->logger->warning('Phone number is not valid for PUI payment.', [
-                        'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
-                        'phone' => $phone,
-                    ]);
-
-                    throw new PsCheckoutException('Phone number is not valid for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
-                }
-            } catch (\libphonenumber\NumberParseException $exception) {
-                $this->logger->warning('Invalid phone number format for PUI payment.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
-                    'phone' => $phone,
-                    'exception' => $exception,
-                ]);
-
-                throw $exception;
-            } catch (\Exception $exception) {
-                $this->logger->warning('Unexpected error formatting phone number for PUI payment.', [
-                    'id_cart' => isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null,
-                    'phone' => $phone,
-                    'exception' => $exception,
-                ]);
-
-                throw $exception;
-            }
-        } else {
+        if (empty($rawPhone)) {
             $this->logger->warning('Phone number is required for PUI payment.');
 
-            throw new PsCheckoutException('Phone number is required for PUI payment.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+            throw new PsCheckoutException('Phone number is required for PUI payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
         }
+
+        $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parsePhone($rawPhone, $countryIsoCode, ['id_cart' => $cartId]);
+
+        if ($parsedPhone === null) {
+            $this->logger->warning('Phone number is not valid for PUI payment.', [
+                'id_cart' => $cartId,
+                'phone' => $rawPhone,
+            ]);
+
+            throw new PsCheckoutException('Phone number is not valid for PUI payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
+        }
+
+        $puiData['phone'] = [
+            'national_number' => (string) $parsedPhone->getNationalNumber(),
+            'country_code' => (string) $parsedPhone->getCountryCode(),
+        ];
 
         $billingAddress = OrderPayloadUtility::getAddressPortable(
             $invoiceAddress,
