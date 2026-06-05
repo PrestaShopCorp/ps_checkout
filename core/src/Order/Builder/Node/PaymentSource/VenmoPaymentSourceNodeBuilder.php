@@ -22,9 +22,11 @@ namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
+use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
@@ -44,11 +46,28 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
      */
     private $validate;
 
-    public function __construct(ConfigurationInterface $configuration, LinkInterface $link, ValidateInterface $validate)
-    {
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    /**
+     * @var CountryRepositoryInterface
+     */
+    private $countryRepository;
+
+    public function __construct(
+        ConfigurationInterface $configuration,
+        LinkInterface $link,
+        ValidateInterface $validate,
+        PhoneParser $phoneParser,
+        CountryRepositoryInterface $countryRepository
+    ) {
         $this->configuration = $configuration;
         $this->link = $link;
         $this->validate = $validate;
+        $this->phoneParser = $phoneParser;
+        $this->countryRepository = $countryRepository;
     }
 
     public function supports(string $fundingSource): bool
@@ -71,6 +90,14 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
             $data['email_address'] = (string) $cart['customer']->email;
         }
 
+        $customerAttributes = $this->buildCustomerAttributes($cart);
+        if ($context->isSavePaymentMethod() && $context->getPaypalCustomerId()) {
+            $customerAttributes['id'] = $context->getPaypalCustomerId();
+        }
+        if (!empty($customerAttributes)) {
+            $data['attributes']['customer'] = $customerAttributes;
+        }
+
         if ($context->isSavePaymentMethod()) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
@@ -79,11 +106,6 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
-            if ($context->getPaypalCustomerId()) {
-                $data['attributes']['customer'] = [
-                    'id' => $context->getPaypalCustomerId(),
-                ];
-            }
         }
 
         if ($context->getPaypalVaultId()) {
@@ -112,5 +134,52 @@ class VenmoPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
                 'venmo' => $data,
             ],
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $cart
+     *
+     * @return array<string, mixed>
+     */
+    private function buildCustomerAttributes(array $cart): array
+    {
+        $attributes = [];
+
+        if (!isset($cart['addresses']['invoice'])) {
+            return $attributes;
+        }
+
+        $address = $cart['addresses']['invoice'];
+
+        if (!empty($address->firstname) || !empty($address->lastname)) {
+            $attributes['name'] = [
+                'given_name' => (string) $address->firstname,
+                'surname' => (string) $address->lastname,
+            ];
+        }
+
+        if (isset($cart['customer']->email)
+            && $this->validate->isPayPalEmail($cart['customer']->email)
+        ) {
+            $attributes['email_address'] = (string) $cart['customer']->email;
+        }
+
+        $countryIso = isset($address->id_country)
+            ? $this->countryRepository->getCountryIsoCodeById($address->id_country)
+            : '';
+
+        $cartId = isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parseFromAddress($address, $countryIso, $cartId);
+
+        if ($parsedPhone !== null) {
+            $attributes['phone'] = [
+                'phone_number' => [
+                    'national_number' => $parsedPhone->getNationalNumber(),
+                ],
+                'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
+            ];
+        }
+
+        return $attributes;
     }
 }
