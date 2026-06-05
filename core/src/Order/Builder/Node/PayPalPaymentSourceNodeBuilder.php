@@ -223,7 +223,7 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
         if ($parsedPhone !== null) {
             $data['phone'] = [
                 'phone_number' => [
-                    'national_number' => $parsedPhone->getNationalNumber(),
+                    'national_number' => (string) $parsedPhone->getNationalNumber(),
                 ],
                 'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
             ];

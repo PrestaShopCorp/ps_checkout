@@ -74,6 +74,7 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
         $defaultPhoneParser = $this->createMock(PhoneParser::class);
         $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
+        $defaultPhoneParser->method('getPhoneType')->willReturn('OTHER');
 
         return new CardPaymentSourceNodeBuilder(
             $paypalConfig,
@@ -393,17 +394,18 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
     public function testCustomerPhoneIsAddedToAttributesCustomer(): void
     {
         $parsedPhone = $this->createMock(PhoneNumber::class);
-        $parsedPhone->method('getCountryCode')->willReturn(33);
         $parsedPhone->method('getNationalNumber')->willReturn('612345678');
 
         $phoneParser = $this->createMock(PhoneParser::class);
         $phoneParser->method('parsePhone')->willReturn($parsedPhone);
+        $phoneParser->method('getPhoneType')->willReturn('MOBILE');
 
         $result = $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', $phoneParser)
             ->build($this->makeContext($this->makeCart()));
 
-        $this->assertSame('33', $result['payment_source']['card']['attributes']['customer']['phone']['country_code']);
-        $this->assertSame('612345678', $result['payment_source']['card']['attributes']['customer']['phone']['national_number']);
+        $phone = $result['payment_source']['card']['attributes']['customer']['phone'];
+        $this->assertSame('612345678', $phone['phone_number']['national_number']);
+        $this->assertSame('MOBILE', $phone['phone_type']);
     }
 
     public function testThrowsWhenPhoneIsEmpty(): void

@@ -8325,7 +8325,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 14
+			count: 13
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8343,19 +8343,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''card'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 28
-			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^Cannot access offset ''country_code'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 27
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
+			count: 7
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8403,7 +8397,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''phone'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone_type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
