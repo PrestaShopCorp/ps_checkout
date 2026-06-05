@@ -2543,46 +2543,7 @@
         <source>Your date of birth is invalid or missing. Please check and try again.</source>
         <target>Your date of birth is invalid or missing. Please check and try again.</target>
       </trans-unit>
-      <trans-unit id="77c9fca2821a98712dab74c2c8148402">
-        <source>Your card cannot be used to pay in our country, please try another payment method.</source>
-        <target>Your card cannot be used to pay in our country, please try another payment method.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="4d8364340cc96b2df8772cdec3e1f64c">
-        <source>This payment method declined transaction, please try another.</source>
-        <target>This payment method declined transaction, please try another.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="33da114589573cc39176bfaa3ad32023">
-        <source>You have exceeded the maximum number of payment attempts.</source>
-        <target>You have exceeded the maximum number of payment attempts.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="55b4c1f5d07923f828fae74d6c52a498">
-        <source>Your PayPal account is locked or closed, please try another.</source>
-        <target>Your PayPal account is locked or closed, please try another.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="7f77b6e4e1e8f9ee6de4986f23375597">
-        <source>You are not allowed to pay with this PayPal account, please try another.</source>
-        <target>You are not allowed to pay with this PayPal account, please try another.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="c94066f8412e90dc79e01086fc7efd72">
-        <source>You are not allowed to pay with this payment method, please try another.</source>
-        <target>You are not allowed to pay with this payment method, please try another.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="58c08d0c7b972b96c8eed1acf2482996">
-        <source>The transaction was blocked by Fraud Protection settings.</source>
-        <target>The transaction was blocked by Fraud Protection settings.</target>
-        <note>Line: </note>
-      </trans-unit>
-      <trans-unit id="45c4bc7eeb5fa739bf86b16413d601db">
-        <source>This payment method seems not working currently, please try another.</source>
-        <target>This payment method seems not working currently, please try another.</target>
-        <note>Line: </note>
-      </trans-unit>
+
       <trans-unit id="9430962be49cde96b3aa6c277aafc7dc">
         <source>Your card has expired. Please use another card.</source>
         <target>Your card has expired. Please use another card.</target>
