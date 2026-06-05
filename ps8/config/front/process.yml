@@ -132,6 +132,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Country'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepository'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction:
     class: PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction
