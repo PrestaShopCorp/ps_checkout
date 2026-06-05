@@ -292,10 +292,15 @@ class OrderCreationExceptionHandlerTest extends TestCase
                 'card',
                 'original',
             ],
-            'CART_ADDRESS_INVOICE_INVALID with PUI' => [
-                new PsCheckoutException('internal', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID),
-                'pay_upon_invoice',
+            'CART_CUSTOMER_PHONE_INVALID' => [
+                new PsCheckoutException('internal', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID),
+                'card',
                 'Your phone number is invalid or missing. Please update your contact details and try again.',
+            ],
+            'CART_CUSTOMER_EMAIL_INVALID' => [
+                new PsCheckoutException('internal', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID),
+                'card',
+                'Your email address is invalid or missing. Please update your contact details and try again.',
             ],
             'CART_CUSTOMER_BIRTH_DATE_INVALID' => [
                 new PsCheckoutException('internal', PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID),

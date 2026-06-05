@@ -1555,6 +1555,18 @@ parameters:
 			path: ../core/src/Order/Builder/Node/BaseNodeBuilderInterface.php
 
 		-
+			message: '#^Access to an undefined property object\:\:\$firstname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$lastname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Binary operation "\." between mixed and '' '' results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -1563,6 +1575,12 @@ parameters:
 		-
 			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
@@ -1585,9 +1603,15 @@ parameters:
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$firstname on mixed\.$#'
+			message: '#^Cannot access property \$email on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access property \$firstname on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
@@ -1605,7 +1629,31 @@ parameters:
 		-
 			message: '#^Cannot access property \$lastname on mixed\.$#'
 			identifier: property.nonObject
+			count: 2
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access property \$phone on mixed\.$#'
+			identifier: property.nonObject
 			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access property \$phone_mobile on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 3
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
@@ -1627,6 +1675,12 @@ parameters:
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Parameter \#1 \$idCountry of method PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\:\:getCountryIsoCodeById\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1640,6 +1694,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$idState of method PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\:\:getNameById\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$rawPhone of method PsCheckout\\Core\\Util\\PhoneParser\:\:parsePhone\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
@@ -1689,7 +1749,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
@@ -1723,12 +1783,6 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$id on mixed\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
 			message: '#^Cannot access property \$id_country on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1747,21 +1801,9 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$phone on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Cannot access property \$phone_mobile on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 4
+			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
@@ -1808,12 +1850,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$idState of method PsCheckout\\Infrastructure\\Repository\\StateRepositoryInterface\:\:getNameById\(\) expects int, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$numberToParse of method libphonenumber\\PhoneNumberUtil\:\:parse\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
@@ -2181,7 +2217,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 2
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
 
 		-
@@ -2235,7 +2271,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 4
+			count: 2
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
 
 		-
@@ -2281,7 +2317,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$numberToParse of method libphonenumber\\PhoneNumberUtil\:\:parse\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$rawPhone of method PsCheckout\\Core\\Util\\PhoneParser\:\:parsePhone\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
@@ -6481,6 +6517,36 @@ parameters:
 			path: ../core/src/Util/CountryResolver.php
 
 		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Util/PhoneParser.php
+
+		-
+			message: '#^Cannot access property \$phone on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Util/PhoneParser.php
+
+		-
+			message: '#^Cannot access property \$phone_mobile on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Util/PhoneParser.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../core/src/Util/PhoneParser.php
+
+		-
+			message: '#^Parameter \#1 \$rawPhone of method PsCheckout\\Core\\Util\\PhoneParser\:\:parsePhone\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Util/PhoneParser.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -8163,7 +8229,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
+			count: 14
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8181,11 +8247,23 @@ parameters:
 		-
 			message: '#^Cannot access offset ''card'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 22
+			count: 28
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''country_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 8
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
@@ -8197,9 +8275,15 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''given_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 3
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8211,7 +8295,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''name'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8230,6 +8326,12 @@ parameters:
 			message: '#^Cannot access offset ''stored_credential'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
+			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''surname'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8259,7 +8361,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8391,12 +8493,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''vault_id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
@@ -9215,6 +9311,12 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/tests/Unit/PaymentToken/Action/DeletePaymentTokenActionTest.php
+
+		-
+			message: '#^Parameter \#1 \$phone of method PsCheckout\\Core\\Util\\PhoneParser\:\:getPhoneType\(\) expects libphonenumber\\PhoneNumber, libphonenumber\\PhoneNumber\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/tests/Unit/Util/PhoneParserTest.php
 
 		-
 			message: '#^Parameter \#1 \$payload of method PsCheckout\\Core\\Webhook\\Handler\\WebhookEventConfigurationUpdatedHandler\:\:handle\(\) expects array\{id\: string, createTime\: string, eventType\: string, eventVersion\: string, summary\: string, resourceType\: string, resource\: array\}, array\{eventType\: ''PRESTASHOP…'', resource\: array\{configuration\: ''not_an_array''\}\} given\.$#'
@@ -13467,7 +13569,7 @@ parameters:
 		-
 			message: '#^Call to method l\(\) on an unknown class Ps_Checkout\.$#'
 			identifier: class.notFound
-			count: 183
+			count: 184
 			path: src/Presentation/Translator.php
 
 		-
@@ -13479,7 +13581,7 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Module\\Presentation\\Translator\:\:trans\(\) should return string but returns mixed\.$#'
 			identifier: return.type
-			count: 183
+			count: 184
 			path: src/Presentation/Translator.php
 
 		-

@@ -20,13 +20,17 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
+use Psr\Log\LoggerInterface;
 
 class CardPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
@@ -50,16 +54,37 @@ class CardPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
      */
     private $link;
 
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         PayPalConfiguration $paypalConfiguration,
         CountryRepositoryInterface $countryRepository,
         StateRepositoryInterface $stateRepository,
-        LinkInterface $link
+        LinkInterface $link,
+        PhoneParser $phoneParser,
+        ValidateInterface $validate,
+        LoggerInterface $logger
     ) {
         $this->paypalConfiguration = $paypalConfiguration;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
         $this->link = $link;
+        $this->phoneParser = $phoneParser;
+        $this->validate = $validate;
+        $this->logger = $logger;
     }
 
     public function supports(string $fundingSource): bool
@@ -98,10 +123,12 @@ class CardPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
             $node['payment_source']['card']['vault_id'] = $context->getPaypalVaultId();
         }
 
+        $customerAttributes = $this->buildCustomerAttributes($address, $countryIso, $cart);
         if ($context->getPaypalCustomerId()) {
-            $node['payment_source']['card']['attributes']['customer'] = [
-                'id' => $context->getPaypalCustomerId(),
-            ];
+            $customerAttributes['id'] = $context->getPaypalCustomerId();
+        }
+        if (!empty($customerAttributes)) {
+            $node['payment_source']['card']['attributes']['customer'] = $customerAttributes;
         }
 
         if ($context->isSavePaymentMethod()) {
@@ -130,5 +157,64 @@ class CardPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
         ];
 
         return $node;
+    }
+
+
+    /**
+     * @param mixed $address
+     * @param array<string, mixed> $cart
+     *
+     * @return array<string, mixed>
+     *
+     * @throws PsCheckoutException
+     */
+    private function buildCustomerAttributes($address, string $countryIso, array $cart): array
+    {
+        $attributes = [];
+
+        if (!empty($address->firstname) || !empty($address->lastname)) {
+            $attributes['name'] = [
+                'given_name' => (string) $address->firstname,
+                'surname' => (string) $address->lastname,
+            ];
+        }
+
+        if (!isset($cart['customer']->email)
+            || !$this->validate->isPayPalEmail($cart['customer']->email)
+        ) {
+            $this->logger->warning('Valid email is required for card payment.');
+
+            throw new PsCheckoutException('Valid email is required for card payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
+        }
+        $attributes['email_address'] = (string) $cart['customer']->email;
+
+        $rawPhone = !empty($address->phone)
+            ? $address->phone
+            : (!empty($address->phone_mobile) ? $address->phone_mobile : '');
+
+        if (empty($rawPhone)) {
+            $this->logger->warning('Phone number is required for card payment.');
+
+            throw new PsCheckoutException('Phone number is required for card payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
+        }
+
+        $cartId = isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parsePhone($rawPhone, $countryIso, ['id_cart' => $cartId]);
+
+        if ($parsedPhone === null) {
+            $this->logger->warning('Phone number is not valid for card payment.', [
+                'id_cart' => $cartId,
+                'phone' => $rawPhone,
+            ]);
+
+            throw new PsCheckoutException('Phone number is not valid for card payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
+        }
+
+        $attributes['phone'] = [
+            'country_code' => (string) $parsedPhone->getCountryCode(),
+            'national_number' => (string) $parsedPhone->getNationalNumber(),
+        ];
+
+        return $attributes;
     }
 }

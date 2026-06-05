@@ -22,19 +22,17 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use Address;
 use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberType;
-use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 
 class PayPalPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -50,11 +48,8 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
     /** @var StateRepositoryInterface|MockObject */
     private $stateRepository;
 
-    /** @var PhoneNumberUtil|MockObject */
-    private $phoneUtil;
-
-    /** @var PhoneNumberUtil */
-    private $originalPhoneUtil;
+    /** @var PhoneParser|MockObject */
+    private $phoneParser;
 
     protected function setUp(): void
     {
@@ -62,24 +57,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->validate = $this->createMock(ValidateInterface::class);
         $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $this->stateRepository = $this->createMock(StateRepositoryInterface::class);
-
-        $this->originalPhoneUtil = PhoneNumberUtil::getInstance();
-        $this->phoneUtil = $this->createMock(PhoneNumberUtil::class);
-
-        $reflection = new ReflectionClass(PhoneNumberUtil::class);
-        $instanceProperty = $reflection->getProperty('instance');
-        $instanceProperty->setAccessible(true);
-        $instanceProperty->setValue(null, $this->phoneUtil);
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->originalPhoneUtil) {
-            $reflection = new ReflectionClass(PhoneNumberUtil::class);
-            $instanceProperty = $reflection->getProperty('instance');
-            $instanceProperty->setAccessible(true);
-            $instanceProperty->setValue(null, $this->originalPhoneUtil);
-        }
+        $this->phoneParser = $this->createMock(PhoneParser::class);
     }
 
     private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder
@@ -100,7 +78,8 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             $this->logger,
             $this->validate,
             $this->countryRepository,
-            $this->stateRepository
+            $this->stateRepository,
+            $this->phoneParser
         );
     }
 
@@ -341,9 +320,8 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $phoneNumberMock = $this->createMock(PhoneNumber::class);
         $phoneNumberMock->method('getNationalNumber')->willReturn('2125551234');
-        $this->phoneUtil->method('parse')->willReturn($phoneNumberMock);
-        $this->phoneUtil->method('isValidNumber')->willReturn(true);
-        $this->phoneUtil->method('getNumberType')->willReturn(PhoneNumberType::MOBILE);
+        $this->phoneParser->method('parseFromAddress')->willReturn($phoneNumberMock);
+        $this->phoneParser->method('getPhoneType')->willReturn('MOBILE');
 
         $result = $this->makeBuilder()->build($this->makeContext(
             false,

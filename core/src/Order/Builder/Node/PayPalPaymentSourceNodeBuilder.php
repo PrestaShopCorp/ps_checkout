@@ -20,10 +20,9 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
-use libphonenumber\PhoneNumberType;
-use libphonenumber\PhoneNumberUtil;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -66,6 +65,11 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
     private $stateRepository;
 
     /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    /**
      * @var string
      */
     private $fundingSource;
@@ -76,7 +80,8 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
         LoggerInterface $logger,
         ValidateInterface $validate,
         CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository
+        StateRepositoryInterface $stateRepository,
+        PhoneParser $phoneParser
     ) {
         $this->configuration = $configuration;
         $this->link = $link;
@@ -84,6 +89,7 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
         $this->validate = $validate;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
+        $this->phoneParser = $phoneParser;
     }
 
     public function supports(string $fundingSource): bool
@@ -212,50 +218,17 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
             $data['birth_date'] = (string) $cart['customer']->birthday;
         }
 
-        $phone = !empty($invoiceAddress->phone) ? $invoiceAddress->phone : (!empty($invoiceAddress->phone_mobile) ? $invoiceAddress->phone_mobile : '');
-
-        if (!empty($phone)) {
-            try {
-                $phoneUtil = PhoneNumberUtil::getInstance();
-                $parsedPhone = $phoneUtil->parse($phone, $countryIsoCode);
-
-                if ($phoneUtil->isValidNumber($parsedPhone)) {
-                    $data['phone'] = [
-                        'phone_number' => [
-                            'national_number' => $parsedPhone->getNationalNumber(),
-                        ],
-                        'phone_type' => $this->getPhoneType($phoneUtil->getNumberType($parsedPhone)),
-                    ];
-                }
-            } catch (\libphonenumber\NumberParseException $exception) {
-                $this->logger->warning('Invalid phone number format.', [
-                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
-                    'address_id' => isset($invoiceAddress->id) ? (int) $invoiceAddress->id : null,
-                    'phone' => $phone,
-                    'exception' => $exception,
-                ]);
-            } catch (\Exception $exception) {
-                $this->logger->warning('Unexpected error formatting phone number.', [
-                    'id_cart' => isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null,
-                    'address_id' => isset($invoiceAddress->id) ? (int) $invoiceAddress->id : null,
-                    'phone' => $phone,
-                    'exception' => $exception,
-                ]);
-            }
+        $cartId = isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parseFromAddress($invoiceAddress, $countryIsoCode, $cartId);
+        if ($parsedPhone !== null) {
+            $data['phone'] = [
+                'phone_number' => [
+                    'national_number' => $parsedPhone->getNationalNumber(),
+                ],
+                'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
+            ];
         }
 
         return $data;
-    }
-
-    private function getPhoneType(int $phoneType): string
-    {
-        switch ($phoneType) {
-            case PhoneNumberType::MOBILE:
-                return 'MOBILE';
-            case PhoneNumberType::PAGER:
-                return 'PAGER';
-            default:
-                return 'OTHER';
-        }
     }
 }

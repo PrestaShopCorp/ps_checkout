@@ -173,4 +173,8 @@ class PsCheckoutException extends \Exception
     const CART_SHIPPING_ADDRESS_INVALID = 79;
 
     const CART_CUSTOMER_BIRTH_DATE_INVALID = 80;
+
+    const CART_CUSTOMER_EMAIL_INVALID = 81;
+
+    const CART_CUSTOMER_PHONE_INVALID = 82;
 }
