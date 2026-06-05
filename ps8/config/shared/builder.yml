@@ -55,6 +55,8 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Validate'
+      - '@PsCheckout\Core\Util\PhoneParser'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
 
   PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder

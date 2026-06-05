@@ -20,8 +20,10 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
+use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
@@ -61,10 +63,26 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
      */
     private $validate;
 
-    public function __construct(ConfigurationInterface $configuration, ValidateInterface $validate)
-    {
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    /**
+     * @var CountryRepositoryInterface
+     */
+    private $countryRepository;
+
+    public function __construct(
+        ConfigurationInterface $configuration,
+        ValidateInterface $validate,
+        PhoneParser $phoneParser,
+        CountryRepositoryInterface $countryRepository
+    ) {
         $this->configuration = $configuration;
         $this->validate = $validate;
+        $this->phoneParser = $phoneParser;
+        $this->countryRepository = $countryRepository;
     }
 
     /**
@@ -81,6 +99,14 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
             $data['email_address'] = (string) $this->cart['customer']->email;
         }
 
+        $customerAttributes = $this->buildCustomerAttributes();
+        if ($this->savePaymentMethod && $this->paypalCustomerId) {
+            $customerAttributes['id'] = $this->paypalCustomerId;
+        }
+        if (!empty($customerAttributes)) {
+            $data['attributes']['customer'] = $customerAttributes;
+        }
+
         if ($this->savePaymentMethod) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
@@ -89,11 +115,6 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
-            if ($this->paypalCustomerId) {
-                $data['attributes']['customer'] = [
-                    'id' => $this->paypalCustomerId,
-                ];
-            }
         }
 
         if ($this->paypalVaultId) {
@@ -113,6 +134,51 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'venmo' => $data,
             ],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildCustomerAttributes(): array
+    {
+        $attributes = [];
+
+        if ($this->cart === null || !isset($this->cart['addresses']['invoice'])) {
+            return $attributes;
+        }
+
+        $address = $this->cart['addresses']['invoice'];
+
+        if (!empty($address->firstname) || !empty($address->lastname)) {
+            $attributes['name'] = [
+                'given_name' => (string) $address->firstname,
+                'surname' => (string) $address->lastname,
+            ];
+        }
+
+        if (isset($this->cart['customer']->email)
+            && $this->validate->isPayPalEmail($this->cart['customer']->email)
+        ) {
+            $attributes['email_address'] = (string) $this->cart['customer']->email;
+        }
+
+        $countryIso = isset($address->id_country)
+            ? $this->countryRepository->getCountryIsoCodeById($address->id_country)
+            : '';
+
+        $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parseFromAddress($address, $countryIso, $cartId);
+
+        if ($parsedPhone !== null) {
+            $attributes['phone'] = [
+                'phone_number' => [
+                    'national_number' => $parsedPhone->getNationalNumber(),
+                ],
+                'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
+            ];
+        }
+
+        return $attributes;
     }
 
     /** {@inheritDoc} */

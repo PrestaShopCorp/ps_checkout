@@ -2161,6 +2161,36 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/P24PaymentSourceNodeBuilder.php
 
 		-
+			message: '#^Access to an undefined property object\:\:\$firstname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$lastname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -2173,13 +2203,13 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Cannot access offset ''vault'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			message: '#^Cannot access property \$email on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Cannot access property \$email on mixed\.$#'
+			message: '#^Cannot access property \$firstname on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
@@ -2191,9 +2221,27 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
+			message: '#^Cannot access property \$id_country on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot access property \$lastname on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
-			count: 1
+			count: 4
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
@@ -2210,6 +2258,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$email of method PsCheckout\\Infrastructure\\Adapter\\ValidateInterface\:\:isPayPalEmail\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$idCountry of method PsCheckout\\Infrastructure\\Repository\\CountryRepositoryInterface\:\:getCountryIsoCodeById\(\) expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
@@ -8797,7 +8851,25 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/PuiPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''customer'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''email_address'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
@@ -8806,6 +8878,54 @@ parameters:
 			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 7
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''given_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''invoice'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''phone_type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8821,6 +8941,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''surname'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''user_action'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
@@ -8829,13 +8955,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''venmo'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 11
+			count: 18
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 4
+			count: 6
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
