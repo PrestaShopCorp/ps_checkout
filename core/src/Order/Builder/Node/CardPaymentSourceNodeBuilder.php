@@ -221,8 +221,10 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         }
 
         $attributes['phone'] = [
-            'country_code' => (string) $parsedPhone->getCountryCode(),
-            'national_number' => (string) $parsedPhone->getNationalNumber(),
+            'phone_number' => [
+                'national_number' => (string) $parsedPhone->getNationalNumber(),
+            ],
+            'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
         ];
 
         return $attributes;

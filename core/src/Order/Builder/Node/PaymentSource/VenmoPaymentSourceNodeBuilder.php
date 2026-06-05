@@ -172,7 +172,7 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
         if ($parsedPhone !== null) {
             $attributes['phone'] = [
                 'phone_number' => [
-                    'national_number' => $parsedPhone->getNationalNumber(),
+                    'national_number' => (string) $parsedPhone->getNationalNumber(),
                 ],
                 'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
             ];
