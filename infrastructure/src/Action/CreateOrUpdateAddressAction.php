@@ -23,6 +23,7 @@ namespace PsCheckout\Infrastructure\Action;
 use Address;
 use Country;
 use Exception;
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -55,16 +56,23 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
      */
     private $psCheckoutAddressRepository;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         ContextInterface $context,
         CountryInterface $country,
         CountryRepositoryInterface $countryRepository,
-        PsCheckoutAddressRepositoryInterface $psCheckoutAddressRepository
+        PsCheckoutAddressRepositoryInterface $psCheckoutAddressRepository,
+        LoggerInterface $logger
     ) {
         $this->context = $context;
         $this->country = $country;
         $this->countryRepository = $countryRepository;
         $this->psCheckoutAddressRepository = $psCheckoutAddressRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -73,6 +81,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
     public function execute(ExpressCheckoutShippingData $shippingData)
     {
         if (!$shippingData->getCountryCode()) {
+            $this->logger->warning('CreateOrUpdateAddressAction: missing country code in shipping data', ['orderId' => $shippingData->getOrderId()]);
+
             return false;
         }
 
@@ -88,6 +98,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             || !$country->isAssociatedToShop((int) $this->context->getShop()->id)
             || $this->country->isNeedDniByCountryId($idCountry)
         ) {
+            $this->logger->warning('CreateOrUpdateAddressAction: country not available for delivery', ['isoCode' => $shopIsoCode, 'idCountry' => $idCountry, 'orderId' => $shippingData->getOrderId()]);
+
             return false;
         }
 
@@ -106,6 +118,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
         $idCustomer = (int) $this->context->getCustomer()->id;
 
         if ($idCustomer === 0) {
+            $this->logger->warning('CreateOrUpdateAddressAction: no customer in context', ['orderId' => $shippingData->getOrderId()]);
+
             return false;
         }
 
@@ -141,6 +155,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             $address->id_state = $idState;
 
             if (!$address->validateFields(false)) {
+                $this->logger->warning('CreateOrUpdateAddressAction: address field validation failed', ['orderId' => $shippingData->getOrderId(), 'idCustomer' => $idCustomer]);
+
                 return false;
             }
 
@@ -151,10 +167,7 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             }
 
             if (!$this->psCheckoutAddressRepository->saveAddress($address->id, $idCustomer, $checksum)) {
-                \PrestaShopLogger::addLog(
-                    'CreateOrUpdateAddressAction: failed to track address ' . (int) $address->id . ' for customer ' . $idCustomer,
-                    3
-                );
+                $this->logger->error('CreateOrUpdateAddressAction: failed to track address in ps_checkout_address', ['idAddress' => $address->id, 'idCustomer' => $idCustomer, 'orderId' => $shippingData->getOrderId()]);
             }
         }
 

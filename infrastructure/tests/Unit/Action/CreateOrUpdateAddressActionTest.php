@@ -22,6 +22,7 @@ namespace Tests\Unit\PsCheckout\Infrastructure\Action;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -43,6 +44,9 @@ class CreateOrUpdateAddressActionTest extends TestCase
     /** @var PsCheckoutAddressRepositoryInterface|MockObject */
     private $psCheckoutAddressRepository;
 
+    /** @var LoggerInterface|MockObject */
+    private $logger;
+
     /** @var CreateOrUpdateAddressAction */
     private $action;
 
@@ -52,12 +56,14 @@ class CreateOrUpdateAddressActionTest extends TestCase
         $this->country = $this->createMock(CountryInterface::class);
         $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $this->psCheckoutAddressRepository = $this->createMock(PsCheckoutAddressRepositoryInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->action = new CreateOrUpdateAddressAction(
             $this->context,
             $this->country,
             $this->countryRepository,
-            $this->psCheckoutAddressRepository
+            $this->psCheckoutAddressRepository,
+            $this->logger
         );
     }
 
