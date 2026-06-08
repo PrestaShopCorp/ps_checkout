@@ -20,11 +20,9 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Core\Util\PhoneParser;
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Common\StringUtility;
 
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
 {
@@ -54,9 +52,9 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
     private $cart;
 
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
+    private $experienceContextHelper;
 
     /**
      * @var ValidateInterface
@@ -68,21 +66,14 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
      */
     private $phoneParser;
 
-    /**
-     * @var CountryRepositoryInterface
-     */
-    private $countryRepository;
-
     public function __construct(
-        ConfigurationInterface $configuration,
+        ExperienceContextHelper $experienceContextHelper,
         ValidateInterface $validate,
-        PhoneParser $phoneParser,
-        CountryRepositoryInterface $countryRepository
+        PhoneParser $phoneParser
     ) {
-        $this->configuration = $configuration;
+        $this->experienceContextHelper = $experienceContextHelper;
         $this->validate = $validate;
         $this->phoneParser = $phoneParser;
-        $this->countryRepository = $countryRepository;
     }
 
     /**
@@ -92,11 +83,11 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
     {
         $data = [];
 
-        if ($this->cart !== null
-            && isset($this->cart['customer']->email)
-            && $this->validate->isPayPalEmail($this->cart['customer']->email)
-        ) {
-            $data['email_address'] = (string) $this->cart['customer']->email;
+        if ($this->cart !== null) {
+            $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+            if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+                $data['email_address'] = $email;
+            }
         }
 
         $customerAttributes = $this->buildCustomerAttributes();
@@ -121,11 +112,9 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
             $data['vault_id'] = $this->paypalVaultId;
         }
 
-        $isVirtual = isset($this->cart['cart']['is_virtual']) && (bool) $this->cart['cart']['is_virtual'];
-        $hasShipping = isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
         $data['experience_context'] = [
-            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'shipping_preference' => $isVirtual ? 'NO_SHIPPING' : ($hasShipping ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
+            'brand_name' => $this->experienceContextHelper->getBrandName(),
+            'shipping_preference' => ExperienceContextHelper::getShippingPreference($this->cart ?? []),
             'user_action' => (!$this->isExpressCheckout && $this->cart !== null) ? 'PAY_NOW' : 'CONTINUE',
         ];
 
@@ -156,15 +145,12 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
             ];
         }
 
-        if (isset($this->cart['customer']->email)
-            && $this->validate->isPayPalEmail($this->cart['customer']->email)
-        ) {
-            $attributes['email_address'] = (string) $this->cart['customer']->email;
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+        if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+            $attributes['email_address'] = $email;
         }
 
-        $countryIso = isset($address->id_country)
-            ? $this->countryRepository->getCountryIsoCodeById($address->id_country)
-            : '';
+        $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
 
         $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
         $parsedPhone = $this->phoneParser->parseFromAddress($address, $countryIso, $cartId);
@@ -173,6 +159,7 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
             $attributes['phone'] = [
                 'phone_number' => [
                     'national_number' => (string) $parsedPhone->getNationalNumber(),
+                    'country_code' => (string) $parsedPhone->getCountryCode(),
                 ],
                 'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
             ];

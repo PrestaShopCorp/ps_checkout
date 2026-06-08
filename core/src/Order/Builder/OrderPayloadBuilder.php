@@ -298,6 +298,10 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     {
         switch ($this->fundingSource) {
             case 'google_pay':
+                if (!$this->isUpdate) {
+                    $this->googlePayPaymentSourceNodeBuilder->setCart($this->cart);
+                }
+
                 return $this->googlePayPaymentSourceNodeBuilder->build();
             case 'paypal':
             case 'paylater':
@@ -346,7 +350,16 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
             case 'bancontact':
                 return $this->bancontactPaymentSourceNodeBuilder->setCart($this->cart)->build();
             case 'apple_pay':
-                return $this->applePayPaymentSourceNodeBuilder->build();
+                $applePayBuilder = $this->applePayPaymentSourceNodeBuilder
+                    ->setSavePaymentMethod($this->savePaymentMethod)
+                    ->setPaypalCustomerId($this->paypalCustomerId)
+                    ->setPaypalVaultId($this->paypalVaultId);
+
+                if (!$this->isUpdate) {
+                    $applePayBuilder->setCart($this->cart);
+                }
+
+                return $applePayBuilder->build();
         }
 
         return null;

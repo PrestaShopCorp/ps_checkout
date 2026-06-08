@@ -25,6 +25,7 @@ use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -59,7 +60,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->phoneParser = $this->createMock(PhoneParser::class);
     }
 
-    private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'Test Shop'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
@@ -69,13 +70,15 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action;
         });
 
+        return new ExperienceContextHelper($configuration, $link, $this->countryRepository, $this->stateRepository);
+    }
+
+    private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder
+    {
         return new PayPalPaymentSourceNodeBuilder(
-            $configuration,
-            $link,
+            $this->makeExperienceContextHelper($shopName),
             $this->logger,
             $this->validate,
-            $this->countryRepository,
-            $this->stateRepository,
             $this->phoneParser
         );
     }

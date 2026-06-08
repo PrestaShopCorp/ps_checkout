@@ -21,30 +21,16 @@
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\Util\PayPalLocaleValidator;
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Common\StringUtility;
 use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
-
-    /**
-     * @var LinkInterface
-     */
-    private $link;
-
-    /**
-     * @var CountryRepositoryInterface
-     */
-    private $countryRepository;
+    private $experienceContextHelper;
 
     /**
      * @var LoggerInterface
@@ -62,15 +48,11 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
     private $cart;
 
     public function __construct(
-        ConfigurationInterface $configuration,
-        LinkInterface $link,
-        CountryRepositoryInterface $countryRepository,
+        ExperienceContextHelper $experienceContextHelper,
         LoggerInterface $logger,
         ValidateInterface $validate
     ) {
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->countryRepository = $countryRepository;
+        $this->experienceContextHelper = $experienceContextHelper;
         $this->logger = $logger;
         $this->validate = $validate;
     }
@@ -82,14 +64,7 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
      */
     public function build(): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
-        $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
-        $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
-        $countryCode = isset($invoiceAddress->id_country)
-            ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
-            : '';
-
-        $email = isset($this->cart['customer']->email) ? (string) $this->cart['customer']->email : '';
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
 
         if (!$this->validate->isPayPalEmail($email)) {
             $this->logger->warning('Valid email is required for P24 payment.');
@@ -97,26 +72,13 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
             throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
         }
 
-        $experienceContext = [
-            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'return_url' => $this->link->getModuleLink('validate'),
-            'cancel_url' => $this->link->getModuleLink('cancel'),
-        ];
-
-        $locale = PayPalLocaleValidator::getValidLocale(
-            isset($this->cart['language']->locale) ? (string) $this->cart['language']->locale : ''
-        );
-        if (!empty($locale)) {
-            $experienceContext['locale'] = $locale;
-        }
-
         return [
             'payment_source' => [
                 'p24' => [
-                    'name' => trim($firstName . ' ' . $lastName),
+                    'name' => $this->experienceContextHelper->getInvoiceName($this->cart),
                     'email' => $email,
-                    'country_code' => $countryCode,
-                    'experience_context' => $experienceContext,
+                    'country_code' => $this->experienceContextHelper->getInvoiceCountryCode($this->cart),
+                    'experience_context' => $this->experienceContextHelper->buildBaseContext($this->cart),
                 ],
             ],
         ];

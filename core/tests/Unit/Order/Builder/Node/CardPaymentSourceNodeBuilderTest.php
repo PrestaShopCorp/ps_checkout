@@ -26,7 +26,9 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Core\Util\PhoneParser;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
@@ -44,6 +46,27 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         return $phone;
     }
 
+    private function makeExperienceContextHelper(
+        string $countryIso = 'FR',
+        ?StateRepositoryInterface $stateRepository = null
+    ): ExperienceContextHelper {
+        $configuration = $this->createMock(ConfigurationInterface::class);
+
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturnCallback(function (string $action): string {
+            return 'https://example.com/' . $action;
+        });
+
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryIso);
+
+        $defaultStateRepository = $this->createMock(StateRepositoryInterface::class);
+        $defaultStateRepository->method('getNameById')->willReturn('Île-de-France');
+        $defaultStateRepository->method('getIsoById')->willReturn('CA');
+
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $stateRepository ?? $defaultStateRepository);
+    }
+
     private function makeBuilder(
         bool $is3dSecureEnabled = false,
         string $contingency = 'SCA_ALWAYS',
@@ -56,18 +79,6 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $paypalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
         $paypalConfig->method('getCardFieldsContingencies')->willReturn($contingency);
 
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryIso);
-
-        $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->method('getNameById')->willReturn('Île-de-France');
-        $stateRepository->method('getIsoById')->willReturn('CA');
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturnCallback(function (string $action): string {
-            return 'https://example.com/' . $action;
-        });
-
         $defaultValidate = $this->createMock(ValidateInterface::class);
         $defaultValidate->method('isPayPalEmail')->willReturn(true);
 
@@ -77,9 +88,7 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
         return new CardPaymentSourceNodeBuilder(
             $paypalConfig,
-            $countryRepository,
-            $stateRepository,
-            $link,
+            $this->makeExperienceContextHelper($countryIso),
             $phoneParser ?? $defaultPhoneParser,
             $validate ?? $defaultValidate,
             $logger ?? $this->createMock(LoggerInterface::class)
@@ -275,31 +284,21 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
     public function testUsStateResolutionUsesIsoCode(): void
     {
-        $paypalConfig = $this->createMock(PayPalConfiguration::class);
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('US');
-
         $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->expects($this->once())->method('getIsoById')->with(10)->willReturn('CA');
+        $stateRepository->expects($this->atLeastOnce())->method('getIsoById')->with(10)->willReturn('CA');
         $stateRepository->expects($this->never())->method('getNameById');
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/link');
-
-        $defaultValidate = $this->createMock(ValidateInterface::class);
-        $defaultValidate->method('isPayPalEmail')->willReturn(true);
 
         $defaultPhoneParser = $this->createMock(PhoneParser::class);
         $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
 
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
         $builder = new CardPaymentSourceNodeBuilder(
-            $paypalConfig,
-            $countryRepository,
-            $stateRepository,
-            $link,
+            $this->createMock(PayPalConfiguration::class),
+            $this->makeExperienceContextHelper('US', $stateRepository),
             $defaultPhoneParser,
-            $defaultValidate,
+            $validate,
             $this->createMock(LoggerInterface::class)
         );
         $result = $builder->setCart($this->makeCart($this->makeAddress('John', 'Doe', 1, 10)))->build();
@@ -309,31 +308,21 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
     public function testNonUsStateResolutionUsesName(): void
     {
-        $paypalConfig = $this->createMock(PayPalConfiguration::class);
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
-
         $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->expects($this->once())->method('getNameById')->with(5)->willReturn('Bayern');
+        $stateRepository->expects($this->atLeastOnce())->method('getNameById')->with(5)->willReturn('Bayern');
         $stateRepository->expects($this->never())->method('getIsoById');
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/link');
-
-        $defaultValidate = $this->createMock(ValidateInterface::class);
-        $defaultValidate->method('isPayPalEmail')->willReturn(true);
 
         $defaultPhoneParser = $this->createMock(PhoneParser::class);
         $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
 
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
         $builder = new CardPaymentSourceNodeBuilder(
-            $paypalConfig,
-            $countryRepository,
-            $stateRepository,
-            $link,
+            $this->createMock(PayPalConfiguration::class),
+            $this->makeExperienceContextHelper('DE', $stateRepository),
             $defaultPhoneParser,
-            $defaultValidate,
+            $validate,
             $this->createMock(LoggerInterface::class)
         );
         $result = $builder->setCart($this->makeCart($this->makeAddress('Hans', 'Müller', 1, 5)))->build();

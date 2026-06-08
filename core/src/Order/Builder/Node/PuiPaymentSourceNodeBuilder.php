@@ -157,6 +157,7 @@ class PuiPaymentSourceNodeBuilder implements PuiPaymentSourceNodeBuilderInterfac
             $this->logger->warning('Phone number is not valid for PUI payment.', [
                 'id_cart' => $cartId,
                 'phone' => $rawPhone,
+                'country' => $countryIsoCode,
             ]);
 
             throw new PsCheckoutException('Phone number is not valid for PUI payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);

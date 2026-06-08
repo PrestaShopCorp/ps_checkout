@@ -22,12 +22,9 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Core\Util\PhoneParser;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
-use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use Psr\Log\LoggerInterface;
 
 class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterface
@@ -58,19 +55,9 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     private $paypalConfiguration;
 
     /**
-     * @var CountryRepositoryInterface
+     * @var ExperienceContextHelper
      */
-    private $countryRepository;
-
-    /**
-     * @var StateRepositoryInterface
-     */
-    private $stateRepository;
-
-    /**
-     * @var LinkInterface
-     */
-    private $link;
+    private $experienceContextHelper;
 
     /**
      * @var PhoneParser
@@ -89,17 +76,13 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
 
     public function __construct(
         PayPalConfiguration $paypalConfiguration,
-        CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository,
-        LinkInterface $link,
+        ExperienceContextHelper $experienceContextHelper,
         PhoneParser $phoneParser,
         ValidateInterface $validate,
         LoggerInterface $logger
     ) {
         $this->paypalConfiguration = $paypalConfiguration;
-        $this->countryRepository = $countryRepository;
-        $this->stateRepository = $stateRepository;
-        $this->link = $link;
+        $this->experienceContextHelper = $experienceContextHelper;
         $this->phoneParser = $phoneParser;
         $this->validate = $validate;
         $this->logger = $logger;
@@ -111,17 +94,13 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
     public function build(): array
     {
         $address = $this->cart['addresses']['invoice'];
-
-        $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
-        $stateName = $countryIso === 'US' ?
-            $this->stateRepository->getIsoById($address->id_state)
-            : $this->stateRepository->getNameById($address->id_state);
+        $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
 
         $node = [
             'payment_source' => [
                 'card' => [
-                    'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
-                    'billing_address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
+                    'name' => $address->firstname . ' ' . $address->lastname,
+                    'billing_address' => $this->experienceContextHelper->buildInvoicePortableAddress($this->cart),
                 ],
             ],
         ];
@@ -163,10 +142,7 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             ];
         }
 
-        $node['payment_source']['card']['experience_context'] = [
-            'return_url' => $this->link->getModuleLink('validate'),
-            'cancel_url' => $this->link->getModuleLink('cancel'),
-        ];
+        $node['payment_source']['card']['experience_context'] = $this->experienceContextHelper->buildUrlContext();
 
         return $node;
     }
@@ -189,14 +165,13 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             ];
         }
 
-        if (!isset($this->cart['customer']->email)
-            || !$this->validate->isPayPalEmail($this->cart['customer']->email)
-        ) {
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+        if ($email === '' || !$this->validate->isPayPalEmail($email)) {
             $this->logger->warning('Valid email is required for card payment.');
 
             throw new PsCheckoutException('Valid email is required for card payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
         }
-        $attributes['email_address'] = (string) $this->cart['customer']->email;
+        $attributes['email_address'] = $email;
 
         $rawPhone = !empty($address->phone)
             ? $address->phone
@@ -215,6 +190,7 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             $this->logger->warning('Phone number is not valid for card payment.', [
                 'id_cart' => $cartId,
                 'phone' => $rawPhone,
+                'country' => $countryIso,
             ]);
 
             throw new PsCheckoutException('Phone number is not valid for card payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
@@ -223,6 +199,7 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
         $attributes['phone'] = [
             'phone_number' => [
                 'national_number' => (string) $parsedPhone->getNationalNumber(),
+                'country_code' => (string) $parsedPhone->getCountryCode(),
             ],
             'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
         ];
