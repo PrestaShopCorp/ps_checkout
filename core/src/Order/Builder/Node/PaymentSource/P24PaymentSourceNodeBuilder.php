@@ -23,41 +23,33 @@ namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
-use PsCheckout\Core\Util\PayPalLocaleValidator;
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Common\StringUtility;
 use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
+    private $experienceContextHelper;
 
     /**
-     * @var LinkInterface
+     * @var LoggerInterface
      */
-    private $link;
+    private $logger;
 
     /**
-     * @var CountryRepositoryInterface
+     * @var ValidateInterface
      */
-    private $countryRepository;
+    private $validate;
 
     public function __construct(
-        ConfigurationInterface $configuration,
-        LinkInterface $link,
-        CountryRepositoryInterface $countryRepository,
+        ExperienceContextHelper $experienceContextHelper,
         LoggerInterface $logger,
         ValidateInterface $validate
     ) {
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->countryRepository = $countryRepository;
+        $this->experienceContextHelper = $experienceContextHelper;
         $this->logger = $logger;
         $this->validate = $validate;
     }
@@ -75,14 +67,8 @@ class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
     public function build(CheckoutContextInterface $context): array
     {
         $cart = $context->getCart();
-        $invoiceAddress = isset($cart['addresses']['invoice']) ? $cart['addresses']['invoice'] : null;
-        $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
-        $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
-        $countryCode = isset($invoiceAddress->id_country)
-            ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
-            : '';
 
-        $email = isset($cart['customer']->email) ? (string) $cart['customer']->email : '';
+        $email = $this->experienceContextHelper->getCustomerEmail($cart);
 
         if (!$this->validate->isPayPalEmail($email)) {
             $this->logger->warning('Valid email is required for P24 payment.');
@@ -90,26 +76,13 @@ class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
             throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
         }
 
-        $experienceContext = [
-            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'return_url' => $this->link->getModuleLink('validate'),
-            'cancel_url' => $this->link->getModuleLink('cancel'),
-        ];
-
-        $locale = PayPalLocaleValidator::getValidLocale(
-            isset($cart['language']->locale) ? (string) $cart['language']->locale : ''
-        );
-        if (!empty($locale)) {
-            $experienceContext['locale'] = $locale;
-        }
-
         return [
             'payment_source' => [
                 'p24' => [
-                    'name' => trim($firstName . ' ' . $lastName),
+                    'name' => $this->experienceContextHelper->getInvoiceName($cart),
                     'email' => $email,
-                    'country_code' => $countryCode,
-                    'experience_context' => $experienceContext,
+                    'country_code' => $this->experienceContextHelper->getInvoiceCountryCode($cart),
+                    'experience_context' => $this->experienceContextHelper->buildBaseContext($cart),
                 ],
             ],
         ];

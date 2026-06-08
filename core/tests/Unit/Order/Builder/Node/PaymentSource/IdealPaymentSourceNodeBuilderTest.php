@@ -23,16 +23,15 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class IdealPaymentSourceNodeBuilderTest extends TestCase
 {
-    /**
-     * @return array<int, mixed>
-     */
-    private function makeBuilder(string $shopName = 'My Shop'): array
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'NL'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
@@ -43,9 +42,14 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('NL');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return [new IdealPaymentSourceNodeBuilder($configuration, $link, $countryRepository), $configuration, $countryRepository];
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(string $shopName = 'My Shop'): IdealPaymentSourceNodeBuilder
+    {
+        return new IdealPaymentSourceNodeBuilder($this->makeExperienceContextHelper($shopName));
     }
 
     /**
@@ -79,8 +83,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
 
     public function testSupportsIdeal(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
+        $builder = $this->makeBuilder();
 
         $this->assertTrue($builder->supports('ideal'));
         $this->assertFalse($builder->supports('blik'));
@@ -88,10 +91,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
 
     public function testBuildReturnsCorrectStructure(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
-
-        $result = $builder->build($this->makeContext($this->makeCart()));
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertSame([
             'payment_source' => [
@@ -100,6 +100,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'NL',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -110,52 +111,35 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
 
     public function testLocaleIsIncludedWhenSupported(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
-
-        $result = $builder->setCart($this->makeCart('John', 'Doe', 1, 'nl-NL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('John', 'Doe', 1, 'nl-NL')));
 
         $this->assertSame('nl-NL', $result['payment_source']['ideal']['experience_context']['locale']);
     }
 
     public function testLocaleIsOmittedWhenNotSupported(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
-
-        $result = $builder->setCart($this->makeCart('John', 'Doe', 1, 'nl_NL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('John', 'Doe', 1, 'nl_NL')));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['ideal']['experience_context']);
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $longName = str_repeat('A', 150);
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder($longName);
-
-        $result = $builder->build($this->makeContext($this->makeCart()));
+        $result = $this->makeBuilder(str_repeat('A', 150))->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['ideal']['experience_context']['brand_name']));
     }
 
     public function testBrandNameHasControlCharactersStripped(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder("My\nShop\r\nName");
-
-        $result = $builder->build($this->makeContext($this->makeCart()));
+        $result = $this->makeBuilder("My\nShop\r\nName")->build($this->makeContext($this->makeCart()));
 
         $this->assertSame('MyShopName', $result['payment_source']['ideal']['experience_context']['brand_name']);
     }
 
     public function testNameIsTrimmedWhenOnlyFirstNamePresent(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
-        $cart = $this->makeCart('Jane', '');
-
-        $result = $builder->build($this->makeContext($cart));
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('Jane', '')));
 
         $this->assertSame('Jane', $result['payment_source']['ideal']['name']);
     }
@@ -179,7 +163,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         $address->lastname = 'Bakker';
         $address->id_country = 42;
 
-        $builder = new IdealPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new IdealPaymentSourceNodeBuilder(new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class)));
         $result = $builder->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('NL', $result['payment_source']['ideal']['country_code']);
@@ -187,14 +171,11 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
 
     public function testMissingCountryIdProducesEmptyCountryCode(): void
     {
-        /** @var IdealPaymentSourceNodeBuilder $builder */
-        [$builder] = $this->makeBuilder();
-
         $address = new \stdClass();
         $address->firstname = 'Jan';
         $address->lastname = 'Bakker';
 
-        $result = $builder->build($this->makeContext(['addresses' => ['invoice' => $address]]));
+        $result = $this->makeBuilder()->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('', $result['payment_source']['ideal']['country_code']);
     }

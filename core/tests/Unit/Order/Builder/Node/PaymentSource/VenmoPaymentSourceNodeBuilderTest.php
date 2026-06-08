@@ -24,16 +24,18 @@ use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class VenmoPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(string $shopName = 'Test Shop', ?PhoneParser $phoneParser = null): VenmoPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'Test Shop', string $countryCode = 'US'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
@@ -45,6 +47,14 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action . $query;
         });
 
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
+
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(string $shopName = 'Test Shop', ?PhoneParser $phoneParser = null): VenmoPaymentSourceNodeBuilder
+    {
         $validate = $this->createMock(ValidateInterface::class);
         $validate->method('isPayPalEmail')->willReturnCallback(
             static function (string $email): bool {
@@ -52,18 +62,13 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
             }
         );
 
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('US');
-
         $defaultPhoneParser = $this->createMock(PhoneParser::class);
         $defaultPhoneParser->method('parseFromAddress')->willReturn(null);
 
         return new VenmoPaymentSourceNodeBuilder(
-            $configuration,
-            $link,
+            $this->makeExperienceContextHelper($shopName),
             $validate,
-            $phoneParser ?? $defaultPhoneParser,
-            $countryRepository
+            $phoneParser ?? $defaultPhoneParser
         );
     }
 

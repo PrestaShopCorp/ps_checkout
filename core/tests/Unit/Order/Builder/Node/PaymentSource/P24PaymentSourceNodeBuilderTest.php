@@ -24,19 +24,21 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\P24PaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(): P24PaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'PL'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn('My Shop');
+        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
@@ -44,8 +46,13 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(): P24PaymentSourceNodeBuilder
+    {
         $logger = $this->createMock(LoggerInterface::class);
 
         $validate = $this->createMock(ValidateInterface::class);
@@ -55,7 +62,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
             }
         );
 
-        return new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
+        return new P24PaymentSourceNodeBuilder($this->makeExperienceContextHelper(), $logger, $validate);
     }
 
     /**
@@ -113,6 +120,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'PL',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -131,21 +139,21 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
 
     public function testLocaleIsIncludedWhenSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('jan@example.com', 'pl-PL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('jan@example.com', 'pl-PL')));
 
         $this->assertSame('pl-PL', $result['payment_source']['p24']['experience_context']['locale']);
     }
 
     public function testLocaleIsOmittedWhenNotSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('jan@example.com', 'pl_PL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('jan@example.com', 'pl_PL')));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['p24']['experience_context']);
     }
 
     public function testLocaleIsOmittedWhenMissing(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['p24']['experience_context']);
     }
@@ -167,21 +175,16 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
 
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->willReturn(str_repeat('E', 200));
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/x');
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
-
         $logger = $this->createMock(LoggerInterface::class);
 
         $validate = $this->createMock(ValidateInterface::class);
         $validate->method('isPayPalEmail')->willReturn(true);
 
-        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
+        $builder = new P24PaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper(str_repeat('E', 200)),
+            $logger,
+            $validate
+        );
         $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['p24']['experience_context']['brand_name']));
@@ -214,7 +217,11 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = 'jan@example.com';
 
-        $builder = new P24PaymentSourceNodeBuilder($configuration, $link, $countryRepository, $logger, $validate);
+        $builder = new P24PaymentSourceNodeBuilder(
+            new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class)),
+            $logger,
+            $validate
+        );
         $result = $builder->build($this->makeContext([
             'addresses' => ['invoice' => $address],
             'customer' => $customer,

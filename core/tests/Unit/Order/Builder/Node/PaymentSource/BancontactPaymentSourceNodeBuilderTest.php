@@ -23,16 +23,18 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\BancontactPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class BancontactPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(): BancontactPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'BE'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn('My Shop');
+        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
@@ -40,9 +42,14 @@ class BancontactPaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('BE');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new BancontactPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(): BancontactPaymentSourceNodeBuilder
+    {
+        return new BancontactPaymentSourceNodeBuilder($this->makeExperienceContextHelper());
     }
 
     /**
@@ -93,6 +100,7 @@ class BancontactPaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'BE',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -103,38 +111,60 @@ class BancontactPaymentSourceNodeBuilderTest extends TestCase
 
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->willReturn(str_repeat('D', 200));
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/x');
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('BE');
-
-        $builder = new BancontactPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new BancontactPaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper(str_repeat('D', 200))
+        );
         $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['bancontact']['experience_context']['brand_name']));
     }
 
+    public function testShippingPreferenceIsGetFromFileByDefault(): void
+    {
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
+
+        $this->assertSame('GET_FROM_FILE', $result['payment_source']['bancontact']['experience_context']['shipping_preference']);
+    }
+
+    public function testShippingPreferenceIsNoShippingForVirtualCart(): void
+    {
+        $cart = $this->makeCart();
+        $cart['cart'] = ['is_virtual' => true];
+
+        $result = $this->makeBuilder()->build($this->makeContext($cart));
+
+        $this->assertSame('NO_SHIPPING', $result['payment_source']['bancontact']['experience_context']['shipping_preference']);
+    }
+
+    public function testShippingPreferenceIsSetProvidedAddressWhenShippingAddressExists(): void
+    {
+        $cart = $this->makeCart();
+        $shippingAddress = new \stdClass();
+        $shippingAddress->id = 42;
+        $cart['addresses']['shipping'] = $shippingAddress;
+
+        $result = $this->makeBuilder()->build($this->makeContext($cart));
+
+        $this->assertSame('SET_PROVIDED_ADDRESS', $result['payment_source']['bancontact']['experience_context']['shipping_preference']);
+    }
+
     public function testLocaleIsIncludedWhenSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('nl-NL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('nl-NL')));
 
         $this->assertSame('nl-NL', $result['payment_source']['bancontact']['experience_context']['locale']);
     }
 
     public function testLocaleIsOmittedWhenNotSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('nl_NL'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('nl_NL')));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['bancontact']['experience_context']);
     }
 
     public function testLocaleIsOmittedWhenMissing(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart()));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['bancontact']['experience_context']);
     }

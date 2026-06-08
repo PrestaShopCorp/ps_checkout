@@ -23,16 +23,18 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\EpsPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class EpsPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(): EpsPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'AT'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn('My Shop');
+        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
@@ -40,9 +42,14 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('AT');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new EpsPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(): EpsPaymentSourceNodeBuilder
+    {
+        return new EpsPaymentSourceNodeBuilder($this->makeExperienceContextHelper());
     }
 
     /**
@@ -93,6 +100,7 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'AT',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -103,30 +111,23 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
 
     public function testLocaleIsIncludedWhenSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('de-DE'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('de-DE')));
 
         $this->assertSame('de-DE', $result['payment_source']['eps']['experience_context']['locale']);
     }
 
     public function testLocaleIsOmittedWhenNotSupported(): void
     {
-        $result = $this->makeBuilder()->setCart($this->makeCart('de_DE'))->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCart('de_DE')));
 
         $this->assertArrayNotHasKey('locale', $result['payment_source']['eps']['experience_context']);
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->willReturn(str_repeat('C', 200));
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/x');
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('AT');
-
-        $builder = new EpsPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new EpsPaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper(str_repeat('C', 200))
+        );
         $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['eps']['experience_context']['brand_name']));

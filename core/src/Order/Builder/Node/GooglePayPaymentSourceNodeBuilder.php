@@ -23,7 +23,9 @@ namespace PsCheckout\Core\Order\Builder\Node;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Core\Util\PhoneParser;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 
 class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
 {
@@ -33,14 +35,35 @@ class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInter
     private $payPalConfiguration;
 
     /**
-     * @var LinkInterface
+     * @var ExperienceContextHelper
      */
-    private $link;
+    private $experienceContextHelper;
 
-    public function __construct(PayPalConfiguration $payPalConfiguration, LinkInterface $link)
-    {
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    /**
+     * @var array<string, mixed>|null
+     */
+    private $cart;
+
+    public function __construct(
+        PayPalConfiguration $payPalConfiguration,
+        ExperienceContextHelper $experienceContextHelper,
+        ValidateInterface $validate,
+        PhoneParser $phoneParser
+    ) {
         $this->payPalConfiguration = $payPalConfiguration;
-        $this->link = $link;
+        $this->experienceContextHelper = $experienceContextHelper;
+        $this->validate = $validate;
+        $this->phoneParser = $phoneParser;
     }
 
     public function supports(string $fundingSource): bool
@@ -53,17 +76,53 @@ class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInter
      */
     public function build(CheckoutContextInterface $context): array
     {
-        $data = [
-            'experience_context' => [
-                'return_url' => $this->link->getModuleLink('validate'),
-                'cancel_url' => $this->link->getModuleLink('cancel'),
-            ],
-        ];
+        $data = [];
 
-        if ($this->payPalConfiguration->is3dSecureEnabled()) {
-            $data['attributes'] = ['verification' => ['method' => $this->payPalConfiguration->getCardFieldsContingencies()]];
+        if ($this->cart !== null && isset($this->cart['addresses']['invoice'])) {
+            $invoiceAddress = $this->cart['addresses']['invoice'];
+
+            $name = $this->experienceContextHelper->getInvoiceName($this->cart);
+            if ($name !== '') {
+                $data['name'] = $name;
+            }
+
+            $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+            if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+                $data['email_address'] = $email;
+            }
+
+            $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
+            $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
+            $parsedPhone = $this->phoneParser->parseFromAddress($invoiceAddress, $countryIso, $cartId);
+            if ($parsedPhone !== null) {
+                $data['phone_number'] = [
+                    'national_number' => (string) $parsedPhone->getNationalNumber(),
+                    'country_code' => (string) $parsedPhone->getCountryCode(),
+                ];
+            }
+
+            $billingAddress = $this->experienceContextHelper->buildInvoicePortableAddress($this->cart);
+            if (!empty($billingAddress)) {
+                $data['card']['billing_address'] = $billingAddress;
+            }
         }
 
+        if ($this->payPalConfiguration->is3dSecureEnabled()) {
+            $data['attributes']['verification']['method'] = $this->payPalConfiguration->getCardFieldsContingencies();
+        }
+
+        $data['experience_context'] = $this->experienceContextHelper->buildUrlContext();
+
         return ['payment_source' => ['google_pay' => $data]];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCart(array $cart)
+    {
+        $this->cart = $cart;
+
+        return $this;
     }
 }
