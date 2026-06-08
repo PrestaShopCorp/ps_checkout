@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use PsCheckout\Core\Util\PayPalLocaleValidator;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
@@ -69,16 +70,25 @@ class EpsPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
             : '';
 
+        $experienceContext = [
+            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
+        ];
+
+        $locale = PayPalLocaleValidator::getValidLocale(
+            isset($this->cart['language']->locale) ? (string) $this->cart['language']->locale : ''
+        );
+        if (!empty($locale)) {
+            $experienceContext['locale'] = $locale;
+        }
+
         return [
             'payment_source' => [
                 'eps' => [
                     'name' => trim($firstName . ' ' . $lastName),
                     'country_code' => $countryCode,
-                    'experience_context' => [
-                        'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-                        'return_url' => $this->link->getModuleLink('validate'),
-                        'cancel_url' => $this->link->getModuleLink('cancel'),
-                    ],
+                    'experience_context' => $experienceContext,
                 ],
             ],
         ];

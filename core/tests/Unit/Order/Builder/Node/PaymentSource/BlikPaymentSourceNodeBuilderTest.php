@@ -56,7 +56,7 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(string $email = 'anna@example.com'): array
+    private function makeCart(string $email = 'anna@example.com', string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Anna';
@@ -66,10 +66,32 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = $email;
 
-        return [
+        $cart = [
             'addresses' => ['invoice' => $address],
             'customer' => $customer,
         ];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('anna@example.com', 'pl-PL'))->build();
+
+        $this->assertSame('pl-PL', $result['payment_source']['blik']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('anna@example.com', 'pl_PL'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['blik']['experience_context']);
     }
 
     public function testBuildIncludesEmailWhenPresent(): void
