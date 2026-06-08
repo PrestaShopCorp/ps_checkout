@@ -48,14 +48,22 @@ class BancontactPaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(): array
+    private function makeCart(string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Luc';
         $address->lastname = 'Dupont';
         $address->id_country = 1;
 
-        return ['addresses' => ['invoice' => $address]];
+        $cart = ['addresses' => ['invoice' => $address]];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     /**
@@ -108,6 +116,27 @@ class BancontactPaymentSourceNodeBuilderTest extends TestCase
         $result = $builder->build($this->makeContext($this->makeCart()));
 
         $this->assertSame(127, mb_strlen($result['payment_source']['bancontact']['experience_context']['brand_name']));
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('nl-NL'))->build();
+
+        $this->assertSame('nl-NL', $result['payment_source']['bancontact']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('nl_NL'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['bancontact']['experience_context']);
+    }
+
+    public function testLocaleIsOmittedWhenMissing(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['bancontact']['experience_context']);
     }
 
     public function testMissingCountryIdProducesEmptyCountryCode(): void

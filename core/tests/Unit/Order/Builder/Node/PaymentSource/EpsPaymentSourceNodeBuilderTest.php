@@ -48,14 +48,22 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(): array
+    private function makeCart(string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Hans';
         $address->lastname = 'Müller';
         $address->id_country = 1;
 
-        return ['addresses' => ['invoice' => $address]];
+        $cart = ['addresses' => ['invoice' => $address]];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     /**
@@ -91,6 +99,20 @@ class EpsPaymentSourceNodeBuilderTest extends TestCase
                 ],
             ],
         ], $result);
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('de-DE'))->build();
+
+        $this->assertSame('de-DE', $result['payment_source']['eps']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('de_DE'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['eps']['experience_context']);
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void

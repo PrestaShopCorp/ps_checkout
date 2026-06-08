@@ -48,14 +48,22 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(): array
+    private function makeCart(string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Mario';
         $address->lastname = 'Rossi';
         $address->id_country = 1;
 
-        return ['addresses' => ['invoice' => $address]];
+        $cart = ['addresses' => ['invoice' => $address]];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     /**
@@ -91,6 +99,20 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
                 ],
             ],
         ], $result);
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('it-IT'))->build();
+
+        $this->assertSame('it-IT', $result['payment_source']['mybank']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('it_IT'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['mybank']['experience_context']);
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void

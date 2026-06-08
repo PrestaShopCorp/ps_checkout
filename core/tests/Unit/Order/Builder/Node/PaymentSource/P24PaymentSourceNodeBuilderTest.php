@@ -61,7 +61,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(string $email = 'jan@example.com'): array
+    private function makeCart(string $email = 'jan@example.com', string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Jan';
@@ -71,10 +71,18 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = $email;
 
-        return [
+        $cart = [
             'addresses' => ['invoice' => $address],
             'customer' => $customer,
         ];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     /**
@@ -119,6 +127,27 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
 
         $this->assertArrayHasKey('email', $result['payment_source']['p24']);
         $this->assertSame('customer@shop.pl', $result['payment_source']['p24']['email']);
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('jan@example.com', 'pl-PL'))->build();
+
+        $this->assertSame('pl-PL', $result['payment_source']['p24']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('jan@example.com', 'pl_PL'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['p24']['experience_context']);
+    }
+
+    public function testLocaleIsOmittedWhenMissing(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['p24']['experience_context']);
     }
 
     public function testBuildThrowsExceptionWhenEmailHasNoTld(): void

@@ -51,14 +51,22 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(string $firstName = 'John', string $lastName = 'Doe', int $idCountry = 1): array
+    private function makeCart(string $firstName = 'John', string $lastName = 'Doe', int $idCountry = 1, string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = $firstName;
         $address->lastname = $lastName;
         $address->id_country = $idCountry;
 
-        return ['addresses' => ['invoice' => $address]];
+        $cart = ['addresses' => ['invoice' => $address]];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     /**
@@ -98,6 +106,26 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
                 ],
             ],
         ], $result);
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        /** @var IdealPaymentSourceNodeBuilder $builder */
+        [$builder] = $this->makeBuilder();
+
+        $result = $builder->setCart($this->makeCart('John', 'Doe', 1, 'nl-NL'))->build();
+
+        $this->assertSame('nl-NL', $result['payment_source']['ideal']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        /** @var IdealPaymentSourceNodeBuilder $builder */
+        [$builder] = $this->makeBuilder();
+
+        $result = $builder->setCart($this->makeCart('John', 'Doe', 1, 'nl_NL'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['ideal']['experience_context']);
     }
 
     public function testBrandNameIsTruncatedTo127Characters(): void

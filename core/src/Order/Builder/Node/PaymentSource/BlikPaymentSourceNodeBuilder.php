@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Util\PayPalLocaleValidator;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -75,14 +76,23 @@ class BlikPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
             ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
             : '';
 
+        $experienceContext = [
+            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
+        ];
+
+        $locale = PayPalLocaleValidator::getValidLocale(
+            isset($cart['language']->locale) ? (string) $cart['language']->locale : ''
+        );
+        if (!empty($locale)) {
+            $experienceContext['locale'] = $locale;
+        }
+
         $data = [
             'name' => trim($firstName . ' ' . $lastName),
             'country_code' => $countryCode,
-            'experience_context' => [
-                'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-                'return_url' => $this->link->getModuleLink('validate'),
-                'cancel_url' => $this->link->getModuleLink('cancel'),
-            ],
+            'experience_context' => $experienceContext,
         ];
 
         if (isset($cart['customer']->email) && $this->validate->isPayPalEmail($cart['customer']->email)) {

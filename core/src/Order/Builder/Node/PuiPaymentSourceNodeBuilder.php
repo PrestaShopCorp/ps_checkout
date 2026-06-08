@@ -23,6 +23,7 @@ namespace PsCheckout\Core\Order\Builder\Node;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Util\PayPalLocaleValidator;
 use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
@@ -229,7 +230,7 @@ class PuiPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
     private function getLocale(array $cart): string
     {
         if (isset($cart['language']->locale) && !empty($cart['language']->locale)) {
-            return $cart['language']->locale;
+            return PayPalLocaleValidator::getValidLocale((string) $cart['language']->locale);
         }
 
         $this->logger->warning('Language locale is missing in the cart for PUI payment.');

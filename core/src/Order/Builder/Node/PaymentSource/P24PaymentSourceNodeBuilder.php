@@ -23,6 +23,7 @@ namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\CheckoutContextInterface;
 use PsCheckout\Core\Order\Builder\PaymentSourceNodeBuilderInterface;
+use PsCheckout\Core\Util\PayPalLocaleValidator;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
@@ -86,7 +87,20 @@ class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
         if (!$this->validate->isPayPalEmail($email)) {
             $this->logger->warning('Valid email is required for P24 payment.');
 
-            throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+            throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
+        }
+
+        $experienceContext = [
+            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
+            'return_url' => $this->link->getModuleLink('validate'),
+            'cancel_url' => $this->link->getModuleLink('cancel'),
+        ];
+
+        $locale = PayPalLocaleValidator::getValidLocale(
+            isset($cart['language']->locale) ? (string) $cart['language']->locale : ''
+        );
+        if (!empty($locale)) {
+            $experienceContext['locale'] = $locale;
         }
 
         return [
@@ -95,11 +109,7 @@ class P24PaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterface
                     'name' => trim($firstName . ' ' . $lastName),
                     'email' => $email,
                     'country_code' => $countryCode,
-                    'experience_context' => [
-                        'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-                        'return_url' => $this->link->getModuleLink('validate'),
-                        'cancel_url' => $this->link->getModuleLink('cancel'),
-                    ],
+                    'experience_context' => $experienceContext,
                 ],
             ],
         ];
