@@ -411,13 +411,13 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('CONTINUE', $result['payment_source']['paypal']['experience_context']['user_action']);
     }
 
-    public function testVaultIdAppearsInOutput(): void
+    public function testVaultIdIsNotSentForPayPal(): void
     {
         $result = $this->makeBuilder()->build(
             $this->makeContext(false, false, false, false, false, 'paypal', 'vault_xyz')
         );
 
-        $this->assertSame('vault_xyz', $result['payment_source']['paypal']['vault_id']);
+        $this->assertArrayNotHasKey('vault_id', $result['payment_source']['paypal']);
     }
 
     public function testOrderUpdateCallbackConfigPresentWhenGetFromFile(): void

@@ -73,10 +73,6 @@ class PayPalPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInterfac
     {
         $data = [];
 
-        if ($context->getPaypalVaultId()) {
-            $data['vault_id'] = $context->getPaypalVaultId();
-        }
-
         if ($context->isSavePaymentMethod()) {
             $data['attributes']['vault'] = [
                 'store_in_vault' => 'ON_SUCCESS',
