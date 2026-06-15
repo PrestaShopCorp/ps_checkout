@@ -30,10 +30,11 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_8_5_5_0(Ps_checkout $module)
 {
-    try {
-        $db = Db::getInstance();
+    $result = true;
+    $db = Db::getInstance();
 
-        $db->execute('
+    try {
+        if (!$db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_address` (
             `id_address` int(10) unsigned NOT NULL,
             `id_customer` int(10) unsigned NOT NULL,
@@ -41,9 +42,20 @@ function upgrade_module_8_5_5_0(Ps_checkout $module)
             PRIMARY KEY (`id_customer`, `checksum`),
             KEY `id_address` (`id_address`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8
-        ');
+        ')) {
+            PrestaShopLogger::addLog(
+                sprintf('%s: pscheckout_address: %s', __FUNCTION__, $db->getMsgError()),
+                4, 1, 'Module', $module->id
+            );
+            $result = false;
+        }
+    } catch (Throwable $exception) {
+        PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
+        $result = false;
+    }
 
-        $db->execute('
+    try {
+        if (!$db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_webhook_event` (
             `id` varchar(50) NOT NULL,
             `event_type` varchar(100) NOT NULL,
@@ -54,12 +66,21 @@ function upgrade_module_8_5_5_0(Ps_checkout $module)
             `date_upd` datetime NOT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
-        ');
-    } catch (Exception $exception) {
+        ')) {
+            PrestaShopLogger::addLog(
+                sprintf('%s: pscheckout_webhook_event: %s', __FUNCTION__, $db->getMsgError()),
+                4, 1, 'Module', $module->id
+            );
+            $result = false;
+        }
+    } catch (Throwable $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
-
-        return false;
+        $result = false;
     }
 
-    return true;
+    if ($result) {
+        PrestaShopLogger::addLog(sprintf('%s: successful', __FUNCTION__), 1, 1, 'Module', $module->id);
+    }
+
+    return $result;
 }
