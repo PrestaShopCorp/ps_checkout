@@ -205,7 +205,6 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                     'payment_source' => [
                         'venmo' => [
                             'email_address' => 'customer@example.com',
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -220,7 +219,6 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                             'attributes' => [
                                 'vault' => $vaultAttributes,
                             ],
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -236,7 +234,6 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                                 'customer' => ['id' => 'cust_abc'],
                                 'vault' => $vaultAttributes,
                             ],
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -422,6 +419,17 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('cust_abc', $customer['id']);
         $this->assertArrayHasKey('name', $customer);
         $this->assertSame('customer@example.com', $customer['email_address']);
+    }
+
+    public function testVaultIdIsNotSentForVenmo(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_xyz')
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('vault_id', $result['payment_source']['venmo']);
     }
 
     public function testCustomerAttributesAbsentWhenNoInvoiceAddress(): void

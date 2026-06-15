@@ -108,10 +108,6 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
             ];
         }
 
-        if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
-        }
-
         $data['experience_context'] = [
             'brand_name' => $this->experienceContextHelper->getBrandName(),
             'shipping_preference' => ExperienceContextHelper::getShippingPreference($this->cart ?? []),

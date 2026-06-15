@@ -407,7 +407,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('PAY_NOW', $result['payment_source']['paypal']['experience_context']['user_action']);
     }
 
-    public function testVaultIdAppearsInOutput(): void
+    public function testVaultIdIsNotSentForPayPal(): void
     {
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -416,7 +416,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             ->setPaypalVaultId('vault_xyz')
             ->build();
 
-        $this->assertSame('vault_xyz', $result['payment_source']['paypal']['vault_id']);
+        $this->assertArrayNotHasKey('vault_id', $result['payment_source']['paypal']);
     }
 
     /**
