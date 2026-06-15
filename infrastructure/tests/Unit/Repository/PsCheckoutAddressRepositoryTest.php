@@ -35,6 +35,7 @@ class PsCheckoutAddressRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->db = $this->createMock(\Db::class);
+        $this->db->method('escape')->willReturnArgument(0);
         $this->repository = new PsCheckoutAddressRepository($this->db);
     }
 

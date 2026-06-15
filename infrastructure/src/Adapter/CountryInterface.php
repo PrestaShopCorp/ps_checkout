@@ -35,4 +35,19 @@ interface CountryInterface
      * @return int|bool
      */
     public function getIdByIsoCode(string $isoCode);
+
+    /**
+     * @param int $idCountry
+     * @param int $idShop
+     *
+     * @return bool
+     */
+    public function isAvailableForDelivery(int $idCountry, int $idShop): bool;
+
+    /**
+     * @param int $idCountry
+     *
+     * @return bool
+     */
+    public function containsStates(int $idCountry): bool;
 }

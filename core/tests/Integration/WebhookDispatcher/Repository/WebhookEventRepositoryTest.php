@@ -39,6 +39,31 @@ class WebhookEventRepositoryTest extends BaseTestCase
      */
     private $repository;
 
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        \Db::getInstance()->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_webhook_event` (
+                `id` varchar(50) NOT NULL,
+                `event_type` varchar(100) NOT NULL,
+                `resource_id` varchar(50) NOT NULL,
+                `status` varchar(20) NOT NULL DEFAULT \'processing\',
+                `error` text DEFAULT NULL,
+                `date_add` datetime NOT NULL,
+                `date_upd` datetime NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=UTF8
+        ');
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        \Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'pscheckout_webhook_event`');
+
+        parent::tearDownAfterClass();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

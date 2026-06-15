@@ -93,33 +93,32 @@ class CreateOrUpdateAddressActionTest extends TestCase
         );
     }
 
-    private function setUpActiveCountry(int $shopId = 1): void
+    /**
+     * Sets up country + shop + customer mocks.
+     *
+     * $customerId = 0 (default) makes the action return false at the customer guard
+     * after the state resolution block, which avoids Address::save() DB calls.
+     * Use $customerId = 1 for tests that need to reach the checksum/address code.
+     */
+    private function setUpAvailableCountry(bool $containsStates = false, int $customerId = 0): void
     {
-        $this->country->method('getIdByIsoCode')
-            ->willReturnCallback(function ($code) {
-                return \Country::getByIso($code) ?: 0;
-            });
-
-        $shop = $this->getMockBuilder(\Shop::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shop->id = $shopId;
-        $this->context->method('getShop')->willReturn($shop);
-
+        $this->country->method('getIdByIsoCode')->willReturn(75);
+        $this->country->method('isAvailableForDelivery')->willReturn(true);
+        $this->country->method('containsStates')->willReturn($containsStates);
         $this->country->method('isNeedDniByCountryId')->willReturn(false);
 
-        $customer = $this->getMockBuilder(\Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customer->id = 1;
+        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+
+        $customer = $this->getMockBuilder(\Customer::class)->disableOriginalConstructor()->getMock();
+        $customer->id = $customerId;
         $this->context->method('getCustomer')->willReturn($customer);
     }
 
     private function setUpCartMock(): void
     {
-        $cart = $this->getMockBuilder(\Cart::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->method('getProducts')->willReturn([]);
         $cart->method('save')->willReturn(true);
         $this->context->method('getCart')->willReturn($cart);
@@ -152,9 +151,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Country not found — getIdByIsoCode returns 0
-    // new Country(0) skips the ObjectModel DB load because if ($id) is falsy,
-    // leaving $country->id as null, which makes !$country->id true.
+    // Country not found — getIdByIsoCode returns 0 or false
     // -------------------------------------------------------------------------
 
     public function testReturnsFalseWhenCountryIdIsZero(): void
@@ -209,8 +206,6 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     // -------------------------------------------------------------------------
     // Country code ↔ ISO mapping
-    // PaypalCountryCodeUtility maps C2 (PayPal) → CN (PS). All other codes pass
-    // through unchanged. Verify the adapter receives the mapped ISO code.
     // -------------------------------------------------------------------------
 
     public function testPassesPayPalC2IsoCodesToCountryAdapterAsCn(): void
@@ -252,16 +247,82 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // State resolution: correct repository method is called based on country type.
+    // Country not available — isAvailableForDelivery returns false
+    // -------------------------------------------------------------------------
+
+    public function testReturnsFalseWhenCountryIsNotAvailableForDelivery(): void
+    {
+        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+
+        $this->country->method('getIdByIsoCode')->willReturn(75);
+        $this->country->method('isAvailableForDelivery')->willReturn(false);
+
+        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+
+        $this->assertFalse($result);
+    }
+
+    // -------------------------------------------------------------------------
+    // DNI required
+    // -------------------------------------------------------------------------
+
+    public function testReturnsFalseWhenDniIsRequired(): void
+    {
+        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+
+        $this->country->method('getIdByIsoCode')->willReturn(75);
+        $this->country->method('isAvailableForDelivery')->willReturn(true);
+        $this->country->method('isNeedDniByCountryId')->willReturn(true);
+
+        $this->psCheckoutAddressRepository->expects($this->never())
+            ->method('getAddressIdByChecksumAndCustomer');
+
+        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'ES'));
+
+        $this->assertFalse($result);
+    }
+
+    public function testSaveAddressIsNeverCalledWhenDniIsRequired(): void
+    {
+        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
+        $shop->id = 1;
+        $this->context->method('getShop')->willReturn($shop);
+
+        $this->country->method('getIdByIsoCode')->willReturn(75);
+        $this->country->method('isAvailableForDelivery')->willReturn(true);
+        $this->country->method('isNeedDniByCountryId')->willReturn(true);
+
+        $this->psCheckoutAddressRepository->expects($this->never())
+            ->method('saveAddress');
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'ES'));
+    }
+
+    // -------------------------------------------------------------------------
+    // Customer ID guard
+    // -------------------------------------------------------------------------
+
+    public function testReturnsFalseWhenCustomerIdIsZero(): void
+    {
+        $this->setUpAvailableCountry(false, 0);
+
+        $this->psCheckoutAddressRepository->expects($this->never())
+            ->method('getAddressIdByChecksumAndCustomer');
+
+        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+
+        $this->assertFalse($result);
+    }
+
+    // -------------------------------------------------------------------------
+    // State resolution
     //
-    // These cases use the real PrestaShop Country class (available in the Docker
-    // test environment). A positive country ID returned by getIdByIsoCode causes
-    // new Country($id) to load the row from the PS installation DB.
-    //
-    // US / AR: contains_states = true AND usesStateIsoCode → getStateIdByIsoCode once.
-    // GB / FR / ES / IT: contains_states = false → neither method called.
-    //
-    // The shop mock is required because Country::__construct reads the shop ID.
+    // customer id = 0 (default) → action returns false at customer guard
+    // after the state resolution block, so no Address DB calls are needed.
     // -------------------------------------------------------------------------
 
     /**
@@ -280,7 +341,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
      */
     public function testStateResolutionUsesIsoCodeLookupForIsoCodeCountries(string $isoCode): void
     {
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(true);
 
         $this->countryRepository->expects($this->once())
             ->method('getStateIdByIsoCode');
@@ -308,21 +369,19 @@ class CreateOrUpdateAddressActionTest extends TestCase
      */
     public function testStateResolutionIsSkippedForCountriesWithoutStates(string $isoCode): void
     {
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(false);
 
         $this->countryRepository->expects($this->never())
             ->method('getStateId');
         $this->countryRepository->expects($this->never())
             ->method('getStateIdByIsoCode');
 
-        // execute() may return false (address validation/save failure is fine here;
-        // the assertion is on whether state lookup was called, not the return value).
         $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
     }
 
     public function testStateResolutionIsSkippedWhenStateIsNull(): void
     {
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(true);
 
         $this->countryRepository->expects($this->never())
             ->method('getStateId');
@@ -334,102 +393,18 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // DNI required — country found but DNI is mandatory → return false
-    // -------------------------------------------------------------------------
-
-    public function testReturnsFalseWhenDniIsRequired(): void
-    {
-        $this->country->method('getIdByIsoCode')
-            ->willReturnCallback(function ($code) {
-                return \Country::getByIso($code) ?: 0;
-            });
-
-        $shop = $this->getMockBuilder(\Shop::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-
-        $this->country->method('isNeedDniByCountryId')->willReturn(true);
-
-        $this->psCheckoutAddressRepository->expects($this->never())
-            ->method('getAddressIdByChecksumAndCustomer');
-
-        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'ES'));
-
-        $this->assertFalse($result);
-    }
-
-    public function testSaveAddressIsNeverCalledWhenDniIsRequired(): void
-    {
-        $this->country->method('getIdByIsoCode')
-            ->willReturnCallback(function ($code) {
-                return \Country::getByIso($code) ?: 0;
-            });
-
-        $shop = $this->getMockBuilder(\Shop::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-
-        $this->country->method('isNeedDniByCountryId')->willReturn(true);
-
-        $this->psCheckoutAddressRepository->expects($this->never())
-            ->method('saveAddress');
-
-        $this->action->execute($this->makeShippingData('ORDER-1', 'ES'));
-    }
-
-    // -------------------------------------------------------------------------
-    // Customer ID guard — guest users (id_customer = 0) must be rejected early
-    // -------------------------------------------------------------------------
-
-    public function testReturnsFalseWhenCustomerIdIsZero(): void
-    {
-        $this->country->method('getIdByIsoCode')
-            ->willReturnCallback(function ($code) {
-                return \Country::getByIso($code) ?: 0;
-            });
-
-        $shop = $this->getMockBuilder(\Shop::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-        $this->country->method('isNeedDniByCountryId')->willReturn(false);
-
-        $customer = $this->getMockBuilder(\Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customer->id = 0;
-        $this->context->method('getCustomer')->willReturn($customer);
-
-        $this->psCheckoutAddressRepository->expects($this->never())
-            ->method('getAddressIdByChecksumAndCustomer');
-
-        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
-
-        $this->assertFalse($result);
-    }
-
-    // -------------------------------------------------------------------------
     // Checksum-based deduplication
     //
-    // When getAddressIdByChecksumAndCustomer returns a non-zero ID, the action
-    // reuses the existing address and must NOT call saveAddress (no new row
-    // should be written to pscheckout_address).
-    //
-    // The full "new address created → saveAddress called" path requires a real
-    // DB write (Address::save()) and is covered at integration level.
+    // customer id = 1 allows the action to proceed to the checksum block.
+    // getAddressIdByChecksumAndCustomer returns 42 (existing address found) so
+    // Address::save() is never reached — no DB connection required.
     // -------------------------------------------------------------------------
 
     public function testSaveAddressIsNeverCalledWhenChecksumMatchFound(): void
     {
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(false, 1);
         $this->setUpCartMock();
 
-        // Existing address found for this customer/checksum pair.
         $this->psCheckoutAddressRepository
             ->method('getAddressIdByChecksumAndCustomer')
             ->willReturn(42);
@@ -442,7 +417,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testChecksumLookupReceivesCustomerIdAndMd5String(): void
     {
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(false, 1);
         $this->setUpCartMock();
 
         $this->psCheckoutAddressRepository
@@ -452,7 +427,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
                 $this->callback(function ($checksum) {
                     return is_string($checksum) && strlen($checksum) === 32 && ctype_xdigit($checksum);
                 }),
-                1 // customer id set in setUpActiveCountry
+                1 // customer id set in setUpAvailableCountry
             )
             ->willReturn(42);
 
@@ -468,10 +443,10 @@ class CreateOrUpdateAddressActionTest extends TestCase
             ->willReturnCallback(function ($checksum) use (&$checksums) {
                 $checksums[] = $checksum;
 
-                return 42; // reuse path — avoids Address::save() and cart dependency
+                return 42;
             });
 
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(false, 1);
         $this->setUpCartMock();
 
         $this->action->execute($this->makeShippingData('ORDER-A', 'FR', 'John', 'Doe', '1 Rue de la Paix'));
@@ -490,10 +465,10 @@ class CreateOrUpdateAddressActionTest extends TestCase
             ->willReturnCallback(function ($checksum) use (&$checksums) {
                 $checksums[] = $checksum;
 
-                return 42; // reuse path — avoids Address::save() and cart dependency
+                return 42;
             });
 
-        $this->setUpActiveCountry();
+        $this->setUpAvailableCountry(false, 1);
         $this->setUpCartMock();
 
         $this->action->execute($this->makeShippingData('ORDER-X', 'FR'));
@@ -505,12 +480,6 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     // -------------------------------------------------------------------------
     // With/without shipping address (wallet fallback dimension)
-    //
-    // ExpressCheckoutShippingData built from purchase_units[0].shipping.address
-    // (present) vs payment_source.paypal.address (fallback when shipping absent).
-    // The action does not know which source was used; it only cares about
-    // getCountryCode(). Both paths are indistinguishable from its perspective
-    // once the DTO is constructed — guard and mapping logic are identical.
     // -------------------------------------------------------------------------
 
     public function testBothShippingPathsReachCountryLookup(): void

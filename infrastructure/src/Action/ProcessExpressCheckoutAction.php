@@ -21,7 +21,7 @@
 namespace PsCheckout\Infrastructure\Action;
 
 use Exception;
-use PsCheckout\Api\Http\OrderHttpClient;
+use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Customer\Action\ExpressCheckoutActionInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutPayerData;
@@ -29,13 +29,13 @@ use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
+use PsCheckout\Infrastructure\Validator\FrontControllerValidatorInterface;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
 
 class ProcessExpressCheckoutAction
 {
-    /** @var FrontControllerValidator */
+    /** @var FrontControllerValidatorInterface */
     private $frontControllerValidator;
 
     /** @var InputStreamUtility */
@@ -44,7 +44,7 @@ class ProcessExpressCheckoutAction
     /** @var PayPalOrderRepositoryInterface */
     private $payPalOrderRepository;
 
-    /** @var OrderHttpClient */
+    /** @var OrderHttpClientInterface */
     private $orderHttpClient;
 
     /** @var SaveExpressCheckoutFlagsAction */
@@ -60,10 +60,10 @@ class ProcessExpressCheckoutAction
     private $logger;
 
     public function __construct(
-        FrontControllerValidator $frontControllerValidator,
+        FrontControllerValidatorInterface $frontControllerValidator,
         InputStreamUtility $inputStreamUtility,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
-        OrderHttpClient $orderHttpClient,
+        OrderHttpClientInterface $orderHttpClient,
         SaveExpressCheckoutFlagsAction $saveExpressCheckoutFlagsAction,
         ExpressCheckoutActionInterface $expressCheckoutAction,
         ContextInterface $context,

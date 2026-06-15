@@ -133,7 +133,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $request->method('isExpressCheckout')->willReturn(false);
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
-        $payPalOrder->expects($this->once())->method('setStatus')->with('PENDING');
+        $payPalOrder->expects($this->once())->method('setStatus')->with('APPROVED');
         $payPalOrder->expects($this->once())->method('setFundingSource')->with('card');
         $payPalOrder->expects($this->once())->method('setIsCardFields')->with(true);
         $payPalOrder->expects($this->once())->method('setIsExpressCheckout')->with(false);
@@ -144,14 +144,13 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
-            'PENDING',
+            'APPROVED',
             PayPalOrderIntent::CAPTURE,
             null,
             null,
             [
                 [
-                    'reference_id' => 'default',
-                    'amount' => ['currency_code' => 'EUR', 'value' => '10.00'],
+                    'amount' => ['currency_code' => 'USD', 'value' => '10.00'],
                     'items' => [['id' => '1']],
                 ],
             ],
@@ -174,7 +173,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             ->willReturn([
                 'purchase_units' => [
                     [
-                        'amount' => ['currency_code' => 'EUR', 'value' => '11.00', 'breakdown' => []],
+                        'amount' => ['currency_code' => 'USD', 'value' => '11.00'],
                         'items' => [['id' => '2']],
                     ],
                 ],
@@ -221,7 +220,8 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             null,
             [
                 [
-                    'amount' => ['currency_code' => 'EUR', 'value' => '10.00'],
+                    'amount' => ['currency_code' => 'USD', 'value' => '10.00'],
+                    'shipping' => ['old_data'],
                 ],
             ],
             []
@@ -240,7 +240,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $this->orderPayloadBuilder->method('build')->willReturn([
             'purchase_units' => [
                 [
-                    'amount' => ['currency_code' => 'EUR', 'value' => '11.00', 'breakdown' => []],
+                    'amount' => ['currency_code' => 'USD', 'value' => '11.00'],
                 ],
             ],
         ]);
