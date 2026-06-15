@@ -35,13 +35,17 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 
 class SetDeclinedOrderStateActionTest extends BaseTestCase
 {
-    private ?SetDeclinedOrderStateAction $setDeclinedOrderStateAction;
+    /** @var SetDeclinedOrderStateAction */
+    private $setDeclinedOrderStateAction;
 
-    private ?ChangeOrderStateAction $changeOrderStateAction;
+    /** @var ChangeOrderStateAction */
+    private $changeOrderStateAction;
 
-    private ?OrderStateMapper $orderStateMapper;
+    /** @var OrderStateMapper */
+    private $orderStateMapper;
 
-    private ?PayPalOrderRepository $payPalOrderRepository;
+    /** @var PayPalOrderRepository */
+    private $payPalOrderRepository;
 
     protected function setUp(): void
     {
@@ -69,14 +73,16 @@ class SetDeclinedOrderStateActionTest extends BaseTestCase
         try {
             $this->setDeclinedOrderStateAction->execute($payPalOrder->getId());
         } catch (OrderException $exception) {
-            if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                // NOTE: Error due mail sending which does not work with tests
-                self::assertEquals(
-                    $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_ERROR),
-                    (new \Order($order->id))->current_state
-                );
+            if (OrderException::FAILED_UPDATE_ORDER_STATUS !== $exception->getCode()) {
+                throw $exception;
             }
+            // NOTE: Email sending fails in test environment; the state transition itself still happened.
         }
+
+        self::assertEquals(
+            $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_ERROR),
+            (new \Order($order->id))->current_state
+        );
     }
 
     public function testItShouldNotChangeStateAsOrderAlreadyHasErrorStatus(): void

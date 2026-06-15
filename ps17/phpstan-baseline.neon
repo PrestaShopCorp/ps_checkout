@@ -6805,6 +6805,12 @@ parameters:
 			path: ../core/tests/Integration/BaseTestCase.php
 
 		-
+			message: '#^Cannot access property \$currency on Context\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: ../core/tests/Integration/BaseTestCase.php
+
+		-
 			message: '#^Cannot call method get\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -6813,18 +6819,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\BaseTestCase\:\:clearCache\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: ../core/tests/Integration/BaseTestCase.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\BaseTestCase\:\:getService\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: ../core/tests/Integration/BaseTestCase.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\BaseTestCase\:\:getService\(\) has parameter \$serviceName with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: ../core/tests/Integration/BaseTestCase.php
 
@@ -6895,7 +6889,7 @@ parameters:
 			path: ../core/tests/Integration/Factory/CustomerFactory.php
 
 		-
-			message: '#^Parameter \#1 \$passwd of static method ToolsCore\:\:encrypt\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$passwd of static method ToolsCore\:\:hash\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/Factory/CustomerFactory.php
@@ -7333,39 +7327,15 @@ parameters:
 			path: ../core/tests/Integration/Order/Action/CreateValidateOrderDataActionTest.php
 
 		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateAction\|null\.$#'
-			identifier: method.nonObject
+			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateAction\:\:execute\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
 			count: 3
 			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
 
 		-
-			message: '#^Cannot call method getIdByKey\(\) on PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\.$#'
-			identifier: method.nonObject
+			message: '#^Parameter \#2 \$newOrderStateId of method PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateAction\:\:execute\(\) expects string, int\|null given\.$#'
+			identifier: argument.type
 			count: 3
-			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method getOneBy\(\) on PsCheckout\\Infrastructure\\Repository\\OrderStateRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\ChangeOrderStateActionTest\:\:\$changeOrderStateAction \(PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\ChangeOrderStateActionTest\:\:\$orderStateMapper \(PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\ChangeOrderStateActionTest\:\:\$orderStateRepository \(PsCheckout\\Infrastructure\\Repository\\OrderStateRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../core/tests/Integration/OrderState/Action/ChangeOrderStateActionTest.php
 
 		-
@@ -7381,21 +7351,9 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction\|null\.$#'
-			identifier: method.nonObject
-			count: 10
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
 			message: '#^Cannot call method expects\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 18
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method getIdByKey\(\) on PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\.$#'
-			identifier: method.nonObject
-			count: 9
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
@@ -7405,76 +7363,10 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
 
 		-
-			message: '#^Cannot call method save\(\) on PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 9
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
 			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 18
 			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#1 \$payPalOrderRepository of class PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction constructor expects PsCheckout\\Core\\PayPal\\Order\\Repository\\PayPalOrderRepositoryInterface, PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#3 \$orderAmountValidator of class PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction constructor expects PsCheckout\\Core\\Order\\Validator\\OrderAmountValidatorInterface, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#4 \$orderStateMapper of class PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction constructor expects PsCheckout\\Core\\OrderState\\Service\\OrderStateMapperInterface, PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#5 \$changeOrderStateAction of class PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction constructor expects PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateActionInterface, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetCompletedOrderStateActionTest\:\:\$orderStateMapper \(PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetCompletedOrderStateActionTest\:\:\$payPalOrderRepository \(PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetCompletedOrderStateActionTest\:\:\$setCompletedOrderStateAction \(PsCheckout\\Core\\OrderState\\Action\\SetCompletedOrderStateAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetCompletedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\OrderState\\Action\\SetDeclinedOrderStateAction\|null\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method getIdByKey\(\) on PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\.$#'
-			identifier: method.nonObject
-			count: 4
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method save\(\) on PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
 
 		-
 			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|Order, int\|null given\.$#'
@@ -7486,12 +7378,6 @@ parameters:
 			message: '#^Property OrderHistoryCore\:\:\$id_order \(int\) does not accept int\|null\.$#'
 			identifier: assign.propertyType
 			count: 2
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetDeclinedOrderStateActionTest\:\:\$changeOrderStateAction \(PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
 
 		-
@@ -7501,42 +7387,6 @@ parameters:
 			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetDeclinedOrderStateActionTest\:\:\$orderStateMapper \(PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetDeclinedOrderStateActionTest\:\:\$payPalOrderRepository \(PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetDeclinedOrderStateActionTest\:\:\$setDeclinedOrderStateAction \(PsCheckout\\Core\\OrderState\\Action\\SetDeclinedOrderStateAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetDeclinedOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\OrderState\\Action\\SetPendingOrderStateAction\|null\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method getIdByKey\(\) on PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
-			message: '#^Cannot call method save\(\) on PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
 			message: '#^Parameter \#2 \$id_order of method OrderHistoryCore\:\:changeIdOrderState\(\) expects int\|Order, int\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -7544,24 +7394,6 @@ parameters:
 
 		-
 			message: '#^Property OrderHistoryCore\:\:\$id_order \(int\) does not accept int\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetPendingOrderStateActionTest\:\:\$orderStateMapper \(PsCheckout\\Core\\OrderState\\Service\\OrderStateMapper\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetPendingOrderStateActionTest\:\:\$payPalOrderRepository \(PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetPendingOrderStateActionTest\:\:\$setPendingOrderStateAction \(PsCheckout\\Core\\OrderState\\Action\\SetPendingOrderStateAction\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../core/tests/Integration/OrderState/Action/SetPendingOrderStateActionTest.php
@@ -7581,12 +7413,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\OrderState\\Action\\SetRefundedOrderStateActionTest\:\:testSetRefundedOrderStateActionToPartiallyRefund\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
-
-		-
-			message: '#^Parameter \#4 \$changeOrderStateAction of class PsCheckout\\Core\\OrderState\\Action\\SetRefundedOrderStateAction constructor expects PsCheckout\\Core\\OrderState\\Action\\ChangeOrderStateActionInterface, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/OrderState/Action/SetRefundedOrderStateActionTest.php
 
@@ -7711,16 +7537,16 @@ parameters:
 			path: ../core/tests/Integration/PayPal/Order/Action/CancelPayPalOrderActionTest.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PayPal\\Order\\Action\\CancelPayPalOrderActionTest\:\:\$cancelPayPalOrderAction \(PsCheckout\\Core\\PayPal\\Order\\Action\\CancelPayPalOrderAction\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/PayPal/Order/Action/CancelPayPalOrderActionTest.php
+			message: '#^Binary operation "\." between ''id \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PayPal\\Order\\Action\\CancelPayPalOrderActionTest\:\:\$payPalRepository \(PsCheckout\\Infrastructure\\Repository\\PayPalOrderRepository\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/PayPal/Order/Action/CancelPayPalOrderActionTest.php
+			message: '#^Binary operation "\." between ''id_order \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
 
 		-
 			message: '#^Cannot access offset ''items'' on non\-empty\-array\|object\|true\.$#'
@@ -7741,21 +7567,9 @@ parameters:
 			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
 
 		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitAction\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
-
-		-
 			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor invoked with 8 parameters, 7 required\.$#'
 			identifier: arguments.count
 			count: 2
-			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitActionTest\:\:\$updatePayPalOrderPurchaseUnitAction \(PsCheckout\\Core\\PayPal\\Order\\Action\\UpdatePayPalOrderPurchaseUnitAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../core/tests/Integration/PayPal/Order/Action/UpdatePayPalOrderPurchaseUnitActionTest.php
 
 		-
@@ -7885,24 +7699,6 @@ parameters:
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
 		-
-			message: '#^Cannot call method execute\(\) on PsCheckout\\Core\\PaymentToken\\Action\\SavePaymentTokenAction\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
-
-		-
-			message: '#^Cannot call method getOneById\(\) on PsCheckout\\Infrastructure\\Repository\\PaymentTokenRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
-
-		-
-			message: '#^Cannot call method getPayPalCustomerIdByCustomerId\(\) on PsCheckout\\Infrastructure\\Repository\\PayPalCustomerRepository\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\Tests\\Integration\\PaymentToken\\Action\\SavePaymentTokenActionTest\:\:provideVaultData\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -7927,20 +7723,14 @@ parameters:
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PaymentToken\\Action\\SavePaymentTokenActionTest\:\:\$paymentTokenRepository \(PsCheckout\\Infrastructure\\Repository\\PaymentTokenRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
+			message: '#^Parameter \#1 \$customerId of method PsCheckout\\Infrastructure\\Repository\\PayPalCustomerRepository\:\:getPayPalCustomerIdByCustomerId\(\) expects int, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PaymentToken\\Action\\SavePaymentTokenActionTest\:\:\$paypalCustomerRepository \(PsCheckout\\Infrastructure\\Repository\\PayPalCustomerRepository\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Tests\\Integration\\PaymentToken\\Action\\SavePaymentTokenActionTest\:\:\$savePaymentTokenAction \(PsCheckout\\Core\\PaymentToken\\Action\\SavePaymentTokenAction\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
+			message: '#^Parameter \#1 \$vaultId of method PsCheckout\\Infrastructure\\Repository\\PaymentTokenRepository\:\:getOneById\(\) expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../core/tests/Integration/PaymentToken/Action/SavePaymentTokenActionTest.php
 
@@ -7951,7 +7741,7 @@ parameters:
 			path: ../core/tests/Integration/Response/CaptureOrderResponse.php
 
 		-
-			message: '#^Binary operation "\." between ''SELECT \* FROM `'' and mixed results in an error\.$#'
+			message: '#^Binary operation "\." between ''SELECT \* FROM `ps…'' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../core/tests/Integration/WebhookDispatcher/Repository/WebhookEventRepositoryTest.php
@@ -9517,12 +9307,6 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
 
 		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 2
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 3
@@ -9769,12 +9553,6 @@ parameters:
 			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
 
 		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 2
-			path: ../core/tests/Unit/WebhookDispatcher/Validator/BodyValuesValidatorTest.php
-
-		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\WebhookDispatcher\\Validator\\HeaderValuesValidatorTest\:\:provideInvalidHeaders\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9785,36 +9563,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/tests/Unit/WebhookDispatcher/Validator/HeaderValuesValidatorTest.php
-
-		-
-			message: '#^Binary operation "\." between ''test_'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../core/tests/create-test-database.php
-
-		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 5
-			path: ../core/tests/create-test-database.php
-
-		-
-			message: '#^Part \$sourceHost \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 3
-			path: ../core/tests/create-test-database.php
-
-		-
-			message: '#^Part \$sourcePassword \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: ../core/tests/create-test-database.php
-
-		-
-			message: '#^Part \$sourceUser \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: ../core/tests/create-test-database.php
 
 		-
 			message: '#^Cannot access property \$id on Currency\|null\.$#'
@@ -9873,7 +9621,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Shop\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
@@ -9925,12 +9673,6 @@ parameters:
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
-			message: '#^Parameter \#1 \$idCountry of method PsCheckout\\Infrastructure\\Adapter\\CountryInterface\:\:isNeedDniByCountryId\(\) expects int, bool\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
-
-		-
 			message: '#^Parameter \#1 \$isoCode of method PsCheckout\\Infrastructure\\Adapter\\CountryInterface\:\:getIdByIsoCode\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -9955,7 +9697,7 @@ parameters:
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
-			message: '#^Property AddressCore\:\:\$id_country \(int\) does not accept bool\|int\.$#'
+			message: '#^Property AddressCore\:\:\$id_country \(int\) does not accept int\<min, \-1\>\|int\<1, max\>\|true\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
@@ -10003,7 +9745,7 @@ parameters:
 			path: ../infrastructure/src/Action/CustomerAuthenticationAction.php
 
 		-
-			message: '#^Binary operation "\." between "\\n            SELECT…" and mixed results in an error\.$#'
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../infrastructure/src/Action/CustomerNotifyAction.php
@@ -10041,12 +9783,6 @@ parameters:
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Action\\CustomerNotifyAction\:\:execute\(\) with return type void returns null but should not return anything\.$#'
 			identifier: return.void
-			count: 1
-			path: ../infrastructure/src/Action/CustomerNotifyAction.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Action/CustomerNotifyAction.php
 
@@ -10201,7 +9937,7 @@ parameters:
 			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
 
 		-
-			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Api\\Http\\OrderHttpClient\:\:fetchOrder\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$orderId of method PsCheckout\\Api\\Http\\OrderHttpClientInterface\:\:fetchOrder\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../infrastructure/src/Action/ProcessExpressCheckoutAction.php
@@ -10670,24 +10406,6 @@ parameters:
 
 		-
 			message: '#^Binary operation "\." between "\\n            CREATE…" and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 13
-			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
-
-		-
-			message: '#^Binary operation "\." between ''ALTER TABLE `'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 8
-			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
-
-		-
-			message: '#^Binary operation "\." between ''SHOW COLUMNS FROM `'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 3
-			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
-
-		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 12
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
@@ -11419,6 +11137,12 @@ parameters:
 			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
 
 		-
+			message: '#^Binary operation "\." between ''alias \= \\'''' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/AddressRepository.php
+
+		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 1
@@ -11461,24 +11185,6 @@ parameters:
 			path: ../infrastructure/src/Repository/CollectionRepository.php
 
 		-
-			message: '#^Binary operation "\." between ''SELECT COUNT\(\*\)…'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../infrastructure/src/Repository/ConfigurationRepository.php
-
-		-
-			message: '#^Binary operation "\." between ''SELECT value FROM '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../infrastructure/src/Repository/ConfigurationRepository.php
-
-		-
-			message: '#^Binary operation "\." between ''UPDATE '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../infrastructure/src/Repository/ConfigurationRepository.php
-
-		-
 			message: '#^Binary operation "\." between "\\n               …" and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -11491,9 +11197,15 @@ parameters:
 			path: ../infrastructure/src/Repository/CountryRepository.php
 
 		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			message: '#^Binary operation "\." between ''iso_code \= \\'''' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 3
+			count: 1
+			path: ../infrastructure/src/Repository/CountryRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''name LIKE \\''%%'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
 			path: ../infrastructure/src/Repository/CountryRepository.php
 
 		-
@@ -11545,18 +11257,6 @@ parameters:
 			path: ../infrastructure/src/Repository/CurrencyRepository.php
 
 		-
-			message: '#^Binary operation "\." between "\\n            SELECT…" and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../infrastructure/src/Repository/CurrencyRepository.php
-
-		-
-			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 3
-			path: ../infrastructure/src/Repository/CurrencyRepository.php
-
-		-
 			message: '#^Cannot access property \$shop on Context\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -11579,6 +11279,24 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../infrastructure/src/Repository/CurrencyRepositoryInterface.php
+
+		-
+			message: '#^Binary operation "\." between ''`name` \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/FundingSourceRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''name \= \\'''' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: ../infrastructure/src/Repository/FundingSourceRepository.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/FundingSourceRepository.php
 
 		-
 			message: '#^Cannot cast mixed to int\.$#'
@@ -11635,12 +11353,6 @@ parameters:
 			path: ../infrastructure/src/Repository/FundingSourceRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../infrastructure/src/Repository/FundingSourceRepository.php
-
-		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\GenderRepository\:\:getGenderNameById\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -11659,20 +11371,32 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalCustomerRepository.php
 
 		-
+			message: '#^Binary operation "\." between ''id \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
+
+		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalOrderAuthorizationRepository\:\:save\(\) with return type void returns bool but should not return anything\.$#'
 			identifier: return.void
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../infrastructure/src/Repository/PayPalOrderAuthorizationRepository.php
-
-		-
 			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''id \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''id_order \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
 
@@ -11701,46 +11425,28 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 5
-			path: ../infrastructure/src/Repository/PayPalOrderCaptureRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/src/Repository/PayPalOrderPurchaseUnitRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../infrastructure/src/Repository/PayPalOrderPurchaseUnitRepository.php
-
-		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PayPalOrderRefundRepository\:\:save\(\) with return type void returns bool but should not return anything\.$#'
 			identifier: return.void
 			count: 1
 			path: ../infrastructure/src/Repository/PayPalOrderRefundRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
+			message: '#^Binary operation "\." between ''id \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
 			count: 1
-			path: ../infrastructure/src/Repository/PayPalOrderRefundRepository.php
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 6
-			path: ../infrastructure/src/Repository/PayPalOrderRefundRepository.php
+			message: '#^Binary operation "\." between mixed and '' \= "'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
 			message: '#^Cannot access offset ''environment'' on non\-empty\-array\|object\|true\.$#'
@@ -11839,18 +11545,6 @@ parameters:
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
-
-		-
 			message: '#^Parameter \#2 \$idCart of class PsCheckout\\Core\\PayPal\\Order\\Entity\\PayPalOrder constructor expects int, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -11860,6 +11554,12 @@ parameters:
 			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
+			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 5
 			path: ../infrastructure/src/Repository/PayPalOrderRepository.php
 
 		-
@@ -11929,12 +11629,6 @@ parameters:
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
-
-		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 1
@@ -11947,9 +11641,21 @@ parameters:
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
 
 		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 5
+			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
+
+		-
 			message: '#^Parameter \#3 \$paymentSource of class PsCheckout\\Core\\PaymentToken\\ValueObject\\PaymentToken constructor expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 2
+			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../infrastructure/src/Repository/PaymentTokenRepository.php
 
 		-
@@ -12037,6 +11743,24 @@ parameters:
 			path: ../infrastructure/src/Repository/ReadOnlyCollectionRepositoryInterface.php
 
 		-
+			message: '#^Binary operation "\." between ''paypal_order_id \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 3
+			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
+
+		-
+			message: '#^Binary operation "\." between ''status \= "'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
+
+		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\ShippingTrackingRepository\:\:buildTrackingRecord\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -12073,18 +11797,6 @@ parameters:
 			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
 
 		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
-
-		-
-			message: '#^Parameter \#1 \$string of function pSQL expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../infrastructure/src/Repository/ShippingTrackingRepository.php
-
-		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, array\|mysqli_result\|PDOStatement\|resource given\.$#'
 			identifier: argument.type
 			count: 4
@@ -12109,7 +11821,13 @@ parameters:
 			path: ../infrastructure/src/Repository/StateRepository.php
 
 		-
-			message: '#^Binary operation "\." between ''UPDATE `'' and mixed results in an error\.$#'
+			message: '#^Binary operation "\." between ''`id` \= \\'''' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: ../infrastructure/src/Repository/WebhookEventRepository.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../infrastructure/src/Repository/WebhookEventRepository.php
@@ -12143,24 +11861,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: ../infrastructure/src/Validator/PayLaterValidator.php
-
-		-
-			message: '#^Parameter \#1 \$isoCode of static method CountryCore\:\:getByIso\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 4
-			path: ../infrastructure/tests/Unit/Action/CreateOrUpdateAddressActionTest.php
-
-		-
-			message: '#^Parameter \#1 \$frontControllerValidator of class PsCheckout\\Infrastructure\\Action\\ProcessExpressCheckoutAction constructor expects PsCheckout\\Infrastructure\\Validator\\FrontControllerValidator, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Infrastructure\\Validator\\FrontControllerValidatorInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/tests/Unit/Action/ProcessExpressCheckoutActionTest.php
-
-		-
-			message: '#^Parameter \#4 \$orderHttpClient of class PsCheckout\\Infrastructure\\Action\\ProcessExpressCheckoutAction constructor expects PsCheckout\\Api\\Http\\OrderHttpClient, PHPUnit\\Framework\\MockObject\\MockObject&PsCheckout\\Api\\Http\\OrderHttpClientInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../infrastructure/tests/Unit/Action/ProcessExpressCheckoutActionTest.php
 
 		-
 			message: '#^Method Tests\\Unit\\PsCheckout\\Infrastructure\\Action\\SaveBatchConfigurationActionTest\:\:testExecuteSavesValidConfiguration\(\) has no return type specified\.$#'
@@ -12293,6 +11993,42 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../infrastructure/tests/Unit/Validator/PayLaterValidatorTest.php
+
+		-
+			message: '#^Function bqSQL\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
+
+		-
+			message: '#^Function bqSQL\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
+
+		-
+			message: '#^Function pSQL\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
+
+		-
+			message: '#^Function pSQL\(\) has parameter \$htmlOK with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
+
+		-
+			message: '#^Function pSQL\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/tests/bootstrap.php
 
 		-
 			message: '#^Cannot access property \$gift on Cart\|null\.$#'

@@ -39,7 +39,7 @@ class CustomerFactory
         $customer->firstname = $data['firstname'] ?? 'John';  // First name is required
         $customer->lastname = $data['lastname'] ?? 'Doe';     // Last name is required
         $customer->email = $data['email'] ?? 'test@example.com'; // Email is required
-        $customer->passwd = isset($data['passwd']) ? Tools::encrypt($data['passwd']) : Tools::encrypt('defaultpassword'); // Password is required and should be hashed
+        $customer->passwd = Tools::hash($data['passwd'] ?? 'defaultpassword');
 
         // Optional fields can be omitted since we are focusing on integration tests and only mandatory fields are needed
         $customer->id_shop = $data['id_shop'] ?? 1;  // Default shop ID

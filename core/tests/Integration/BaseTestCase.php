@@ -39,6 +39,12 @@ class BaseTestCase extends TestCase
         \Configuration::loadConfiguration();
         $this->updateConfigurationValues();
 
+        // PS9 / PHP 8.1 throws a fatal on null property access; ensure currency is available
+        // for any code path that calls Context::getContext()->currency->precision.
+        if (\Context::getContext()->currency === null) {
+            \Context::getContext()->currency = new \Currency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
+        }
+
         \Cache::clear();
     }
 
@@ -166,6 +172,11 @@ class BaseTestCase extends TestCase
         \Configuration::updateValue('PS_INVOICE', false);
     }
 
+    /**
+     * @template T
+     * @param class-string<T> $serviceName
+     * @return T
+     */
     protected function getService($serviceName)
     {
         $containerFront = ContainerBuilder::getContainer('front', true);

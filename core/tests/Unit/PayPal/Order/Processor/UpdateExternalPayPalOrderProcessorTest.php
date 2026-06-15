@@ -134,8 +134,6 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
     public function testItUpdatesOrderWhenChangesDetected(): void
     {
-        $this->markTestSkipped('This test is broken.');
-
         $request = $this->createMock(CheckPayPalOrderRequest::class);
         $request->method('getOrderId')->willReturn('ORDER-123');
         $request->method('getFundingSource')->willReturn('card');
@@ -143,7 +141,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
         $request->method('isExpressCheckout')->willReturn(false);
 
         $payPalOrder = $this->createMock(PayPalOrder::class);
-        $payPalOrder->expects($this->once())->method('setStatus')->with('COMPLETED');
+        $payPalOrder->expects($this->once())->method('setStatus')->with('APPROVED');
         $payPalOrder->expects($this->once())->method('setFundingSource')->with('card');
         $payPalOrder->expects($this->once())->method('setIsCardFields')->with(true);
         $payPalOrder->expects($this->once())->method('setIsExpressCheckout')->with(false);
@@ -155,13 +153,13 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
         $paypalOrderResponse = new PayPalOrderResponse(
             'ORDER-123',
-            'COMPLETED',
+            'APPROVED',
             PayPalOrderIntent::CAPTURE,
             null,
             ['card' => []],
             [
                 [
-                    'amount' => ['value' => '10.00'],
+                    'amount' => ['currency_code' => 'USD', 'value' => '10.00'],
                     'items' => [['id' => '1']],
                     'shipping' => ['old_data'],
                 ],
@@ -198,7 +196,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             ->willReturn([
                 'purchase_units' => [
                     [
-                        'amount' => ['value' => '11.00'],
+                        'amount' => ['currency_code' => 'USD', 'value' => '11.00'],
                         'items' => [['id' => '2']],
                         'shipping' => ['new_data'],
                     ],
@@ -229,8 +227,6 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
 
     public function testItThrowsExceptionWhenUpdateFails(): void
     {
-        $this->markTestSkipped('This test is broken.');
-
         $request = $this->createMock(CheckPayPalOrderRequest::class);
         $request->method('getOrderId')->willReturn('ORDER-123');
         $request->method('getFundingSource')->willReturn('card');
@@ -249,7 +245,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             ['card' => []],
             [
                 [
-                    'amount' => ['value' => '10.00'],
+                    'amount' => ['currency_code' => 'USD', 'value' => '10.00'],
                     'shipping' => ['old_data'],
                 ],
             ],
@@ -286,7 +282,7 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             ->willReturn([
                 'purchase_units' => [
                     [
-                        'amount' => ['value' => '11.00'],
+                        'amount' => ['currency_code' => 'USD', 'value' => '11.00'],
                     ],
                 ],
             ]);

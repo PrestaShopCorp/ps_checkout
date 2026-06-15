@@ -31,11 +31,14 @@ use PsCheckout\Infrastructure\Repository\OrderStateRepository;
 
 class ChangeOrderStateActionTest extends BaseTestCase
 {
-    private ?OrderStateMapper $orderStateMapper;
+    /** @var OrderStateMapper */
+    private $orderStateMapper;
 
-    private ?OrderStateRepository $orderStateRepository;
+    /** @var OrderStateRepository */
+    private $orderStateRepository;
 
-    private ?ChangeOrderStateAction $changeOrderStateAction;
+    /** @var ChangeOrderStateAction */
+    private $changeOrderStateAction;
 
     protected function setUp(): void
     {
@@ -84,11 +87,13 @@ class ChangeOrderStateActionTest extends BaseTestCase
         try {
             $this->changeOrderStateAction->execute($order->id, $newOrderState->id);
         } catch (OrderException $exception) {
-            if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                // NOTE: Error due mail sending which does not work with tests
-                self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
+            if (OrderException::FAILED_UPDATE_ORDER_STATUS !== $exception->getCode()) {
+                throw $exception;
             }
+            // NOTE: Email sending fails in test environment; the state transition itself still happened.
         }
+
+        self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
     }
 
     public function testChangeOrderStateWithNotDefaultValue(): void
@@ -110,10 +115,12 @@ class ChangeOrderStateActionTest extends BaseTestCase
         try {
             $this->changeOrderStateAction->execute($order->id, $newOrderState->id);
         } catch (OrderException $exception) {
-            if (OrderException::FAILED_UPDATE_ORDER_STATUS === $exception->getCode()) {
-                // NOTE: Error due mail sending which does not work with tests
-                self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
+            if (OrderException::FAILED_UPDATE_ORDER_STATUS !== $exception->getCode()) {
+                throw $exception;
             }
+            // NOTE: Email sending fails in test environment; the state transition itself still happened.
         }
+
+        self::assertEquals($newOrderState->id, (new \Order($order->id))->getCurrentState());
     }
 }

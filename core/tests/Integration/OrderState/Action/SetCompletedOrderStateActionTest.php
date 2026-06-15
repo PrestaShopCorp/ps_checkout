@@ -39,11 +39,14 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 
 class SetCompletedOrderStateActionTest extends BaseTestCase
 {
-    private ?SetCompletedOrderStateAction $setCompletedOrderStateAction;
+    /** @var SetCompletedOrderStateAction */
+    private $setCompletedOrderStateAction;
 
-    private ?OrderStateMapper $orderStateMapper;
+    /** @var OrderStateMapper */
+    private $orderStateMapper;
 
-    private ?PayPalOrderRepository $payPalOrderRepository;
+    /** @var PayPalOrderRepository */
+    private $payPalOrderRepository;
 
     protected function setUp(): void
     {
@@ -225,11 +228,29 @@ class SetCompletedOrderStateActionTest extends BaseTestCase
     public function testItShouldNotChangeStateWhenOrderHasAlreadyBeenCompleted(): void
     {
         $completedStateId = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_COMPLETED);
-        $order = OrderFactory::create(['total_paid' => 29.00, 'current_state' => $completedStateId]);
+        $order = OrderFactory::create(['total_paid' => 29.00]);
+
+        // Insert history directly rather than via setCurrentState() — the latter triggers email
+        // sending which requires the Symfony kernel/container, unavailable in the PHPUnit context.
+        \Db::getInstance()->insert('order_history', [
+            'id_order' => $order->id,
+            'id_order_state' => $completedStateId,
+            'id_employee' => 0,
+            'date_add' => date('Y-m-d H:i:s'),
+        ]);
 
         // Simulate that order has been moved past Completed by another module
         $shippedStateId = 4; // PS default "Shipped" state
-        $order->setCurrentState($shippedStateId);
+        \Db::getInstance()->execute(
+            'UPDATE `' . _DB_PREFIX_ . 'orders` SET `current_state` = ' . $shippedStateId . ' WHERE `id_order` = ' . (int) $order->id
+        );
+        \Db::getInstance()->insert('order_history', [
+            'id_order' => $order->id,
+            'id_order_state' => $shippedStateId,
+            'id_employee' => 0,
+            'date_add' => date('Y-m-d H:i:s'),
+        ]);
+        $order->current_state = $shippedStateId;
 
         $payPalOrderResponseData = [
             'purchase_units' => [[

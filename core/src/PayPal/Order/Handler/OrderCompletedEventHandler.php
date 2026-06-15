@@ -94,6 +94,9 @@ class OrderCompletedEventHandler implements EventHandlerInterface
 
         if ($payPalOrderResponse->getPaymentSource()) {
             $payPalOrder->setPaymentSource($payPalOrderResponse->getPaymentSource());
+            if ($payPalOrderResponse->getFundingSource()) {
+                $payPalOrder->setFundingSource($payPalOrderResponse->getFundingSource());
+            }
         }
 
         if (in_array($payPalOrderResponse->getFundingSource(), ['apple_pay', 'google_pay', 'card'], true)

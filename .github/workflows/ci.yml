@@ -59,8 +59,23 @@ jobs:
 
       - name: Wait for PrestaShop to be ready
         run: |
-          timeout 60 bash -c 'until docker exec prestashop-${{ matrix.module }} test -f /var/www/html/config/config.inc.php 2>/dev/null || docker exec prestashop-${{ matrix.module }} test -f /var/www/html/app/config/parameters.php 2>/dev/null; do sleep 2; done' || true
-          sleep 5
+          echo "Waiting for PrestaShop installation to complete..."
+          for i in $(seq 60); do
+            if docker exec prestashop-${{ matrix.module }} bash -c "
+              ! test -d /var/www/html/install &&
+              (test -f /var/www/html/config/config.inc.php || test -f /var/www/html/app/config/parameters.php) &&
+              mysql -hmysql -uroot -pprestashop prestashop -e 'SELECT 1 FROM ps_configuration LIMIT 1' > /dev/null 2>&1
+            " 2>/dev/null; then
+              echo "PrestaShop is ready (attempt $i)"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "ERROR: PrestaShop did not become ready within 5 minutes"
+              exit 1
+            fi
+            echo "Still waiting... attempt $i/60"
+            sleep 5
+          done
 
       - name: Copy module to PrestaShop
         run: |
@@ -110,7 +125,7 @@ jobs:
       - name: Install module and Create testing database for Integration tests
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html && php bin/console  prestashop:module install ps_checkout"
-          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL tests/create-test-database.php"
+          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL vendor/invertus/core/tests/create-test-database.php"
 
       - name: Run Infrastructure Integration Tests
         run: |
@@ -123,12 +138,6 @@ jobs:
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
             --configuration=vendor/invertus/core/tests/phpunit-integration.xml \
             --bootstrap=vendor/invertus/core/tests/bootstrap-integration.php"
-
-      - name: Run Module Integration Tests
-        run: |
-          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
-            --configuration=tests/phpunit-integration.xml \
-            --bootstrap=tests/bootstrap-integration.php"  
 
       - name: Cleanup
         if: always()

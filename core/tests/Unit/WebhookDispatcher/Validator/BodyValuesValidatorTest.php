@@ -44,13 +44,14 @@ class BodyValuesValidatorTest extends TestCase
 
     public function testItValidatesAndTransformsValidBody(): void
     {
-        $this->markTestSkipped('This test is broken');
-
         // Arrange
         $bodyValues = [
             'resource' => json_encode(['id' => '123', 'status' => 'completed']),
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
             'category' => 'PAYMENT',
+            'eventStream' => 'PLATFORM',
+            'eventNumber' => '42',
+            'webhookId' => 'WEBHOOK-123',
             'summary' => 'Payment completed',
             'orderId' => 'ORDER-123',
         ];
@@ -60,12 +61,15 @@ class BodyValuesValidatorTest extends TestCase
             ->willReturn($bodyValues);
 
         // Act
-        $result = $this->validator->validate();
+        $result = $this->validator->validateMaasland();
 
         // Assert
         $this->assertEquals([
+            'webhookId' => 'WEBHOOK-123',
             'resource' => ['id' => '123', 'status' => 'completed'],
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
+            'eventStream' => 'PLATFORM',
+            'eventNumber' => '42',
             'category' => 'PAYMENT',
             'summary' => 'Payment completed',
             'orderId' => 'ORDER-123',
@@ -74,13 +78,14 @@ class BodyValuesValidatorTest extends TestCase
 
     public function testItTransformsBodyWithOptionalFields(): void
     {
-        $this->markTestSkipped('This test is broken');
-
         // Arrange
         $bodyValues = [
             'resource' => json_encode(['id' => '123']),
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
             'category' => 'PAYMENT',
+            'eventStream' => 'PLATFORM',
+            'eventNumber' => '1',
+            'webhookId' => 'WEBHOOK-456',
         ];
 
         $this->webhookBodyProvider->expects($this->once())
@@ -88,12 +93,15 @@ class BodyValuesValidatorTest extends TestCase
             ->willReturn($bodyValues);
 
         // Act
-        $result = $this->validator->validate();
+        $result = $this->validator->validateMaasland();
 
         // Assert
         $this->assertEquals([
+            'webhookId' => 'WEBHOOK-456',
             'resource' => ['id' => '123'],
             'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
+            'eventStream' => 'PLATFORM',
+            'eventNumber' => '1',
             'category' => 'PAYMENT',
             'summary' => null,
             'orderId' => null,

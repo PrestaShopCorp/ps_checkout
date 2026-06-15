@@ -39,4 +39,24 @@ class Country implements CountryInterface
     {
         return PrestaShopCountry::getByIso($isoCode);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAvailableForDelivery(int $idCountry, int $idShop): bool
+    {
+        $country = new PrestaShopCountry($idCountry, null, $idShop);
+
+        return (bool) $country->id && $country->active && $country->isAssociatedToShop($idShop);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function containsStates(int $idCountry): bool
+    {
+        $country = new PrestaShopCountry($idCountry);
+
+        return (bool) $country->contains_states;
+    }
 }

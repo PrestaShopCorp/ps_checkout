@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Infrastructure\Repository;
 
-use DbQuery;
-
 class PsCheckoutAddressRepository implements PsCheckoutAddressRepositoryInterface
 {
     /**
@@ -43,14 +41,13 @@ class PsCheckoutAddressRepository implements PsCheckoutAddressRepositoryInterfac
             return 0;
         }
 
-        $query = new DbQuery();
-        $query->select('pa.id_address');
-        $query->from('pscheckout_address', 'pa');
-        $query->innerJoin('address', 'a', 'a.id_address = pa.id_address AND a.deleted = 0');
-        $query->where('pa.checksum = \'' . pSQL($checksum) . '\'');
-        $query->where('pa.id_customer = ' . $idCustomer);
+        $sql = 'SELECT pa.`id_address`'
+            . ' FROM `' . _DB_PREFIX_ . 'pscheckout_address` pa'
+            . ' INNER JOIN `' . _DB_PREFIX_ . 'address` a ON (a.`id_address` = pa.`id_address` AND a.`deleted` = 0)'
+            . ' WHERE pa.`checksum` = \'' . $this->db->escape($checksum) . '\''
+            . ' AND pa.`id_customer` = ' . (int) $idCustomer;
 
-        return (int) $this->db->getValue($query);
+        return (int) $this->db->getValue($sql);
     }
 
     /**
@@ -67,7 +64,7 @@ class PsCheckoutAddressRepository implements PsCheckoutAddressRepositoryInterfac
             [
                 'id_address' => $idAddress,
                 'id_customer' => $idCustomer,
-                'checksum' => pSQL($checksum),
+                'checksum' => $this->db->escape($checksum),
             ],
             false,
             true,
