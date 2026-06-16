@@ -105,7 +105,7 @@ class AmountBreakdownNodeTest extends TestCase
                         [
                             'name' => StringUtility::truncate('Product 2', 127),
                             'description' => '',
-                            'sku' => StringUtility::truncate('2-0', 127),
+                            // no 'sku' key: product has no reference, field is omitted rather than sending a synthetic "{id}-{attr}" value
                             'unit_amount' => [
                                 'currency_code' => 'USD',
                                 'value' => '30.00', // 30.00 / 1
@@ -312,6 +312,57 @@ class AmountBreakdownNodeTest extends TestCase
                                 'currency_code' => 'EUR',
                                 'value' => '40.00', // remainder (100 - 45 - 5 - 10)
                             ],
+                        ],
+                    ],
+                ],
+            ],
+            'cart_with_missing_reference_omits_sku' => [
+                // Regression: previously a product without a reference produced sku="{id}-{attr}"
+                // (e.g. "8-0"), which the PayPal tracking API rejects with 422.
+                // The order-creation API accepts it silently, but it is meaningless data.
+                // The correct behaviour is to omit the sku field entirely when reference is empty.
+                'cartData' => [
+                    'cart' => [
+                        'totals' => ['total_including_tax' => ['amount' => 20.00]],
+                        'shipping_cost' => 0.00,
+                        'subtotals' => ['gift_wrapping' => ['amount' => 0.00]],
+                    ],
+                    'currency' => ['iso_code' => 'EUR'],
+                    'products' => [
+                        [
+                            'id_product' => 8,
+                            'id_product_attribute' => 0,
+                            'name' => 'Mug Today is a good day',
+                            'total' => 18.00,
+                            'total_wt' => 20.00,
+                            'quantity' => 1,
+                            'reference' => '',
+                            'is_virtual' => '0',
+                            'attributes' => '',
+                        ],
+                    ],
+                ],
+                'expected' => [
+                    'items' => [
+                        [
+                            'name' => StringUtility::truncate('Mug Today is a good day', 127),
+                            'description' => '',
+                            // 'sku' intentionally absent — empty reference must not produce "8-0"
+                            'unit_amount' => ['currency_code' => 'EUR', 'value' => '18.00'],
+                            'tax' => ['currency_code' => 'EUR', 'value' => '2.00'],
+                            'quantity' => 1,
+                            'category' => 'PHYSICAL_GOODS',
+                        ],
+                    ],
+                    'amount' => [
+                        'breakdown' => [
+                            'item_total' => ['currency_code' => 'EUR', 'value' => '18.00'],
+                            'shipping' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                            'tax_total' => ['currency_code' => 'EUR', 'value' => '2.00'],
+                            'insurance' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                            'shipping_discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                            'discount' => ['currency_code' => 'EUR', 'value' => '0.00'],
+                            'handling' => ['currency_code' => 'EUR', 'value' => '0.00'],
                         ],
                     ],
                 ],
