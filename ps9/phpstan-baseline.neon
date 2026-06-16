@@ -4321,6 +4321,12 @@ parameters:
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
 
 		-
+			message: '#^Parameter \#1 \$array of function array_filter expects array, array\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
+
+		-
 			message: '#^Parameter \#1 \$array of function array_replace_recursive expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4340,12 +4346,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$status of class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
-
-		-
-			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Provider/PayPalOrderProvider.php
@@ -9351,7 +9351,7 @@ parameters:
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
-			count: 3
+			count: 5
 			path: ../core/tests/Unit/PayPal/Order/Provider/PayPalOrderProviderTest.php
 
 		-

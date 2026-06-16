@@ -90,7 +90,9 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
 
         $payPalOrderResponse = $this->fetchOrder($id);
 
-        $orderToStoreInCache = !empty($data) ? array_replace_recursive($data, $payPalOrderResponse) : $payPalOrderResponse;
+        $orderToStoreInCache = !empty($data)
+            ? array_replace_recursive($data, array_filter($payPalOrderResponse, static function ($value) { return $value !== null; }))
+            : $payPalOrderResponse;
 
         if (!$orderToStoreInCache) {
             throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
@@ -146,8 +148,8 @@ class PayPalOrderProvider implements PayPalOrderProviderInterface
     {
         return new PayPalOrderResponse(
             $data['id'],
-            $data['status'],
-            $data['intent'],
+            $data['status'] ?? '',
+            $data['intent'] ?? '',
             $data['payer'] ?? null,
             $data['payment_source'] ?? null,
             $data['purchase_units'],

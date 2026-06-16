@@ -172,6 +172,111 @@ class PayPalOrderProviderTest extends TestCase
         $this->assertEquals($orderId, $result->getId());
     }
 
+    /**
+     * When a shipping tracking number is added, the PayPal add-tracker API response
+     * contains `purchase_units` (with tracker details) but omits `status` and `intent`.
+     * The provider must not throw a TypeError when building the value object from such data.
+     */
+    public function testItHandlesOrderResponseMissingStatusAndIntentAfterTrackingAdded(): void
+    {
+        $orderId = 'ORDER-123';
+        // Simulates the PayPal response shape returned by POST /trackers after shipping tracking is added:
+        // top-level `status` and `intent` are absent; only tracking-enriched purchase_units are present.
+        $trackingApiResponseData = [
+            'id' => $orderId,
+            'purchase_units' => [
+                [
+                    'reference_id' => 'default',
+                    'shipping' => [
+                        'trackers' => [
+                            ['id' => 'TRACKER-ID-123', 'status' => 'SHIPPED'],
+                        ],
+                    ],
+                ],
+            ],
+            'links' => [],
+        ];
+
+        $this->orderPayPalCache->method('has')->willReturn(false);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+
+        $response->method('getStatusCode')->willReturn(200);
+        $response->method('getBody')->willReturn($stream);
+        $stream->method('__toString')->willReturn(json_encode($trackingApiResponseData));
+
+        $this->orderHttpClient->expects($this->once())
+            ->method('fetchOrder')
+            ->with($orderId)
+            ->willReturn($response);
+
+        $result = $this->provider->getById($orderId);
+
+        $this->assertInstanceOf(PayPalOrderResponse::class, $result);
+        $this->assertSame('', $result->getStatus());
+        $this->assertSame('', $result->getIntent());
+    }
+
+    /**
+     * When cached order data is merged with a fresh fetch that lacks `status`,
+     * null values are stripped before merging so the cached status is preserved.
+     */
+    public function testItPreservesCachedStatusWhenFreshFetchHasNullStatus(): void
+    {
+        $orderId = 'ORDER-123';
+
+        $cachedData = [
+            'id' => $orderId,
+            'status' => 'APPROVED',
+            'intent' => PayPalOrderIntent::CAPTURE,
+            'purchase_units' => [],
+            'links' => [],
+        ];
+
+        // Fresh fetch from PayPal (e.g. after tracker was added) has no status/intent
+        $freshResponseData = [
+            'id' => $orderId,
+            'status' => null,
+            'intent' => null,
+            'purchase_units' => [
+                [
+                    'shipping' => [
+                        'trackers' => [
+                            ['id' => 'TRACKER-ID-456', 'status' => 'SHIPPED'],
+                        ],
+                    ],
+                ],
+            ],
+            'links' => [],
+        ];
+
+        $this->orderPayPalCache->method('has')
+            ->with($orderId)
+            ->willReturn(true);
+
+        $this->orderPayPalCache->method('getValue')
+            ->with($orderId)
+            ->willReturn($cachedData);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $stream = $this->createMock(StreamInterface::class);
+
+        $response->method('getStatusCode')->willReturn(200);
+        $response->method('getBody')->willReturn($stream);
+        $stream->method('__toString')->willReturn(json_encode($freshResponseData));
+
+        $this->orderHttpClient->expects($this->once())
+            ->method('fetchOrder')
+            ->with($orderId)
+            ->willReturn($response);
+
+        $result = $this->provider->getById($orderId);
+
+        $this->assertInstanceOf(PayPalOrderResponse::class, $result);
+        $this->assertSame('APPROVED', $result->getStatus());
+    }
+
     public function testItThrowsExceptionWhenOrderNotFound(): void
     {
         $orderId = 'ORDER-123';
