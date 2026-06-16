@@ -92,18 +92,20 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             // Get product details
             $productData = $this->getProductData($productId, $productAttributeId);
 
-            // Validate required fields
-            $sku = $this->validateSku($product, $productData);
+            $sku = $this->resolveSku($product, $productData);
             $quantity = $this->validateQuantity($product);
             $name = $this->validateName($product, $productData);
 
             $item = [
                 'name' => $name,
                 'quantity' => $quantity,
-                'sku' => $sku,
                 'url' => $this->getProductUrl($productData['product'], $productAttributeId),
                 'image_url' => $this->getProductImageUrl($productData['product'], $productAttributeId),
             ];
+
+            if (!empty($sku)) {
+                $item['sku'] = $sku;
+            }
 
             $allowedUpcTypes = ['UPC-A', 'UPC-B', 'UPC-C', 'UPC-D', 'UPC-E', 'UPC-2', 'UPC-5'];
 
@@ -126,27 +128,28 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
     }
 
     /**
-     * Validate and get SKU (required field)
+     * Resolve the SKU for a tracking item, mirroring AmountBreakdownNode:
+     * use the product reference when available, omit (return '') otherwise.
+     * Sending a sku that doesn't match the one in the original PayPal order causes a 422.
      *
      * @param array $product
      * @param array $productData
      *
      * @return string
-     *
-     * @throws \InvalidArgumentException
      */
-    private function validateSku(array $product, array $productData): string
+    private function resolveSku(array $product, array $productData): string
     {
-        $sku = $productData['sku'] ?? '';
-
-        // If no SKU from order data, try to get from product data
-        if (empty($sku)) {
-            $sku = $product['reference'] ?? '';
+        if (!empty($productData['sku'])) {
+            return $productData['sku'];
         }
 
-        // SKU is required and must not be empty
+        $sku = $product['reference'] ?? '';
+
         if (empty($sku)) {
-            throw new \InvalidArgumentException('SKU is required for tracking items. Product ID: ' . ($product['id_product'] ?? 'unknown'));
+            $this->logger->warning('No SKU/reference found for product, sku field will be omitted from tracking payload.', [
+                'id_product' => $product['id_product'] ?? null,
+                'id_product_attribute' => $product['id_product_attribute'] ?? null,
+            ]);
         }
 
         return $sku;
@@ -218,20 +221,11 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
                 return [];
             }
 
-            $sku = '';
-
             if ($productAttributeId) {
                 $combination = new \Combination($productAttributeId);
-
-                if (!empty($combination->reference)) {
-                    $sku = $combination->reference;
-                } else {
-                    $sku = $product->reference;
-                }
-            }
-
-            if (empty($sku)) {
-                $sku = $productId . '-' . $productAttributeId;
+                $sku = !empty($combination->reference) ? $combination->reference : $product->reference;
+            } else {
+                $sku = $product->reference;
             }
 
             $productData = [
