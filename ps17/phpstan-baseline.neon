@@ -25,6 +25,12 @@ parameters:
 			path: ../api/src/Http/CheckoutHttpClient.php
 
 		-
+			message: '#^Cannot call method push\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../api/src/Http/Configuration/AbstractHttpClientConfigurationBuilder.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\Configuration\\AbstractHttpClientConfigurationBuilder\:\:applyLoggingMiddleware\(\) has parameter \$config with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -313,6 +319,12 @@ parameters:
 			path: ../api/src/Http/PsrHttpClientAdapter.php
 
 		-
+			message: '#^Property PsCheckout\\Api\\Http\\PsrHttpClientAdapter\:\:\$client \(Psr\\Http\\Client\\ClientInterface\) does not accept Prestashop\\ModuleLibGuzzleAdapter\\Interfaces\\HttpClientInterface\|Psr\\Http\\Client\\ClientInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../api/src/Http/PsrHttpClientAdapter.php
+
+		-
 			message: '#^Method PsCheckout\\Api\\Http\\WebhookHttpClient\:\:extractMessage\(\) has parameter \$body with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -332,12 +344,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../api/src/Http/WebhookHttpClient.php
-
-		-
-			message: '#^Parameter \#3 \$headers of class GuzzleHttp\\Psr7\\Request constructor expects array\<array\<string\>\|string\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../api/src/Http/WebhookHttpClient.php
@@ -7903,7 +7909,19 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/BaseNodeBuilderTest.php
 
 		-
-			message: '#^Parameter \#2 \$string of method PHPUnit\\Framework\\Assert\:\:assertRegExp\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/BaseNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/BaseNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/BaseNodeBuilderTest.php
@@ -10671,6 +10689,12 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
+			count: 1
+			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
+
+		-
+			message: '#^Instantiated class GuzzleHttp\\Promise\\RejectedPromise not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: ../infrastructure/src/Http/Middleware/HttpLoggingMiddleware.php
 

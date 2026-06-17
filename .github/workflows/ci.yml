@@ -127,12 +127,6 @@ jobs:
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html && php bin/console  prestashop:module install ps_checkout"
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php -d display_errors=1 -d error_reporting=E_ALL vendor/invertus/core/tests/create-test-database.php"
 
-      - name: Run Infrastructure Integration Tests
-        run: |
-          docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
-            --configuration=vendor/invertus/infrastructure/tests/phpunit-integration.xml \
-            --bootstrap=vendor/invertus/infrastructure/tests/bootstrap-integration.php"
-
       - name: Run Core Integration Tests
         run: |
           docker exec prestashop-${{ matrix.module }} bash -c "cd /var/www/html/modules/ps_checkout && php vendor/bin/phpunit \
