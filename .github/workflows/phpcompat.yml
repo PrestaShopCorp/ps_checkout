@@ -1,0 +1,27 @@
+name: PHP Compatibility
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '5.*'
+
+jobs:
+  phpcompat-71:
+    name: PHPCompatibility (target 7.1)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPCompatibility for PHP 7.1 targets
+        run: composer phpcompat:71
+
