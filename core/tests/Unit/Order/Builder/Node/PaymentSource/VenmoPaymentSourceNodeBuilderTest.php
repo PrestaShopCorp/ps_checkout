@@ -493,11 +493,9 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
 
     public function testVaultIdIsNotSentForVenmo(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->setPaypalVaultId('vault_xyz')
-            ->setSavePaymentMethod(false)
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext('customer@example.com', false, false, false, false, false, 'vault_xyz')
+        );
 
         $this->assertArrayNotHasKey('vault_id', $result['payment_source']['venmo']);
     }

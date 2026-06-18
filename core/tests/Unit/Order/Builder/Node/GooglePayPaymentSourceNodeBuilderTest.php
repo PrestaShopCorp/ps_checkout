@@ -124,9 +124,9 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
-    private function makeContext(): CheckoutContext
+    private function makeContext(array $cart = []): CheckoutContext
     {
-        return new CheckoutContext([], 'google_pay', false, null, null, false, false);
+        return new CheckoutContext($cart, 'google_pay', false, null, null, false, false);
     }
 
     public function testSupportsGooglePay(): void
@@ -214,34 +214,34 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testNameAddedFromInvoiceAddress(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith')))
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith')))
+        );
 
         $this->assertSame('Jane Smith', $result['payment_source']['google_pay']['name']);
     }
 
     public function testNameOmittedWhenNoCart(): void
     {
-        $result = $this->makeBuilder()->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertArrayNotHasKey('name', $result['payment_source']['google_pay']);
     }
 
     public function testEmailAddressAddedFromCustomer(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com'))
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress('customer@example.com'))
+        );
 
         $this->assertSame('customer@example.com', $result['payment_source']['google_pay']['email_address']);
     }
 
     public function testEmailAddressOmittedWhenEmailHasNoTld(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('einkauf@my-shop'))
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress('einkauf@my-shop'))
+        );
 
         $this->assertArrayNotHasKey('email_address', $result['payment_source']['google_pay']);
     }
@@ -255,9 +255,9 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
         $phoneParser = $this->createMock(PhoneParser::class);
         $phoneParser->method('parseFromAddress')->willReturn($parsedPhone);
 
-        $result = $this->makeBuilder(false, 'SCA_ALWAYS', $phoneParser)
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+        $result = $this->makeBuilder(false, 'SCA_ALWAYS', $phoneParser)->build(
+            $this->makeContext($this->makeCartWithAddress())
+        );
 
         $this->assertSame(
             ['national_number' => '2025551234', 'country_code' => '1'],
@@ -267,18 +267,18 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testPhoneNumberOmittedWhenParserReturnsNull(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress())
+        );
 
         $this->assertArrayNotHasKey('phone_number', $result['payment_source']['google_pay']);
     }
 
     public function testCardBillingAddressAddedFromInvoiceAddress(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress())
+        );
 
         $billingAddress = $result['payment_source']['google_pay']['card']['billing_address'];
         $this->assertSame('123 Main St', $billingAddress['address_line_1']);
@@ -306,14 +306,16 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
             $phoneParser
         );
 
-        $result = $builder->setCart($this->makeCartWithAddress())->build();
+        $result = $builder->build(
+            new \PsCheckout\Core\Order\Builder\CheckoutContext($this->makeCartWithAddress(), 'google_pay', false, null, null, false, false)
+        );
 
         $this->assertSame('DC', $result['payment_source']['google_pay']['card']['billing_address']['admin_area_1']);
     }
 
     public function testCardBillingAddressAbsentWhenNoCart(): void
     {
-        $result = $this->makeBuilder()->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertArrayNotHasKey('card', $result['payment_source']['google_pay']);
     }

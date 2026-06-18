@@ -25,6 +25,7 @@ use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Builder\CheckoutContext;
 use PsCheckout\Core\Order\Builder\Node\PuiPaymentSourceNodeBuilder;
 use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
@@ -121,6 +122,11 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
+    private function makeContext(array $cart, ?string $birthDate = null, ?string $phone = null): CheckoutContext
+    {
+        return new CheckoutContext($cart, 'pay_upon_invoice', false, null, null, false, false, $birthDate, $phone);
+    }
+
     private function stubValidPhone(): void
     {
         $phoneNumber = $this->createMock(PhoneNumber::class);
@@ -136,10 +142,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
         $this->stubValidPhone();
 
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491701234567']))
-            ->setBirthDate('1990-01-15')
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491701234567']), '1990-01-15')
+        );
 
         $phone = $result['payment_source']['pay_upon_invoice']['phone'];
         $this->assertSame('1701234567', $phone['national_number']);
@@ -152,11 +157,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
         $this->stubValidPhone();
 
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491701234567']))
-            ->setPhone(null)
-            ->setBirthDate('1990-01-15')
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491701234567']), '1990-01-15', null)
+        );
 
         $this->assertArrayHasKey('phone', $result['payment_source']['pay_upon_invoice']);
     }
@@ -167,10 +170,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
         $this->stubValidPhone();
 
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '', 'phone_mobile' => '+491701234567']))
-            ->setBirthDate('1990-01-15')
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '', 'phone_mobile' => '+491701234567']), '1990-01-15')
+        );
 
         $this->assertArrayHasKey('phone', $result['payment_source']['pay_upon_invoice']);
     }
@@ -183,9 +185,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '', 'phone_mobile' => '']))
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '', 'phone_mobile' => '']))
+        );
     }
 
     public function testThrowsWhenPhoneIsParsableButInvalid(): void
@@ -197,9 +199,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491']))
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491']))
+        );
     }
 
     public function testThrowsWhenPhoneIsUnparseable(): void
@@ -211,9 +213,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => 'not-a-phone']))
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => 'not-a-phone']))
+        );
     }
 
     public function testThrowsWhenEmailIsInvalid(): void
@@ -224,9 +226,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart())
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart())
+        );
     }
 
     public function testBirthDateIncludedWhenValid(): void
@@ -235,10 +237,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
         $this->stubValidPhone();
 
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491701234567']))
-            ->setBirthDate('1990-01-15')
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491701234567']), '1990-01-15')
+        );
 
         $this->assertSame('1990-01-15', $result['payment_source']['pay_upon_invoice']['birth_date']);
     }
@@ -252,10 +253,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491701234567']))
-            ->setBirthDate('15/01/1990')
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491701234567']), '15/01/1990')
+        );
     }
 
     public function testThrowsWhenBirthDateIsEmpty(): void
@@ -267,9 +267,9 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_BIRTH_DATE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart($this->makeCart(['phone' => '+491701234567']))
-            ->build();
+        $this->makeBuilder()->build(
+            $this->makeContext($this->makeCart(['phone' => '+491701234567']))
+        );
     }
 
     public function testThrowsWhenInvoiceAddressMissing(): void
@@ -277,14 +277,12 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
 
-        $this->makeBuilder()
-            ->setCart([
-                'cart' => ['id' => 1],
-                'addresses' => [],
-                'customer' => (object) ['email' => 'a@b.com'],
-                'language' => (object) ['locale' => 'de_DE'],
-            ])
-            ->build();
+        $this->makeBuilder()->build($this->makeContext([
+            'cart' => ['id' => 1],
+            'addresses' => [],
+            'customer' => (object) ['email' => 'a@b.com'],
+            'language' => (object) ['locale' => 'de_DE'],
+        ]));
     }
 
     public function testThrowsWhenCustomerMissing(): void
@@ -299,12 +297,10 @@ class PuiPaymentSourceNodeBuilderTest extends TestCase
         $address->firstname = 'Hans';
         $address->lastname = 'Müller';
 
-        $this->makeBuilder()
-            ->setCart([
-                'cart' => ['id' => 1],
-                'addresses' => ['invoice' => $address],
-                'language' => (object) ['locale' => 'de_DE'],
-            ])
-            ->build();
+        $this->makeBuilder()->build($this->makeContext([
+            'cart' => ['id' => 1],
+            'addresses' => ['invoice' => $address],
+            'language' => (object) ['locale' => 'de_DE'],
+        ]));
     }
 }

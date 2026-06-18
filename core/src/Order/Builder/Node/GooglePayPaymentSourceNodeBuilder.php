@@ -77,22 +77,23 @@ class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInter
     public function build(CheckoutContextInterface $context): array
     {
         $data = [];
+        $cart = $context->getCart();
 
-        if ($this->cart !== null && isset($this->cart['addresses']['invoice'])) {
-            $invoiceAddress = $this->cart['addresses']['invoice'];
+        if (isset($cart['addresses']['invoice'])) {
+            $invoiceAddress = $cart['addresses']['invoice'];
 
-            $name = $this->experienceContextHelper->getInvoiceName($this->cart);
+            $name = $this->experienceContextHelper->getInvoiceName($cart);
             if ($name !== '') {
                 $data['name'] = $name;
             }
 
-            $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+            $email = $this->experienceContextHelper->getCustomerEmail($cart);
             if ($email !== '' && $this->validate->isPayPalEmail($email)) {
                 $data['email_address'] = $email;
             }
 
-            $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
-            $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
+            $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($cart);
+            $cartId = isset($cart['cart']['id']) ? (int) $cart['cart']['id'] : null;
             $parsedPhone = $this->phoneParser->parseFromAddress($invoiceAddress, $countryIso, $cartId);
             if ($parsedPhone !== null) {
                 $data['phone_number'] = [
@@ -101,7 +102,7 @@ class GooglePayPaymentSourceNodeBuilder implements PaymentSourceNodeBuilderInter
                 ];
             }
 
-            $billingAddress = $this->experienceContextHelper->buildInvoicePortableAddress($this->cart);
+            $billingAddress = $this->experienceContextHelper->buildInvoicePortableAddress($cart);
             if (!empty($billingAddress)) {
                 $data['card']['billing_address'] = $billingAddress;
             }

@@ -111,9 +111,13 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
         ];
     }
 
-    private function makeContext(): CheckoutContext
-    {
-        return new CheckoutContext([], 'apple_pay', false, null, null, false, false);
+    private function makeContext(
+        array $cart = [],
+        bool $savePaymentMethod = false,
+        ?string $paypalCustomerId = null,
+        ?string $paypalVaultId = null
+    ): CheckoutContext {
+        return new CheckoutContext($cart, 'apple_pay', $savePaymentMethod, $paypalCustomerId, $paypalVaultId, false, false);
     }
 
     public function testSupportsApplePay(): void
@@ -201,34 +205,29 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testNameAddedFromInvoiceAddress(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith')))
-            ->build();
+        $cart = $this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith'));
+        $result = $this->makeBuilder()->build($this->makeContext($cart));
 
         $this->assertSame('Jane Smith', $result['payment_source']['apple_pay']['name']);
     }
 
     public function testNameOmittedWhenAddressMissing(): void
     {
-        $result = $this->makeBuilder()->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertArrayNotHasKey('name', $result['payment_source']['apple_pay']);
     }
 
     public function testEmailAddressAddedFromCustomer(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com'))
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCartWithAddress('customer@example.com')));
 
         $this->assertSame('customer@example.com', $result['payment_source']['apple_pay']['email_address']);
     }
 
     public function testEmailAddressOmittedWhenEmailHasNoTld(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('einkauf@my-shop'))
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCartWithAddress('einkauf@my-shop')));
 
         $this->assertArrayNotHasKey('email_address', $result['payment_source']['apple_pay']);
     }
@@ -243,8 +242,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
         $phoneParser->method('parseFromAddress')->willReturn($parsedPhone);
 
         $result = $this->makeBuilder(false, 'SCA_ALWAYS', $phoneParser)
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+            ->build($this->makeContext($this->makeCartWithAddress()));
 
         $this->assertSame(
             ['national_number' => '2025551234', 'country_code' => '1'],
@@ -254,27 +252,22 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testPhoneNumberOmittedWhenParserReturnsNull(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCartWithAddress()));
 
         $this->assertArrayNotHasKey('phone_number', $result['payment_source']['apple_pay']);
     }
 
     public function testVaultIdAddedWhenSet(): void
     {
-        $result = $this->makeBuilder()
-            ->setPaypalVaultId('vault_xyz')
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext([], false, null, 'vault_xyz'));
 
         $this->assertSame('vault_xyz', $result['payment_source']['apple_pay']['vault_id']);
     }
 
     public function testCustomerNameAddedToAttributesCustomer(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith')))
-            ->build();
+        $cart = $this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith'));
+        $result = $this->makeBuilder()->build($this->makeContext($cart));
 
         $this->assertSame('Jane', $result['payment_source']['apple_pay']['attributes']['customer']['name']['given_name']);
         $this->assertSame('Smith', $result['payment_source']['apple_pay']['attributes']['customer']['name']['surname']);
@@ -282,9 +275,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testCustomerEmailAddedToAttributesCustomer(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com'))
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext($this->makeCartWithAddress('customer@example.com')));
 
         $this->assertSame('customer@example.com', $result['payment_source']['apple_pay']['attributes']['customer']['email_address']);
     }
@@ -299,8 +290,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
         $phoneParser->method('getPhoneType')->willReturn('MOBILE');
 
         $result = $this->makeBuilder(false, 'SCA_ALWAYS', $phoneParser)
-            ->setCart($this->makeCartWithAddress())
-            ->build();
+            ->build($this->makeContext($this->makeCartWithAddress()));
 
         $phone = $result['payment_source']['apple_pay']['attributes']['customer']['phone'];
         $this->assertSame('2025551234', $phone['phone_number']['national_number']);
@@ -309,21 +299,18 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testCustomerIdAddedToAttributesCustomer(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com'))
-            ->setPaypalCustomerId('cust_abc')
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress('customer@example.com'), false, 'cust_abc')
+        );
 
         $this->assertSame('cust_abc', $result['payment_source']['apple_pay']['attributes']['customer']['id']);
     }
 
     public function testCustomerIdMergesWithCustomerAttributes(): void
     {
-        $result = $this->makeBuilder()
-            ->setCart($this->makeCartWithAddress('customer@example.com'))
-            ->setPaypalCustomerId('cust_abc')
-            ->setSavePaymentMethod(true)
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext($this->makeCartWithAddress('customer@example.com'), true, 'cust_abc')
+        );
 
         $customer = $result['payment_source']['apple_pay']['attributes']['customer'];
         $this->assertSame('cust_abc', $customer['id']);
@@ -336,27 +323,23 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = 'customer@example.com';
 
-        $result = $this->makeBuilder()
-            ->setCart(['customer' => $customer, 'cart' => ['is_virtual' => false]])
-            ->build();
+        $result = $this->makeBuilder()->build(
+            $this->makeContext(['customer' => $customer, 'cart' => ['is_virtual' => false]])
+        );
 
         $this->assertArrayNotHasKey('attributes', $result['payment_source']['apple_pay']);
     }
 
     public function testSavePaymentMethodAddsVaultAttribute(): void
     {
-        $result = $this->makeBuilder()
-            ->setSavePaymentMethod(true)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext([], true));
 
         $this->assertSame('ON_SUCCESS', $result['payment_source']['apple_pay']['attributes']['vault']['store_in_vault']);
     }
 
     public function testStoredCredentialIsSubsequentWhenVaultIdSet(): void
     {
-        $result = $this->makeBuilder()
-            ->setPaypalVaultId('vault_xyz')
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext([], false, null, 'vault_xyz'));
 
         $this->assertSame([
             'payment_initiator' => 'CUSTOMER',
@@ -367,9 +350,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testStoredCredentialIsFirstWhenSavePaymentMethodWithoutVaultId(): void
     {
-        $result = $this->makeBuilder()
-            ->setSavePaymentMethod(true)
-            ->build();
+        $result = $this->makeBuilder()->build($this->makeContext([], true));
 
         $this->assertSame([
             'payment_initiator' => 'CUSTOMER',
@@ -380,7 +361,7 @@ class ApplePayPaymentSourceNodeBuilderTest extends TestCase
 
     public function testStoredCredentialAbsentWhenNeitherVaultNorSave(): void
     {
-        $result = $this->makeBuilder()->build();
+        $result = $this->makeBuilder()->build($this->makeContext());
 
         $this->assertArrayNotHasKey('stored_credential', $result['payment_source']['apple_pay']);
     }
