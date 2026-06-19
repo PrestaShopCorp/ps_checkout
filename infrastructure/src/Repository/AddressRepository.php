@@ -37,6 +37,19 @@ class AddressRepository implements AddressRepositoryInterface
     /**
      * {@inheritDoc}
      */
+    public function deleteByAliasAndCustomer(string $alias, int $customerId): void
+    {
+        $addressId = $this->getAddressIdByAliasAndCustomer($alias, $customerId);
+
+        if ($addressId) {
+            $address = new \Address($addressId);
+            $address->delete();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getAddressIdByAliasAndCustomer(string $alias, int $idCustomer): int
     {
         $query = new DbQuery();

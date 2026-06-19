@@ -20,12 +20,11 @@
 
 namespace PsCheckout\Infrastructure\Builder;
 
-use Cart;
-use Currency;
 use PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface;
+use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
+use PsCheckout\Infrastructure\Adapter\HookInterface;
 use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
-use Validate;
 
 class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
 {
@@ -35,10 +34,14 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
     /** @var PsCheckoutCarrierRepository */
     private $carrierRepository;
 
-    public function __construct(CartInterface $cartAdapter, PsCheckoutCarrierRepository $carrierRepository)
+    /** @var HookInterface */
+    private $hook;
+
+    public function __construct(CartInterface $cartAdapter, PsCheckoutCarrierRepository $carrierRepository, HookInterface $hook)
     {
         $this->cartAdapter = $cartAdapter;
         $this->carrierRepository = $carrierRepository;
+        $this->hook = $hook;
     }
 
     /**
@@ -48,7 +51,7 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
     {
         $cart = $this->cartAdapter->getCart($cartId);
 
-        if (!$cart || !Validate::isLoadedObject($cart)) {
+        if (!$cart) {
             return [];
         }
 
@@ -58,7 +61,7 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
             return [];
         }
 
-        $selectedCarrierId = (int) trim((string) current($cart->getDeliveryOption(null, false, false)), ',');
+        $selectedCarrierId = (int) trim((string) current($cart->getDeliveryOption()), ',');
 
         return $this->buildShippingOptions($cart, $deliveryOptions, $selectedCarrierId, $selectedOptionId);
     }
@@ -85,10 +88,10 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function buildShippingOptions(Cart $cart, array $deliveryOptions, int $selectedCarrierId, ?string $selectedOptionId): array
+    private function buildShippingOptions(CartDataInterface $cart, array $deliveryOptions, int $selectedCarrierId, ?string $selectedOptionId): array
     {
         $shippingOptions = [];
-        $currencyCode = (new Currency($cart->id_currency))->iso_code;
+        $currencyCode = $cart->getCurrencyIsoCode();
 
         foreach ($deliveryOptions as $options) {
             foreach ($options as $optionId => $option) {
@@ -96,10 +99,21 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
                     continue;
                 }
                 foreach ($option['carrier_list'] as $carrierId => $carrierData) {
-                    $carrierType = $this->carrierRepository->getTypeByCarrierId((int) $carrierId);
+                    $data = $this->carrierRepository->getCarrierData((int) $carrierId);
 
-                    if ($carrierType === null) {
-                        continue; // carrier disabled for PayPal shipping options
+                    $carrierType = $data ? $data['type'] : PsCheckoutCarrierRepository::TYPE_SHIPPING;
+                    $disabled = $data ? $data['disabled'] : false;
+
+                    $hookParams = [
+                        'id_carrier' => (int) $carrierId,
+                        'id_reference' => $data ? $data['id_reference'] : 0,
+                        'type' => &$carrierType,
+                        'disabled' => &$disabled,
+                    ];
+                    $this->hook->exec('actionGetPsCheckoutCarrierType', $hookParams);
+
+                    if ($disabled) {
+                        continue;
                     }
 
                     $price = isset($carrierData['price_with_tax'])
@@ -134,7 +148,7 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
             if ($selectedOptionId !== null && $option['id'] === $selectedOptionId) {
                 $option['selected'] = true;
                 $marked = true;
-            } elseif ($selectedCarrierId && $option['id'] === $this->formatShippingOptionIdFromCarrierId((string) $selectedCarrierId)) {
+            } elseif ($selectedOptionId === null && $selectedCarrierId && $option['id'] === $this->formatShippingOptionIdFromCarrierId((string) $selectedCarrierId)) {
                 $option['selected'] = true;
                 $marked = true;
             }

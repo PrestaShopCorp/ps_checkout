@@ -24,17 +24,15 @@ use Cart as PrestaShopCart;
 
 class Cart implements CartInterface
 {
-    const BOTH = PrestaShopCart::BOTH;
-
     /**
      * {@inheritDoc}
      */
-    public function getCart(int $cartId)
+    public function getCart(int $cartId): ?CartDataInterface
     {
         $cart = new PrestaShopCart($cartId);
 
         if (is_object($cart) && $cart->id) {
-            return $cart;
+            return new CartData($cart);
         }
 
         return null;

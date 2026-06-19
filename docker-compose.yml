@@ -43,6 +43,8 @@ services:
       PS_FOLDER_ADMIN: admin1
       PS_ENABLE_SSL: ${SSL_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
+      PS_COUNTRY: fr
+      PS_LANGUAGE: en
     depends_on:
       - mysql
     ports:

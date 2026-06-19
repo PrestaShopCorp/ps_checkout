@@ -18,11 +18,17 @@ make build                 # Build Docker images
 make up                    # Start containers + install root dependencies
 ```
 
-The shop runs at `http://localhost:8991` (admin: `demo@prestashop.com` / `prestashop_demo`).
+The shop runs at `https://<PS_DOMAIN>` via Cloudflare tunnel, or `http://localhost:8991` directly (admin: `demo@prestashop.com` / `prestashop_demo`).
+
+`make up` auto-generates `.cloudflared.yml` from `.cloudflared.yml.dist` — do not edit it directly.
 
 Key `.env` variables:
 - `MODULE_VERSION`: `ps17`, `ps8`, or `ps9` — controls which PrestaShop container to target
 - `PS_VERSION_TAG`: Docker image tag for the PrestaShop version (e.g., `8`)
+- `PS_DOMAIN`: public shop domain used by Cloudflare tunnel and PrestaShop's shop URL
+- `CLOUDFLARED_DOMAIN`: base domain for tunnel subdomains (`logs.`, `glitchtip.`)
+- `TUNNEL_ID`: Cloudflare tunnel UUID — run `cloudflared tunnel list` to find it
+- `CLOUDFLARED_CREDENTIALS_FILE`: absolute path to the tunnel credentials JSON
 - `SENTRY_DSN`: Glitchtip/Sentry DSN for error monitoring
 
 ## Commands

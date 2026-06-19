@@ -4,7 +4,14 @@
         "preferred-install": "dist",
         "optimize-autoloader": true,
         "prepend-autoloader": false,
-        "platform-check": false
+        "platform-check": false,
+        "audit": {
+            "ignore": [
+                "PKSA-jj5t-2zs1-dcfm",
+                "PKSA-gm5x-j3mz-71n9",
+                "PKSA-hn62-zkx4-1y5q"
+            ]
+        }
     },
     "require": {
         "php": "^7.1",

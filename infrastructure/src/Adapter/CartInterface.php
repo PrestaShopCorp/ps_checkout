@@ -20,14 +20,7 @@
 
 namespace PsCheckout\Infrastructure\Adapter;
 
-use Cart as PrestaShopCart;
-
 interface CartInterface
 {
-    /**
-     * @param int $cartId
-     *
-     * @return PrestaShopCart|null
-     */
-    public function getCart(int $cartId);
+    public function getCart(int $cartId): ?CartDataInterface;
 }

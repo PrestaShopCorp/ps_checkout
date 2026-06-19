@@ -72,6 +72,23 @@ class ShippingCallbackPayloadTest extends TestCase
         $this->assertFalse($payload->isAddressEvent());
     }
 
+    public function testParsesReferenceId(): void
+    {
+        $payload = new ShippingCallbackPayload([
+            'purchase_units' => [
+                ['reference_id' => 'd9f80740-38f0-11e8-b467-0ed5f89f718b'],
+            ],
+        ]);
+
+        $this->assertSame('d9f80740-38f0-11e8-b467-0ed5f89f718b', $payload->getReferenceId());
+    }
+
+    public function testReferenceIdDefaultsToDefaultWhenMissing(): void
+    {
+        $this->assertSame('default', (new ShippingCallbackPayload([]))->getReferenceId());
+        $this->assertSame('default', (new ShippingCallbackPayload(['purchase_units' => [[]]]))->getReferenceId());
+    }
+
     public function testHandlesMissingFields(): void
     {
         $payload = new ShippingCallbackPayload([]);
@@ -83,6 +100,7 @@ class ShippingCallbackPayloadTest extends TestCase
         $this->assertSame('', $payload->getPostalCode());
         $this->assertNull($payload->getShippingOptionId());
         $this->assertTrue($payload->isAddressEvent());
+        $this->assertSame('default', $payload->getReferenceId());
     }
 
     public function testShippingOptionIdIsCastToString(): void

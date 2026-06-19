@@ -21,9 +21,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PsCheckout\Core\PayPal\ShippingCallback\Action\VerifyShippingCallbackSignatureActionInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Exception\ShippingCallbackException;
+use PsCheckout\Core\PayPal\ShippingCallback\Provider\CallbackHeaderProviderInterface;
+use PsCheckout\Core\PayPal\ShippingCallback\Service\ShippingCallbackProcessorInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
-use PsCheckout\Infrastructure\Action\ShippingCallbackProcessor;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
@@ -41,10 +43,7 @@ class Ps_CheckoutShippingModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->exitWithResponse([
-                'httpCode' => 405,
-                'body' => 'Method Not Allowed',
-            ]);
+            $this->exitWithServerResponse(405, 'Method Not Allowed');
         }
 
         /** @var LoggerInterface $logger */
@@ -54,10 +53,7 @@ class Ps_CheckoutShippingModuleFrontController extends AbstractFrontController
             $idCart = (int) Tools::getValue('id_cart');
 
             if (!$idCart) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Missing id_cart parameter',
-                ]);
+                $this->exitWithServerResponse(400, 'Missing id_cart parameter');
             }
 
             /** @var InputStreamUtility $inputStreamUtility */
@@ -65,65 +61,68 @@ class Ps_CheckoutShippingModuleFrontController extends AbstractFrontController
             $bodyContent = $inputStreamUtility->getBodyContent();
 
             if (empty($bodyContent)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Empty payload',
-                ]);
+                $this->exitWithServerResponse(400, 'Empty payload');
             }
 
             $data = json_decode($bodyContent, true);
 
             if (!is_array($data)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Invalid JSON payload',
-                ]);
+                $this->exitWithServerResponse(400, 'Invalid JSON payload');
             }
+
+            /** @var CallbackHeaderProviderInterface $headerProvider */
+            $headerProvider = $this->module->getService(CallbackHeaderProviderInterface::class);
+            $callbackHeaders = $headerProvider->getHeaders();
+
+            /** @var VerifyShippingCallbackSignatureActionInterface $signatureVerifier */
+            $signatureVerifier = $this->module->getService(VerifyShippingCallbackSignatureActionInterface::class);
+            $signatureVerifier->execute($bodyContent, $callbackHeaders);
 
             $payload = new ShippingCallbackPayload($data);
 
-            /** @var ShippingCallbackProcessor $processor */
-            $processor = $this->module->getService(ShippingCallbackProcessor::class);
+            /** @var ShippingCallbackProcessorInterface $processor */
+            $processor = $this->module->getService(ShippingCallbackProcessorInterface::class);
             $response = $processor->process($idCart, $payload);
 
-            $this->exitWithResponse($response);
+            $logger->info('ShippingController - Callback processed', [
+                'id_cart' => $idCart,
+                'paypal_headers' => $callbackHeaders,
+                'payload' => $data,
+                'response' => $response,
+            ]);
+
+            $this->exitWithServerResponse(200, $response);
         } catch (ShippingCallbackException $exception) {
             $logger->warning(
                 'ShippingController - Callback declined: ' . $exception->getMessage(),
                 [
                     'issue' => $exception->getIssue(),
                     'id_cart' => isset($idCart) ? $idCart : null,
+                    'paypal_headers' => isset($callbackHeaders) ? $callbackHeaders : null,
                 ]
             );
 
-            $this->exitWithResponse([
-                'httpCode' => 422,
-                'body' => [
-                    'name' => 'UNPROCESSABLE_ENTITY',
+            if ($exception->getIssue() === ShippingCallbackException::INVALID_SIGNATURE) {
+                $this->exitWithServerResponse(401, [
+                    'name' => 'UNAUTHORIZED',
                     'details' => [
                         ['issue' => $exception->getIssue()],
                     ],
+                ]);
+            }
+
+            $this->exitWithServerResponse(422, [
+                'name' => 'UNPROCESSABLE_ENTITY',
+                'details' => [
+                    ['issue' => $exception->getIssue()],
                 ],
             ]);
-        } catch (Exception $exception) {
-            $logger->error(
-                'ShippingController - Exception ' . $exception->getCode(),
-                [
-                    'exception' => $exception,
-                    'id_cart' => isset($idCart) ? $idCart : null,
-                ]
-            );
-
-            $this->exitWithExceptionMessage($exception);
         } catch (Throwable $exception) {
-            $logger->error(
-                'ShippingController - Exception ' . $exception->getCode(),
-                [
-                    'exception' => $exception,
-                    'id_cart' => isset($idCart) ? $idCart : null,
-                ]
-            );
-            $this->exitWithExceptionMessage($exception);
+            $logger->error('ShippingController - Unexpected error: ' . $exception->getMessage(), [
+                'exception' => $exception,
+                'id_cart' => isset($idCart) ? $idCart : null,
+            ]);
+            $this->exitWithServerResponse(500, ['name' => 'INTERNAL_SERVER_ERROR']);
         }
     }
 }

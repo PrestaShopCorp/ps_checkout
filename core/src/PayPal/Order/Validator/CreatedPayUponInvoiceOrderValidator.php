@@ -81,6 +81,8 @@ class CreatedPayUponInvoiceOrderValidator implements CreatedPayPalOrderValidator
             return null;
         }
 
+        $cart = $this->cart->getCart($cartId);
+
         return new PayPalOrderCompletionData(
             $paypalOrderResponse->getStatus(),
             $paypalOrderResponse->getId(),
@@ -88,7 +90,7 @@ class CreatedPayUponInvoiceOrderValidator implements CreatedPayPalOrderValidator
             $cartId,
             $this->moduleId,
             (int) $order->id,
-            $this->cart->getCart($cartId)->secure_key
+            $cart ? $cart->getSecureKey() : ''
         );
     }
 }

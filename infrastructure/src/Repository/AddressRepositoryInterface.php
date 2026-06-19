@@ -29,4 +29,6 @@ interface AddressRepositoryInterface
      * @return int
      */
     public function getAddressIdByAliasAndCustomer(string $alias, int $customerId): int;
+
+    public function deleteByAliasAndCustomer(string $alias, int $customerId): void;
 }

@@ -29,6 +29,7 @@ use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
+use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidatorInterface;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
@@ -56,6 +57,9 @@ class ProcessExpressCheckoutAction
     /** @var ContextInterface */
     private $context;
 
+    /** @var AddressRepositoryInterface */
+    private $addressRepository;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -67,6 +71,7 @@ class ProcessExpressCheckoutAction
         SaveExpressCheckoutFlagsAction $saveExpressCheckoutFlagsAction,
         ExpressCheckoutActionInterface $expressCheckoutAction,
         ContextInterface $context,
+        AddressRepositoryInterface $addressRepository,
         LoggerInterface $logger
     ) {
         $this->frontControllerValidator = $frontControllerValidator;
@@ -76,6 +81,7 @@ class ProcessExpressCheckoutAction
         $this->saveExpressCheckoutFlagsAction = $saveExpressCheckoutFlagsAction;
         $this->expressCheckoutAction = $expressCheckoutAction;
         $this->context = $context;
+        $this->addressRepository = $addressRepository;
         $this->logger = $logger;
     }
 
@@ -190,6 +196,11 @@ class ProcessExpressCheckoutAction
             );
 
             throw $exception;
+        } finally {
+            $this->addressRepository->deleteByAliasAndCustomer(
+                ShippingCallbackProcessor::TEMPORARY_ADDRESS_ALIAS_PREFIX . $cart->id,
+                (int) $cart->id_customer
+            );
         }
 
         return [

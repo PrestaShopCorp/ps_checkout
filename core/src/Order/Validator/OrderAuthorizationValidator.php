@@ -20,13 +20,11 @@
 
 namespace PsCheckout\Core\Order\Validator;
 
-use Cart as PrestaShopCart;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
-use PsCheckout\Infrastructure\Adapter\Cart;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\CustomerInterface;
@@ -134,78 +132,36 @@ class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterfac
             throw new PsCheckoutException(sprintf('Cart with id %s not found.', var_export($cartId, true)), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        if (empty($cart->getProducts(true))) {
-            throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
+        if (empty($cart->getProducts())) {
+            throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->getId(), true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
         if (
-            !$this->isAllProductsInStock($cart) ||
-            !$this->checkAllProductsAreStillAvailableInThisState($cart) ||
-            !$this->checkAllProductsHaveMinimalQuantities($cart)
+            ($this->configuration->get('PS_STOCK_MANAGEMENT') && !$cart->isAllProductsInStock()) ||
+            !$cart->checkAllProductsAreStillAvailableInThisState() ||
+            !$cart->checkAllProductsHaveMinimalQuantities()
         ) {
-            throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
+            throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->getId(), true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }
 
-        if (!$this->customer->customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
-            throw new PsCheckoutException(sprintf('Invoice address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_invoice, true)), PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+        if (!$this->customer->customerHasAddress($cart->getCustomerId(), $cart->getInvoiceAddressId())) {
+            throw new PsCheckoutException(sprintf('Invoice address with id %s is incorrect. Cannot capture the order.', var_export($cart->getInvoiceAddressId(), true)), PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
         }
 
-        if (!$cart->isVirtualCart() && !$this->customer->customerHasAddress($cart->id_customer, $cart->id_address_delivery)) {
-            throw new PsCheckoutException(sprintf('Delivery address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID);
+        if (!$cart->isVirtualCart() && !$this->customer->customerHasAddress($cart->getCustomerId(), $cart->getDeliveryAddressId())) {
+            throw new PsCheckoutException(sprintf('Delivery address with id %s is incorrect. Cannot capture the order.', var_export($cart->getDeliveryAddressId(), true)), PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID);
         }
 
-        if (!$cart->isVirtualCart() && !array_key_exists((int) $cart->id_address_delivery, $cart->getDeliveryOptionList())) {
-            throw new PsCheckoutException(sprintf('No delivery option selected for address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_DELIVERY_OPTION_INVALID);
+        if (!$cart->isVirtualCart() && !array_key_exists($cart->getDeliveryAddressId(), $cart->getDeliveryOptionList())) {
+            throw new PsCheckoutException(sprintf('No delivery option selected for address with id %s is incorrect. Cannot capture the order.', var_export($cart->getDeliveryAddressId(), true)), PsCheckoutException::CART_DELIVERY_OPTION_INVALID);
         }
 
         // Check if PayPal order amount is the same than the cart amount : we tolerate a difference of more or less 0.05
         $paypalOrderAmount = (float) sprintf('%01.2f', $payPalOrder->getOrderAmountValue());
-        $cartAmount = (float) sprintf('%01.2f', $cart->getOrderTotal(true, Cart::BOTH));
+        $cartAmount = (float) sprintf('%01.2f', $cart->getOrderTotalWithTax());
 
         if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
             throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
         }
-    }
-
-    /**
-     * @param PrestaShopCart $cart
-     *
-     * @return bool
-     */
-    private function isAllProductsInStock(PrestaShopCart $cart): bool
-    {
-        if (!$this->configuration->get('PS_STOCK_MANAGEMENT')) {
-            return true;
-        }
-
-        return $cart->isAllProductsInStock();
-    }
-
-    /**
-     * @param PrestaShopCart $cart
-     *
-     * @return bool
-     */
-    private function checkAllProductsAreStillAvailableInThisState(PrestaShopCart $cart): bool
-    {
-        if (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState')) {
-            return $cart->checkAllProductsAreStillAvailableInThisState();
-        }
-
-        return true;
-    }
-
-    /**
-     * @param PrestaShopCart $cart
-     *
-     * @return bool
-     */
-    private function checkAllProductsHaveMinimalQuantities(PrestaShopCart $cart): bool
-    {
-        if (method_exists($cart, 'checkAllProductsHaveMinimalQuantities')) {
-            return $cart->checkAllProductsHaveMinimalQuantities();
-        }
-
-        return true;
     }
 }

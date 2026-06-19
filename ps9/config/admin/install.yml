@@ -10,6 +10,7 @@ services:
       - '@PsCheckout\Infrastructure\Bootstrap\Install\FundingSourceInstaller'
       - '@PsCheckout\Infrastructure\Bootstrap\Install\OrderStateInstaller'
       - '@PsCheckout\Infrastructure\Bootstrap\Install\CompatibilityRulesInstaller'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\HookInstaller'
 
   PsCheckout\Infrastructure\Bootstrap\Install\ConfigurationInstaller:
     class: PsCheckout\Infrastructure\Bootstrap\Install\ConfigurationInstaller
@@ -40,6 +41,9 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
+
+  PsCheckout\Infrastructure\Bootstrap\Install\HookInstaller:
+    class: PsCheckout\Infrastructure\Bootstrap\Install\HookInstaller
 
   PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstaller:
     class: 'PsCheckout\Infrastructure\Bootstrap\Install\ApplePayInstaller'

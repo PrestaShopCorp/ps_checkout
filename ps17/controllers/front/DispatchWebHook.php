@@ -48,10 +48,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     public function display(): bool
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->exitWithResponse([
-                'httpCode' => 405,
-                'body' => 'Method Not Allowed',
-            ]);
+            $this->exitWithServerResponse(405, 'Method Not Allowed');
         }
 
         /** @var LoggerInterface $logger */
@@ -118,16 +115,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             return $processed;
         } catch (Exception $e) {
-
             // Handle the exception
             $logger->error('Webhook Dispatcher error', [
                 'message' => $e->getMessage(),
                 'headers' => $headerProvider->getHeaders(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            http_response_code(400);
-
-            echo json_encode([
+            $this->exitWithServerResponse(400, [
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
             ]);
@@ -140,9 +134,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 ),
                 ['exception' => $e]
             );
-            http_response_code(500);
-
-            echo json_encode(['error' => 'An unexpected error occurred.']);
+            $this->exitWithServerResponse(500, ['error' => 'An unexpected error occurred.']);
         }
 
         return false;

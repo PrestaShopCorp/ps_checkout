@@ -6,6 +6,7 @@ services:
     class: PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
@@ -19,6 +20,7 @@ services:
     class: PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Api\Http\OrderHttpClient'
       - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
@@ -31,11 +33,13 @@ services:
     class: PsCheckout\Infrastructure\Action\AddProductToCartAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
 
   PsCheckout\Core\Order\Action\CreateValidateOrderDataAction:
     class: PsCheckout\Core\Order\Action\CreateValidateOrderDataAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Core\OrderState\Service\OrderStateMapper'
       - '@PsCheckout\Infrastructure\Repository\CurrencyRepository'
       - '@PsCheckout\Core\Order\Validator\OrderAmountValidator'
@@ -51,6 +55,7 @@ services:
     class: PsCheckout\Core\Order\Action\CreateOrderAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Core\Order\Action\CreateValidateOrderDataAction'
       - '@PsCheckout\Core\Order\Action\ValidateOrderAction'
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
@@ -77,6 +82,7 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@Psr\Log\LoggerInterface'
 
@@ -96,6 +102,7 @@ services:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Infrastructure\Repository\CartRepository'
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Core\Order\Validator\CheckoutValidator'
       - '@PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction'
       - '@PsCheckout\Core\PaymentToken\Action\SavePaymentTokenAction'
@@ -123,11 +130,13 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Customer'
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
 
   PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction:
     class: PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Infrastructure\Adapter\Country'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
       - '@PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepository'
@@ -142,6 +151,7 @@ services:
     class: PsCheckout\Core\Customer\Action\ExpressCheckoutAction
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@PsCheckout\Infrastructure\Action\CustomerAuthenticationAction'
       - '@PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction'
 
@@ -155,6 +165,7 @@ services:
       - '@PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction'
       - '@PsCheckout\Core\Customer\Action\ExpressCheckoutAction'
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\PayPal\Order\Processor\UpdateExternalPayPalOrderProcessor:
@@ -299,6 +310,7 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Repository\CartRepository'
       - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
 
   PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction:
     class: PsCheckout\Core\PayPal\Order\Action\AuthorizePayPalOrderAction
@@ -313,9 +325,42 @@ services:
       - '@Psr\Log\LoggerInterface'
 
 
+  PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilder:
+    class: PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilder
+
+  PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilderInterface:
+    alias: PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilder
+
   PsCheckout\Infrastructure\Action\ShippingCallbackProcessor:
     class: PsCheckout\Infrastructure\Action\ShippingCallbackProcessor
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Cart'
       - '@PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface'
+      - '@PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilderInterface'
+      - '@PsCheckout\Infrastructure\Adapter\Country'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\AddressRepository'
       - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ShippingCallback\Service\ShippingCallbackProcessorInterface:
+    alias: PsCheckout\Infrastructure\Action\ShippingCallbackProcessor
+
+  PsCheckout\Infrastructure\Provider\ShippingCallbackCertProvider:
+    class: PsCheckout\Infrastructure\Provider\ShippingCallbackCertProvider
+
+  PsCheckout\Core\PayPal\ShippingCallback\Provider\ShippingCallbackCertProviderInterface:
+    alias: PsCheckout\Infrastructure\Provider\ShippingCallbackCertProvider
+
+  PsCheckout\Infrastructure\Provider\CallbackHeaderProvider:
+    class: PsCheckout\Infrastructure\Provider\CallbackHeaderProvider
+
+  PsCheckout\Core\PayPal\ShippingCallback\Provider\CallbackHeaderProviderInterface:
+    alias: PsCheckout\Infrastructure\Provider\CallbackHeaderProvider
+
+  PsCheckout\Core\PayPal\ShippingCallback\Action\VerifyShippingCallbackSignatureAction:
+    class: PsCheckout\Core\PayPal\ShippingCallback\Action\VerifyShippingCallbackSignatureAction
+    arguments:
+      - '@PsCheckout\Core\PayPal\ShippingCallback\Provider\ShippingCallbackCertProviderInterface'
+
+  PsCheckout\Core\PayPal\ShippingCallback\Action\VerifyShippingCallbackSignatureActionInterface:
+    alias: PsCheckout\Core\PayPal\ShippingCallback\Action\VerifyShippingCallbackSignatureAction

@@ -32,6 +32,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Action\ProcessExpressCheckoutAction;
+use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
 use PsCheckout\Infrastructure\Action\SaveExpressCheckoutFlagsAction;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidatorInterface;
@@ -60,6 +61,9 @@ class ProcessExpressCheckoutActionTest extends TestCase
     /** @var ContextInterface|MockObject */
     private $context;
 
+    /** @var AddressRepositoryInterface|MockObject */
+    private $addressRepository;
+
     /** @var LoggerInterface|MockObject */
     private $logger;
 
@@ -75,6 +79,7 @@ class ProcessExpressCheckoutActionTest extends TestCase
         $this->saveExpressCheckoutFlagsAction = $this->createMock(SaveExpressCheckoutFlagsAction::class);
         $this->expressCheckoutAction = $this->createMock(ExpressCheckoutActionInterface::class);
         $this->context = $this->createMock(ContextInterface::class);
+        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->action = new ProcessExpressCheckoutAction(
@@ -85,6 +90,7 @@ class ProcessExpressCheckoutActionTest extends TestCase
             $this->saveExpressCheckoutFlagsAction,
             $this->expressCheckoutAction,
             $this->context,
+            $this->addressRepository,
             $this->logger
         );
     }

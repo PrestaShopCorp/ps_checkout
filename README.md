@@ -75,15 +75,22 @@ To install PHP versions older than 8.x, please refer to these specific repositor
 ### Build
 
 1. Clone repository to local environment
-2. Copy .env.dist -> .env
-3. Configure the .env file to your environment settings.
-4. Copy MODULE_VERSION/.env.dist -> MODULE_VERSION/.env
-5. Copy the docker-compose.local.yml.dist -> docker-compose.local.yml
-6. Uncomment the services in the docker-compose.local.yml file to your needs.
-7. Run Makefile command in terminal `make build`
-8. Run Makefile command in terminal `make run`
-9. Website is accessible at `http://localhost:8991`
-10. `http://localhost:8991/admin1` - admin panel
+2. Copy `.env.dist` → `.env` and configure to your environment:
+   - `MODULE_VERSION`: `ps17`, `ps8`, or `ps9`
+   - `PS_VERSION_TAG`: matching Docker image tag (e.g. `8`)
+   - `PS_DOMAIN`: your shop's public domain (used by Cloudflare tunnel and PrestaShop's shop URL)
+   - `CLOUDFLARED_DOMAIN`: base domain for tunnel subdomains (`logs.`, `glitchtip.`)
+   - `TUNNEL_ID`: your Cloudflare tunnel UUID — run `cloudflared tunnel list` to find it
+   - `CLOUDFLARED_CREDENTIALS_FILE`: absolute path to your tunnel credentials JSON (e.g. `~/.config/cloudflared/<uuid>.json`)
+3. Copy `MODULE_VERSION/.env.dist` → `MODULE_VERSION/.env`
+4. Copy `docker-compose.local.yml.dist` → `docker-compose.local.yml` and uncomment services as needed
+5. Run `make build` to build Docker images
+6. Run `make up` to start containers and install root dependencies
+
+`make up` automatically generates `.cloudflared.yml` from `.cloudflared.yml.dist` with your `.env` values — do not edit `.cloudflared.yml` directly, it is overwritten on each `make up`.
+
+The shop is accessible at `https://<PS_DOMAIN>` (via Cloudflare tunnel) or `http://localhost:8991` (direct).
+The admin panel is at `https://<PS_DOMAIN>/admin1`.
 
 Use default PrestaShop credentials to login:
 - `demo@prestashop.com`

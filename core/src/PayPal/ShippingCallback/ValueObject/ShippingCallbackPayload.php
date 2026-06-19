@@ -52,6 +52,11 @@ class ShippingCallbackPayload
      */
     private $shippingOptionId;
 
+    /**
+     * @var string
+     */
+    private $referenceId;
+
     public function __construct(array $data)
     {
         $this->paypalOrderId = (string) ($data['id'] ?? '');
@@ -62,6 +67,7 @@ class ShippingCallbackPayload
         $this->shippingOptionId = isset($data['shipping_option']['id'])
             ? (string) $data['shipping_option']['id']
             : null;
+        $this->referenceId = (string) ($data['purchase_units'][0]['reference_id'] ?? 'default');
     }
 
     public function getPaypalOrderId(): string
@@ -92,6 +98,11 @@ class ShippingCallbackPayload
     public function getShippingOptionId(): ?string
     {
         return $this->shippingOptionId;
+    }
+
+    public function getReferenceId(): string
+    {
+        return $this->referenceId;
     }
 
     public function isAddressEvent(): bool

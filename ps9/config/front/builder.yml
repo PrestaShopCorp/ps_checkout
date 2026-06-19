@@ -2,11 +2,18 @@ services:
   _defaults:
     public: true
 
+  PsCheckout\Infrastructure\Adapter\Hook:
+    class: PsCheckout\Infrastructure\Adapter\Hook
+
+  PsCheckout\Infrastructure\Adapter\HookInterface:
+    alias: PsCheckout\Infrastructure\Adapter\Hook
+
   PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder:
     class: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Cart'
       - '@PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository'
+      - '@PsCheckout\Infrastructure\Adapter\HookInterface'
 
   PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface:
     alias: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder

@@ -84,6 +84,8 @@ class CreatedPayPalOrderValidator implements CreatedPayPalOrderValidatorInterfac
 
         $transactionModel = $paypalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE ? $paypalOrderResponse->getAuthorization() : $paypalOrderResponse->getCapture();
 
+        $cart = $this->cart->getCart($cartId);
+
         return new PayPalOrderCompletionData(
             $paypalOrderResponse->getStatus(),
             $paypalOrderResponse->getId(),
@@ -91,7 +93,7 @@ class CreatedPayPalOrderValidator implements CreatedPayPalOrderValidatorInterfac
             $cartId,
             $this->moduleId,
             (int) $order->id,
-            $this->cart->getCart($cartId)->secure_key
+            $cart ? $cart->getSecureKey() : ''
         );
     }
 }

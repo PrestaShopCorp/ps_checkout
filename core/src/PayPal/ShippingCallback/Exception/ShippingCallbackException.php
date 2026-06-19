@@ -26,6 +26,8 @@ class ShippingCallbackException extends \RuntimeException
 
     const COUNTRY_ERROR = 'COUNTRY_ERROR';
 
+    const INVALID_SIGNATURE = 'INVALID_SIGNATURE';
+
     const METHOD_UNAVAILABLE = 'METHOD_UNAVAILABLE';
 
     /**

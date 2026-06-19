@@ -20,14 +20,18 @@
 
 namespace Tests\Unit\PsCheckout\Infrastructure\Action;
 
-use Cart;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\PayPal\ShippingCallback\Builder\PurchaseUnitsNodeBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Exception\ShippingCallbackException;
 use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
 use PsCheckout\Infrastructure\Action\ShippingCallbackProcessor;
+use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
+use PsCheckout\Infrastructure\Adapter\CountryInterface;
+use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class ShippingCallbackProcessorTest extends TestCase
@@ -37,6 +41,9 @@ class ShippingCallbackProcessorTest extends TestCase
 
     /** @var ShippingOptionsBuilderInterface|MockObject */
     private $shippingOptionsBuilder;
+
+    /** @var PurchaseUnitsNodeBuilderInterface|MockObject */
+    private $purchaseUnitsNodeBuilder;
 
     /** @var LoggerInterface|MockObject */
     private $logger;
@@ -48,8 +55,17 @@ class ShippingCallbackProcessorTest extends TestCase
     {
         $this->cartAdapter = $this->createMock(CartInterface::class);
         $this->shippingOptionsBuilder = $this->createMock(ShippingOptionsBuilderInterface::class);
+        $this->purchaseUnitsNodeBuilder = $this->createMock(PurchaseUnitsNodeBuilderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->processor = new ShippingCallbackProcessor($this->cartAdapter, $this->shippingOptionsBuilder, $this->logger);
+        $this->processor = new ShippingCallbackProcessor(
+            $this->cartAdapter,
+            $this->shippingOptionsBuilder,
+            $this->purchaseUnitsNodeBuilder,
+            $this->createMock(CountryInterface::class),
+            $this->createMock(CountryRepositoryInterface::class),
+            $this->createMock(AddressRepositoryInterface::class),
+            $this->logger
+        );
     }
 
     public function testThrowsMethodUnavailableWhenCartNotFound(): void
@@ -79,9 +95,9 @@ class ShippingCallbackProcessorTest extends TestCase
         }
     }
 
-    public function testResponseContainsExpectedStructure(): void
+    public function testDelegatesToPurchaseUnitsNodeBuilderWithCorrectAmounts(): void
     {
-        $cart = $this->makeCart(['placeholder' => true]);
+        $cart = $this->makeCart(['placeholder' => true], 80.00, 90.00);
         $this->cartAdapter->method('getCart')->willReturn($cart);
 
         $shippingOptions = [
@@ -90,30 +106,91 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->shippingOptionsBuilder->method('build')->willReturn($shippingOptions);
         $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
 
+        $builtUnits = ['purchase_units' => [['reference_id' => 'default']]];
+
+        // item=80.00, tax=90.00-80.00=10.00, shipping=4.99, reference_id from payload
+        $this->purchaseUnitsNodeBuilder
+            ->expects($this->once())
+            ->method('build')
+            ->with('default', $this->anything(), 80.00, 10.00, 4.99, $shippingOptions)
+            ->willReturn($builtUnits);
+
         $result = $this->processor->process(1, new ShippingCallbackPayload(['id' => 'ORDER-1']));
 
-        $this->assertArrayHasKey('purchase_units', $result);
-        $unit = $result['purchase_units'][0];
+        $this->assertSame('ORDER-1', $result['id']);
+        $this->assertSame($builtUnits['purchase_units'], $result['purchase_units']);
+    }
 
-        $this->assertSame('default', $unit['reference_id']);
-        $this->assertArrayHasKey('amount', $unit);
-        $this->assertArrayHasKey('value', $unit['amount']);
-        $this->assertArrayHasKey('breakdown', $unit['amount']);
-        $this->assertArrayHasKey('item_total', $unit['amount']['breakdown']);
-        $this->assertArrayHasKey('tax_total', $unit['amount']['breakdown']);
-        $this->assertArrayHasKey('shipping', $unit['amount']['breakdown']);
-        $this->assertArrayHasKey('shipping_options', $unit);
-        $this->assertSame($shippingOptions, $unit['shipping_options']);
+    public function testUpdatesCartDeliveryOptionOnShippingOptionEvent(): void
+    {
+        $cart = $this->createMock(CartDataInterface::class);
+        $cart->method('getId')->willReturn(1);
+        $cart->method('getCurrencyIsoCode')->willReturn('EUR');
+        $cart->method('getDeliveryAddressId')->willReturn(5);
+        $cart->method('getDeliveryOptionList')->willReturn(['placeholder' => true]);
+        $cart->method('getDeliveryOption')->willReturn([5 => '3,']);
+        $cart->method('getProductsTotalWithoutTax')->willReturn(100.00);
+        $cart->method('getProductsTotalWithTax')->willReturn(100.00);
+        $cart->expects($this->once())->method('setDeliveryOption')->with(5, 3);
+        $cart->expects($this->once())->method('save');
+
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-3', 'amount' => ['value' => '4.99'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+
+        $this->processor->process(1, new ShippingCallbackPayload([
+            'id' => 'ORDER-1',
+            'shipping_option' => ['id' => 'delivery-option-3'],
+        ]));
+    }
+
+    public function testLogsWarningWhenDeliveryAddressIdIsZeroOnShippingOptionEvent(): void
+    {
+        $cart = $this->makeCart(['placeholder' => true]); // getDeliveryAddressId returns 0
+        $cart->expects($this->never())->method('setDeliveryOption');
+
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-3', 'amount' => ['value' => '4.99'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+        $this->logger->expects($this->once())->method('warning');
+
+        $this->processor->process(1, new ShippingCallbackPayload([
+            'id' => 'ORDER-1',
+            'shipping_option' => ['id' => 'delivery-option-3'],
+        ]));
+    }
+
+    public function testDoesNotUpdateCartDeliveryOptionOnAddressEvent(): void
+    {
+        $cart = $this->makeCart(['placeholder' => true]);
+        $cart->expects($this->never())->method('setDeliveryOption');
+
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-3', 'amount' => ['value' => '4.99'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+
+        $this->processor->process(1, new ShippingCallbackPayload(['id' => 'ORDER-1']));
     }
 
     public function testBuilderReceivesPayloadShippingOptionId(): void
     {
         $cart = $this->makeCart(['placeholder' => true]);
         $this->cartAdapter->method('getCart')->willReturn($cart);
-        $this->shippingOptionsBuilder->method('build')->willReturn([
-            ['id' => 'delivery-option-5', 'label' => 'DHL', 'type' => 'SHIPPING', 'amount' => ['currency_code' => 'EUR', 'value' => '7.00'], 'selected' => true],
-        ]);
         $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(7.00);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+
+        $shippingOptions = [
+            ['id' => 'delivery-option-5', 'label' => 'DHL', 'type' => 'SHIPPING', 'amount' => ['currency_code' => 'EUR', 'value' => '7.00'], 'selected' => true],
+        ];
 
         $payload = new ShippingCallbackPayload([
             'id' => 'ORDER-1',
@@ -123,7 +200,8 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->shippingOptionsBuilder
             ->expects($this->once())
             ->method('build')
-            ->with(1, 'delivery-option-5');
+            ->with(1, 'delivery-option-5')
+            ->willReturn($shippingOptions);
 
         $this->processor->process(1, $payload);
     }
@@ -131,20 +209,19 @@ class ShippingCallbackProcessorTest extends TestCase
     /**
      * @param array<string, mixed> $deliveryOptions non-empty to simulate available options
      *
-     * @return Cart|MockObject
+     * @return CartDataInterface|MockObject
      */
-    private function makeCart(array $deliveryOptions): Cart
+    private function makeCart(array $deliveryOptions, float $itemsWithoutTax = 100.00, float $itemsWithTax = 100.00): CartDataInterface
     {
-        $cart = $this->getMockBuilder(Cart::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cart = $this->createMock(CartDataInterface::class);
 
-        $cart->id = 1;
-        $cart->id_currency = 0;
-
+        $cart->method('getId')->willReturn(1);
+        $cart->method('getCurrencyIsoCode')->willReturn('EUR');
+        $cart->method('getDeliveryAddressId')->willReturn(0);
         $cart->method('getDeliveryOptionList')->willReturn($deliveryOptions);
         $cart->method('getDeliveryOption')->willReturn([1 => '3,']);
-        $cart->method('getOrderTotal')->willReturn(100.00);
+        $cart->method('getProductsTotalWithoutTax')->willReturn($itemsWithoutTax);
+        $cart->method('getProductsTotalWithTax')->willReturn($itemsWithTax);
 
         return $cart;
     }

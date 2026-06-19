@@ -21,7 +21,6 @@
 namespace PsCheckout\Infrastructure\Controller;
 
 use Connection;
-use Exception;
 use ModuleFrontController;
 use Ps_Checkout;
 use Psr\Log\LoggerInterface;
@@ -94,11 +93,35 @@ class AbstractFrontController extends ModuleFrontController
     }
 
     /**
-     * @param Exception $exception
+     * Output a clean JSON response for server-to-server endpoints (PayPal callbacks, webhooks).
+     * Unlike exitWithResponse(), this does not wrap the body in a PS AJAX envelope.
+     *
+     * @param int $httpCode
+     * @param mixed $body
      *
      * @return void
      */
-    protected function exitWithExceptionMessage(Exception $exception)
+    protected function exitWithServerResponse(int $httpCode = 200, $body = null)
+    {
+        ob_end_clean();
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Content-Type: application/json;charset=utf-8');
+        header('X-Robots-Tag: noindex, nofollow');
+        http_response_code($httpCode);
+
+        if ($body !== null) {
+            echo json_encode($body, JSON_UNESCAPED_SLASHES);
+        }
+
+        exit;
+    }
+
+    /**
+     * @param \Throwable $exception
+     *
+     * @return void
+     */
+    protected function exitWithExceptionMessage(\Throwable $exception)
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);

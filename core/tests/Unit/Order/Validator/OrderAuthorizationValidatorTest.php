@@ -27,6 +27,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Validator\OrderAuthorizationValidator;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidatorInterface;
+use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\CustomerInterface;
@@ -132,40 +133,24 @@ class OrderAuthorizationValidatorTest extends TestCase
         $this->validator->validate(1, $payPalOrder);
     }
 
-    private function createCartMock(bool $valid = true): MockObject
+    /**
+     * @return CartDataInterface|MockObject
+     */
+    private function createCartMock(bool $valid = true): CartDataInterface
     {
-        $cart = $this->getMockBuilder(\Cart::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProducts', 'isAllProductsInStock', 'checkAllProductsAreStillAvailableInThisState',
-                         'checkAllProductsHaveMinimalQuantities', 'isVirtualCart', 'getDeliveryOptionList', 'getOrderTotal', ])
-            ->getMock();
+        $cart = $this->createMock(CartDataInterface::class);
 
-        $cart->id = 1;
-        $cart->id_customer = 1;
-        $cart->id_address_invoice = 1;
-        $cart->id_address_delivery = 1;
-
-        $cart->method('getProducts')
-            ->willReturn($valid ? [['id_product' => 1]] : []);
-
-        $cart->method('isAllProductsInStock')
-            ->willReturn($valid);
-
-        $cart->method('checkAllProductsAreStillAvailableInThisState')
-            ->willReturn($valid);
-
-        $cart->method('checkAllProductsHaveMinimalQuantities')
-            ->willReturn($valid);
-
-        $cart->method('isVirtualCart')
-            ->willReturn(false);
-
-        $cart->method('getDeliveryOptionList')
-            ->willReturn($valid ? [1 => ['carrier_list' => []]] : []);
-
-        $cart->method('getOrderTotal')
-            ->with(true, \Cart::BOTH)
-            ->willReturn(100.00);
+        $cart->method('getId')->willReturn(1);
+        $cart->method('getCustomerId')->willReturn(1);
+        $cart->method('getInvoiceAddressId')->willReturn(1);
+        $cart->method('getDeliveryAddressId')->willReturn(1);
+        $cart->method('getProducts')->willReturn($valid ? [['id_product' => 1]] : []);
+        $cart->method('isAllProductsInStock')->willReturn($valid);
+        $cart->method('checkAllProductsAreStillAvailableInThisState')->willReturn($valid);
+        $cart->method('checkAllProductsHaveMinimalQuantities')->willReturn($valid);
+        $cart->method('isVirtualCart')->willReturn(false);
+        $cart->method('getDeliveryOptionList')->willReturn($valid ? [1 => ['carrier_list' => []]] : []);
+        $cart->method('getOrderTotalWithTax')->willReturn(100.00);
 
         return $cart;
     }

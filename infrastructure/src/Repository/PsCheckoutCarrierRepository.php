@@ -39,13 +39,17 @@ class PsCheckoutCarrierRepository
     }
 
     /**
-     * Returns the carrier type, or null if the carrier is explicitly disabled for PayPal shipping options.
-     * Returns TYPE_SHIPPING by default for carriers not yet configured.
+     * Returns carrier data from ps_carrier joined with pscheckout_carrier configuration,
+     * or null if no ps_carrier row exists for the given id_carrier.
+     * The returned array contains the raw DB values; callers are responsible for applying
+     * business logic such as hook dispatch and disabled filtering.
+     *
+     * @return array{id_reference: int, type: string, disabled: bool}|null
      */
-    public function getTypeByCarrierId(int $carrierId): ?string
+    public function getCarrierData(int $carrierId): ?array
     {
         $query = new \DbQuery();
-        $query->select('p.type, p.disabled')
+        $query->select('c.id_reference, p.type, p.disabled')
             ->from('carrier', 'c')
             ->leftJoin(self::TABLE_NAME, 'p', 'c.id_reference = p.id_reference')
             ->where('c.id_carrier = ' . (int) $carrierId);
@@ -53,14 +57,14 @@ class PsCheckoutCarrierRepository
         $row = $this->db->getRow($query);
 
         if ($row === false || $row === null) {
-            return self::TYPE_SHIPPING;
-        }
-
-        if (isset($row['disabled']) && $row['disabled']) {
             return null;
         }
 
-        return $row['type'] ?: self::TYPE_SHIPPING;
+        return [
+            'id_reference' => (int) $row['id_reference'],
+            'type' => $row['type'] ?: self::TYPE_SHIPPING,
+            'disabled' => (bool) $row['disabled'],
+        ];
     }
 
     /**

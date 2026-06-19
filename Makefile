@@ -6,7 +6,16 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 install:
 	composer install
 
-up: install
+generate-cloudflared-config:
+	@sed \
+		-e 's|$${TUNNEL_ID}|$(TUNNEL_ID)|g' \
+		-e 's|$${PS_DOMAIN}|$(PS_DOMAIN)|g' \
+		-e 's|$${CLOUDFLARED_DOMAIN}|$(CLOUDFLARED_DOMAIN)|g' \
+		-e 's|$${MODULE_VERSION}|$(MODULE_VERSION)|g' \
+		-e 's|$${PS_VERSION_TAG}|$(PS_VERSION_TAG)|g' \
+		.cloudflared.yml.dist > .cloudflared.yml
+
+up: install generate-cloudflared-config
 	docker compose up -d
 
 build:
@@ -49,7 +58,26 @@ php-unit-presentation:
 
 unit-test: php-unit-api php-unit-utility php-unit-core php-unit-presentation
 
-php-integration-core:
+create-test-db:
+	docker exec -i $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} mysql -uroot -pprestashop -e "DROP DATABASE IF EXISTS test_prestashop; CREATE DATABASE test_prestashop;"
+	docker exec $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} mysqldump -uroot -pprestashop prestashop | \
+	  docker exec -i $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} mysql -uroot -pprestashop test_prestashop
+	docker exec -i $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} mysql -uroot -pprestashop test_prestashop -e "\
+	  ALTER TABLE ps_pscheckout_cart MODIFY COLUMN paypal_token text DEFAULT NULL;\
+	  ALTER TABLE ps_pscheckout_cart MODIFY COLUMN paypal_status varchar(30) NULL;\
+	  ALTER TABLE ps_pscheckout_cart ADD COLUMN IF NOT EXISTS environment varchar(20) DEFAULT NULL;\
+	  ALTER TABLE ps_pscheckout_order ADD COLUMN IF NOT EXISTS tags varchar(255) DEFAULT NULL;\
+	  ALTER TABLE ps_pscheckout_order ADD COLUMN IF NOT EXISTS date_add datetime DEFAULT NULL;\
+	  ALTER TABLE ps_pscheckout_carrier ADD COLUMN IF NOT EXISTS disabled tinyint(1) NOT NULL DEFAULT 0;\
+	  ALTER TABLE ps_pscheckout_authorization DROP COLUMN IF EXISTS seller_protection;\
+	  ALTER TABLE ps_pscheckout_authorization ADD COLUMN IF NOT EXISTS create_time varchar(20) NOT NULL DEFAULT '';\
+	  ALTER TABLE ps_pscheckout_authorization ADD COLUMN IF NOT EXISTS update_time varchar(20) NOT NULL DEFAULT '';\
+	  INSERT INTO ps_currency (id_currency, iso_code, name, numeric_iso_code, \`precision\`, conversion_rate, deleted, active, unofficial, modified)\
+	    VALUES (2, 'USD', 'US Dollar', '840', 2, 1.100000, 0, 1, 0, 0)\
+	    ON DUPLICATE KEY UPDATE iso_code='USD', name='US Dollar';\
+	  "
+
+php-integration-core: create-test-db
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/core/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/vendor/invertus/core/tests/bootstrap-integration.php"
 
 integration-test: php-integration-core

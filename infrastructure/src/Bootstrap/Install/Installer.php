@@ -47,18 +47,25 @@ class Installer implements InstallerInterface
      */
     private $compatibilityRulesInstaller;
 
+    /**
+     * @var InstallerInterface
+     */
+    private $hookInstaller;
+
     public function __construct(
         InstallerInterface $configurationInstaller,
         InstallerInterface $databaseTableInstaller,
         InstallerInterface $fundingSourceInstaller,
         InstallerInterface $orderStateInstaller,
-        InstallerInterface $compatibilityRulesInstaller
+        InstallerInterface $compatibilityRulesInstaller,
+        InstallerInterface $hookInstaller
     ) {
         $this->configurationInstaller = $configurationInstaller;
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->fundingSourceInstaller = $fundingSourceInstaller;
         $this->orderStateInstaller = $orderStateInstaller;
         $this->compatibilityRulesInstaller = $compatibilityRulesInstaller;
+        $this->hookInstaller = $hookInstaller;
     }
 
     /**
@@ -70,7 +77,8 @@ class Installer implements InstallerInterface
             && $this->databaseTableInstaller->init()
             && $this->fundingSourceInstaller->init()
             && $this->orderStateInstaller->init()
-            && $this->compatibilityRulesInstaller->init();
+            && $this->compatibilityRulesInstaller->init()
+            && $this->hookInstaller->init();
 
         return $result;
     }

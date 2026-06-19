@@ -1255,6 +1255,72 @@ parameters:
 			path: ../core/src/Order/Action/ValidateOrderAction.php
 
 		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\CheckoutContext\:\:__construct\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\CheckoutContext\:\:__construct\(\) has parameter \$shippingOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\CheckoutContext\:\:getCart\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\Order\\Builder\\CheckoutContext\:\:\$cart \(array\<string, mixed\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\Order\\Builder\\CheckoutContext\:\:\$shippingOptions \(array\<int, array\<string, mixed\>\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContext.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\CheckoutContextInterface\:\:getCart\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/Order/Builder/CheckoutContextInterface.php
+
+		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -1657,25 +1723,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildInvoicePortableAddress\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
@@ -1693,34 +1741,10 @@ parameters:
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:\$cart type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Parameter \#3 \$cart of method PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:buildCustomerAttributes\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:\$paypalCustomerId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilder\:\:\$paypalVaultId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilderInterface\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\CardPaymentSourceNodeBuilderInterface\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/CardPaymentSourceNodeBuilderInterface.php
 
 		-
 			message: '#^Cannot access offset ''billing_address'' on mixed\.$#'
@@ -1755,6 +1779,54 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\GooglePayPaymentSourceNodeBuilder\:\:setCart\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\GooglePayPaymentSourceNodeBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildInvoicePortableAddress\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\GooglePayPaymentSourceNodeBuilder\:\:\$cart \(array\<string, mixed\>\|null\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\GooglePayPaymentSourceNodeBuilder\:\:\$cart is never read, only written\.$#'
+			identifier: property.onlyWritten
 			count: 1
 			path: ../core/src/Order/Builder/Node/GooglePayPaymentSourceNodeBuilder.php
 
@@ -1807,56 +1879,14 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildInvoicePortableAddress\(\) expects array\<string, mixed\>, array given\.$#'
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:buildPayerData\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
+			message: '#^Parameter \#1 \$cart of static method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getShippingPreference\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:\$cart type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:\$paypalCustomerId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:\$paypalVaultId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilder\:\:\$paypalVaultId is never read, only written\.$#'
-			identifier: property.onlyWritten
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
 
@@ -1865,18 +1895,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilderInterface\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilderInterface\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PayPalPaymentSourceNodeBuilderInterface.php
 
 		-
 			message: '#^Access to an undefined property object\:\:\$firstname\.$#'
@@ -1945,6 +1963,150 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\ApplePayPaymentSourceNodeBuilder\:\:buildCustomerAttributes\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BancontactPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BancontactPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BancontactPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/BlikPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/EpsPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/EpsPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/EpsPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/IdealPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/IdealPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/IdealPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/MybankPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/MybankPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/MybankPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:buildBaseContext\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/P24PaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/P24PaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/P24PaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceName\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PaymentSource/P24PaymentSourceNodeBuilder.php
+
+		-
 			message: '#^Access to an undefined property object\:\:\$firstname\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1999,25 +2161,13 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:buildCustomerAttributes\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
 
 		-
 			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getCustomerEmail\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Util\\ExperienceContextHelper\:\:getInvoiceCountryCode\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
@@ -2027,42 +2177,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:\$cart type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:\$paypalCustomerId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:\$paypalVaultId \(string\) does not accept string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilder\:\:\$paypalVaultId is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderInterface\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderInterface\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderInterface.php
 
 		-
 			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
@@ -2137,19 +2251,13 @@ parameters:
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$address of static method PsCheckout\\Utility\\Payload\\OrderPayloadUtility\:\:getAddressPortable\(\) expects Address, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$cart of method PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilder\:\:getLocale\(\) expects array\<string, mixed\>, array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
@@ -2171,24 +2279,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilder\:\:\$cart type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilderInterface\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\Node\\PuiPaymentSourceNodeBuilderInterface\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/Node/PuiPaymentSourceNodeBuilderInterface.php
 
 		-
 			message: '#^Binary operation "\." between mixed and '' '' results in an error\.$#'
@@ -2443,13 +2533,7 @@ parameters:
 			path: ../core/src/Order/Builder/Node/SupplementaryDataNodeBuilderInterface.php
 
 		-
-			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			message: '#^Cannot access offset ''shipping_options'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2457,71 +2541,11 @@ parameters:
 		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Cannot access property \$id on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
+			count: 7
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:build\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildBasePayload\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildCardPaymentSource\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildOptionalPayload\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildPaymentSource\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildSupplementaryData\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:checkPaypalOrderIdWhenUpdate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:mergePayload\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:mergePayload\(\) has parameter \$optionalPayload with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
@@ -2539,44 +2563,8 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Parameter \#2 \.\.\.\$replacements of function array_replace_recursive expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:\$cart \(array\<string, mixed\>\) does not accept array\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
-			message: '#^Property PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:\$payload type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilderInterface\:\:build\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilderInterface\:\:setCart\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilderInterface\:\:setCart\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilderInterface.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilderInterface\:\:setIsUpdate\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: ../core/src/Order/Builder/OrderPayloadBuilderInterface.php
 
@@ -2737,27 +2725,9 @@ parameters:
 			path: ../core/src/Order/Validator/OrderAmountValidator.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cart and ''checkAllProductsAre…'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cart and ''checkAllProductsHav…'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
-
-		-
 			message: '#^Parameter \#1 \$array of function key expects array\|object, array\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
-
-		-
-			message: '#^Parameter \#2 \$idAddress of method PsCheckout\\Infrastructure\\Adapter\\CustomerInterface\:\:customerHasAddress\(\) expects int, int\|null given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../core/src/Order/Validator/OrderAuthorizationValidator.php
 
 		-
@@ -3225,60 +3195,12 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Customer\|null\.$#'
 			identifier: property.nonObject
-			count: 3
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setCustomerBirthDay\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setCustomerPhone\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setFundingSource\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setIsCard\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setIsExpressCheckout\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setIsVault\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Cannot call method setSavePaymentMethod\(\) on mixed\.$#'
-			identifier: method.nonObject
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Action\\CreatePayPalOrderAction\:\:createPayPalOrder\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
-
-		-
-			message: '#^Method PsCheckout\\Core\\PayPal\\Order\\Action\\CreatePayPalOrderAction\:\:deleteExistingPayPalOrder\(\) is unused\.$#'
-			identifier: method.unused
 			count: 1
 			path: ../core/src/PayPal/Order/Action/CreatePayPalOrderAction.php
 
@@ -4207,30 +4129,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
 
 		-
-			message: '#^Cannot call method setIsCard\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
-
-		-
-			message: '#^Cannot call method setIsExpressCheckout\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
-
-		-
-			message: '#^Cannot call method setIsUpdate\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
-
-		-
-			message: '#^Cannot call method setPaypalOrderId\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
-
-		-
 			message: '#^Offset ''purchase_units'' on non\-empty\-array\<int, array\{reference_id\?\: string, invoice_id\?\: string, custom_id\?\: string, description\?\: string, items\?\: array\<int, array\<string, mixed\>\>, shipping\?\: array\<string, mixed\>, amount\?\: array\{value\: string, currency_code\: string\}, payments\?\: array\{authorizations\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, amount\: array\{value\: string, currency_code\: string\}, status_details\?\: array\{reason\: string\}, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, network_transaction_reference\?\: array\{id\: string, date\: string, network\: string, acquirer_reference_number\: string\}, \.\.\.\}\>, captures\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, final_capture\?\: bool, seller_protection\?\: array\{status\: string, dispute_categories\: array\<int, string\>\}, \.\.\.\}\>, refunds\?\: array\<int, array\{id\: string, invoice_id\?\: string, custom_id\?\: string, status\: string, status_details\?\: array\{reason\: string\}, amount\?\: array\{value\: string, currency_code\: string\}, note_to_payer\?\: string, seller_payable_breakdown\?\: array\{gross_amount\?\: array\{value\: string, currency_code\: string\}, paypal_fee\?\: array\{value\: string, currency_code\: string\}, paypal_fee_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, net_amount\?\: array\{value\: string, currency_code\: string\}, net_amount_in_receivable_currency\?\: array\{value\: string, currency_code\: string\}, platform_fees\?\: array\{value\: string, currency_code\: string\}, net_amount_breakdown\?\: array\{value\: string, currency_code\: string\}, total_refunded_amount\?\: array\{value\: string, currency_code\: string\}\}, \.\.\.\}\>\}\}\> on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -4256,6 +4154,12 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$key of method PsCheckout\\Core\\PayPal\\Order\\Cache\\PayPalOrderCacheInterface\:\:delete\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$paypalOrderId of method PsCheckout\\Core\\Order\\Builder\\CheckoutContextBuilderInterface\:\:setPaypalOrderId\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessor.php
@@ -4681,12 +4585,6 @@ parameters:
 			path: ../core/src/PayPal/Order/Validator/CreatedPayPalOrderValidator.php
 
 		-
-			message: '#^Cannot access property \$secure_key on Cart\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Validator/CreatedPayPalOrderValidator.php
-
-		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 1
@@ -4712,12 +4610,6 @@ parameters:
 
 		-
 			message: '#^Cannot access property \$id on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/PayPal/Order/Validator/CreatedPayUponInvoiceOrderValidator.php
-
-		-
-			message: '#^Cannot access property \$secure_key on Cart\|null\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: ../core/src/PayPal/Order/Validator/CreatedPayUponInvoiceOrderValidator.php
@@ -4751,6 +4643,66 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../core/src/PayPal/Refund/Provider/PayPalRefundOrderProvider.php
+
+		-
+			message: '#^Possibly invalid array key type string\|null\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Action/VerifyShippingCallbackSignatureAction.php
+
+		-
+			message: '#^Cannot access offset ''admin_area_1'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset ''admin_area_2'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset ''country_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset ''postal_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset ''reference_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 7
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
+
+		-
+			message: '#^Method PsCheckout\\Core\\PayPal\\ShippingCallback\\ValueObject\\ShippingCallbackPayload\:\:__construct\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/ValueObject/ShippingCallbackPayload.php
 
 		-
 			message: '#^Method PsCheckout\\Core\\PayPal\\ShippingTracking\\Action\\AddTrackingAction\:\:execute\(\) has no return type specified\.$#'
@@ -8185,6 +8137,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/GooglePayPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\GooglePayPaymentSourceNodeBuilderTest\:\:makeContext\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/GooglePayPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
 			count: 4
@@ -8210,6 +8168,18 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''brand_name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''callback_events'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''callback_url'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
@@ -8241,7 +8211,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
+			count: 10
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8263,6 +8233,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''order_update_callback_config'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''payment_method_selected'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -8271,7 +8247,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''paypal'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 19
+			count: 22
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8301,12 +8277,24 @@ parameters:
 		-
 			message: '#^Cannot access offset ''user_action'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''vault'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilderTest\:\:makeContext\(\) has parameter \$paypalCustomerId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PayPalPaymentSourceNodeBuilderTest\:\:makeContext\(\) has parameter \$paypalVaultId with no type specified\.$#'
+			identifier: missingType.parameter
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
@@ -8325,7 +8313,25 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 12
+			count: 16
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#4 \$paypalCustomerId of class PsCheckout\\Core\\Order\\Builder\\CheckoutContext constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#5 \$paypalVaultId of class PsCheckout\\Core\\Order\\Builder\\CheckoutContext constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8421,6 +8427,12 @@ parameters:
 		-
 			message: '#^Cannot access offset ''vault_id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\ApplePayPaymentSourceNodeBuilderTest\:\:makeContext\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/ApplePayPaymentSourceNodeBuilderTest.php
 
@@ -8749,6 +8761,12 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/PuiPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\PuiPaymentSourceNodeBuilderTest\:\:makeContext\(\) has parameter \$cart with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/PuiPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
 			count: 2
@@ -8767,6 +8785,18 @@ parameters:
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
+			message: '#^Cannot access offset ''callback_events'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''callback_url'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 6
@@ -8781,7 +8811,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
+			count: 10
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8810,6 +8840,12 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''national_number'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''order_update_callback_config'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
@@ -8859,7 +8895,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''venmo'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 19
+			count: 23
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderTest\:\:testBuild\(\) has parameter \$customerId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderTest\:\:testBuild\(\) has parameter \$vaultId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8871,7 +8919,25 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 7
+			count: 10
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#7 \$vaultId of method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderTest\:\:makeContext\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Parameter \#8 \$customerId of method Tests\\Unit\\PsCheckout\\Core\\Order\\Builder\\Node\\PaymentSource\\VenmoPaymentSourceNodeBuilderTest\:\:makeContext\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
 			path: ../core/tests/Unit/Order/Builder/Node/PaymentSource/VenmoPaymentSourceNodeBuilderTest.php
 
 		-
@@ -9331,12 +9397,6 @@ parameters:
 			path: ../core/tests/Unit/PayPal/Card3DSecure/Card3DSecureValidatorTest.php
 
 		-
-			message: '#^Class PsCheckout\\Api\\ValueObject\\PayPalOrderResponse constructor invoked with 8 parameters, 7 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: ../core/tests/Unit/PayPal/Order/Processor/UpdateExternalPayPalOrderProcessorTest.php
-
-		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''PsCheckout\\\\Api\\\\ValueObject\\\\PayPalOrderResponse'' and PsCheckout\\Api\\ValueObject\\PayPalOrderResponse will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 5
@@ -9359,6 +9419,42 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../core/tests/Unit/PayPal/OrderStatus/Action/PayPalCheckOrderStatusActionTest.php
+
+		-
+			message: '#^Cannot access offset ''breakdown'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 9
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''currency_code'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''item_total'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''shipping'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''tax_total'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 10
+			path: ../core/tests/Unit/PayPal/ShippingCallback/Builder/PurchaseUnitsNodeBuilderTest.php
 
 		-
 			message: '#^Method PsCheckout\\Tests\\Unit\\PaymentToken\\Action\\DeletePaymentTokenActionTest\:\:providePayPalErrorScenarios\(\) return type has no value type specified in iterable type array\.$#'
@@ -10141,10 +10237,76 @@ parameters:
 			path: ../infrastructure/src/Action/SaveExpressCheckoutFlagsAction.php
 
 		-
+			message: '#^Cannot access offset ''address1''\|''city''\|''firstname''\|''lastname'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Cannot access offset ''fields'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Cannot access offset ''required'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Cannot access property \$id on Shop\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Cannot access property \$shop on Context\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$countryCode of static method PsCheckout\\Utility\\Payload\\PaypalAddressRequirementsUtility\:\:usesStateIsoCode\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$countryCode of static method PsCheckout\\Utility\\Payload\\PaypalStateCodeMapUtility\:\:getShopStateCode\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
+			message: '#^Parameter \#1 \$isoCode of method PsCheckout\\Infrastructure\\Adapter\\CountryInterface\:\:getIdByIsoCode\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Action/ShippingCallbackProcessor.php
+
+		-
 			message: '#^Call to function is_object\(\) with Cart will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../infrastructure/src/Adapter/Cart.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cart and ''checkAllProductsAre…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../infrastructure/src/Adapter/CartData.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cart and ''checkAllProductsHav…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../infrastructure/src/Adapter/CartData.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Adapter\\CartData\:\:getProducts\(\) should return array\<int, array\<string, mixed\>\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Adapter/CartData.php
 
 		-
 			message: '#^Call to function is_int\(\) with int will always evaluate to true\.$#'
@@ -10455,19 +10617,19 @@ parameters:
 		-
 			message: '#^Argument of an invalid type array\|mysqli_result\|PDOStatement\|resource\|true supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
-			count: 2
+			count: 3
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
 			message: '#^Binary operation "\." between "\\n            CREATE…" and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 12
+			count: 13
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
 			message: '#^Cannot access offset ''Field'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
+			count: 7
 			path: ../infrastructure/src/Bootstrap/Install/DatabaseTableInstaller.php
 
 		-
@@ -10493,6 +10655,12 @@ parameters:
 			identifier: cast.int
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/FundingSourceInstaller.php
+
+		-
+			message: '#^Property HookCore\:\:\$position \(bool\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../infrastructure/src/Bootstrap/Install/HookInstaller.php
 
 		-
 			message: '#^Cannot access offset ''id_lang'' on array\|int\.$#'
@@ -10553,6 +10721,102 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: ../infrastructure/src/Bootstrap/Install/OrderStateInstaller.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/CheckoutContextBuilder.php
+
+		-
+			message: '#^Cannot access offset ''is_virtual'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/CheckoutContextBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../infrastructure/src/Builder/CheckoutContextBuilder.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of function in_array expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/src/Builder/CheckoutContextBuilder.php
+
+		-
+			message: '#^Property PsCheckout\\Infrastructure\\Builder\\CheckoutContextBuilder\:\:\$shippingEligibleSources has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../infrastructure/src/Builder/CheckoutContextBuilder.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access offset ''carrier_list'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access offset ''instance'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access offset ''price'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access offset ''price_with_tax'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 3
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 4
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Builder\\ShippingOptionsBuilder\:\:buildShippingOptions\(\) has parameter \$deliveryOptions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../infrastructure/src/Builder/ShippingOptionsBuilder.php
 
 		-
 			message: '#^Method PsCheckout\\Infrastructure\\Controller\\AbstractAdminController\:\:ensureHasPermissions\(\) has parameter \$permissions with no value type specified in iterable type array\.$#'
@@ -11015,6 +11279,12 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: ../infrastructure/src/Logger/Processor/SensitiveDataProcessor.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Provider\\CallbackHeaderProvider\:\:getHeaders\(\) should return array\<string, string\|null\> but returns array\<string, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Provider/CallbackHeaderProvider.php
 
 		-
 			message: '#^Binary operation "\." between ''alias \= \\'''' and mixed results in an error\.$#'
@@ -11617,6 +11887,36 @@ parameters:
 			path: ../infrastructure/src/Repository/PsAccountRepository.php
 
 		-
+			message: '#^Cannot access offset ''id_reference'' on array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PsCheckoutCarrierRepository.php
+
+		-
+			message: '#^Cannot access offset ''type'' on array\|object\|true\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/src/Repository/PsCheckoutCarrierRepository.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../infrastructure/src/Repository/PsCheckoutCarrierRepository.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PsCheckoutCarrierRepository\:\:getAll\(\) should return array\<int, array\{id_reference\: string, name\: string, external_module_name\: string, type\: string\|null, disabled\: string\}\> but returns array\|mysqli_result\|PDOStatement\|resource\|true\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Repository/PsCheckoutCarrierRepository.php
+
+		-
+			message: '#^Method PsCheckout\\Infrastructure\\Repository\\PsCheckoutCarrierRepository\:\:getCarrierData\(\) should return array\{id_reference\: int, type\: string, disabled\: bool\}\|null but returns array\{id_reference\: int, type\: mixed, disabled\: bool\}\.$#'
+			identifier: return.type
+			count: 1
+			path: ../infrastructure/src/Repository/PsCheckoutCarrierRepository.php
+
+		-
 			message: '#^Method PsCheckout\\Infrastructure\\Repository\\ReadOnlyCollectionRepositoryInterface\:\:getAllBy\(\) has parameter \$keyValueCriteria with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -11783,6 +12083,42 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: ../infrastructure/tests/Unit/Action/SaveBatchConfigurationActionTest.php
+
+		-
+			message: '#^Cannot access offset ''id_carrier'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''id_reference'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
+
+		-
+			message: '#^Parameter \#1 \$deliveryOptions of method Tests\\Unit\\PsCheckout\\Infrastructure\\Builder\\ShippingOptionsBuilderTest\:\:makeCart\(\) expects array\<string, mixed\>, array\<int, array\<string, array\<string, array\<int, array\<string, float\>\>\>\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
+
+		-
+			message: '#^Parameter \#1 \$deliveryOptions of method Tests\\Unit\\PsCheckout\\Infrastructure\\Builder\\ShippingOptionsBuilderTest\:\:makeCart\(\) expects array\<string, mixed\>, array\<int, array\<string, array\<string, mixed\>\>\> given\.$#'
+			identifier: argument.type
+			count: 11
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(array\<string, mixed\>\)\: bool\)\|null, Closure\(mixed\)\: mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: ../infrastructure/tests/Unit/Builder/ShippingOptionsBuilderTest.php
 
 		-
 			message: '#^Method Tests\\Unit\\PsCheckout\\Infrastructure\\Logger\\LoggerFileReaderTest\:\:badFilenameProvider\(\) return type has no value type specified in iterable type array\.$#'
