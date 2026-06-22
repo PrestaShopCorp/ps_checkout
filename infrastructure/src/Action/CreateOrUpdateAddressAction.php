@@ -178,6 +178,17 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
         }
 
         $cart = $this->context->getCart();
+        $oldAddressId = (int) $cart->id_address_delivery;
+        $deliveryOptionBefore = (string) $cart->delivery_option;
+
+        $this->logger->info('CreateOrUpdateAddressAction: updating cart address', [
+            'orderId' => $shippingData->getOrderId(),
+            'cartId' => (int) $cart->id,
+            'oldAddressId' => $oldAddressId,
+            'newAddressId' => (int) $addressId,
+            'deliveryOptionBefore' => $deliveryOptionBefore,
+        ]);
+
         $cart->id_address_delivery = $addressId;
         $cart->id_address_invoice = $addressId;
 
@@ -186,6 +197,54 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             $cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $addressId);
         }
 
-        return $cart->save();
+        $result = $cart->save();
+
+        // When the address changes, migrate the stored delivery option key so the carrier selected
+        // via the shipping callback remains valid after the temp address is replaced by the real one.
+        if ($result && $oldAddressId > 0 && $oldAddressId !== (int) $addressId) {
+            $rawOption = json_decode($deliveryOptionBefore, true);
+            $carrierKey = null;
+            if (is_array($rawOption)) {
+                if (isset($rawOption[$oldAddressId])) {
+                    // Normal case: delivery option is keyed by the temp address id.
+                    $carrierKey = $rawOption[$oldAddressId];
+                } else {
+                    // Fallback: product rows may have kept the original customer address
+                    // (e.g. key=44) rather than the temp address (e.g. 47) because
+                    // Cart::updateDeliveryAddressId only updates rows matching the old address.
+                    // Pick any entry not already keyed by the new real address.
+                    foreach ($rawOption as $optionAddressId => $key) {
+                        if ((int) $optionAddressId !== (int) $addressId) {
+                            $carrierKey = $key;
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($carrierKey !== null) {
+                $cart->setDeliveryOption([(int) $addressId => $carrierKey]);
+                $cart->save();
+                $this->logger->info('CreateOrUpdateAddressAction: migrated delivery option to new address', [
+                    'orderId' => $shippingData->getOrderId(),
+                    'cartId' => (int) $cart->id,
+                    'oldAddressId' => $oldAddressId,
+                    'newAddressId' => (int) $addressId,
+                    'deliveryOptionBefore' => $deliveryOptionBefore,
+                    'deliveryOptionAfter' => (string) $cart->delivery_option,
+                ]);
+            } else {
+                $this->logger->info('CreateOrUpdateAddressAction: address changed but no delivery option to migrate', [
+                    'orderId' => $shippingData->getOrderId(),
+                    'cartId' => (int) $cart->id,
+                    'oldAddressId' => $oldAddressId,
+                    'newAddressId' => (int) $addressId,
+                    'deliveryOptionBefore' => $deliveryOptionBefore,
+                ]);
+            }
+        }
+
+        return $result;
     }
 }

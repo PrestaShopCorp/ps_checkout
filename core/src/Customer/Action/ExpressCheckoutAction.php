@@ -72,15 +72,25 @@ class ExpressCheckoutAction implements ExpressCheckoutActionInterface
                 throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER, $exception);
             }
 
+            // PS Context::updateCustomer resets cart.id_address_delivery to the customer's first
+            // saved address (which does not exist yet for a brand-new guest) and clears/corrupts
+            // delivery_option. Capture and restore the delivery state so the carrier selected via
+            // the shipping callback survives the guest-login step.
+            $cart = $this->context->getCart();
+            $savedAddressId = $cart !== null ? (int) $cart->id_address_delivery : 0;
+            $savedDeliveryOption = ($cart !== null && $cart->delivery_option) ? (string) $cart->delivery_option : '';
+
             $this->context->updateCustomer($customer);
+
+            if ($cart !== null && $savedAddressId > 0) {
+                $cart->id_address_delivery = $savedAddressId;
+                $cart->delivery_option = $savedDeliveryOption;
+                $cart->save();
+            }
         }
 
         $this->context->setPayPalEmail($payerData->getEmail());
 
-        $deliveryAddressId = $this->context->getCart() ? $this->context->getCart()->id_address_delivery : null;
-        // If cart already has a shipping address, no need to fetch it from EC response
-        if ($deliveryAddressId === null || $deliveryAddressId === 0) {
-            $this->createOrUpdateAddressAction->execute($shippingData);
-        }
+        $this->createOrUpdateAddressAction->execute($shippingData);
     }
 }

@@ -45,6 +45,9 @@ class ShippingCallbackProcessorTest extends TestCase
     /** @var PurchaseUnitsNodeBuilderInterface|MockObject */
     private $purchaseUnitsNodeBuilder;
 
+    /** @var CountryInterface|MockObject */
+    private $country;
+
     /** @var LoggerInterface|MockObject */
     private $logger;
 
@@ -56,12 +59,13 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->cartAdapter = $this->createMock(CartInterface::class);
         $this->shippingOptionsBuilder = $this->createMock(ShippingOptionsBuilderInterface::class);
         $this->purchaseUnitsNodeBuilder = $this->createMock(PurchaseUnitsNodeBuilderInterface::class);
+        $this->country = $this->createMock(CountryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->processor = new ShippingCallbackProcessor(
             $this->cartAdapter,
             $this->shippingOptionsBuilder,
             $this->purchaseUnitsNodeBuilder,
-            $this->createMock(CountryInterface::class),
+            $this->country,
             $this->createMock(CountryRepositoryInterface::class),
             $this->createMock(AddressRepositoryInterface::class),
             $this->logger
@@ -127,7 +131,7 @@ class ShippingCallbackProcessorTest extends TestCase
         $cart->method('getId')->willReturn(1);
         $cart->method('getCurrencyIsoCode')->willReturn('EUR');
         $cart->method('getDeliveryAddressId')->willReturn(5);
-        $cart->method('getDeliveryOptionList')->willReturn(['placeholder' => true]);
+        $cart->method('getDeliveryOptionList')->willReturn([5 => ['carrier_list' => ['3' => []]]]);
         $cart->method('getDeliveryOption')->willReturn([5 => '3,']);
         $cart->method('getProductsTotalWithoutTax')->willReturn(100.00);
         $cart->method('getProductsTotalWithTax')->willReturn(100.00);
@@ -144,6 +148,36 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->processor->process(1, new ShippingCallbackPayload([
             'id' => 'ORDER-1',
             'shipping_option' => ['id' => 'delivery-option-3'],
+        ]));
+    }
+
+    public function testUsesEffectiveAddressFromOptionListWhenDeliveryAddressNotInList(): void
+    {
+        // Simulates the bug where ps_cart_product rows keep the original customer address (44)
+        // even though id_address_delivery was updated to the temp address (47). The delivery option
+        // list is therefore keyed by 44, not 47. The processor must use 44 so setDeliveryOption
+        // passes Cart's internal validation and does not silently discard the carrier selection.
+        $cart = $this->createMock(CartDataInterface::class);
+        $cart->method('getId')->willReturn(1);
+        $cart->method('getCurrencyIsoCode')->willReturn('EUR');
+        $cart->method('getDeliveryAddressId')->willReturn(47);
+        $cart->method('getDeliveryOptionList')->willReturn([44 => ['carrier_list' => ['2' => []]]]);
+        $cart->method('getDeliveryOption')->willReturn([44 => '1,']);
+        $cart->method('getProductsTotalWithoutTax')->willReturn(100.00);
+        $cart->method('getProductsTotalWithTax')->willReturn(100.00);
+        $cart->expects($this->once())->method('setDeliveryOption')->with(44, 2);
+        $cart->expects($this->once())->method('save');
+
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-2', 'amount' => ['value' => '9.67'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(9.67);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+
+        $this->processor->process(1, new ShippingCallbackPayload([
+            'id' => 'ORDER-1',
+            'shipping_option' => ['id' => 'delivery-option-2'],
         ]));
     }
 
@@ -181,6 +215,42 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->processor->process(1, new ShippingCallbackPayload(['id' => 'ORDER-1']));
     }
 
+    public function testThrowsAddressErrorWhenAllCarriersDisabled(): void
+    {
+        $cart = $this->makeCart(['placeholder' => true]);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([]);
+        $this->logger->expects($this->once())->method('warning');
+
+        try {
+            $this->processor->process(1, new ShippingCallbackPayload(['id' => 'ORDER-1']));
+            $this->fail('Expected ShippingCallbackException');
+        } catch (ShippingCallbackException $e) {
+            $this->assertSame(ShippingCallbackException::ADDRESS_ERROR, $e->getIssue());
+        }
+    }
+
+    public function testThrowsMethodUnavailableWhenShippingOptionIdHasUnrecognisedFormat(): void
+    {
+        $cart = $this->makeCart(['placeholder' => true]);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-3', 'amount' => ['value' => '4.99'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
+        $this->purchaseUnitsNodeBuilder->method('build')->willReturn(['purchase_units' => []]);
+
+        try {
+            $this->processor->process(1, new ShippingCallbackPayload([
+                'id' => 'ORDER-1',
+                'shipping_option' => ['id' => 'carrier-42'],
+            ]));
+            $this->fail('Expected ShippingCallbackException');
+        } catch (ShippingCallbackException $e) {
+            $this->assertSame(ShippingCallbackException::METHOD_UNAVAILABLE, $e->getIssue());
+        }
+    }
+
     public function testBuilderReceivesPayloadShippingOptionId(): void
     {
         $cart = $this->makeCart(['placeholder' => true]);
@@ -204,6 +274,41 @@ class ShippingCallbackProcessorTest extends TestCase
             ->willReturn($shippingOptions);
 
         $this->processor->process(1, $payload);
+    }
+
+    public function testThrowsCountryErrorWhenCountryNotFound(): void
+    {
+        $cart = $this->makeCart([]);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->country->method('getIdByIsoCode')->willReturn(0);
+
+        try {
+            $this->processor->process(1, new ShippingCallbackPayload([
+                'id' => 'ORDER-1',
+                'shipping_address' => ['country_code' => 'ZZ'],
+            ]));
+            $this->fail('Expected ShippingCallbackException');
+        } catch (ShippingCallbackException $e) {
+            $this->assertSame(ShippingCallbackException::COUNTRY_ERROR, $e->getIssue());
+        }
+    }
+
+    public function testThrowsCountryErrorWhenCountryNotAvailableForDelivery(): void
+    {
+        $cart = $this->makeCart([]);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->country->method('getIdByIsoCode')->willReturn(5);
+        $this->country->method('isAvailableForDelivery')->willReturn(false);
+
+        try {
+            $this->processor->process(1, new ShippingCallbackPayload([
+                'id' => 'ORDER-1',
+                'shipping_address' => ['country_code' => 'US'],
+            ]));
+            $this->fail('Expected ShippingCallbackException');
+        } catch (ShippingCallbackException $e) {
+            $this->assertSame(ShippingCallbackException::COUNTRY_ERROR, $e->getIssue());
+        }
     }
 
     /**

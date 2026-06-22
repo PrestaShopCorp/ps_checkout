@@ -495,4 +495,117 @@ class CreateOrUpdateAddressActionTest extends TestCase
         $this->action->execute($fromShippingUnit);
         $this->action->execute($fromWalletFallback);
     }
+
+    // -------------------------------------------------------------------------
+    // Delivery option migration
+    //
+    // When the cart's delivery address changes, the stored delivery_option key
+    // (which encodes the address ID) must be migrated to the new address ID so
+    // the carrier selected via the shipping callback remains valid.
+    // -------------------------------------------------------------------------
+
+    public function testMigratesDeliveryOptionFromOldAddressToNewAddressOnAddressChange(): void
+    {
+        $this->setUpAvailableCountry(false, 1);
+
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id_address_delivery = 500;
+        $cart->delivery_option = '{"500":"7,"}';
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('save')->willReturn(true);
+        $cart->expects($this->once())
+            ->method('setDeliveryOption')
+            ->with([42 => '7,']);
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->psCheckoutAddressRepository
+            ->method('getAddressIdByChecksumAndCustomer')
+            ->willReturn(42);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+    }
+
+    public function testDoesNotMigrateDeliveryOptionWhenAddressUnchanged(): void
+    {
+        $this->setUpAvailableCountry(false, 1);
+
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id_address_delivery = 42;
+        $cart->delivery_option = '{"42":"7,"}';
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('save')->willReturn(true);
+        $cart->expects($this->never())
+            ->method('setDeliveryOption');
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->psCheckoutAddressRepository
+            ->method('getAddressIdByChecksumAndCustomer')
+            ->willReturn(42);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+    }
+
+    public function testDoesNotMigrateDeliveryOptionWhenOldAddressIsZero(): void
+    {
+        $this->setUpAvailableCountry(false, 1);
+
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id_address_delivery = 0;
+        $cart->delivery_option = null;
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('save')->willReturn(true);
+        $cart->expects($this->never())
+            ->method('setDeliveryOption');
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->psCheckoutAddressRepository
+            ->method('getAddressIdByChecksumAndCustomer')
+            ->willReturn(42);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+    }
+
+    public function testMigratesDeliveryOptionViaFallbackWhenKeyDoesNotMatchOldAddress(): void
+    {
+        // delivery_option key (999) does not match id_address_delivery (500): this happens when
+        // ps_cart_product rows kept the original customer address while id_address_delivery was set
+        // to the temp address. The fallback picks any key that is not the new real address (42).
+        $this->setUpAvailableCountry(false, 1);
+
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id_address_delivery = 500;
+        $cart->delivery_option = '{"999":"3,"}';
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('save')->willReturn(true);
+        $cart->expects($this->once())
+            ->method('setDeliveryOption')
+            ->with([42 => '3,']);
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->psCheckoutAddressRepository
+            ->method('getAddressIdByChecksumAndCustomer')
+            ->willReturn(42);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+    }
+
+    public function testDoesNotMigrateDeliveryOptionWhenOnlyEntryIsAlreadyKeyedByNewAddress(): void
+    {
+        $this->setUpAvailableCountry(false, 1);
+
+        $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id_address_delivery = 500;
+        $cart->delivery_option = '{"42":"3,"}';
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('save')->willReturn(true);
+        $cart->expects($this->never())
+            ->method('setDeliveryOption');
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->psCheckoutAddressRepository
+            ->method('getAddressIdByChecksumAndCustomer')
+            ->willReturn(42);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
+    }
 }

@@ -169,7 +169,7 @@ class ExpressCheckoutActionTest extends TestCase
         $this->action->execute($this->makePayerData(), $shippingData);
     }
 
-    public function testSkipsAddressCreationWhenCartAlreadyHasDeliveryAddress(): void
+    public function testAlwaysCreatesOrUpdatesAddressEvenWhenCartAlreadyHasDeliveryAddress(): void
     {
         $customer = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
@@ -184,7 +184,7 @@ class ExpressCheckoutActionTest extends TestCase
         $this->context->method('getCustomer')->willReturn($customer);
         $this->context->method('getCart')->willReturn($cart);
 
-        $this->createOrUpdateAddressAction->expects($this->never())
+        $this->createOrUpdateAddressAction->expects($this->once())
             ->method('execute');
 
         $this->action->execute($this->makePayerData(), $this->makeShippingData());
@@ -204,6 +204,37 @@ class ExpressCheckoutActionTest extends TestCase
             ->method('execute');
 
         $this->action->execute($this->makePayerData(), $this->makeShippingData());
+    }
+
+    public function testRestoresCartDeliveryStateAfterGuestCustomerAuthentication(): void
+    {
+        // PS Context::updateCustomer resets id_address_delivery to the customer's first address
+        // (0 for a brand-new guest) and clears/corrupts delivery_option. The action must restore
+        // both so the carrier selected via the shipping callback is not lost.
+        $customer = $this->getMockBuilder(Customer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $customer->method('isLogged')->willReturn(false);
+        $customer->method('save')->willReturn(true);
+
+        $cart = $this->getMockBuilder(Cart::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $cart->id_address_delivery = 50;
+        $cart->delivery_option = '{"50":"2,"}';
+        $cart->expects($this->once())->method('save');
+
+        $this->context->method('getCustomer')->willReturn($customer);
+        $this->context->method('getCart')->willReturn($cart);
+        $this->context->method('updateCustomer')->willReturnCallback(function () use ($cart) {
+            $cart->id_address_delivery = 0;
+            $cart->delivery_option = '["2,"]';
+        });
+
+        $this->action->execute($this->makePayerData(), $this->makeShippingData());
+
+        $this->assertSame(50, $cart->id_address_delivery);
+        $this->assertSame('{"50":"2,"}', $cart->delivery_option);
     }
 
     public function testWrapsCustomerSaveExceptionInPsCheckoutException(): void

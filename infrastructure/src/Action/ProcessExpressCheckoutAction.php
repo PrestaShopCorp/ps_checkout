@@ -136,6 +136,12 @@ class ProcessExpressCheckoutAction
             );
         }
 
+        // Capture customer ID before authentication: for guest checkouts, ExpressCheckoutAction
+        // calls context->updateCustomer() which updates $cart->id_customer from 0 to the new
+        // guest customer ID. The temp address was saved with the original id_customer (0 for guests),
+        // so we must use the pre-auth value to find and delete it in the finally block.
+        $customerIdBeforeAuth = (int) $cart->id_customer;
+
         try {
             $responseBody = json_decode(
                 (string) $this->orderHttpClient->fetchOrder($orderID)->getBody(),
@@ -197,10 +203,29 @@ class ProcessExpressCheckoutAction
 
             throw $exception;
         } finally {
-            $this->addressRepository->deleteByAliasAndCustomer(
-                ShippingCallbackProcessor::TEMPORARY_ADDRESS_ALIAS_PREFIX . $cart->id,
-                (int) $cart->id_customer
-            );
+            $alias = ShippingCallbackProcessor::TEMPORARY_ADDRESS_ALIAS_PREFIX . $cart->id;
+            $tempAddressId = $this->addressRepository->getAddressIdByAliasAndCustomer($alias, $customerIdBeforeAuth);
+            $this->addressRepository->deleteByAliasAndCustomer($alias, $customerIdBeforeAuth);
+
+            if ($tempAddressId > 0) {
+                $this->logger->info('ProcessExpressCheckoutAction: temporary delivery address deleted', [
+                    'id_cart' => (int) $cart->id,
+                    'id_address_temp' => $tempAddressId,
+                    'id_address_delivery_after' => (int) $cart->id_address_delivery,
+                    'delivery_option' => (string) $cart->delivery_option,
+                ]);
+            }
+
+            // If the cart still points to the now-deleted temp address, reset it to avoid a dangling pointer.
+            // On the success path, expressCheckoutAction already updated id_address_delivery to the real address.
+            if ($tempAddressId > 0 && (int) $cart->id_address_delivery === $tempAddressId) {
+                $cart->id_address_delivery = 0;
+                $cart->save();
+                $this->logger->warning('ProcessExpressCheckoutAction: cart still pointed to deleted temp address, reset to 0', [
+                    'id_cart' => (int) $cart->id,
+                    'id_address_temp' => $tempAddressId,
+                ]);
+            }
         }
 
         return [

@@ -15,6 +15,8 @@
     },
     "require": {
         "php": "^7.1",
+        "ext-json": "*",
+        "ext-openssl": "*",
         "giggsey/libphonenumber-for-php": "^8.0",
         "prestashop/module-lib-guzzle-adapter": "^0.6",
         "prestashop/module-lib-mbo-installer": "^3",

@@ -255,6 +255,41 @@ class ProcessExpressCheckoutActionTest extends TestCase
     // Exception logging — fetchOrder failure is logged with paypal_order context
     // -------------------------------------------------------------------------
 
+    public function testResetsDeliveryAddressIdWhenTempAddressDeletedAfterFailure(): void
+    {
+        $this->validator->method('isExpressCheckoutEnabled')->willReturn(true);
+        $this->inputStreamUtility->method('getBodyContent')->willReturn(
+            json_encode(['orderID' => 'ORDER-1', 'fundingSource' => 'paypal'])
+        );
+
+        $payPalOrder = $this->createMock(\PsCheckout\Core\PayPal\Order\Entity\PayPalOrder::class);
+        $payPalOrder->method('getIdCart')->willReturn(1);
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
+
+        $cart = $this->getMockBuilder(Cart::class)->disableOriginalConstructor()->getMock();
+        $cart->id = 1;
+        $cart->id_address_delivery = 99; // temp address set by a prior shipping callback
+        $cart->id_customer = 0;
+        $cart->expects($this->once())->method('save'); // reset in finally
+        $this->context->method('getCart')->willReturn($cart);
+
+        $this->setUpHttpResponse('ORDER-1');
+
+        // Simulate that address 99 is the temp address alias for this cart
+        $this->addressRepository->method('getAddressIdByAliasAndCustomer')->willReturn(99);
+
+        $this->expressCheckoutAction->method('execute')->willThrowException(new \Exception('EC failed'));
+
+        try {
+            $this->action->execute();
+            $this->fail('Expected exception to be re-thrown');
+        } catch (\Exception $e) {
+            $this->assertSame('EC failed', $e->getMessage());
+        }
+
+        $this->assertSame(0, $cart->id_address_delivery);
+    }
+
     public function testLogsOrderContextAndRethrowsWhenFetchOrderFails(): void
     {
         $this->setUpValidGuards('ORDER-1', 'paypal', 1, 1, false);

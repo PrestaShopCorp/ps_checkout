@@ -20,43 +20,97 @@
 
 namespace PsCheckout\Infrastructure\Provider;
 
+use GuzzleHttp\Psr7\Request;
+use PsCheckout\Api\Http\HttpClientInterface;
+use PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCache;
+use PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCacheInterface;
 use PsCheckout\Core\PayPal\ShippingCallback\Provider\ShippingCallbackCertProviderInterface;
 
 class ShippingCallbackCertProvider implements ShippingCallbackCertProviderInterface
 {
     /**
-     * @var array<string, string>
+     * @var HttpClientInterface
      */
-    private static $cache = [];
+    private $httpClient;
+
+    /**
+     * @var ShippingCallbackCacheInterface
+     */
+    private $cache;
+
+    public function __construct(HttpClientInterface $httpClient, ShippingCallbackCacheInterface $cache)
+    {
+        $this->httpClient = $httpClient;
+        $this->cache = $cache;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function getCert(string $certUrl): string
     {
-        if (isset(self::$cache[$certUrl])) {
-            return self::$cache[$certUrl];
+        $cacheKey = md5($certUrl);
+
+        if ($this->cache->has($cacheKey)) {
+            return (string) $this->cache->get($cacheKey);
         }
 
-        $context = stream_context_create([
-            'ssl' => [
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ],
-            'http' => [
-                'timeout' => 5,
-                'method' => 'GET',
-            ],
-        ]);
+        $cert = $this->fetchCert($certUrl);
+        $ttl = $this->computeTtlFromCert($cert);
+        if ($ttl > 0) {
+            $this->cache->set($cacheKey, $cert, $ttl);
+        }
 
-        $cert = @file_get_contents($certUrl, false, $context);
+        return $cert;
+    }
 
-        if ($cert === false || $cert === '') {
+    /**
+     * @throws \RuntimeException
+     */
+    private function fetchCert(string $certUrl): string
+    {
+        try {
+            $response = $this->httpClient->sendRequest(new Request('GET', $certUrl));
+            $cert = (string) $response->getBody();
+        } catch (\Exception $exception) {
+            throw new \RuntimeException(
+                sprintf('Failed to download PayPal cert from %s', $certUrl),
+                0,
+                $exception
+            );
+        }
+
+        if ($cert === '') {
             throw new \RuntimeException(sprintf('Failed to download PayPal cert from %s', $certUrl));
         }
 
-        self::$cache[$certUrl] = $cert;
-
         return $cert;
+    }
+
+    /**
+     * Compute cache TTL from the cert's notAfter date.
+     * Falls back to ShippingCallbackCache::DEFAULT_TTL when the cert cannot be parsed.
+     * The result is clamped to [MIN_TTL, MAX_TTL] so a near-expiry or very
+     * long-lived cert does not cause either constant re-fetching or stale data.
+     */
+    private function computeTtlFromCert(string $certPem): int
+    {
+        $cert = openssl_x509_read($certPem);
+        if ($cert !== false) {
+            $parsed = openssl_x509_parse($cert);
+            if (is_array($parsed) && isset($parsed['validTo_time_t'])) {
+                $remaining = (int) $parsed['validTo_time_t'] - time();
+                if ($remaining > 0) {
+                    return max(
+                        ShippingCallbackCache::MIN_TTL,
+                        min($remaining, ShippingCallbackCache::MAX_TTL)
+                    );
+                }
+
+                return 0;
+            }
+        }
+
+        return ShippingCallbackCache::DEFAULT_TTL;
     }
 }

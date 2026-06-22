@@ -55,7 +55,9 @@ class CartData implements CartDataInterface
 
     public function setDeliveryAddressId(int $addressId): void
     {
-        $this->psCart->id_address_delivery = $addressId;
+        $currentAddressId = (int) $this->psCart->id_address_delivery;
+        // updateDeliveryAddressId propagates the new address to ps_cart_product rows so getDeliveryOptionList returns options keyed by the new address.
+        $this->psCart->updateDeliveryAddressId($currentAddressId, $addressId);
     }
 
     public function setDeliveryOption(int $deliveryAddressId, int $carrierId): void

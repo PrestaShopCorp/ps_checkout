@@ -45,3 +45,24 @@ services:
     arguments:
       - '@PsCheckout\Cache\Array\ShippingTracking'
       - '@PsCheckout\Cache\FileSystem\ShippingTracking'
+
+  # Shipping Callback Cert Cache Services
+  PsCheckout\Cache\Array\ShippingCallbackCert:
+    class: Symfony\Component\Cache\Adapter\ArrayAdapter
+
+  PsCheckout\Cache\FileSystem\ShippingCallbackCert:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      - "paypal-callback-cert"
+      - 86400
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
+
+  PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCache:
+    class: PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCache
+    public: true
+    arguments:
+      - '@PsCheckout\Cache\Array\ShippingCallbackCert'
+      - '@PsCheckout\Cache\FileSystem\ShippingCallbackCert'
+
+  PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCacheInterface:
+    alias: PsCheckout\Core\PayPal\ShippingCallback\Cache\ShippingCallbackCache

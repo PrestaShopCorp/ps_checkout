@@ -138,20 +138,62 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
         }
 
         $shippingOptions = $this->shippingOptionsBuilder->build($cartId, $payload->getShippingOptionId());
+
+        if (empty($shippingOptions)) {
+            $this->logger->warning('No ps_checkout-enabled carriers available for cart', [
+                'id_cart' => $cartId,
+            ]);
+
+            throw new ShippingCallbackException(
+                ShippingCallbackException::ADDRESS_ERROR,
+                sprintf('No shipping options available for cart %d after filtering', $cartId)
+            );
+        }
+
         $selectedPrice = $this->shippingOptionsBuilder->getSelectedShippingPrice($shippingOptions);
 
         if ($payload->getShippingOptionId() !== null) {
-            $carrierId = (int) substr($payload->getShippingOptionId(), strlen('delivery-option-'));
+            $shippingOptionId = $payload->getShippingOptionId();
+            $prefix = 'delivery-option-';
+
+            if (strncmp($shippingOptionId, $prefix, strlen($prefix)) !== 0) {
+                throw new ShippingCallbackException(
+                    ShippingCallbackException::METHOD_UNAVAILABLE,
+                    sprintf('Unrecognised shipping option ID format: %s', $shippingOptionId)
+                );
+            }
+
+            $carrierId = (int) substr($shippingOptionId, strlen($prefix));
             $deliveryAddressId = $cart->getDeliveryAddressId();
 
             if ($carrierId > 0 && $deliveryAddressId > 0) {
-                $cart->setDeliveryOption($deliveryAddressId, $carrierId);
+                // $deliveryOptions is keyed by ps_cart_product.id_address_delivery, not cart.id_address_delivery.
+                // When updateDeliveryAddressId fails to propagate the temp address to product rows, these two
+                // differ (e.g. temp=47, product rows=44). Use the address actually in the list so
+                // Cart::setDeliveryOption passes its internal validation and does not silently discard the entry.
+                $deliveryOptionAddresses = array_keys($deliveryOptions);
+                $effectiveAddressId = (!empty($deliveryOptionAddresses) && !in_array($deliveryAddressId, $deliveryOptionAddresses, true))
+                    ? (int) reset($deliveryOptionAddresses)
+                    : $deliveryAddressId;
+
+                $deliveryOptionBefore = $cart->getDeliveryOption();
+                $cart->setDeliveryOption($effectiveAddressId, $carrierId);
                 // Cart::setDeliveryOption only sets properties in memory; explicit save is required to persist to DB.
                 $cart->save();
+                $this->logger->info('PayPal shipping callback: delivery option updated', [
+                    'id_cart' => $cartId,
+                    'shipping_option_id' => $shippingOptionId,
+                    'carrier_id' => $carrierId,
+                    'delivery_address_id' => $deliveryAddressId,
+                    'effective_address_id' => $effectiveAddressId,
+                    'delivery_option_list_addresses' => $deliveryOptionAddresses,
+                    'delivery_option_before' => $deliveryOptionBefore,
+                    'delivery_option_after' => $cart->getDeliveryOption(),
+                ]);
             } else {
                 $this->logger->warning('PayPal shipping callback: cannot persist carrier selection', [
                     'id_cart' => $cartId,
-                    'shipping_option_id' => $payload->getShippingOptionId(),
+                    'shipping_option_id' => $shippingOptionId,
                     'carrier_id' => $carrierId,
                     'delivery_address_id' => $deliveryAddressId,
                 ]);
@@ -182,7 +224,10 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
                 'shop_iso_code' => $shopIsoCode,
             ]);
 
-            return null;
+            throw new ShippingCallbackException(
+                ShippingCallbackException::COUNTRY_ERROR,
+                sprintf('Country not found for code: %s', $payload->getCountryCode())
+            );
         }
 
         $idShop = (int) \Context::getContext()->shop->id;
@@ -196,7 +241,10 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
                 'id_country' => $idCountry,
             ]);
 
-            return null;
+            throw new ShippingCallbackException(
+                ShippingCallbackException::COUNTRY_ERROR,
+                sprintf('Country %s (id=%d) is not available for delivery', $shopIsoCode, $idCountry)
+            );
         }
 
         $idState = 0;
@@ -220,6 +268,9 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
         $address->id_state = $idState;
         $address->postcode = (string) $payload->getPostalCode();
         $address->city = (string) $payload->getAdminArea2();
+        if (!$existingId) {
+            $address->other = (string) $cart->getDeliveryAddressId();
+        }
 
         try {
             if (!$this->saveAddressWithRelaxedValidation($address)) {
@@ -238,6 +289,15 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
 
             return null;
         }
+
+        $this->logger->info('PayPal shipping callback: temporary delivery address ' . ($existingId ? 'updated' : 'created'), [
+            'id_cart' => $cart->getId(),
+            'id_address' => (int) $address->id,
+            'id_country' => $idCountry,
+            'id_state' => $idState,
+            'city' => $address->city,
+            'postcode' => $address->postcode,
+        ]);
 
         return (int) $address->id;
     }

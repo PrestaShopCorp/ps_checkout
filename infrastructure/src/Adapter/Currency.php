@@ -31,4 +31,12 @@ class Currency implements CurrencyInterface
     {
         return PrestaShopCurrency::getCurrencyInstance($idCurrency);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIdByIsoCode(string $isoCode): int
+    {
+        return (int) PrestaShopCurrency::getIdByIsoCode($isoCode);
+    }
 }

@@ -29,7 +29,7 @@ use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Infrastructure\Repository\CurrencyRepositoryInterface;
+use PsCheckout\Infrastructure\Adapter\CurrencyInterface;
 
 class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInterface
 {
@@ -44,9 +44,9 @@ class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInte
     private $orderStateMapper;
 
     /**
-     * @var CurrencyRepositoryInterface
+     * @var CurrencyInterface
      */
-    private $currencyRepository;
+    private $currency;
 
     /**
      * @var OrderAmountValidatorInterface
@@ -61,13 +61,13 @@ class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInte
     public function __construct(
         ContextInterface $context,
         OrderStateMapperInterface $orderStateMapper,
-        CurrencyRepositoryInterface $currencyRepository,
+        CurrencyInterface $currency,
         OrderAmountValidatorInterface $orderAmountValidator,
         PayPalOrderRepositoryInterface $payPalOrderRepository
     ) {
         $this->context = $context;
         $this->orderStateMapper = $orderStateMapper;
-        $this->currencyRepository = $currencyRepository;
+        $this->currency = $currency;
         $this->orderAmountValidator = $orderAmountValidator;
         $this->payPalOrderRepository = $payPalOrderRepository;
     }
@@ -92,7 +92,7 @@ class CreateValidateOrderDataAction implements CreateValidateOrderDataActionInte
         if ($capture) {
             $transactionId = $capture['id'];
             $paidAmount = $capture['status'] === 'COMPLETED' ? $capture['amount']['value'] : '';
-            $currencyId = $this->currencyRepository->getIdByIsoCode($capture['amount']['currency_code'], (int) $this->context->getCart()->id_shop);
+            $currencyId = $this->currency->getIdByIsoCode($capture['amount']['currency_code']);
         }
 
         try {

@@ -75,6 +75,9 @@ create-test-db:
 	  INSERT INTO ps_currency (id_currency, iso_code, name, numeric_iso_code, \`precision\`, conversion_rate, deleted, active, unofficial, modified)\
 	    VALUES (2, 'USD', 'US Dollar', '840', 2, 1.100000, 0, 1, 0, 0)\
 	    ON DUPLICATE KEY UPDATE iso_code='USD', name='US Dollar';\
+	  INSERT INTO ps_currency (id_currency, iso_code, name, numeric_iso_code, \`precision\`, conversion_rate, deleted, active, unofficial, modified)\
+	    VALUES (1, 'EUR', 'Euro', '978', 2, 1.000000, 0, 1, 0, 0)\
+	    ON DUPLICATE KEY UPDATE iso_code='EUR', name='Euro';\
 	  "
 
 php-integration-core: create-test-db

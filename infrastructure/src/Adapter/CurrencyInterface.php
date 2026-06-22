@@ -28,4 +28,11 @@ interface CurrencyInterface
      * @return \Currency
      */
     public function getCurrencyInstance(int $idCurrency): \Currency;
+
+    /**
+     * @param string $isoCode
+     *
+     * @return int
+     */
+    public function getIdByIsoCode(string $isoCode): int;
 }

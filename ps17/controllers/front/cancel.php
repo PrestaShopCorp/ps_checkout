@@ -24,7 +24,9 @@ if (!defined('_PS_VERSION_')) {
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CancelPayPalOrderRequest;
+use PsCheckout\Infrastructure\Action\ShippingCallbackProcessor;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
+use PsCheckout\Infrastructure\Repository\AddressRepository;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
 
@@ -74,6 +76,22 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 /** @var CancelPayPalOrderAction $cancelPayPalOrderAction */
                 $cancelPayPalOrderAction = $this->module->getService(CancelPayPalOrderAction::class);
                 $cancelPayPalOrderAction->execute($orderCancelRequest);
+            }
+
+            /** @var AddressRepository $addressRepository */
+            $addressRepository = $this->module->getService(AddressRepository::class);
+            $alias = ShippingCallbackProcessor::TEMPORARY_ADDRESS_ALIAS_PREFIX . $this->context->cart->id;
+            $customerId = (int) $this->context->cart->id_customer;
+            $tempAddressId = $addressRepository->getAddressIdByAliasAndCustomer($alias, $customerId);
+            $originalAddressId = 0;
+            if ($tempAddressId > 0) {
+                $tempAddress = new Address($tempAddressId);
+                $originalAddressId = (int) $tempAddress->other;
+            }
+            $addressRepository->deleteByAliasAndCustomer($alias, $customerId);
+            if ($tempAddressId > 0 && (int) $this->context->cart->id_address_delivery === $tempAddressId) {
+                $this->context->cart->id_address_delivery = $originalAddressId;
+                $this->context->cart->save();
             }
 
             $logger->log(

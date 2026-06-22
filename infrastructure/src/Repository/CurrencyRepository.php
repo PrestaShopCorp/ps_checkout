@@ -20,8 +20,6 @@
 
 namespace PsCheckout\Infrastructure\Repository;
 
-use Currency as PrestaShopCurrency;
-
 class CurrencyRepository implements CurrencyRepositoryInterface
 {
     /**
@@ -68,13 +66,5 @@ class CurrencyRepository implements CurrencyRepositoryInterface
                 AND mc.id_module = ' . (int) \Module::getModuleIdByName($this->moduleName) . '
                 AND mc.id_shop = ' . (int) \Context::getContext()->shop->id
         ) ?: false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdByIsoCode(string $isoCode, int $shopId = 0): int
-    {
-        return (int) PrestaShopCurrency::getIdByIsoCode($isoCode, $shopId);
     }
 }

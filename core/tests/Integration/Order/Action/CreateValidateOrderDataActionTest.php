@@ -38,6 +38,7 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
         parent::setUp();
         $this->createValidateOrderDataAction = $this->getService(CreateValidateOrderDataAction::class);
         $this->context = $this->getService(Context::class);
+
         /** @var PayPalOrderRepository $payPalOrderRepository */
         $payPalOrderRepository = $this->getService(PayPalOrderRepository::class);
         $payPalOrderRepository->save(PayPalOrderFactory::create());

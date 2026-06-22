@@ -8,6 +8,8 @@
     },
     "require": {
         "php": "^8.1",
+        "ext-json": "*",
+        "ext-openssl": "*",
         "giggsey/libphonenumber-for-php-lite": "^8.12",
         "prestashop/module-lib-guzzle-adapter": "^1.0",
         "prestashop/module-lib-mbo-installer": "^3",

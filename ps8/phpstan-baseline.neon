@@ -1183,12 +1183,6 @@ parameters:
 			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
 
 		-
-			message: '#^Cannot access property \$id_shop on Cart\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
-
-		-
 			message: '#^Cannot access property \$secure_key on Cart\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1225,7 +1219,7 @@ parameters:
 			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
 
 		-
-			message: '#^Parameter \#1 \$isoCode of method PsCheckout\\Infrastructure\\Repository\\CurrencyRepositoryInterface\:\:getIdByIsoCode\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$isoCode of method PsCheckout\\Infrastructure\\Adapter\\CurrencyInterface\:\:getIdByIsoCode\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../core/src/Order/Action/CreateValidateOrderDataAction.php
@@ -4645,10 +4639,46 @@ parameters:
 			path: ../core/src/PayPal/Refund/Provider/PayPalRefundOrderProvider.php
 
 		-
-			message: '#^Possibly invalid array key type string\|null\.$#'
-			identifier: offsetAccess.invalidOffset
+			message: '#^Call to method get\(\) on an unknown class Symfony\\Component\\Cache\\Adapter\\CacheItem\.$#'
+			identifier: class.notFound
 			count: 1
-			path: ../core/src/PayPal/ShippingCallback/Action/VerifyShippingCallbackSignatureAction.php
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Call to method isHit\(\) on an unknown class Symfony\\Component\\Cache\\Adapter\\CacheItem\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Call to method set\(\) on an unknown class Symfony\\Component\\Cache\\Adapter\\CacheItem\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Cannot call method expiresAfter\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Parameter \#1 \$adapters of method Symfony\\Component\\Cache\\Adapter\\ChainAdapter\:\:__construct\(\) expects array\<Symfony\\Component\\Cache\\Adapter\\CacheItemPoolInterface\>, array\<int, Symfony\\Component\\Cache\\Adapter\\ArrayAdapter\|Symfony\\Component\\Cache\\Adapter\\FilesystemAdapter\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
+
+		-
+			message: '#^Parameter \#1 \$item of method Symfony\\Component\\Cache\\Adapter\\ChainAdapter\:\:save\(\) expects Psr\\Cache\\CacheItemInterface, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../core/src/PayPal/ShippingCallback/Cache/ShippingCallbackCache.php
 
 		-
 			message: '#^Cannot access offset ''admin_area_1'' on mixed\.$#'
@@ -7807,6 +7837,84 @@ parameters:
 			path: ../core/tests/Unit/Order/Action/CreateOrderActionTest.php
 
 		-
+			message: '#^Cannot call method execute\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Cannot call method expects\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Cannot call method getCurrencyId\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Cannot call method method\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 5
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Cannot call method willReturn\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Cannot call method with\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$action has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$cart has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$context has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$currency has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$orderAmountValidator has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$orderStateMapper has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
+			message: '#^Property CreateValidateOrderDataActionTest\:\:\$payPalOrderRepository has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: ../core/tests/Unit/Order/Action/CreateValidateOrderDataActionTest.php
+
+		-
 			message: '#^Method AmountBreakdownNodeTest\:\:buildDataProvider\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -9739,6 +9847,12 @@ parameters:
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
+			message: '#^Cannot access property \$delivery_option on Cart\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
 			message: '#^Cannot access property \$id on Customer\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -9753,7 +9867,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id_address_delivery on Cart\|null\.$#'
 			identifier: property.nonObject
-			count: 1
+			count: 2
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
@@ -9771,12 +9885,24 @@ parameters:
 		-
 			message: '#^Cannot call method save\(\) on Cart\|null\.$#'
 			identifier: method.nonObject
+			count: 2
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
+			message: '#^Cannot call method setDeliveryOption\(\) on Cart\|null\.$#'
+			identifier: method.nonObject
 			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
 		-
 			message: '#^Cannot call method setProductAddressDelivery\(\) on Cart\|null\.$#'
 			identifier: method.nonObject
+			count: 1
+			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: ../infrastructure/src/Action/CreateOrUpdateAddressAction.php
 
@@ -11285,6 +11411,12 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: ../infrastructure/src/Provider/CallbackHeaderProvider.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: ../infrastructure/src/Provider/ShippingCallbackCertProvider.php
 
 		-
 			message: '#^Binary operation "\." between ''alias \= \\'''' and mixed results in an error\.$#'

@@ -18,25 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Infrastructure\Repository;
+namespace PsCheckout\Core\PayPal\ShippingCallback\Cache;
 
-interface CurrencyRepositoryInterface
+interface ShippingCallbackCacheInterface
 {
     /**
-     * Get the module ISO currency codes.
-     *
-     * @param bool $onlyActive
-     *
-     * @return array
-     */
-    public function getModuleCurrencyCodes(bool $onlyActive = true): array;
-
-    /**
-     * Delete module currency by ISO code.
-     *
-     * @param string $isoCode
+     * @param string $cacheKey
      *
      * @return bool
      */
-    public function deleteModuleCurrencyByIsoCode(string $isoCode): bool;
+    public function has(string $cacheKey): bool;
+
+    /**
+     * @param string $cacheKey
+     *
+     * @return string|null
+     */
+    public function get(string $cacheKey): ?string;
+
+    /**
+     * @param string   $cacheKey
+     * @param string   $value
+     * @param int|null $ttl seconds; null uses the implementation default
+     *
+     * @return bool
+     */
+    public function set(string $cacheKey, string $value, ?int $ttl = null): bool;
 }

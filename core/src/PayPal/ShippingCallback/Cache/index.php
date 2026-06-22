@@ -18,25 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Infrastructure\Repository;
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-interface CurrencyRepositoryInterface
-{
-    /**
-     * Get the module ISO currency codes.
-     *
-     * @param bool $onlyActive
-     *
-     * @return array
-     */
-    public function getModuleCurrencyCodes(bool $onlyActive = true): array;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-    /**
-     * Delete module currency by ISO code.
-     *
-     * @param string $isoCode
-     *
-     * @return bool
-     */
-    public function deleteModuleCurrencyByIsoCode(string $isoCode): bool;
-}
+header('Location: ../');
+
+exit;
