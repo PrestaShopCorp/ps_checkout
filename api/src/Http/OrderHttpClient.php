@@ -115,29 +115,33 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
     }
 
     /**
-     * @param array $body
+     * @param array<mixed> $body
      *
      * @return string
      */
     private function extractMessage(array $body): string
     {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
+        if (isset($body['details'][0]['issue']) && is_string($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
             return $body['details'][0]['issue'];
         }
 
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
+        if (isset($body['error']) && is_string($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
+        }
+
+        if (isset($body['error']) && is_array($body['error']) && isset($body['error']['message']) && is_string($body['error']['message'])) {
+            return $body['error']['message'];
         }
 
         if (isset($body['message']) && is_array($body['message'])) {
             return implode("\n", $body['message']);
         }
 
-        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
+        if (isset($body['message']) && is_string($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
             return $body['message'];
         }
 
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
+        if (isset($body['name']) && is_string($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
             return $body['name'];
         }
 

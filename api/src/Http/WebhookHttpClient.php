@@ -66,7 +66,7 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
     }
 
     /**
-     * @param array $body
+     * @param array<mixed> $body
      *
      * @return string
      */
@@ -76,8 +76,12 @@ class WebhookHttpClient extends PsrHttpClientAdapter implements WebhookHttpClien
             return is_array($body['message']) ? implode(',', $body['message']) : $body['message'];
         }
 
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
+        if (isset($body['error']) && is_string($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
             return $body['error'];
+        }
+
+        if (isset($body['error']) && is_array($body['error']) && isset($body['error']['message']) && is_string($body['error']['message'])) {
+            return $body['error']['message'];
         }
 
         return '';

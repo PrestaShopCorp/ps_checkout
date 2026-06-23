@@ -164,6 +164,56 @@ class OrderHttpClientTest extends TestCase
         }
     }
 
+    public function testItExtractsMessageFromNestedErrorObjectWhenErrorFieldIsArray(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                (string) json_encode([
+                    'error' => [
+                        'code' => 401,
+                        'status' => 'Unauthorized',
+                        'message' => 'The request could not be authorized',
+                    ],
+                ]),
+                '1.1',
+                'Unauthorized'
+            ));
+
+        $httpClient = $this->createClient($psrClient);
+
+        try {
+            $httpClient->sendRequest(new Request('GET', 'orders/ORDER-ID'));
+            $this->fail('A PayPalException was expected.');
+        } catch (PayPalException $exception) {
+            $this->assertSame(PayPalException::UNKNOWN, $exception->getCode());
+            $this->assertSame('The request could not be authorized', $exception->getMessage());
+            $this->assertInstanceOf(HttpException::class, $exception->getPrevious());
+        }
+    }
+
+    public function testItRethrowsHttpExceptionWhenErrorFieldIsAnArrayWithNoMessage(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                (string) json_encode(['error' => ['code' => 401]]),
+                '1.1',
+                'Unauthorized'
+            ));
+
+        $httpClient = $this->createClient($psrClient);
+
+        $this->expectException(HttpException::class);
+        $httpClient->sendRequest(new Request('GET', 'orders/ORDER-ID'));
+    }
+
     private function createClient(ClientInterface $psrClient): OrderHttpClient
     {
         $configurationBuilder = $this->createMock(HttpClientConfigurationBuilderInterface::class);
