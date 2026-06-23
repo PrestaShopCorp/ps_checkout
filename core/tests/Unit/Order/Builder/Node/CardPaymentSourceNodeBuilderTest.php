@@ -390,27 +390,25 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('MOBILE', $phone['phone_type']);
     }
 
-    public function testThrowsWhenPhoneIsEmpty(): void
+    public function testPhoneIsOmittedWhenEmpty(): void
     {
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
-
-        $this->makeBuilder()
+        $result = $this->makeBuilder()
             ->setCart($this->makeCart($this->makeAddress('John', 'Doe', 1, 0, '', '')))
             ->build();
+
+        $this->assertArrayNotHasKey('phone', $result['payment_source']['card']['attributes']['customer']);
     }
 
-    public function testThrowsWhenPhoneIsInvalid(): void
+    public function testPhoneIsOmittedWhenUnparseable(): void
     {
         $phoneParser = $this->createMock(PhoneParser::class);
         $phoneParser->method('parsePhone')->willReturn(null);
 
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
-
-        $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', $phoneParser)
+        $result = $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', $phoneParser)
             ->setCart($this->makeCart())
             ->build();
+
+        $this->assertArrayNotHasKey('phone', $result['payment_source']['card']['attributes']['customer']);
     }
 
     public function testCustomerIdMergesWithNewCustomerAttributes(): void

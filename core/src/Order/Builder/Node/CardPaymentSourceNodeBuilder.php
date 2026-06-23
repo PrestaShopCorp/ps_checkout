@@ -177,32 +177,21 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             ? $address->phone
             : (!empty($address->phone_mobile) ? $address->phone_mobile : '');
 
-        if (empty($rawPhone)) {
-            $this->logger->warning('Phone number is required for card payment.');
-
-            throw new PsCheckoutException('Phone number is required for card payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
-        }
-
         $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
-        $parsedPhone = $this->phoneParser->parsePhone($rawPhone, $countryIso, ['id_cart' => $cartId]);
 
-        if ($parsedPhone === null) {
-            $this->logger->warning('Phone number is not valid for card payment.', [
-                'id_cart' => $cartId,
-                'phone' => $rawPhone,
-                'country' => $countryIso,
-            ]);
+        if (!empty($rawPhone)) {
+            $parsedPhone = $this->phoneParser->parsePhone($rawPhone, $countryIso, ['id_cart' => $cartId]);
 
-            throw new PsCheckoutException('Phone number is not valid for card payment.', PsCheckoutException::CART_CUSTOMER_PHONE_INVALID);
+            if ($parsedPhone !== null) {
+                $attributes['phone'] = [
+                    'phone_number' => [
+                        'national_number' => (string) $parsedPhone->getNationalNumber(),
+                        'country_code' => (string) $parsedPhone->getCountryCode(),
+                    ],
+                    'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
+                ];
+            }
         }
-
-        $attributes['phone'] = [
-            'phone_number' => [
-                'national_number' => (string) $parsedPhone->getNationalNumber(),
-                'country_code' => (string) $parsedPhone->getCountryCode(),
-            ],
-            'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
-        ];
 
         return $attributes;
     }

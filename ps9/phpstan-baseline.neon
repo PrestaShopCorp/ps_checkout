@@ -2395,12 +2395,6 @@ parameters:
 			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
 
 		-
-			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildCardPaymentSource\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../core/src/Order/Builder/OrderPayloadBuilder.php
-
-		-
 			message: '#^Method PsCheckout\\Core\\Order\\Builder\\OrderPayloadBuilder\:\:buildOptionalPayload\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -7893,7 +7887,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''attributes'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 13
+			count: 15
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -7911,13 +7905,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''card'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 27
+			count: 29
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''customer'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
+			count: 9
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8037,7 +8031,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\|ArrayAccess, mixed given\.$#'
 			identifier: argument.type
-			count: 5
+			count: 7
 			path: ../core/tests/Unit/Order/Builder/Node/CardPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8157,13 +8151,19 @@ parameters:
 		-
 			message: '#^Cannot access offset ''experience_context'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
+			count: 10
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
+			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
+
+		-
+			message: '#^Cannot access offset ''landing_page'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-
@@ -8187,7 +8187,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''paypal'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 19
+			count: 21
 			path: ../core/tests/Unit/Order/Builder/Node/PayPalPaymentSourceNodeBuilderTest.php
 
 		-

@@ -143,7 +143,7 @@ class PayPalPaymentSourceNodeBuilder implements PayPalPaymentSourceNodeBuilderIn
                 'brand_name' => $this->experienceContextHelper->getBrandName(),
                 'shipping_preference' => $this->isVirtualCart ? 'NO_SHIPPING' : ($this->shippingAddressExists ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
                 'contact_preference' => $this->isExpressCheckout ? 'UPDATE_CONTACT_INFO' : 'NO_CONTACT_INFO',
-                'landing_page' => 'LOGIN',
+                'landing_page' => $this->fundingSource === 'card' ? 'GUEST_CHECKOUT' : 'LOGIN',
                 'payment_method_selected' => $paymentMethodSelected,
                 'user_action' => $this->isExpressCheckout ? 'CONTINUE' : 'PAY_NOW',
             ],

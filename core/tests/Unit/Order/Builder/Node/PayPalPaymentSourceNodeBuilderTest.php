@@ -443,8 +443,33 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             'paylater → PAYPAL_PAY_LATER' => ['paylater', 'PAYPAL_PAY_LATER'],
             'credit → PAYPAL_CREDIT' => ['credit', 'PAYPAL_CREDIT'],
             'paypal → PAYPAL' => ['paypal', 'PAYPAL'],
+            'card → PAYPAL' => ['card', 'PAYPAL'],
             'unknown → PAYPAL' => ['unknown', 'PAYPAL'],
         ];
+    }
+
+    public function testLandingPageIsGuestCheckoutWhenFundingSourceIsCard(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setFundingSource('card')
+            ->build();
+
+        $this->assertSame('GUEST_CHECKOUT', $result['payment_source']['paypal']['experience_context']['landing_page']);
+    }
+
+    public function testLandingPageIsLoginWhenFundingSourceIsNotCard(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setFundingSource('paypal')
+            ->build();
+
+        $this->assertSame('LOGIN', $result['payment_source']['paypal']['experience_context']['landing_page']);
     }
 
     /**
