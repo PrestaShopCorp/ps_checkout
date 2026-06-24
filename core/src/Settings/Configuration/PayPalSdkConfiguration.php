@@ -38,6 +38,8 @@ class PayPalSdkConfiguration
 
     const SDK_FO_ENDPOINT = '/sdk/ps_checkout-fo-sdk.js';
 
+    const SDK_MERCHANT_ENDPOINT = '/sdk/ps_checkout-merchant-sdk.umd.js';
+
     /**
      * google_pay, apple_pay and pui are not considered funding sources
      * and passing these values to disableFunding will crash PayPal SDK
@@ -368,6 +370,8 @@ class PayPalSdkConfiguration
                 return 'en_AU';
             case 'AT':
                 return $languageIso === 'DE' ? 'de_AT' : 'en_AT';
+            case 'CA':
+                return $languageIso === 'FR' ? 'fr_CA' : 'en_CA';
             default:
                 return '';
         }

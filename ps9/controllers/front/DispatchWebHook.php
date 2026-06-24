@@ -60,8 +60,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         $logger->info('Webhook dispatch initiated');
 
         try {
+            /** @var WebhookHeaderProvider $headerProvider */
+            $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
             /** @var HeaderValuesValidator $headerValuesValidator */
             $headerValuesValidator = $this->module->getService(HeaderValuesValidator::class);
+
             $headerValues = $headerValuesValidator->validate();
             $logger->info('Headers validated', $headerValues);
 
@@ -115,9 +118,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
 
             return $processed;
         } catch (Exception $e) {
-            /** @var WebhookHeaderProvider $headerProvider */
-            $headerProvider = $this->module->getService(WebhookHeaderProvider::class);
-
             // Handle the exception
             $logger->error('Webhook Dispatcher error', [
                 'message' => $e->getMessage(),

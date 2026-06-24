@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="c7908a2ddbd02129b4de84d2141ea180">
         <source>PayPal refund failed.</source>
-        <target>PayPal refund failed.</target>
+        <target>PayPal-terugbetaling mislukt.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="5825dada06af7bef8ae4db80c2c5aeba">
@@ -44,12 +44,12 @@
       </trans-unit>
       <trans-unit id="871ac15f357a1612481e0ccc7751e3ed">
         <source>PayPal Order %s is not in the same environment as PrestaShop Checkout</source>
-        <target>PayPal Order %s is not in the same environment as PrestaShop Checkout</target>
+        <target>PayPal-bestelling %s bevindt zich niet in dezelfde omgeving als PrestaShop Checkout</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="94ebf701a6e89d61a2d76adddfe70a44">
         <source>Unable to find PayPal Order associated to this PrestaShop Order %s</source>
-        <target>Unable to find PayPal Order associated to this PrestaShop Order %s</target>
+        <target>Kan de PayPal-bestelling die gekoppeld is aan deze PrestaShop-bestelling %s niet vinden</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1b43db46cf115ecaf2b2e79c780b5266">
@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="bcd27288c2c0bd0dc63a48331cc5580c">
         <source>You are not authorized to refund this order.</source>
-        <target>You are not authorized to refund this order.</target>
+        <target>U bent niet bevoegd om deze bestelling terug te betalen.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="76f0ed934de85cc7131910b32ede7714">
@@ -392,8 +392,8 @@
         <target>We hebben een probleem ondervonden bij het verwerken van je Apple Pay-betaling. Controleer je bestelgegevens en probeer het opnieuw, of gebruik een andere betaalmethode.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="73f9b9812ae06d85ba2e015622a48ad5">
-        <source>We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
+      <trans-unit id="333c40471aae73aa1ef94fd513b0cc54">
+        <source>We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.</source>
         <target>We kunnen je Apple Pay-betaling momenteel niet verwerken. Dit kan komen door een probleem met het verifiëren van de betalingsinstellingen voor deze website. Probeer het later opnieuw of kies een andere betaalmethode.</target>
         <note>Line: </note>
       </trans-unit>
@@ -534,7 +534,7 @@
       </trans-unit>
       <trans-unit id="f990493af3321939ca512f8f2cace108">
         <source>Pay by %s</source>
-        <target>Pay by %s</target>
+        <target>Betalen met %s</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="fc9b4762660906602b63bcd99e5e9747">
@@ -547,9 +547,9 @@
         <target>Betalen met PayPal</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="983fe12e91079dcb00c74772b50747a3">
-        <source>Pay by Card - 100% secure payments</source>
-        <target>Pay by Card - 100% secure payments</target>
+      <trans-unit id="c5ddac9cef20e114d7fd3e5897125bc4">
+        <source>Pay by Card - Secure payments</source>
+        <target>Betalen met kaart - Veilige betalingen</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1d565b9e5303987bb1b1938d5d458bca">
@@ -672,9 +672,9 @@
         <target>Annuleren</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="2f2401d57093e7d31bf2689fb87f72f6">
-        <source>100% secure payments</source>
-        <target>100% veilige betalingen</target>
+      <trans-unit id="90882b25ee7a8a13908647d038ea9420">
+        <source>Secure payments</source>
+        <target>Veilige betalingen</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="e81c4e4f2b7b93b481e13a8553c2ae1b">
@@ -1195,9 +1195,9 @@
         <source>Warning</source>
         <target>Waarschuwing</target>
       </trans-unit>
-      <trans-unit id="2347172eb56070e194a4a9367d2b0b2f">
-        <source>You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.</source>
-        <target>U hebt de PayPal-rekening [PAYPAL_ACCOUNT] gekozen om de betaling uit te voeren.</target>
+      <trans-unit id="3086ae26fec0e87976eff9849d83c97b">
+        <source>You have selected your %s PayPal account to proceed to the payment.</source>
+        <target>U hebt de PayPal-rekening %s gekozen om de betaling uit te voeren.</target>
       </trans-unit>
       <trans-unit id="aec47b33255dfc9e90e269930c428c40">
         <source>Please wait, loading additional payment methods.</source>
@@ -2462,6 +2462,62 @@
       <trans-unit id="f2a6c498fb90ee345d997f888fce3b18">
         <source>Delete</source>
         <target>Verwijderen</target>
+      </trans-unit>
+      <trans-unit id="92d485617457c66799814fa3ea9cc50b">
+        <source>An unexpected refund error occurred.</source>
+        <target>Er is een onverwachte fout opgetreden bij de terugbetaling.</target>
+      </trans-unit>
+      <trans-unit id="9976a3ca5309b7639b4a8d54561f2ca9">
+        <source>Pay upon Invoice</source>
+        <target>Betalen op factuur</target>
+      </trans-unit>
+      <trans-unit id="c49fbef53ae687dd6866e9075f23e83d">
+        <source>Pay later with invoice</source>
+        <target>Later betalen met factuur</target>
+      </trans-unit>
+      <trans-unit id="853e088f85c693c3c6ab297971b4aecc">
+        <source>Contact customer service via %s</source>
+        <target>Neem contact op met de klantenservice via %s</target>
+      </trans-unit>
+      <trans-unit id="1e4dbc7eaa78468a3bc1448a3d68d906">
+        <source>Phone Number</source>
+        <target>Telefoonnummer</target>
+      </trans-unit>
+      <trans-unit id="10803b83a68db8f7e7a33e3b41e184d0">
+        <source>Date of Birth</source>
+        <target>Geboortedatum</target>
+      </trans-unit>
+      <trans-unit id="6fd5e95dc0bce8329da87e1152677b48">
+        <source>Not required</source>
+        <target>Niet vereist</target>
+      </trans-unit>
+      <trans-unit id="ae5057b6f8ec245f3ab53add8cee8bbe">
+        <source>The payment is not valid: the amount is not eligible.</source>
+        <target>De betaling is niet geldig: het bedrag komt niet in aanmerking.</target>
+      </trans-unit>
+      <trans-unit id="3369ba2ed7cf53ddee6687b80ca28724">
+        <source>Authorization captured successfully.</source>
+        <target>Autorisatie succesvol vastgelegd.</target>
+      </trans-unit>
+      <trans-unit id="46b0801bbbd67d6f88169ac8d958176d">
+        <source>Authorization voided successfully.</source>
+        <target>Autorisatie succesvol geannuleerd.</target>
+      </trans-unit>
+      <trans-unit id="d7711b029221c7de1444292a4068bfee">
+        <source>Authorization reauthorized successfully.</source>
+        <target>Autorisatie succesvol opnieuw geautoriseerd.</target>
+      </trans-unit>
+      <trans-unit id="3253bd5ea8ec8be1fd8679a3a9e1fb4f">
+        <source>The authorization has been successfully captured.</source>
+        <target>De autorisatie is succesvol vastgelegd.</target>
+      </trans-unit>
+      <trans-unit id="9242a892e473073c133a71a50eb29b99">
+        <source>An error occurred during the capture of the authorization.</source>
+        <target>Er is een fout opgetreden tijdens het vastleggen van de autorisatie.</target>
+      </trans-unit>
+      <trans-unit id="9ff183ca42145195947b05173db23027">
+        <source>The currency you selected is not supported. Please try another payment method or contact support for assistance.</source>
+        <target>De door u geselecteerde valuta wordt niet ondersteund. Probeer een andere betaalmethode of neem contact op met de ondersteuning.</target>
       </trans-unit>
     </body>
   </file>

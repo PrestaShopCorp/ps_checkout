@@ -43,22 +43,29 @@ class PayPalOrderAuthorization
     private $expirationTime;
 
     /**
-     * @var array
+     * @var string|null
      */
-    private $sellerProtection;
+    private $createTime;
+
+    /**
+     * @var string|null
+     */
+    private $updateTime;
 
     public function __construct(
         $id = null,
         $idOrder = null,
         $status = null,
         $expirationTime = null,
-        $sellerProtection = []
+        $createTime = null,
+        $updateTime = null
     ) {
         $this->id = $id;
         $this->idOrder = $idOrder;
         $this->status = $status;
         $this->expirationTime = $expirationTime;
-        $this->sellerProtection = $sellerProtection;
+        $this->createTime = $createTime;
+        $this->updateTime = $updateTime;
     }
 
     /**
@@ -142,22 +149,42 @@ class PayPalOrderAuthorization
     }
 
     /**
-     * @return array
-     */
-    public function getSellerProtection()
-    {
-        return $this->sellerProtection;
-    }
-
-    /**
-     * @param array $sellerProtection
+     * @param string $createTime
      *
      * @return PayPalOrderAuthorization
      */
-    public function setSellerProtection(array $sellerProtection): self
+    public function setCreateTime(string $createTime)
     {
-        $this->sellerProtection = $sellerProtection;
+        $this->createTime = $createTime;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCreateTime()
+    {
+        return $this->createTime;
+    }
+
+    /**
+     * @param string $updateTime
+     *
+     * @return PayPalOrderAuthorization
+     */
+    public function setUpdateTime(string $updateTime)
+    {
+        $this->updateTime = $updateTime;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUpdateTime()
+    {
+        return $this->updateTime;
     }
 }

@@ -84,7 +84,6 @@ class FundingSourceEligibilityService implements FundingSourceEligibilityService
             }
         }
 
-        // If no specific checker supports this funding source, consider it eligible by default.
         return true;
     }
 }

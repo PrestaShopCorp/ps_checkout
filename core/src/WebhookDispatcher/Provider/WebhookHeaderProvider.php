@@ -29,6 +29,10 @@ class WebhookHeaderProvider implements WebhookHeaderProviderInterface
     {
         return [
             // TODO: Remove when maasland webhooks are redundant
+            'shopId' => $_SERVER['HTTP_SHOP_ID'] ?? null,
+            'merchantId' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
+            'firebaseId' => $_SERVER['HTTP_PSX_ID'] ?? null,
+            // Maasland backward compatibility
             'Shop-Id' => $_SERVER['HTTP_SHOP_ID'] ?? null,
             'Merchant-Id' => $_SERVER['HTTP_MERCHANT_ID'] ?? null,
             'Psx-Id' => $_SERVER['HTTP_PSX_ID'] ?? null,

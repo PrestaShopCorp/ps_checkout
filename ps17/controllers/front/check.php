@@ -104,6 +104,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
+
             $logger->error(
                 sprintf(
                     'CheckController - Exception %s : %s',

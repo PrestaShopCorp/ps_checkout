@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    public: true
+
+  PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler:
+    class: PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler
+    arguments:
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@Psr\Log\LoggerInterface'

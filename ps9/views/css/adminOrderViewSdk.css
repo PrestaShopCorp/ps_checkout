@@ -1,0 +1,10 @@
+#ps-checkout-merchant-order-view {
+    width: 100%;
+    height: 1500px;
+}
+#ps-checkout-merchant-order-view > div,
+#ps-checkout-merchant-order-view iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+}

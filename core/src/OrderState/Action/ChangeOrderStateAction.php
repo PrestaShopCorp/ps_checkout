@@ -79,7 +79,7 @@ class ChangeOrderStateAction implements ChangeOrderStateActionInterface
             throw new OrderException(sprintf('The OrderState #%d does not exist', $newOrderStateId), OrderStateException::INVALID_ID);
         }
 
-        if ($order->getCurrentState() === $newOrderState->id) {
+        if ((int) $order->getCurrentState() === (int) $newOrderState->id) {
             throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $orderId, $newOrderState->id), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
         }
 

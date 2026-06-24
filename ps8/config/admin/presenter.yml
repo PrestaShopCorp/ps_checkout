@@ -54,6 +54,9 @@ services:
       - '@PsCheckout\Module\Presentation\Translator'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
 
+  PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter:
+    class: PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter
+
   PsCheckout\Presentation\Presenter\Date\DatePresenter:
     class: PsCheckout\Presentation\Presenter\Date\DatePresenter
     arguments:

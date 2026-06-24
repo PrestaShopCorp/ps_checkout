@@ -74,7 +74,7 @@ class TranslationModule implements PresenterInterface
                 'loader-component.label.header' => $this->translator->trans('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->translator->trans('Please wait, we are processing your payment'),
                 'loader-component.label.body.longer' => $this->translator->trans('This is taking longer than expected. Please wait...'),
-                'payment-method-logos.title' => $this->translator->trans('100% secure payments'),
+                'payment-method-logos.title' => $this->translator->trans('Secure payments'),
                 'express-button.cart.separator' => $this->translator->trans('or'),
                 'express-button.checkout.express-checkout' => $this->translator->trans('Express Checkout'),
                 'ok' => $this->translator->trans('Ok'),
@@ -96,7 +96,7 @@ class TranslationModule implements PresenterInterface
                 'error.paypal-sdk.contingency.error' => $this->translator->trans('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->translator->trans('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->translator->trans('Card holder authentication cannot be checked, please choose another payment method or try again.'),
-                'APPLE_PAY_MERCHANT_SESSION_VALIDATION_ERROR' => $this->translator->trans('We’re unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.'),
+                'APPLE_PAY_MERCHANT_SESSION_VALIDATION_ERROR' => $this->translator->trans('We are unable to process your Apple Pay payment at the moment. This could be due to an issue verifying the payment setup for this website. Please try again later or choose a different payment method.'),
                 'APPROVE_APPLE_PAY_VALIDATION_ERROR' => $this->translator->trans('We encountered an issue while processing your Apple Pay payment. Please verify your order details and try again, or use a different payment method.'),
             ],
         ];

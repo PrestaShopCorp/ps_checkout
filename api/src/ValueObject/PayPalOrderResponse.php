@@ -304,6 +304,10 @@ class PayPalOrderResponse
      *             invoice_id?: string,
      *             custom_id?: string,
      *             status: string,
+     *             amount: array{
+     *                 value: string,
+     *                 currency_code: string,
+     *             },
      *             status_details?: array{
      *                 reason: string,
      *             },
@@ -475,9 +479,13 @@ class PayPalOrderResponse
      */
     public function getAuthenticationResult()
     {
-        $fundingSource = key($this->getPaymentSource());
+        $fundingSource = $this->getFundingSource();
 
-        return $this->getPaymentSource()[$fundingSource]['authentication_result'] ?? null;
+        if ($fundingSource) {
+            return $paymentSource[$fundingSource]['authentication_result'] ?? null;
+        }
+
+        return null;
     }
 
     /**
@@ -485,7 +493,9 @@ class PayPalOrderResponse
      */
     public function getFundingSource()
     {
-        return key($this->getPaymentSource());
+        $paymentSource = $this->getPaymentSource();
+
+        return $paymentSource !== null ? key($paymentSource) : null;
     }
 
     /**
@@ -497,11 +507,37 @@ class PayPalOrderResponse
     }
 
     /**
-     * @return array|null
+     * @return array<int, array{
+     *     id?: string,
+     *     status?: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     * }>
+     */
+    public function getCaptures()
+    {
+        /** @var array<int, array{id?: string, status?: string, amount: array{value: string, currency_code: string}}> $captures */
+        $captures = $this->getPurchaseUnits()[0]['payments']['captures'] ?? [];
+
+        return $captures;
+    }
+
+    /**
+     * @return array<int, array{
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
+     * }>|null
      */
     public function getRefunds()
     {
-        return $this->getPurchaseUnits()[0]['payments']['refunds'] ?? null;
+        /** @var array<int, array{amount: array{value: string, currency_code: string}}>|null $refunds */
+        $refunds = $this->getPurchaseUnits()[0]['payments']['refunds'] ?? null;
+
+        return $refunds;
     }
 
     /**
@@ -510,6 +546,10 @@ class PayPalOrderResponse
      *     invoice_id?: string,
      *     custom_id?: string,
      *     status: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
      *     status_details?: array{
      *         reason: string,
      *     },
@@ -548,6 +588,10 @@ class PayPalOrderResponse
      *     invoice_id?: string,
      *     custom_id?: string,
      *     status: string,
+     *     amount: array{
+     *         value: string,
+     *         currency_code: string,
+     *     },
      *     status_details?: array{
      *         reason: string,
      *     },
@@ -753,5 +797,24 @@ class PayPalOrderResponse
         }
 
         return '';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $data = [
+            'id' => $this->id,
+            'status' => $this->status,
+            'intent' => $this->intent,
+            'purchase_units' => $this->purchaseUnits,
+        ];
+
+        if ($this->paymentSource !== null) {
+            $data['payment_source'] = $this->paymentSource;
+        }
+
+        return $data;
     }
 }

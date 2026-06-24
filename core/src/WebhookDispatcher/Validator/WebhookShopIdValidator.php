@@ -46,7 +46,7 @@ class WebhookShopIdValidator implements WebhookShopIdValidatorInterface
 
             // Step 2: Compare the Shop-Id from headers with the shop UUID
             if ($shopId !== $shopUuid) {
-                throw new WebhookException('Invalid Shop-Id', 401);
+                throw new WebhookException("Invalid Shop-Id: $shopId", 401);
             }
         } catch (\Exception $e) {
             // Wrap any exceptions in a domain-specific exception

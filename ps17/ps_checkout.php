@@ -26,6 +26,9 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
+use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
+use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
+use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingAction;
 use PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction;
@@ -46,6 +49,7 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Infrastructure\Validator\MerchantValidator;
 use PsCheckout\Module\Presentation\Translator;
+use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTokenPresenter;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider;
 use PsCheckout\Presentation\Presenter\OrderSummary\OrderSummaryPresenter;
@@ -109,7 +113,7 @@ class Ps_Checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '7.5.2.0';
+        $this->version = '7.5.3.2';
         $this->author = 'PrestaShop';
 
         parent::__construct();
@@ -271,6 +275,27 @@ class Ps_Checkout extends PaymentModule
                 );
                 $this->context->controller->addCss(
                     $this->_path . 'views/css/adminOrderView.css?version=' . $this->version,
+                    'all',
+                    null,
+                    false
+                );
+
+                /** @var Env $env */
+                $env = $this->getService(Env::class);
+                $merchantSdkUrl = $env->getEnv('CHECKOUT_MERCHANT_SDK_URL');
+
+                if (substr($merchantSdkUrl, -3) !== '.js') {
+                    $merchantSdkVersion = $env->getEnv('CHECKOUT_MERCHANT_SDK_VERSION');
+                    $merchantSdkUrl = $merchantSdkUrl . $merchantSdkVersion . PayPalSdkConfiguration::SDK_MERCHANT_ENDPOINT;
+                }
+
+                $this->context->controller->addJS($merchantSdkUrl, false);
+                $this->context->controller->addJS(
+                    $this->getPathUri() . 'views/js/adminOrderViewSdk.js?version=' . $this->version,
+                    false
+                );
+                $this->context->controller->addCss(
+                    $this->_path . 'views/css/adminOrderViewSdk.css?version=' . $this->version,
                     'all',
                     null,
                     false
@@ -666,18 +691,20 @@ class Ps_Checkout extends PaymentModule
         $payPalOrder = $payPalOrderRepository->getOneByCartId($this->context->cart->id);
 
         $isExpressCheckout = $payPalOrder && $payPalOrder->isExpressCheckout();
+        $cookieEmail = $this->context->cookie->__get('paypalEmail');
+        $email = ($cookieEmail && Validate::isEmail($cookieEmail)) ? $cookieEmail : '';
+
+        /** @var Translator $translator */
+        $translator = $this->getService(Translator::class);
 
         $this->context->smarty->assign([
             'isExpressCheckout' => $isExpressCheckout,
             'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-            'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
+            'loaderTranslatedText' => $translator->trans('Please wait, loading additional payment methods.'),
             'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => sprintf(
-                $this->l('You have selected your %s PayPal account to proceed to the payment.'),
-                $this->context->cookie->__get('paypalEmail') ?: ''
-            ),
+            'translatedText' => sprintf($translator->trans('You have selected your %s PayPal account to proceed to the payment.'), $email),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/icons/shopping-cart-warning.svg',
-            'warningTranslatedText' => $this->l('Warning'),
+            'warningTranslatedText' => $translator->trans('Warning'),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayPaymentTop.tpl');
@@ -879,7 +906,7 @@ class Ps_Checkout extends PaymentModule
 
         foreach ($orderPayments as $orderPayment) {
             if (!empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->l('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $translator->trans('Transaction identifier') . ' ' . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 
@@ -979,6 +1006,7 @@ class Ps_Checkout extends PaymentModule
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'locale' => $this->context->language->iso_code,
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderLeft.tpl');
@@ -1004,6 +1032,7 @@ class Ps_Checkout extends PaymentModule
             'moduleName' => $this->displayName,
             'orderPrestaShopId' => $order->id,
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'locale' => $this->context->language->iso_code,
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderMainBottom.tpl');
@@ -1237,6 +1266,35 @@ class Ps_Checkout extends PaymentModule
         }
     }
 
+    /**
+     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int, newOrderStatus: OrderState, oldOrderStatus: OrderState} $params
+     *
+     * @return void
+     */
+    public function hookActionOrderStatusPostUpdate(array $params)
+    {
+        $order = new Order((int) $params['id_order']);
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return;
+        }
+
+        /** @var OrderCaptureAuthorizationStatusPostUpdateHookHandler $handler */
+        $handler = $this->getService(OrderCaptureAuthorizationStatusPostUpdateHookHandler::class);
+
+        $result = $handler->handle(new OrderCaptureAuthorizationStatusPostUpdateHookParams(
+            $params['newOrderStatus'],
+            (int) $params['id_order']
+        ));
+
+        if ($result instanceof HookHandlerResult) {
+            if ($result->isError()) {
+                $this->context->controller->errors[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
+            } else {
+                $this->context->controller->confirmations[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
+            }
+        }
+    }
 
     /**
      * Common logic to process tracking number update.

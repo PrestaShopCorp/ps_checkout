@@ -22,6 +22,8 @@ namespace PsCheckout\Api\Http;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
+use PsCheckout\Api\Dto\PayPal\Payment\PaymentAuthorizationResponseDto;
+use PsCheckout\Api\Dto\PayPal\Payment\ReauthorizeAuthorizationRequestDto;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
 use Psr\Http\Client\ClientInterface;
@@ -46,8 +48,8 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
             return parent::sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body);
+            $decodedBody = json_decode((string) $response->getBody(), true);
+            $message = $this->extractMessage(is_array($decodedBody) ? $decodedBody : []);
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
@@ -65,6 +67,56 @@ class PaymentHttpClient extends PsrHttpClientAdapter implements PaymentHttpClien
         $body = $this->generatePayloadString($payload);
 
         return $this->sendRequest(new Request('POST', "captures/$captureId/refund", [], $body));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function captureAuthorization(string $authorizationId, array $payload = []): ResponseInterface
+    {
+        $payloadString = !empty($payload) && json_encode($payload) ? json_encode($payload) : '{}';
+
+        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/capture", [], $payloadString));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function voidAuthorization(string $authorizationId, array $payload = []): ResponseInterface
+    {
+        $body = $this->generatePayloadString($payload);
+
+        return $this->sendRequest(new Request('POST', "authorizations/$authorizationId/void", [], $body));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthorization(string $authorizationId): PaymentAuthorizationResponseDto
+    {
+        $response = $this->sendRequest(new Request('GET', "authorizations/$authorizationId"));
+
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reauthorizeAuthorization(string $authorizationId, ?ReauthorizeAuthorizationRequestDto $requestDto = null): PaymentAuthorizationResponseDto
+    {
+        $payload = '{}';
+        if ($requestDto !== null) {
+            $amount = $requestDto->getAmount();
+            $data = $amount !== null ? ['amount' => ['currency_code' => $amount->getCurrencyCode(), 'value' => $amount->getValue()]] : [];
+            $payload = !empty($data) ? (string) json_encode($data) : '{}';
+        }
+        $response = $this->sendRequest(new Request('POST', "authorizations/$authorizationId/reauthorize", [], $payload));
+
+        return PaymentAuthorizationResponseDto::fromPayPalApiResponse(
+            json_decode((string) $response->getBody(), true)
+        );
     }
 
     /**

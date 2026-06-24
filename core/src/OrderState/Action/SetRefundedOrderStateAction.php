@@ -20,10 +20,12 @@
 
 namespace PsCheckout\Core\OrderState\Action;
 
+use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\OrderState\Service\OrderStateMapperInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Refund\Provider\PayPalRefundOrderProviderInterface;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefundOrder;
@@ -98,13 +100,19 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
 
         $payPalOrderResponse = $this->payPalOrderProvider->getById($payPalOrderId);
 
+        if ($payPalOrderResponse->getIntent() === PayPalOrderIntent::AUTHORIZE) {
+            $this->handleAuthorizationRefund($refundOrder, $payPalOrderResponse);
+
+            return;
+        }
+
         if (!$payPalOrderResponse || empty($payPalOrderResponse->getRefunds())) {
             return;
         }
 
         $totalRefunded = array_reduce($payPalOrderResponse->getRefunds(), function ($totalRefunded, $refund) {
             return $totalRefunded + (float) $refund['amount']['value'];
-        });
+        }, 0.0);
 
         $orderFullyRefunded = (float) $refundOrder->getTotalAmount() <= round($totalRefunded, 2);
         $orderStateRefunded = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
@@ -120,5 +128,33 @@ class SetRefundedOrderStateAction implements SetOrderStateActionInterface
         }
 
         $this->changeOrderStateAction->execute($refundOrder->getOrderId(), $newOrderState);
+    }
+
+    private function handleAuthorizationRefund(PayPalRefundOrder $refundOrder, PayPalOrderResponse $payPalOrderResponse): void
+    {
+        $orderTotal = (float) $payPalOrderResponse->getOrderAmountValue();
+
+        $totalCaptured = array_reduce($payPalOrderResponse->getCaptures(), function ($totalCaptured, $capture) {
+            return $totalCaptured + (float) $capture['amount']['value'];
+        }, 0.0);
+
+        $totalRefunded = array_reduce($payPalOrderResponse->getRefunds() ?? [], function ($totalRefunded, $refund) {
+            return $totalRefunded + (float) $refund['amount']['value'];
+        }, 0.0);
+
+        $capturedFullyRefunded = round($totalRefunded, 2) >= round($totalCaptured, 2);
+        $orderFullyCaptured = round($totalCaptured, 2) >= round($orderTotal, 2);
+
+        $newOrderState = null;
+
+        if ($capturedFullyRefunded && $orderFullyCaptured) {
+            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_REFUNDED);
+        } elseif ($totalRefunded > 0) {
+            $newOrderState = $this->orderStateMapper->getIdByKey(OrderStateConfiguration::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+        }
+
+        if ($newOrderState && $refundOrder->getCurrentStateId() !== $newOrderState) {
+            $this->changeOrderStateAction->execute($refundOrder->getOrderId(), (string) $newOrderState);
+        }
     }
 }

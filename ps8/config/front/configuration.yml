@@ -103,6 +103,22 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Util\CountryResolver'
 
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
   PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration:
     class: PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration
     arguments:

@@ -69,26 +69,39 @@ class CartPresenterTest extends TestCase
         $cartMock->id_currency = $cartData['id_currency'];
         $cartMock->id_customer = $cartData['id_customer'];
         $cartMock->id_lang = $cartData['id_lang'];
+        $cartMock->gift = $cartData['gift'];
 
         $cartMock->method('getProducts')->willReturn($cartData['products']);
         $cartMock->method('getTotalShippingCost')->willReturn($cartData['shipping_cost']);
         $cartMock->method('getOrderTotal')->willReturn($cartData['total_including_tax']);
         $cartMock->method('getGiftWrappingPrice')->willReturn($cartData['gift_wrapping']);
+        $cartMock->method('isVirtualCart')->willReturn($cartData['is_virtual']);
 
         $this->context->method('getCart')->willReturn($cartMock);
 
-        $this->address->method('initialize')->willReturnMap([
-            [$cartData['id_address_delivery'], $cartData['shipping_address']],
-            [$cartData['id_address_invoice'], $cartData['invoice_address']],
-        ]);
+        $shippingAddressMock = $this->getMockBuilder(\Address::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $invoiceAddressMock = $this->getMockBuilder(\Address::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->currency->method('getCurrencyInstance')->willReturn((object) ['iso_code' => $cartData['currency_iso_code']]);
+        $this->address->method('initialize')
+            ->willReturnOnConsecutiveCalls($shippingAddressMock, $invoiceAddressMock);
+
+        $currencyMock = $this->getMockBuilder(\Currency::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $currencyMock->iso_code = $cartData['currency_iso_code'];
+        $this->currency->method('getCurrencyInstance')->willReturn($currencyMock);
 
         $this->customerRepository->method('getOneBy')->willReturn($cartData['customer']);
-
         $this->languageRepository->method('getOneBy')->willReturn($cartData['language']);
 
         $result = $this->cartPresenter->present();
+
+        $expectedResult['addresses']['shipping'] = $shippingAddressMock;
+        $expectedResult['addresses']['invoice'] = $invoiceAddressMock;
 
         $this->assertEquals($expectedResult, $result);
     }
@@ -108,8 +121,8 @@ class CartPresenterTest extends TestCase
                     'shipping_cost' => 10.00,
                     'total_including_tax' => 100.00,
                     'gift_wrapping' => 5.00,
-                    'shipping_address' => ['id' => 2, 'address' => 'Shipping Address'],
-                    'invoice_address' => ['id' => 3, 'address' => 'Invoice Address'],
+                    'gift' => true,
+                    'is_virtual' => false,
                     'currency_iso_code' => 'USD',
                     'customer' => ['id_customer' => 5, 'name' => 'John Doe'],
                     'language' => ['id_lang' => 6, 'iso_code' => 'en'],
@@ -118,6 +131,7 @@ class CartPresenterTest extends TestCase
                     'cart' => [
                         'id' => 1,
                         'shipping_cost' => 10.00,
+                        'is_virtual' => false,
                         'totals' => [
                             'total_including_tax' => ['amount' => 100.00],
                         ],
@@ -129,8 +143,8 @@ class CartPresenterTest extends TestCase
                     'language' => ['id_lang' => 6, 'iso_code' => 'en'],
                     'products' => [['id_product' => 1, 'name' => 'Product 1']],
                     'addresses' => [
-                        'shipping' => ['id' => 2, 'address' => 'Shipping Address'],
-                        'invoice' => ['id' => 3, 'address' => 'Invoice Address'],
+                        'shipping' => null, // replaced in test with mock
+                        'invoice' => null,  // replaced in test with mock
                     ],
                     'currency' => ['iso_code' => 'USD'],
                 ],
@@ -147,8 +161,8 @@ class CartPresenterTest extends TestCase
                     'shipping_cost' => 0.00,
                     'total_including_tax' => 0.00,
                     'gift_wrapping' => 0.00,
-                    'shipping_address' => null,
-                    'invoice_address' => null,
+                    'gift' => false,
+                    'is_virtual' => false,
                     'currency_iso_code' => null,
                     'customer' => null,
                     'language' => null,
@@ -157,19 +171,20 @@ class CartPresenterTest extends TestCase
                     'cart' => [
                         'id' => null,
                         'shipping_cost' => 0.00,
+                        'is_virtual' => false,
                         'totals' => [
                             'total_including_tax' => ['amount' => 0.00],
                         ],
                         'subtotals' => [
-                            'gift_wrapping' => ['amount' => 0.00],
+                            'gift_wrapping' => ['amount' => 0],
                         ],
                     ],
                     'customer' => null,
                     'language' => null,
                     'products' => [],
                     'addresses' => [
-                        'shipping' => null,
-                        'invoice' => null,
+                        'shipping' => null, // replaced in test with mock
+                        'invoice' => null,  // replaced in test with mock
                     ],
                     'currency' => ['iso_code' => null],
                 ],

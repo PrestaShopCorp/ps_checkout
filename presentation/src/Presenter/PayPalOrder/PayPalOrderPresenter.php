@@ -148,6 +148,11 @@ class PayPalOrderPresenter implements PayPalOrderPresenterInterface
                 $class = 'success';
 
                 break;
+            case PayPalOrderStatus::PAYER_ACTION_REQUIRED:
+                $translated = $this->translator->trans('Action required');
+                $class = 'warning';
+
+                break;
             default:
                 $translated = '';
                 $class = '';

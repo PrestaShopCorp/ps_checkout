@@ -31,7 +31,7 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
 
     protected function getAllowedCurrenciesIsoCodes(): array
     {
-        return [];
+        return ['CAD', 'EUR', 'GBP', 'USD', 'AUD'];
     }
 
     protected function getSupportedIntents(): array
@@ -47,5 +47,15 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
     protected function getSupportedMerchantCountries(): array
     {
         return [];
+    }
+
+    public function getMinAmount(string $currency): ?float
+    {
+        return ['AUD' => 1, 'CAD' => 30, 'USD' => 30, 'EUR' => 30, 'GBP' => 20][$currency] ?? null;
+    }
+
+    public function getMaxAmount(string $currency): ?float
+    {
+        return ['AUD' => 1999.99, 'CAD' => 1500, 'USD' => 10000, 'EUR' => 2000, 'GBP' => 3000][$currency] ?? null;
     }
 }

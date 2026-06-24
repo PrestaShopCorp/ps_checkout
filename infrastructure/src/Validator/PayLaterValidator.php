@@ -58,7 +58,8 @@ class PayLaterValidator implements PayLaterValidatorInterface
             'IT' => 'EUR', // Italy
             'ES' => 'EUR', // Spain
             'GB' => 'GBP', // United Kingdom
-            'US' => 'USD', // United States
+            'US' => 'USD', // United States,
+            'CA' => 'CAD', // Canada
         ];
 
         // Define locale to country mapping for website locale validation
@@ -70,6 +71,8 @@ class PayLaterValidator implements PayLaterValidatorInterface
             'es-ES' => 'ES', // Spain
             'en-GB' => 'GB', // United Kingdom
             'en-US' => 'US', // United States
+            'fr-CA' => 'CA', // Canada
+            'en-CA' => 'CA', // Canada
         ];
 
         return in_array($merchantCountry, $countries, true)

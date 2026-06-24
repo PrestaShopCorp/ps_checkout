@@ -23,12 +23,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Monolog\Logger;
-use PsCheckout\Core\Order\Exception\OrderException;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider;
-use PsCheckout\Core\PayPal\Refund\Exception\PayPalRefundException;
+use PsCheckout\Core\PayPal\Payment\Authorization\Configuration\AuthorizationAction;
+use PsCheckout\Core\PayPal\Payment\Authorization\Processor\AuthorizationActionProcessor;
+use PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler;
 use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
@@ -48,6 +50,7 @@ use PsCheckout\Infrastructure\Repository\PaymentTokenRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
 use PsCheckout\Module\Presentation\Translator;
+use PsCheckout\Presentation\Presenter\PayPalOrder\MerchantOrderViewPresenter;
 use PsCheckout\Presentation\Presenter\PayPalOrder\PayPalOrderPresenter;
 use Psr\Log\LoggerInterface;
 
@@ -225,6 +228,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'isAccountLinked' => $psAccountRepository->isAccountLinked(),
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to get or refresh token: ' . $exception->getMessage(), ['exception' => $exception]);
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -247,9 +253,13 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $token = (string) Tools::getValue('body');
 
         $response = [];
+
         try {
             $status = $webhookSecretTokenService->upsertToken($token);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to upsert secret token: ' . $exception->getMessage(), ['exception' => $exception]);
 
             $status = false;
             $response['errors'] = $exception->getMessage();
@@ -331,6 +341,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
         } catch (OrderStateException $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to get mapped order states: ' . $exception->getMessage(), ['exception' => $exception]);
 
             if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
                 /** @var OrderStateInstaller $orderStateInstaller */
@@ -365,6 +378,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 'status' => true,
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to save batch configuration: ' . $exception->getMessage(), ['exception' => $exception]);
 
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -556,6 +572,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
                 ],
             ]);
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to read log file: ' . $exception->getMessage(), ['exception' => $exception]);
 
             $this->exitWithResponse([
                 'status' => false,
@@ -708,6 +727,9 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to fetch PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
 
             http_response_code(500);
             $this->ajaxRender(json_encode([
@@ -736,15 +758,42 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         ]));
     }
 
+    public function ajaxProcessGetOrderViewData()
+    {
+        $id_order = (int) Tools::getValue('id_order');
+
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var MerchantOrderViewPresenter $presenter */
+        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
+        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'order' => $data['order'],
+            'isTestMode' => $data['isTestMode'],
+        ]);
+    }
+
     public function ajaxProcessRefundOrder()
     {
         /** @var Translator $translator **/
         $translator = $this->module->getService(Translator::class);
 
-        $payPalOrderId = Tools::getValue('orderPayPalRefundOrder');
-        $captureId = Tools::getValue('orderPayPalRefundTransaction');
-        $amount = Tools::getValue('orderPayPalRefundAmount');
-        $currency = Tools::getValue('orderPayPalRefundCurrency');
+        $id_order = (int) Tools::getValue('id_order');
+        $captureId = Tools::getValue('id_transaction') ?: Tools::getValue('orderPayPalRefundTransaction');
+        $amount = Tools::getValue('amount') ?: Tools::getValue('orderPayPalRefundAmount');
+
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        $payPalOrderId = $payPalOrder->getId();
+        $currency = Tools::getValue('currency') ?: Tools::getValue('orderPayPalRefundCurrency');
+
+        if (!$currency) {
+            $orderAmount = $paypalOrderResponse->getOrderAmount();
+            $currency = $orderAmount['currency_code'] ?? '';
+        }
 
         /** @var RefundPayPalOrderAction $refundPayPalOrderAction */
         $refundPayPalOrderAction = $this->module->getService(RefundPayPalOrderAction::class);
@@ -753,74 +802,18 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
             $payPalRefund = new PayPalRefund($payPalOrderId, $captureId, $currency, $amount);
 
             $refundPayPalOrderAction->execute($payPalRefund);
-        } catch (PayPalRefundException $exception) {
-
-            switch ($exception->getCode()) {
-                case PayPalRefundException::INVALID_ORDER_ID:
-                    $error = $translator->trans('PayPal Order is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_TRANSACTION_ID:
-                    $error = $translator->trans('PayPal Transaction is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_CURRENCY:
-                    $error = $translator->trans('PayPal refund currency is invalid.');
-
-                    break;
-                case PayPalRefundException::INVALID_AMOUNT:
-                    $error = $translator->trans('PayPal refund amount is invalid.');
-
-                    break;
-                case PayPalRefundException::REFUND_FAILED:
-                    $error = $translator->trans('PayPal refund failed.');
-
-                    break;
-                default:
-                    $error = '';
-
-                    break;
-            }
-            $this->exitWithResponse([
-                'httpCode' => 400,
-                'status' => false,
-                'errors' => [$error],
-            ]);
-        } catch (OrderException $exception) {
-
-            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 200,
-                    'status' => true,
-                    'content' => $translator->trans('Refund has been processed by PayPal, but order status change or email sending failed.'),
-                ]);
-            } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
-                $this->exitWithResponse([
-                    'httpCode' => 500,
-                    'status' => false,
-                    'errors' => [
-                        $exception->getMessage(),
-                    ],
-                    'error' => $exception->getMessage(),
-                ]);
-            }
         } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to refund PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
 
-            $this->exitWithResponse([
-                'httpCode' => 500,
-                'status' => false,
-                'errors' => [
-                    $translator->trans('Refund cannot be processed by PayPal.'),
-                ],
-                'error' => $exception->getMessage(),
-            ]);
+            /** @var RefundExceptionHandler $refundExceptionHandler */
+            $refundExceptionHandler = $this->module->getService(RefundExceptionHandler::class);
+
+            $this->exitWithResponse($refundExceptionHandler->handle($exception));
         }
 
-        $this->exitWithResponse([
-            'httpCode' => 200,
-            'status' => true,
-            'content' => $translator->trans('Refund has been processed by PayPal.'),
-        ]);
+        $this->exitWithRefreshedOrderData($payPalOrderId, $isProductionEnv, $translator->trans('Refund has been processed by PayPal.'));
     }
 
     /**
@@ -843,6 +836,96 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         parent::ajaxRender($value, $controller, $method);
 
         exit;
+    }
+
+    /**
+     * @param int $idOrder
+     *
+     * @return array{0: \PsCheckout\Infrastructure\Repository\PayPalOrder, 1: \PsCheckout\Api\ValueObject\PayPalOrderResponse, 2: bool}
+     */
+    private function resolvePayPalOrder(int $idOrder): array
+    {
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        if (empty($idOrder)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('No PrestaShop Order identifier received'),
+                ],
+            ]);
+        }
+
+        $order = new Order($idOrder);
+
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
+        $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+
+        if (!$payPalOrder) {
+            try {
+                $migrationSuccessful = $payPalOrderRepository->attemptToMigratePsCheckoutCart($order->id_cart);
+                if ($migrationSuccessful) {
+                    $payPalOrder = $payPalOrderRepository->getOneByCartId($order->id_cart);
+                }
+            } catch (\Exception $e) {
+
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->error(
+                    'Attempted to migrate order to V5 database structure. Encountered error: ' . $e->getMessage(),
+                    [
+                        'exception' => $e,
+                        'cart_id' => $order->id_cart,
+                    ]
+                );
+            }
+        }
+
+        if (!$payPalOrder) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('Unable to find PayPal Order associated to this PrestaShop Order %s', [$order->id]),
+                ],
+            ]);
+        }
+
+        /** @var Configuration $configuration */
+        $configuration = $this->module->getService(Configuration::class);
+
+        if ($configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE) !== $payPalOrder->getEnvironment()) {
+            $this->exitWithResponse([
+                'httpCode' => 422,
+                'status' => false,
+                'errors' => [
+                    $translator->trans('PayPal Order %s is not in the same environment as PrestaShop Checkout', [$payPalOrder->getId()]),
+                ],
+            ]);
+        }
+
+        /** @var PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrder->getId());
+        } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to fetch PayPal order: ' . $exception->getMessage(), ['exception' => $exception]);
+
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [$exception->getMessage()],
+            ]);
+        }
+
+        $isProductionEnv = $payPalOrder->getEnvironment() === PayPalConfiguration::MODE_LIVE;
+
+        return [$payPalOrder, $paypalOrderResponse, $isProductionEnv];
     }
 
     /**
@@ -933,6 +1016,10 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         try {
             $applePayInstaller->setup();
         } catch (ApplePayInstallerException $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to setup Apple Pay: ' . $e->getMessage(), ['exception' => $e]);
+
             $this->exitWithResponse([
                 'httpCode' => 500,
                 'status' => false,
@@ -945,6 +1032,120 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
         $this->exitWithResponse([
             'status' => true,
+        ]);
+    }
+
+    public function ajaxProcessCaptureAuthorization()
+    {
+        $id_order = (int) Tools::getValue('id_order');
+
+        list($payPalOrder, $paypalOrderResponse, $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        $payload = [];
+        $amount = Tools::getValue('amount');
+        $currency = Tools::getValue('currency');
+
+        if ($amount) {
+            $payload['amount'] = [
+                'value' => $amount,
+                'currency_code' => $currency ?: $paypalOrderResponse->getOrderAmount()['currency_code'],
+            ];
+        }
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::CAPTURE, $payPalOrder->getId(), $payload);
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization captured successfully.'));
+    }
+
+    public function ajaxProcessVoidAuthorization()
+    {
+        $id_order = (int) Tools::getValue('id_order');
+
+        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::VOID, $payPalOrder->getId());
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization voided successfully.'));
+    }
+
+    public function ajaxProcessReauthorizeAuthorization()
+    {
+        $id_order = (int) Tools::getValue('id_order');
+
+        list($payPalOrder, , $isProductionEnv) = $this->resolvePayPalOrder($id_order);
+
+        /** @var AuthorizationActionProcessor $processor */
+        $processor = $this->module->getService(AuthorizationActionProcessor::class);
+        $result = $processor->process(AuthorizationAction::REAUTHORIZE, $payPalOrder->getId());
+
+        if (!$result['status']) {
+            $this->exitWithResponse($result);
+        }
+
+        /** @var Translator $translator */
+        $translator = $this->module->getService(Translator::class);
+
+        $this->exitWithRefreshedOrderData($payPalOrder->getId(), $isProductionEnv, $translator->trans('Authorization reauthorized successfully.'));
+    }
+
+    /**
+     * @param string $payPalOrderId
+     * @param bool $isProductionEnv
+     * @param string $message
+     *
+     * @return void
+     */
+    private function exitWithRefreshedOrderData(string $payPalOrderId, bool $isProductionEnv, string $message)
+    {
+        /** @var PayPalOrderCache $cache */
+        $cache = $this->module->getService(PayPalOrderCache::class);
+        $cache->delete($payPalOrderId);
+
+        /** @var PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
+
+        try {
+            $paypalOrderResponse = $paypalOrderProvider->getById($payPalOrderId);
+        } catch (Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to refresh PayPal order data: ' . $exception->getMessage(), ['exception' => $exception]);
+
+            $this->exitWithResponse([
+                'httpCode' => 200,
+                'status' => true,
+                'message' => $message,
+            ]);
+        }
+
+        /** @var MerchantOrderViewPresenter $presenter */
+        $presenter = $this->module->getService(MerchantOrderViewPresenter::class);
+        $data = $presenter->present($paypalOrderResponse, $isProductionEnv);
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'message' => $message,
+            'order' => $data['order'],
+            'isTestMode' => $data['isTestMode'],
         ]);
     }
 }

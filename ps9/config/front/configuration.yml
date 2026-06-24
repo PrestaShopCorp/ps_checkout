@@ -89,7 +89,7 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayUponInvoiceEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags: ['funding_source.eligibility_checker']
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
@@ -97,7 +97,23 @@ services:
 
   PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker:
     class: PsCheckout\Core\FundingSource\Eligibility\Checker\VenmoEligibilityChecker
-    tags: [ 'funding_source.eligibility_checker' ]
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\PayPalEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\Util\CountryResolver'
+
+  PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker:
+    class: PsCheckout\Core\FundingSource\Eligibility\Checker\CardEligibilityChecker
+    tags: ['funding_source.eligibility_checker']
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'

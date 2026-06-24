@@ -52,7 +52,10 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
             if ($action === 'getTransactionInfo') {
                 $this->getTransactionInfo();
             } else {
-                $this->exitWithExceptionMessage(new Exception('Invalid request', 400));
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Invalid request',
+                ]);
             }
         } catch (Exception $exception) {
             $this->exitWithExceptionMessage($exception);
@@ -70,6 +73,13 @@ class Ps_CheckoutGooglepayModuleFrontController extends AbstractFrontController
      */
     private function getTransactionInfo()
     {
+        if (!Validate::isLoadedObject($this->context->cart)) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'No cart found.',
+            ]);
+        }
+
         /** @var GooglePayPaymentRequestDataBuilder $googlePayPaymentRequestDataBuilder */
         $googlePayPaymentRequestDataBuilder = $this->module->getService(GooglePayPaymentRequestDataBuilder::class);
         $transactionInfo = $googlePayPaymentRequestDataBuilder->build($this->context->cart->id);

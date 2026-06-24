@@ -71,7 +71,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             } else {
                 $bodyValues = [
                     'orderID' => $tools->getValue('token'),
-                    'payerID' => $tools->getValue('token')('PayerID'),
                 ];
             }
 
@@ -187,6 +186,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         ]);
     }
 
+    /**
+    * @return CreatedPayPalOrderValidatorInterface
+    **/
     private function getCreatedOrderValidator(ValidateOrderRequest $checkoutRequest)
     {
         if ($checkoutRequest->getFundingSource() === 'pay_upon_invoice') {

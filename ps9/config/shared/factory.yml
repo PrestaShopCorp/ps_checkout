@@ -7,3 +7,4 @@ services:
     arguments:
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
       - '@PsCheckout\Presentation\Presenter\FundingSource\LogoPresenter'
+

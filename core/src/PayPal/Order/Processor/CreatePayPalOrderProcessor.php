@@ -260,7 +260,8 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
                     $orderId,
                     $authorization['status'],
                     $authorization['expiration_time'],
-                    $authorization['seller_protection']
+                    $authorization['create_time'],
+                    $authorization['update_time']
                 );
                 $this->payPalOrderAuthorizationRepository->save($payPalAuthorization);
             }

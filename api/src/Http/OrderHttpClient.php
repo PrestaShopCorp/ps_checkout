@@ -43,8 +43,8 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
             return parent::sendRequest($request);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $this->extractMessage($body);
+            $decodedBody = json_decode((string) $response->getBody(), true);
+            $message = $this->extractMessage(is_array($decodedBody) ? $decodedBody : []);
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);

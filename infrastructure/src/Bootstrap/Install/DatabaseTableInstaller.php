@@ -122,7 +122,8 @@ class DatabaseTableInstaller implements InstallerInterface
             `id_order` varchar(50) NOT NULL,
             `status` varchar(30) NOT NULL,
             `expiration_time` varchar(50) NOT NULL,
-            `seller_protection` text,
+            `create_time` varchar(20) NOT NULL,
+            `update_time` varchar(20) NOT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
@@ -231,6 +232,35 @@ class DatabaseTableInstaller implements InstallerInterface
 
             if (empty($field)) {
                 $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order` ADD COLUMN `tags` varchar(255) DEFAULT NULL;');
+            }
+        }
+
+        $fields = $this->db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_authorization`');
+
+        if (!empty($fields)) {
+            $hasCreateTime = false;
+            $hasUpdateTime = false;
+
+            foreach ($fields as $field) {
+                if ($field['Field'] === 'seller_protection') {
+                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` DROP COLUMN `seller_protection`');
+                }
+
+                if ($field['Field'] === 'create_time') {
+                    $hasCreateTime = true;
+                }
+
+                if ($field['Field'] === 'update_time') {
+                    $hasUpdateTime = true;
+                }
+            }
+
+            if (!$hasCreateTime) {
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` ADD COLUMN `create_time` varchar(20) NOT NULL DEFAULT ""');
+            }
+
+            if (!$hasUpdateTime) {
+                $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_authorization` ADD COLUMN `update_time` varchar(20) NOT NULL DEFAULT ""');
             }
         }
     }

@@ -367,6 +367,76 @@ class PayPalError
                 throw new PayPalException('Credit card number is invalid.', PayPalException::CREDIT_CARD_NUMBER_IS_INVALID, $previous);
             case 'CARD_EXPIRATION_YEAR_IS_INVALID':
                 throw new PayPalException('Expiration year outside of acceptable range.', PayPalException::CARD_EXPIRATION_YEAR_IS_INVALID, $previous);
+            case 'REAUTHORIZATION_TOO_SOON':
+                throw new PayPalException('Reauthorization of authorization happened too soon.', PayPalException::REAUTHORIZATION_TOO_SOON, $previous);
+            case 'INVALID_POSTAL_CODE':
+                throw new PayPalException('The postal code is invalid.', PayPalException::INVALID_POSTAL_CODE, $previous);
+            case 'INVALID_POSTAL_CODE_LENGTH':
+                throw new PayPalException('The postal code length is invalid for the specified country.', PayPalException::INVALID_POSTAL_CODE_LENGTH, $previous);
+            case 'MISSING_PREVIOUS_REFERENCE':
+                throw new PayPalException('The previous transaction reference is missing for this recurring transaction.', PayPalException::MISSING_PREVIOUS_REFERENCE, $previous);
+            case 'MISSING_CRYPTOGRAM':
+                throw new PayPalException('The cryptogram is missing for this network token transaction.', PayPalException::MISSING_CRYPTOGRAM, $previous);
+            case 'PAYMENT_ORIGIN_NOT_ENABLED':
+                throw new PayPalException('The payment origin is not enabled for the merchant.', PayPalException::PAYMENT_ORIGIN_NOT_ENABLED, $previous);
+            case 'PAYEE_PRICING_TIER_ID_NOT_ENABLED':
+                throw new PayPalException('The payee pricing tier ID is not enabled.', PayPalException::PAYEE_PRICING_TIER_ID_NOT_ENABLED, $previous);
+            case 'INVALID_PAYEE_PRICING_TIER_ID':
+                throw new PayPalException('The payee pricing tier ID is invalid.', PayPalException::INVALID_PAYEE_PRICING_TIER_ID, $previous);
+            case 'PAYEE_FX_RATE_ID_EXPIRED':
+                throw new PayPalException('The FX rate ID has expired.', PayPalException::PAYEE_FX_RATE_ID_EXPIRED, $previous);
+            case 'PAYEE_FX_RATE_ID_CURRENCY_MISMATCH':
+                throw new PayPalException('The FX rate ID currency does not match the order currency.', PayPalException::PAYEE_FX_RATE_ID_CURRENCY_MISMATCH, $previous);
+            case 'INVALID_FX_RATE_ID':
+                throw new PayPalException('The FX rate ID is invalid.', PayPalException::INVALID_FX_RATE_ID, $previous);
+            case 'PLATFORM_FEES_NOT_SUPPORTED':
+                throw new PayPalException('Platform fees are not supported for this merchant.', PayPalException::PLATFORM_FEES_NOT_SUPPORTED, $previous);
+            case 'INVALID_PLATFORM_FEES_ACCOUNT':
+                throw new PayPalException('The platform fees account is invalid.', PayPalException::INVALID_PLATFORM_FEES_ACCOUNT, $previous);
+            case 'UNSUPPORTED_INTENT_FOR_KYC_INCOMPLETE_PAYEE':
+                throw new PayPalException('The specified intent is not supported for a payee with incomplete KYC.', PayPalException::UNSUPPORTED_INTENT_FOR_KYC_INCOMPLETE_PAYEE, $previous);
+            case 'INVALID_SHIPPING_OPTION_ID':
+                throw new PayPalException('The shipping option ID is invalid.', PayPalException::INVALID_SHIPPING_OPTION_ID, $previous);
+            case 'INVALID_DELIVERY_ESTIMATE':
+                throw new PayPalException('The delivery estimate is invalid.', PayPalException::INVALID_DELIVERY_ESTIMATE, $previous);
+            case 'INELIGIBLE_SHIPPING_OPTION':
+                throw new PayPalException('The shipping option is ineligible for this order.', PayPalException::INELIGIBLE_SHIPPING_OPTION, $previous);
+            case 'MISSING_SHIPPING_CALL_BACK_CONFIGURATION':
+                throw new PayPalException('The shipping callback configuration is missing.', PayPalException::MISSING_SHIPPING_CALL_BACK_CONFIGURATION, $previous);
+            case 'MISSING_ITEM_SHIPPING_OPTIONS':
+                throw new PayPalException('Shipping options are missing for the items.', PayPalException::MISSING_ITEM_SHIPPING_OPTIONS, $previous);
+            case 'UNSUPPORTED_PROCESSING_INSTRUCTION':
+                throw new PayPalException('The processing instruction is not supported for this operation.', PayPalException::UNSUPPORTED_PROCESSING_INSTRUCTION, $previous);
+            case 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL':
+                throw new PayPalException('The order was completed on payment approval.', PayPalException::ORDER_COMPLETE_ON_PAYMENT_APPROVAL, $previous);
+            case 'BILLING_AGREEMENTS_CANNOT_BE_USED_FOR_SUBSCRIPTIONS':
+                throw new PayPalException('Billing agreements cannot be used for subscriptions.', PayPalException::BILLING_AGREEMENTS_CANNOT_BE_USED_FOR_SUBSCRIPTIONS, $previous);
+            case 'UNSUPPORTED_PAYMENT_SOURCE_FOR_SUBSCRIPTIONS':
+                throw new PayPalException('The payment source is not supported for subscriptions.', PayPalException::UNSUPPORTED_PAYMENT_SOURCE_FOR_SUBSCRIPTIONS, $previous);
+            case 'DUPLICATE_TRANSACTION':
+                throw new PayPalException('A duplicate transaction was detected.', PayPalException::DUPLICATE_TRANSACTION, $previous);
+            case 'REAUTHORIZATION_NOT_SUPPORTED':
+                throw new PayPalException('Reauthorization is not supported for this authorization.', PayPalException::REAUTHORIZATION_NOT_SUPPORTED, $previous);
+            case 'AUTH_CURRENCY_MISMATCH':
+                throw new PayPalException('The authorization currency must match the order currency.', PayPalException::AUTH_CURRENCY_MISMATCH, $previous);
+            case 'REAUTHORIZATION_DECLINED_BY_PROCESSOR':
+                throw new PayPalException('The reauthorization was declined by the processor.', PayPalException::REAUTHORIZATION_DECLINED_BY_PROCESSOR, $previous);
+            case 'REAUTHORIZATION_NOT_SUPPORTED_FOR_PAYMENT_SOURCE':
+                throw new PayPalException('Reauthorization is not supported for this payment source.', PayPalException::REAUTHORIZATION_NOT_SUPPORTED_FOR_PAYMENT_SOURCE, $previous);
+            case 'REFUND_AMOUNT_TOO_LOW':
+                throw new PayPalException('The refund amount is too low.', PayPalException::REFUND_AMOUNT_TOO_LOW, $previous);
+            case 'TRANSACTION_DISPUTED':
+                throw new PayPalException('The transaction is under dispute.', PayPalException::TRANSACTION_DISPUTED, $previous);
+            case 'PLATFORM_FEE_EXCEEDED':
+                throw new PayPalException('The platform fee exceeded the allowable limit.', PayPalException::PLATFORM_FEE_EXCEEDED, $previous);
+            case 'REFUND_IS_RESTRICTED':
+                throw new PayPalException('Refund is restricted for this transaction.', PayPalException::REFUND_IS_RESTRICTED, $previous);
+            case 'PLATFORM_FEE_NOT_ENABLED':
+                throw new PayPalException('Platform fees are not enabled for this merchant.', PayPalException::PLATFORM_FEE_NOT_ENABLED, $previous);
+            case 'CURRENCY_MISMATCH':
+                throw new PayPalException('The currency does not match the expected currency.', PayPalException::CURRENCY_MISMATCH, $previous);
+            case 'UNSUPPORTED_PAYEE_CURRENCY':
+                throw new PayPalException('The currency is not accepted by payee.', PayPalException::UNSUPPORTED_PAYEE_CURRENCY, $previous);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN, $previous);
         }

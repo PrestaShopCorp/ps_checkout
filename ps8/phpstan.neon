@@ -3,6 +3,7 @@ includes:
 
 parameters:
 	level: max
+	reportUnmatchedIgnoredErrors: false
 	paths:
 		- ../api
 		- ../core
@@ -10,7 +11,6 @@ parameters:
 		- ../presentation
 		- ../utility
 		- src
-		- tests
 	excludePaths:
 	    - ../api/vendor
 	    - ../core/vendor

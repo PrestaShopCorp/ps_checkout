@@ -46,16 +46,31 @@ class AddProductToCartAction implements AddProductToCartActionInterface
             throw new PsCheckoutException('Failed to create cart instance');
         }
 
-        if (!$cart->updateQty(
-            $requestData->getQuantityWanted(),
-            $requestData->getIdProduct(),
-            !$requestData->getIdProductAttribute() ? null : $requestData->getIdProductAttribute(),
-            !$requestData->getIdCustomization() ? false : $requestData->getIdCustomization(),
-            'up'
-        )) {
-            $cart->delete();
+        /**
+         * @var array{quantity: string, deep_quantity: string} $quantityInCart
+         */
+        $quantityInCart = $cart->getProductQuantity(
+            (int) $requestData->getIdProduct(),
+            !$requestData->getIdProductAttribute() ? 0 : $requestData->getIdProductAttribute(),
+            !$requestData->getIdCustomization() ? 0 : $requestData->getIdCustomization()
+        );
 
-            throw new PsCheckoutException('Failed to add product to cart');
+        $quantityWanted = (int) $requestData->getQuantityWanted();
+
+        $quantityToAdd = $quantityWanted - (int) $quantityInCart['quantity'];
+
+        if ($quantityToAdd !== 0) {
+            if (!$cart->updateQty(
+                $quantityToAdd < 0 ? -1 * $quantityToAdd : $quantityToAdd,
+                $requestData->getIdProduct(),
+                !$requestData->getIdProductAttribute() ? null : $requestData->getIdProductAttribute(),
+                !$requestData->getIdCustomization() ? false : $requestData->getIdCustomization(),
+                $quantityToAdd < 0 ? 'down' : 'up'
+            )) {
+                $cart->delete();
+
+                throw new PsCheckoutException('Failed to add product to cart');
+            }
         }
 
         try {

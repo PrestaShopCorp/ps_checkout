@@ -14,3 +14,4 @@ vendor
 .cloudflared.yml
 docker-compose.local.yml
 composer2.2.phar
+.claude.local.md
