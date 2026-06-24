@@ -26,4 +26,30 @@ interface ApplePayPaymentSourceNodeBuilderInterface
      * @return array<string, mixed>
      */
     public function build(): array;
+
+    /**
+     * @param array<string, mixed> $cart
+     *
+     * @return static
+     */
+    public function setCart(array $cart);
+
+    /**
+     * @param string|null $paypalVaultId
+     *
+     * @return static
+     */
+    public function setPaypalVaultId($paypalVaultId);
+
+    /**
+     * @param string|null $paypalCustomerId
+     *
+     * @return static
+     */
+    public function setPaypalCustomerId($paypalCustomerId);
+
+    /**
+     * @return static
+     */
+    public function setSavePaymentMethod(bool $savePaymentMethod);
 }

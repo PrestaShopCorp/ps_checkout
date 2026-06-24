@@ -93,6 +93,8 @@ Use default PrestaShop credentials to login:
 
 Run `make lint` in terminal.
 
+Run `make phpcompat-71` to check PHP 7.1 compatibility for shared packages and `ps17/` source files.
+
 ### Tests
 
 #### Unit tests

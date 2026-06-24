@@ -2535,6 +2535,100 @@
         <source>The currency you selected is not supported. Please try another payment method or contact support for assistance.</source>
         <target>De door u geselecteerde valuta wordt niet ondersteund. Probeer een andere betaalmethode of neem contact op met de ondersteuning.</target>
       </trans-unit>
+      <trans-unit id="4f79a1a6abd72b2db85b046e02ce25e3">
+        <source>Your phone number is invalid or missing. Please update your contact details and try again.</source>
+        <target>Uw telefoonnummer is ongeldig of ontbreekt. Werk uw contactgegevens bij en probeer het opnieuw.</target>
+      </trans-unit>
+      <trans-unit id="a13574ad322f652575df04b1b1b60aa5">
+        <source>Your date of birth is invalid or missing. Please check and try again.</source>
+        <target>Uw geboortedatum is ongeldig of ontbreekt. Controleer dit en probeer het opnieuw.</target>
+      </trans-unit>
+
+      <trans-unit id="fc722498ed54de1a14cd49b5d80050e4">
+        <source>Your email address is invalid or missing. Please update your contact details and try again.</source>
+        <target>Uw e-mailadres is ongeldig of ontbreekt. Werk uw contactgegevens bij en probeer het opnieuw.</target>
+      </trans-unit>
+
+      <trans-unit id="9430962be49cde96b3aa6c277aafc7dc">
+        <source>Your card has expired. Please use another card.</source>
+        <target>Uw kaart is verlopen. Gebruik een andere kaart.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="170b744ff8704adee18749a7b0deae8b">
+        <source>This card has been closed by the issuer. Please use another card.</source>
+        <target>Deze kaart is gesloten door de uitgever. Gebruik een andere kaart.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5dafeb07e065694a5988c36ec6c3d19e">
+        <source>The security code is incorrect. Please check and try again.</source>
+        <target>De beveiligingscode is onjuist. Controleer het en probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8fae89ad0a0b307e4feb7c158f0c1220">
+        <source>The expiry date is invalid. Please check and try again.</source>
+        <target>De vervaldatum is ongeldig. Controleer het en probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c3c0d8840c3d927c75c84bb9ed6577a2">
+        <source>The card number is invalid. Please check and try again.</source>
+        <target>Het kaartnummer is ongeldig. Controleer het en probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="afcb13be29e857fc339a8dbdf4763b22">
+        <source>The card expiration year is invalid. Please check and try again.</source>
+        <target>Het vervaljaar van de kaart is ongeldig. Controleer het en probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="323720a4577add8a8b4ef182ffa8c339">
+        <source>The billing address is invalid. Please check and try again.</source>
+        <target>Het factuuradres is ongeldig. Controleer het en probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c0f9163b00caf1617e402188d09c1018">
+        <source>Your payment was declined. Please try a different payment method.</source>
+        <target>Uw betaling is geweigerd. Probeer een andere betaalmethode.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9fb9e4616aed74e9f2a958c083c2e0f3">
+        <source>Your payment information could not be verified. Please try a different payment method.</source>
+        <target>Uw betalingsinformatie kon niet worden geverifieerd. Probeer een andere betaalmethode.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="cd2cdad2cf93cac5dfbb30312af623d1">
+        <source>This order has already been processed. Please check your order history.</source>
+        <target>Deze bestelling is al verwerkt. Controleer uw bestelgeschiedenis.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="18de1a64ede02bc861add3e8e8b076bf">
+        <source>The payment was not approved. Please try again.</source>
+        <target>De betaling is niet goedgekeurd. Probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="126c67b93ea2ace7f509cb949ed7a1db">
+        <source>Your payment session has expired. Please try again.</source>
+        <target>Uw betaalsessie is verlopen. Probeer opnieuw.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4be7c795a0d474a222fb28d2e309062f">
+        <source>This order has already been authorized.</source>
+        <target>Deze bestelling is al geautoriseerd.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d74dc4730c60108b5245dd5852ed20b8">
+        <source>This payment method is not available for international transactions. Please try another payment method.</source>
+        <target>Deze betaalmethode is niet beschikbaar voor internationale transacties. Probeer een andere betaalmethode.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6000b48fba6aa3541fef1b45dee3275f">
+        <source>The transaction limit has been exceeded. Please try a smaller amount or another payment method.</source>
+        <target>De transactielimiet is overschreden. Probeer een kleiner bedrag of een andere betaalmethode.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f04233142f9f1d876c8d2539ad65dade">
+        <source>Payment cannot be processed at the moment. Please contact our customer service.</source>
+        <target>De betaling kan momenteel niet worden verwerkt. Neem contact op met onze klantenservice.</target>
+        <note>Line: </note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

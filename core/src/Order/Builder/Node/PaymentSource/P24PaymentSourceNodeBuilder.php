@@ -20,27 +20,27 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Common\StringUtility;
+use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
+use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
+    private $experienceContextHelper;
 
     /**
-     * @var LinkInterface
+     * @var LoggerInterface
      */
-    private $link;
+    private $logger;
 
     /**
-     * @var CountryRepositoryInterface
+     * @var ValidateInterface
      */
-    private $countryRepository;
+    private $validate;
 
     /**
      * @var array<string, mixed>
@@ -48,38 +48,37 @@ class P24PaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfac
     private $cart;
 
     public function __construct(
-        ConfigurationInterface $configuration,
-        LinkInterface $link,
-        CountryRepositoryInterface $countryRepository
+        ExperienceContextHelper $experienceContextHelper,
+        LoggerInterface $logger,
+        ValidateInterface $validate
     ) {
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->countryRepository = $countryRepository;
+        $this->experienceContextHelper = $experienceContextHelper;
+        $this->logger = $logger;
+        $this->validate = $validate;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws PsCheckoutException When no valid email is available for P24 (required by PayPal)
      */
     public function build(): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
-        $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
-        $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
-        $countryCode = isset($invoiceAddress->id_country)
-            ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
-            : '';
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+
+        if (!$this->validate->isPayPalEmail($email)) {
+            $this->logger->warning('Valid email is required for P24 payment.');
+
+            throw new PsCheckoutException('Valid email is required for P24 payment.', PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
+        }
 
         return [
             'payment_source' => [
                 'p24' => [
-                    'name' => trim($firstName . ' ' . $lastName),
-                    'email' => isset($this->cart['customer']->email) ? (string) $this->cart['customer']->email : '',
-                    'country_code' => $countryCode,
-                    'experience_context' => [
-                        'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-                        'return_url' => $this->link->getModuleLink('validate'),
-                        'cancel_url' => $this->link->getModuleLink('cancel'),
-                    ],
+                    'name' => $this->experienceContextHelper->getInvoiceName($this->cart),
+                    'email' => $email,
+                    'country_code' => $this->experienceContextHelper->getInvoiceCountryCode($this->cart),
+                    'experience_context' => $this->experienceContextHelper->buildBaseContext($this->cart),
                 ],
             ],
         ];

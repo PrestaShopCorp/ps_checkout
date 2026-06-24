@@ -49,9 +49,9 @@ class BaseNodeBuilderTest extends TestCase
 
         $customId = $result['purchase_units'][0]['custom_id'];
         $expectedCartId = $cartData['cart']['id'];
-        $this->assertRegExp(
-            '/^' . $expectedCartId . '@\d+$/',
-            $customId
+        $this->assertTrue(
+            preg_match('/^' . $expectedCartId . '@\d+$/', $customId) === 1,
+            sprintf('Expected custom_id "%s" to match pattern "%s@<timestamp>"', $customId, $expectedCartId)
         );
 
         $result['purchase_units'][0]['custom_id'] = $expected['purchase_units'][0]['custom_id'];

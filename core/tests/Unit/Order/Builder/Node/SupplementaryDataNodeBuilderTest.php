@@ -22,6 +22,7 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use Address;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
@@ -98,6 +99,92 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         ];
     }
 
+    public function testBuildWithMissingItemsInPayload(): void
+    {
+        $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
+        $this->stateRepository->method('getIsoById')->willReturn('CA');
+
+        $address = new Address();
+        $address->id_country = 1;
+        $address->id_state = 2;
+        $address->address1 = '123 Main St';
+        $address->address2 = '';
+        $address->city = 'Los Angeles';
+        $address->postcode = '90001';
+
+        $payload = $this->getSamplePayload();
+        unset($payload['purchase_units'][0]['items']);
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
+        $builder->setPayload($payload);
+
+        $result = $builder->build();
+
+        $this->assertSame([], $result['supplementary_data']['card']['level_3']['line_items']);
+    }
+
+    public function testBuildWithInvalidCountryCodeOmitsShippingAddress(): void
+    {
+        $this->countryRepository
+            ->expects($this->once())
+            ->method('getCountryIsoCodeById')
+            ->willReturn('FRA');
+
+        $this->stateRepository->expects($this->never())->method($this->anything());
+
+        $address = new Address();
+        $address->id_country = 99;
+        $address->id_state = 0;
+        $address->address1 = '1 Street';
+        $address->address2 = '';
+        $address->city = 'Paris';
+        $address->postcode = '75001';
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
+        $builder->setPayload($this->getSamplePayload());
+
+        $result = $builder->build();
+        $level3 = $result['supplementary_data']['card']['level_3'];
+
+        $this->assertArrayNotHasKey('shipping_address', $level3);
+        $this->assertArrayHasKey('duty_amount', $level3);
+        $this->assertArrayHasKey('discount_amount', $level3);
+        $this->assertArrayHasKey('line_items', $level3);
+        $this->assertArrayHasKey('shipping_amount', $level3);
+    }
+
+    public function testBuildWithoutSettingCartThrowsException(): void
+    {
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setPayload($this->getSamplePayload());
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionMessage('Cart data and payload must be set before building supplementary data');
+
+        $builder->build();
+    }
+
+    public function testBuildWithoutSettingPayloadThrowsException(): void
+    {
+        $address = new Address();
+        $address->id_country = 1;
+        $address->id_state = 0;
+        $address->address1 = '1 Street';
+        $address->address2 = '';
+        $address->city = 'Paris';
+        $address->postcode = '75001';
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionMessage('Cart data and payload must be set before building supplementary data');
+
+        $builder->build();
+    }
+
     private function getSamplePayload(): array
     {
         return [
@@ -122,18 +209,27 @@ class SupplementaryDataNodeBuilderTest extends TestCase
 
     private function getExpectedOutput(bool $hasFullAddress): array
     {
-        $shippingAddress = [
-            'admin_area_1' => 'CA',
-            'country_code' => 'US',
+        $level3 = [
+            'shipping_amount' => 5.00,
+            'duty_amount' => [
+                'currency_code' => 'USD',
+                'value' => 100.00,
+            ],
+            'discount_amount' => 2.00,
+            'line_items' => [
+                ['item_id' => 1, 'name' => 'Product 1', 'quantity' => 2, 'price' => 50.00],
+            ],
         ];
 
         if ($hasFullAddress) {
-            $shippingAddress = array_merge($shippingAddress, [
+            $level3['shipping_address'] = [
                 'address_line_1' => '123 Main St',
                 'address_line_2' => 'Apt 4B',
+                'admin_area_1' => 'CA',
                 'admin_area_2' => 'Los Angeles',
                 'postal_code' => '90001',
-            ]);
+                'country_code' => 'US',
+            ];
         }
 
         return [
@@ -142,18 +238,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
                     'level_2' => [
                         'tax_total' => 10.00,
                     ],
-                    'level_3' => [
-                        'shipping_amount' => 5.00,
-                        'duty_amount' => [
-                            'currency_code' => 'USD',
-                            'value' => 100.00,
-                        ],
-                        'discount_amount' => 2.00,
-                        'shipping_address' => $shippingAddress,
-                        'line_items' => [
-                            ['item_id' => 1, 'name' => 'Product 1', 'quantity' => 2, 'price' => 50.00],
-                        ],
-                    ],
+                    'level_3' => $level3,
                 ],
             ],
         ];

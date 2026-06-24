@@ -24,8 +24,10 @@ use Cart;
 use PsCheckout\Core\Order\Action\CreateValidateOrderDataAction;
 use PsCheckout\Core\OrderState\Configuration\OrderStateConfiguration;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
+use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderFactory;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderResponseFactory;
 use PsCheckout\Infrastructure\Adapter\Context;
+use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 
 class CreateValidateOrderDataActionTest extends BaseTestCase
 {
@@ -36,6 +38,9 @@ class CreateValidateOrderDataActionTest extends BaseTestCase
         parent::setUp();
         $this->createValidateOrderDataAction = $this->getService(CreateValidateOrderDataAction::class);
         $this->context = $this->getService(Context::class);
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $this->getService(PayPalOrderRepository::class);
+        $payPalOrderRepository->save(PayPalOrderFactory::create());
     }
 
     /**

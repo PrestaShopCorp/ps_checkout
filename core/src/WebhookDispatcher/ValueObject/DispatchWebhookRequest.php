@@ -122,6 +122,14 @@ class DispatchWebhookRequest
     }
 
     /**
+     * @return string
+     */
+    public function getWebhookId(): string
+    {
+        return $this->webhookId;
+    }
+
+    /**
      * @return array
      */
     public function getResource(): array
@@ -159,6 +167,29 @@ class DispatchWebhookRequest
     public function getOrderId(): ?string
     {
         return $this->orderId;
+    }
+
+    /**
+     * Returns the best available identifier for the resource delivered in this webhook event.
+     *
+     * Resolution order:
+     *   1. resource.id  — present for captures, refunds, authorizations, and most orders
+     *   2. resource.order_id — used by CHECKOUT.PAYMENT-APPROVAL.REVERSED which carries no resource.id
+     *   3. orderId (top-level payload field) — last resort for events with neither resource field
+     *
+     * @return string|null
+     */
+    public function getResourceId(): ?string
+    {
+        if (isset($this->resource['id']) && $this->resource['id'] !== '') {
+            return (string) $this->resource['id'];
+        }
+
+        if (isset($this->resource['order_id']) && $this->resource['order_id'] !== '') {
+            return (string) $this->resource['order_id'];
+        }
+
+        return $this->orderId ?: null;
     }
 
     /**

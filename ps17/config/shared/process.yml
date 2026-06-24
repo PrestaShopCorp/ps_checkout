@@ -127,6 +127,8 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
 
   # Shipping Tracking Processor
   PsCheckout\Core\PayPal\ShippingTracking\Processor\ShipmentProcessorInterface:
@@ -139,6 +141,8 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Cache\ShippingTrackingCache'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
 
   # External Shipping Tracking Processor
   PsCheckout\Core\PayPal\ShippingTracking\Processor\ExternalShipmentProcessor:
@@ -152,6 +156,8 @@ services:
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingApiService'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler'
       - '@PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
 
   # Shipping Tracking Action
   PsCheckout\Core\PayPal\ShippingTracking\Action\AddTrackingActionInterface:

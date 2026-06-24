@@ -36,7 +36,12 @@ if (file_exists($rootDirectory . 'autoload.php')) {
     require_once $rootDirectory . 'autoload.php';
 }
 
-if (class_exists(AppKernel::class)) {
+// PS9 split AppKernel into AdminKernel / AdminAPIKernel / FrontKernel.
+// Back-office integration tests need AdminKernel; PS8/1.7 still use the concrete AppKernel.
+if (class_exists('AdminKernel')) {
+    $kernel = new AdminKernel('dev', _PS_MODE_DEV_);
+    $kernel->boot();
+} elseif (class_exists(AppKernel::class) && !(new ReflectionClass(AppKernel::class))->isAbstract()) {
     $kernel = new AppKernel('dev', _PS_MODE_DEV_);
     $kernel->boot();
 }

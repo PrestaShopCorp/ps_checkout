@@ -10,7 +10,8 @@
     "scripts": {
         "cs": "php-cs-fixer check -vvv --config=.php-cs-fixer.php",
         "cs:fix": "php-cs-fixer fix -vvv --config=.php-cs-fixer.php",
-        "cs:ci": "@cs:fix --no-interaction --using-cache=no --format=checkstyle"
+        "cs:ci": "@cs:fix --no-interaction --using-cache=no --format=checkstyle",
+        "phpcompat:71": "phpcs -d memory_limit=1G --standard=PHPCompatibility --runtime-set testVersion 7.1-7.1 --extensions=php --ignore=*/vendor/* api/ core/ infrastructure/ presentation/ utility/ ps17/"
     },
     "require-dev": {
         "php": "^8.1",
@@ -25,7 +26,8 @@
         "prepend-autoloader": false,
         "allow-plugins": {
             "beberlei/composer-monorepo-plugin": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

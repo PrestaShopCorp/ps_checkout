@@ -22,16 +22,18 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\MybankPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class MybankPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(): MybankPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'IT'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn('My Shop');
+        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
@@ -39,22 +41,35 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('IT');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new MybankPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(): MybankPaymentSourceNodeBuilder
+    {
+        return new MybankPaymentSourceNodeBuilder($this->makeExperienceContextHelper());
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(): array
+    private function makeCart(string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Mario';
         $address->lastname = 'Rossi';
         $address->id_country = 1;
 
-        return ['addresses' => ['invoice' => $address]];
+        $cart = ['addresses' => ['invoice' => $address]];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
     }
 
     public function testBuildReturnsCorrectStructure(): void
@@ -68,6 +83,7 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'IT',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -76,18 +92,25 @@ class MybankPaymentSourceNodeBuilderTest extends TestCase
         ], $result);
     }
 
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('it-IT'))->build();
+
+        $this->assertSame('it-IT', $result['payment_source']['mybank']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('it_IT'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['mybank']['experience_context']);
+    }
+
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->willReturn(str_repeat('B', 200));
-
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/x');
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('IT');
-
-        $builder = new MybankPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new MybankPaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper(str_repeat('B', 200))
+        );
         $result = $builder->setCart($this->makeCart())->build();
 
         $this->assertSame(127, mb_strlen($result['payment_source']['mybank']['experience_context']['brand_name']));

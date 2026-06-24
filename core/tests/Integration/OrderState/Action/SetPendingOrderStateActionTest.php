@@ -33,11 +33,14 @@ use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 
 class SetPendingOrderStateActionTest extends BaseTestCase
 {
-    private ?SetPendingOrderStateAction $setPendingOrderStateAction;
+    /** @var SetPendingOrderStateAction */
+    private $setPendingOrderStateAction;
 
-    private ?OrderStateMapper $orderStateMapper;
+    /** @var OrderStateMapper */
+    private $orderStateMapper;
 
-    private ?PayPalOrderRepository $payPalOrderRepository;
+    /** @var PayPalOrderRepository */
+    private $payPalOrderRepository;
 
     protected function setUp(): void
     {

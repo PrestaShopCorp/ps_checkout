@@ -20,27 +20,20 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Infrastructure\Adapter\LinkInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Common\StringUtility;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 
 class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
+    private $experienceContextHelper;
 
     /**
-     * @var LinkInterface
+     * @var ValidateInterface
      */
-    private $link;
-
-    /**
-     * @var CountryRepositoryInterface
-     */
-    private $countryRepository;
+    private $validate;
 
     /**
      * @var array<string, mixed>
@@ -48,13 +41,11 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
     private $cart;
 
     public function __construct(
-        ConfigurationInterface $configuration,
-        LinkInterface $link,
-        CountryRepositoryInterface $countryRepository
+        ExperienceContextHelper $experienceContextHelper,
+        ValidateInterface $validate
     ) {
-        $this->configuration = $configuration;
-        $this->link = $link;
-        $this->countryRepository = $countryRepository;
+        $this->experienceContextHelper = $experienceContextHelper;
+        $this->validate = $validate;
     }
 
     /**
@@ -62,25 +53,15 @@ class BlikPaymentSourceNodeBuilder implements ApmPaymentSourceNodeBuilderInterfa
      */
     public function build(): array
     {
-        $invoiceAddress = isset($this->cart['addresses']['invoice']) ? $this->cart['addresses']['invoice'] : null;
-        $firstName = isset($invoiceAddress->firstname) ? (string) $invoiceAddress->firstname : '';
-        $lastName = isset($invoiceAddress->lastname) ? (string) $invoiceAddress->lastname : '';
-        $countryCode = isset($invoiceAddress->id_country)
-            ? $this->countryRepository->getCountryIsoCodeById($invoiceAddress->id_country)
-            : '';
-
         $data = [
-            'name' => trim($firstName . ' ' . $lastName),
-            'country_code' => $countryCode,
-            'experience_context' => [
-                'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-                'return_url' => $this->link->getModuleLink('validate'),
-                'cancel_url' => $this->link->getModuleLink('cancel'),
-            ],
+            'name' => $this->experienceContextHelper->getInvoiceName($this->cart),
+            'country_code' => $this->experienceContextHelper->getInvoiceCountryCode($this->cart),
+            'experience_context' => $this->experienceContextHelper->buildBaseContext($this->cart),
         ];
 
-        if (isset($this->cart['customer']->email) && !empty($this->cart['customer']->email)) {
-            $data['email'] = (string) $this->cart['customer']->email;
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+        if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+            $data['email'] = $email;
         }
 
         return [

@@ -51,22 +51,28 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
         $breakdownDiscount = 0;
 
         foreach ($this->cart['products'] as $product => $value) {
-            $sku = '';
             $totalWithoutTax = $value['total'];
             $totalWithTax = $value['total_wt'];
             $totalTax = $totalWithTax - $totalWithoutTax;
             $quantity = (string) $value['quantity'];
             $unitPriceWithoutTax = NumberUtility::formatAmount($totalWithoutTax / $quantity, $currencyIsoCode);
             $unitTax = NumberUtility::formatAmount($totalTax / $quantity, $currencyIsoCode);
+
+            // PayPal rejects items with a zero or negative unit_amount; omit them and let
+            // the remainder mechanism absorb the discrepancy into handling/discount.
+            if ((float) $unitPriceWithoutTax <= 0) {
+                continue;
+            }
+
             $breakdownItemTotal += $unitPriceWithoutTax * $quantity;
             $breakdownTaxTotal += $unitTax * $quantity;
-
-            $sku = !empty($value['reference']) ? $value['reference'] : (int) $value['id_product'] . '-' . (int) $value['id_product_attribute'];
 
             $paypalItem = [];
             $paypalItem['name'] = StringUtility::truncate($value['name'], 127);
             $paypalItem['description'] = !empty($value['attributes']) ? StringUtility::truncate($value['attributes'], 127) : '';
-            $paypalItem['sku'] = StringUtility::truncate($sku, 127);
+            if (!empty($value['reference'])) {
+                $paypalItem['sku'] = StringUtility::truncate($value['reference'], 127);
+            }
             $paypalItem['unit_amount']['currency_code'] = $currencyIsoCode;
             $paypalItem['unit_amount']['value'] = $unitPriceWithoutTax;
             $paypalItem['tax']['currency_code'] = $currencyIsoCode;
@@ -96,11 +102,11 @@ class AmountBreakdownNode implements AmountBreakdownNodeInterface
             ],
             'insurance' => [
                 'currency_code' => $currencyIsoCode,
-                'value' => '0.00',
+                'value' => NumberUtility::formatAmount(0, $currencyIsoCode),
             ],
             'shipping_discount' => [
                 'currency_code' => $currencyIsoCode,
-                'value' => '0.00',
+                'value' => NumberUtility::formatAmount(0, $currencyIsoCode),
             ],
         ];
 

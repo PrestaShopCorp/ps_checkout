@@ -21,60 +21,116 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use Address;
+use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Core\Util\PhoneParser;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(
-        bool $is3dSecureEnabled = false,
-        string $contingency = 'SCA_ALWAYS',
-        string $countryIso = 'FR'
-    ): CardPaymentSourceNodeBuilder {
-        $paypalConfig = $this->createMock(PayPalConfiguration::class);
-        $paypalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
-        $paypalConfig->method('getCardFieldsContingencies')->willReturn($contingency);
+    private function makePhoneNumber(): PhoneNumber
+    {
+        $phone = $this->createMock(PhoneNumber::class);
+        $phone->method('getCountryCode')->willReturn(33);
+        $phone->method('getNationalNumber')->willReturn('612345678');
 
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryIso);
+        return $phone;
+    }
 
-        $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->method('getNameById')->willReturn('Île-de-France');
-        $stateRepository->method('getIsoById')->willReturn('CA');
+    private function makeExperienceContextHelper(
+        string $countryIso = 'FR',
+        ?StateRepositoryInterface $stateRepository = null
+    ): ExperienceContextHelper {
+        $configuration = $this->createMock(ConfigurationInterface::class);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(function (string $action): string {
             return 'https://example.com/' . $action;
         });
 
-        return new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryIso);
+
+        $defaultStateRepository = $this->createMock(StateRepositoryInterface::class);
+        $defaultStateRepository->method('getNameById')->willReturn('Île-de-France');
+        $defaultStateRepository->method('getIsoById')->willReturn('CA');
+
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $stateRepository ?? $defaultStateRepository);
+    }
+
+    private function makeBuilder(
+        bool $is3dSecureEnabled = false,
+        string $contingency = 'SCA_ALWAYS',
+        string $countryIso = 'FR',
+        ?PhoneParser $phoneParser = null,
+        ?ValidateInterface $validate = null,
+        ?LoggerInterface $logger = null
+    ): CardPaymentSourceNodeBuilder {
+        $paypalConfig = $this->createMock(PayPalConfiguration::class);
+        $paypalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
+        $paypalConfig->method('getCardFieldsContingencies')->willReturn($contingency);
+
+        $defaultValidate = $this->createMock(ValidateInterface::class);
+        $defaultValidate->method('isPayPalEmail')->willReturn(true);
+
+        $defaultPhoneParser = $this->createMock(PhoneParser::class);
+        $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
+        $defaultPhoneParser->method('getPhoneType')->willReturn('OTHER');
+
+        return new CardPaymentSourceNodeBuilder(
+            $paypalConfig,
+            $this->makeExperienceContextHelper($countryIso),
+            $phoneParser ?? $defaultPhoneParser,
+            $validate ?? $defaultValidate,
+            $logger ?? $this->createMock(LoggerInterface::class)
+        );
     }
 
     private function makeAddress(
         string $firstName = 'John',
         string $lastName = 'Doe',
         int $idCountry = 1,
-        int $idState = 0
+        int $idState = 0,
+        string $phone = '+33612345678',
+        string $phoneMobile = ''
     ): Address {
         $address = new Address();
         $address->firstname = $firstName;
         $address->lastname = $lastName;
         $address->id_country = $idCountry;
         $address->id_state = $idState;
+        $address->phone = $phone;
+        $address->phone_mobile = $phoneMobile;
 
         return $address;
+    }
+
+    private function makeCustomer(string $email = 'john.doe@example.com'): \stdClass
+    {
+        $customer = new \stdClass();
+        $customer->email = $email;
+
+        return $customer;
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(?Address $address = null): array
+    private function makeCart(?Address $address = null, ?\stdClass $customer = null): array
     {
-        return ['addresses' => ['invoice' => $address ?? $this->makeAddress()]];
+        return [
+            'addresses' => ['invoice' => $address ?? $this->makeAddress()],
+            'customer' => $customer ?? $this->makeCustomer(),
+        ];
     }
 
     public function testNameIsConcatenatedFirstnameAndLastname(): void
@@ -93,11 +149,11 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayHasKey('billing_address', $result['payment_source']['card']);
     }
 
-    public function testWithout3dSecureNoAttributesBlock(): void
+    public function testWithout3dSecureNoVerificationAttribute(): void
     {
         $result = $this->makeBuilder(false)->setCart($this->makeCart())->build();
 
-        $this->assertArrayNotHasKey('attributes', $result['payment_source']['card']);
+        $this->assertArrayNotHasKey('verification', $result['payment_source']['card']['attributes']);
     }
 
     public function testWith3dSecureAddsVerificationMethod(): void
@@ -157,7 +213,7 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
             ->setSavePaymentMethod(false)
             ->build();
 
-        $this->assertArrayNotHasKey('attributes', $result['payment_source']['card']);
+        $this->assertArrayNotHasKey('vault', $result['payment_source']['card']['attributes']);
     }
 
     public function testCustomerIdAndSavePaymentMethodCoexistInAttributes(): void
@@ -228,19 +284,23 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
     public function testUsStateResolutionUsesIsoCode(): void
     {
-        $paypalConfig = $this->createMock(PayPalConfiguration::class);
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('US');
-
         $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->expects($this->once())->method('getIsoById')->with(10)->willReturn('CA');
+        $stateRepository->expects($this->atLeastOnce())->method('getIsoById')->with(10)->willReturn('CA');
         $stateRepository->expects($this->never())->method('getNameById');
 
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/link');
+        $defaultPhoneParser = $this->createMock(PhoneParser::class);
+        $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
 
-        $builder = new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
+        $builder = new CardPaymentSourceNodeBuilder(
+            $this->createMock(PayPalConfiguration::class),
+            $this->makeExperienceContextHelper('US', $stateRepository),
+            $defaultPhoneParser,
+            $validate,
+            $this->createMock(LoggerInterface::class)
+        );
         $result = $builder->setCart($this->makeCart($this->makeAddress('John', 'Doe', 1, 10)))->build();
 
         $this->assertSame('CA', $result['payment_source']['card']['billing_address']['admin_area_1']);
@@ -248,21 +308,119 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
 
     public function testNonUsStateResolutionUsesName(): void
     {
-        $paypalConfig = $this->createMock(PayPalConfiguration::class);
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
-
         $stateRepository = $this->createMock(StateRepositoryInterface::class);
-        $stateRepository->expects($this->once())->method('getNameById')->with(5)->willReturn('Bayern');
+        $stateRepository->expects($this->atLeastOnce())->method('getNameById')->with(5)->willReturn('Bayern');
         $stateRepository->expects($this->never())->method('getIsoById');
 
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/link');
+        $defaultPhoneParser = $this->createMock(PhoneParser::class);
+        $defaultPhoneParser->method('parsePhone')->willReturn($this->makePhoneNumber());
 
-        $builder = new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
+
+        $builder = new CardPaymentSourceNodeBuilder(
+            $this->createMock(PayPalConfiguration::class),
+            $this->makeExperienceContextHelper('DE', $stateRepository),
+            $defaultPhoneParser,
+            $validate,
+            $this->createMock(LoggerInterface::class)
+        );
         $result = $builder->setCart($this->makeCart($this->makeAddress('Hans', 'Müller', 1, 5)))->build();
 
         $this->assertSame('Bayern', $result['payment_source']['card']['billing_address']['admin_area_1']);
+    }
+
+    public function testCustomerNameIsAddedToAttributesCustomer(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart($this->makeAddress('Jane', 'Smith')))
+            ->build();
+
+        $this->assertSame('Jane', $result['payment_source']['card']['attributes']['customer']['name']['given_name']);
+        $this->assertSame('Smith', $result['payment_source']['card']['attributes']['customer']['name']['surname']);
+    }
+
+    public function testCustomerEmailIsAddedToAttributesCustomer(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart(null, $this->makeCustomer('test@example.com')))
+            ->build();
+
+        $this->assertSame('test@example.com', $result['payment_source']['card']['attributes']['customer']['email_address']);
+    }
+
+    public function testThrowsWhenEmailIsInvalid(): void
+    {
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(false);
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
+
+        $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', null, $validate)
+            ->setCart($this->makeCart())
+            ->build();
+    }
+
+    public function testThrowsWhenEmailIsMissing(): void
+    {
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::CART_CUSTOMER_EMAIL_INVALID);
+
+        $this->makeBuilder()
+            ->setCart(['addresses' => ['invoice' => $this->makeAddress()]])
+            ->build();
+    }
+
+    public function testCustomerPhoneIsAddedToAttributesCustomer(): void
+    {
+        $parsedPhone = $this->createMock(PhoneNumber::class);
+        $parsedPhone->method('getNationalNumber')->willReturn('612345678');
+
+        $phoneParser = $this->createMock(PhoneParser::class);
+        $phoneParser->method('parsePhone')->willReturn($parsedPhone);
+        $phoneParser->method('getPhoneType')->willReturn('MOBILE');
+
+        $result = $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', $phoneParser)
+            ->setCart($this->makeCart())
+            ->build();
+
+        $phone = $result['payment_source']['card']['attributes']['customer']['phone'];
+        $this->assertSame('612345678', $phone['phone_number']['national_number']);
+        $this->assertSame('MOBILE', $phone['phone_type']);
+    }
+
+    public function testPhoneIsOmittedWhenEmpty(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart($this->makeAddress('John', 'Doe', 1, 0, '', '')))
+            ->build();
+
+        $this->assertArrayNotHasKey('phone', $result['payment_source']['card']['attributes']['customer']);
+    }
+
+    public function testPhoneIsOmittedWhenUnparseable(): void
+    {
+        $phoneParser = $this->createMock(PhoneParser::class);
+        $phoneParser->method('parsePhone')->willReturn(null);
+
+        $result = $this->makeBuilder(false, 'SCA_ALWAYS', 'FR', $phoneParser)
+            ->setCart($this->makeCart())
+            ->build();
+
+        $this->assertArrayNotHasKey('phone', $result['payment_source']['card']['attributes']['customer']);
+    }
+
+    public function testCustomerIdMergesWithNewCustomerAttributes(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart(null, $this->makeCustomer('merge@example.com')))
+            ->setPaypalCustomerId('cust_456')
+            ->build();
+
+        $customer = $result['payment_source']['card']['attributes']['customer'];
+        $this->assertSame('cust_456', $customer['id']);
+        $this->assertSame('merge@example.com', $customer['email_address']);
+        $this->assertArrayHasKey('name', $customer);
     }
 }

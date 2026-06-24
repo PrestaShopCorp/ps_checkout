@@ -22,18 +22,17 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use Address;
 use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberType;
-use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 
 class PayPalPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -49,11 +48,8 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
     /** @var StateRepositoryInterface|MockObject */
     private $stateRepository;
 
-    /** @var PhoneNumberUtil|MockObject */
-    private $phoneUtil;
-
-    /** @var PhoneNumberUtil */
-    private $originalPhoneUtil;
+    /** @var PhoneParser|MockObject */
+    private $phoneParser;
 
     protected function setUp(): void
     {
@@ -61,27 +57,10 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->validate = $this->createMock(ValidateInterface::class);
         $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $this->stateRepository = $this->createMock(StateRepositoryInterface::class);
-
-        $this->originalPhoneUtil = PhoneNumberUtil::getInstance();
-        $this->phoneUtil = $this->createMock(PhoneNumberUtil::class);
-
-        $reflection = new ReflectionClass(PhoneNumberUtil::class);
-        $instanceProperty = $reflection->getProperty('instance');
-        $instanceProperty->setAccessible(true);
-        $instanceProperty->setValue(null, $this->phoneUtil);
+        $this->phoneParser = $this->createMock(PhoneParser::class);
     }
 
-    protected function tearDown(): void
-    {
-        if ($this->originalPhoneUtil) {
-            $reflection = new ReflectionClass(PhoneNumberUtil::class);
-            $instanceProperty = $reflection->getProperty('instance');
-            $instanceProperty->setAccessible(true);
-            $instanceProperty->setValue(null, $this->originalPhoneUtil);
-        }
-    }
-
-    private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'Test Shop'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
@@ -91,13 +70,16 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action;
         });
 
+        return new ExperienceContextHelper($configuration, $link, $this->countryRepository, $this->stateRepository);
+    }
+
+    private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder
+    {
         return new PayPalPaymentSourceNodeBuilder(
-            $configuration,
-            $link,
+            $this->makeExperienceContextHelper($shopName),
             $this->logger,
             $this->validate,
-            $this->countryRepository,
-            $this->stateRepository
+            $this->phoneParser
         );
     }
 
@@ -243,7 +225,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->with(8)->willReturn('FR');
         $this->stateRepository->method('getNameById')->with(0)->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -277,7 +259,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->with(21)->willReturn('US');
         $this->stateRepository->method('getIsoById')->with(5)->willReturn('CA');
-        $this->validate->method('isEmail')->with('john@example.com')->willReturn(true);
+        $this->validate->method('isPayPalEmail')->with('john@example.com')->willReturn(true);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -310,13 +292,12 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
 
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
         $this->stateRepository->method('getIsoById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $phoneNumberMock = $this->createMock(PhoneNumber::class);
         $phoneNumberMock->method('getNationalNumber')->willReturn('2125551234');
-        $this->phoneUtil->method('parse')->willReturn($phoneNumberMock);
-        $this->phoneUtil->method('isValidNumber')->willReturn(true);
-        $this->phoneUtil->method('getNumberType')->willReturn(PhoneNumberType::MOBILE);
+        $this->phoneParser->method('parseFromAddress')->willReturn($phoneNumberMock);
+        $this->phoneParser->method('getPhoneType')->willReturn('MOBILE');
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -388,7 +369,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $address = $this->createMockAddress(['id_country' => 1, 'id_state' => 0, 'firstname' => 'A', 'lastname' => 'B', 'address1' => '1 St', 'city' => 'City', 'postcode' => '00000']);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('FR');
         $this->stateRepository->method('getNameById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -410,7 +391,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $address = $this->createMockAddress(['id_country' => 1, 'id_state' => 0, 'firstname' => 'A', 'lastname' => 'B', 'address1' => '1 St', 'city' => 'City', 'postcode' => '00000']);
         $this->countryRepository->method('getCountryIsoCodeById')->willReturn('FR');
         $this->stateRepository->method('getNameById')->willReturn('');
-        $this->validate->method('isEmail')->willReturn(false);
+        $this->validate->method('isPayPalEmail')->willReturn(false);
 
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -426,7 +407,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('PAY_NOW', $result['payment_source']['paypal']['experience_context']['user_action']);
     }
 
-    public function testVaultIdAppearsInOutput(): void
+    public function testVaultIdIsNotSentForPayPal(): void
     {
         $result = $this->makeBuilder()
             ->setShippingAddressExists(false)
@@ -435,7 +416,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             ->setPaypalVaultId('vault_xyz')
             ->build();
 
-        $this->assertSame('vault_xyz', $result['payment_source']['paypal']['vault_id']);
+        $this->assertArrayNotHasKey('vault_id', $result['payment_source']['paypal']);
     }
 
     /**
@@ -462,8 +443,33 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             'paylater → PAYPAL_PAY_LATER' => ['paylater', 'PAYPAL_PAY_LATER'],
             'credit → PAYPAL_CREDIT' => ['credit', 'PAYPAL_CREDIT'],
             'paypal → PAYPAL' => ['paypal', 'PAYPAL'],
+            'card → PAYPAL' => ['card', 'PAYPAL'],
             'unknown → PAYPAL' => ['unknown', 'PAYPAL'],
         ];
+    }
+
+    public function testLandingPageIsGuestCheckoutWhenFundingSourceIsCard(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setFundingSource('card')
+            ->build();
+
+        $this->assertSame('GUEST_CHECKOUT', $result['payment_source']['paypal']['experience_context']['landing_page']);
+    }
+
+    public function testLandingPageIsLoginWhenFundingSourceIsNotCard(): void
+    {
+        $result = $this->makeBuilder()
+            ->setShippingAddressExists(false)
+            ->setVirtualCart(false)
+            ->setSavePaymentMethod(false)
+            ->setFundingSource('paypal')
+            ->build();
+
+        $this->assertSame('LOGIN', $result['payment_source']['paypal']['experience_context']['landing_page']);
     }
 
     /**

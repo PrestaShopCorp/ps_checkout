@@ -38,3 +38,37 @@ if (file_exists($rootDirectory . 'autoload.php')) {
 if (!defined('_PS_VERSION_') && class_exists('AppKernel')) {
     define('_PS_VERSION_', AppKernel::VERSION);
 }
+
+if (!function_exists('pSQL')) {
+    function pSQL($string, $htmlOK = false)
+    {
+        return $string;
+    }
+}
+
+if (!function_exists('bqSQL')) {
+    function bqSQL($string)
+    {
+        return str_replace('`', '', $string);
+    }
+}
+
+if (!defined('_DB_PREFIX_')) {
+    define('_DB_PREFIX_', 'ps_');
+}
+
+if (!defined('_DB_SERVER_')) {
+    define('_DB_SERVER_', 'localhost');
+}
+
+if (!defined('_DB_USER_')) {
+    define('_DB_USER_', '');
+}
+
+if (!defined('_DB_PASSWD_')) {
+    define('_DB_PASSWD_', '');
+}
+
+if (!defined('_DB_NAME_')) {
+    define('_DB_NAME_', '');
+}

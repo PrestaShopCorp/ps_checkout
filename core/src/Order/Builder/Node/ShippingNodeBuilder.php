@@ -20,13 +20,21 @@
 
 namespace PsCheckout\Core\Order\Builder\Node;
 
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
+use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
+use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class ShippingNodeBuilder implements ShippingNodeBuilderInterface
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var CountryRepositoryInterface
      */
@@ -43,9 +51,11 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
     private $cart;
 
     public function __construct(
+        LoggerInterface $logger,
         CountryRepositoryInterface $countryRepository,
         StateRepositoryInterface $stateRepository
     ) {
+        $this->logger = $logger;
         $this->countryRepository = $countryRepository;
         $this->stateRepository = $stateRepository;
     }
@@ -67,16 +77,56 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
 
         $countryIso = $this->countryRepository->getCountryIsoCodeById($address->id_country);
 
-        $stateName = $countryIso === 'US' ?
-            $this->stateRepository->getIsoById($address->id_state)
+        if (!preg_match('/^[A-Za-z]{2}$/', (string) $countryIso)) {
+            $this->logger->warning(
+                'ShippingNodeBuilder: invalid country ISO code, shipping address omitted from payload',
+                ['id_country' => $address->id_country, 'iso_code' => $countryIso]
+            );
+
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: invalid country ISO code',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
+        }
+
+        $stateName = PaypalAddressRequirementsUtility::usesStateIsoCode($countryIso)
+            ? $this->stateRepository->getIsoById($address->id_state)
             : $this->stateRepository->getNameById($address->id_state);
+
+        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($countryIso, $stateName);
+
+        $portableAddress = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
+
+        if (PaypalAddressRequirementsUtility::isCityRequired($countryIso) && empty($portableAddress['admin_area_2'])) {
+            $this->logger->warning(
+                'ShippingNodeBuilder: city is required but missing for country, shipping address omitted from payload',
+                ['id_country' => $address->id_country, 'country_code' => $countryIso]
+            );
+
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: city is required but missing',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
+        }
+
+        if (PaypalAddressRequirementsUtility::isPostalCodeRequired($countryIso) && empty($portableAddress['postal_code'])) {
+            $this->logger->warning(
+                'ShippingNodeBuilder: postal code is required but missing for country, shipping address omitted from payload',
+                ['id_country' => $address->id_country, 'country_code' => $countryIso]
+            );
+
+            throw new PsCheckoutException(
+                'ShippingNodeBuilder: postal code is required but missing',
+                PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID
+            );
+        }
 
         return [
             'shipping' => [
                 'name' => [
                     'full_name' => $address->firstname . ' ' . $address->lastname,
                 ],
-                'address' => OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName),
+                'address' => $portableAddress,
             ],
         ];
     }

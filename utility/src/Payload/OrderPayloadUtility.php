@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Utility\Payload;
 
+use PsCheckout\Utility\Common\NumberUtility;
+
 class OrderPayloadUtility
 {
     /**
@@ -32,12 +34,12 @@ class OrderPayloadUtility
     public static function getAddressPortable(\Address $address, string $countryIso, string $stateName): array
     {
         return array_filter([
-            'address_line_1' => $address->address1,
-            'address_line_2' => $address->address2,
-            'admin_area_1' => $stateName,
-            'admin_area_2' => $address->city,
+            'address_line_1' => trim($address->address1),
+            'address_line_2' => trim($address->address2),
+            'admin_area_1' => trim($stateName),
+            'admin_area_2' => trim($address->city),
             'country_code' => PaypalCountryCodeUtility::getPaypalIsoCode(strtoupper($countryIso)),
-            'postal_code' => $address->postcode,
+            'postal_code' => trim($address->postcode),
         ]);
     }
 
@@ -55,6 +57,7 @@ class OrderPayloadUtility
     public static function amountWithBreakdownDiff(array $amount1, array $amount2): array
     {
         $diff = [];
+        $currencyCode = $amount1['currency_code'] ?? null;
 
         // Compare currency_code
         if ($amount1['currency_code'] !== $amount2['currency_code']) {
@@ -62,7 +65,7 @@ class OrderPayloadUtility
         }
 
         // Compare value (normalized)
-        if (!self::areNumericValuesEqual($amount1['value'], $amount2['value'])) {
+        if (!self::areNumericValuesEqual($amount1['value'], $amount2['value'], $currencyCode)) {
             $diff['value'] = $amount1['value'];
         }
 
@@ -71,7 +74,7 @@ class OrderPayloadUtility
         $breakdown2 = $amount2['breakdown'] ?? [];
 
         if (!empty($breakdown1) || !empty($breakdown2)) {
-            $breakdownDiff = self::compareBreakdownItems($breakdown1, $breakdown2);
+            $breakdownDiff = self::compareBreakdownItems($breakdown1, $breakdown2, $currencyCode);
             if (!empty($breakdownDiff)) {
                 $diff['breakdown'] = $breakdownDiff;
             }
@@ -89,7 +92,7 @@ class OrderPayloadUtility
      *
      * @return array Differences found in breakdown
      */
-    private static function compareBreakdownItems(array $breakdown1, array $breakdown2): array
+    private static function compareBreakdownItems(array $breakdown1, array $breakdown2, ?string $currencyCode = null): array
     {
         $diff = [];
 
@@ -119,16 +122,17 @@ class OrderPayloadUtility
                 continue;
             }
 
-            // Both items exist - compare them
+            // Both items exist - compare them; prefer item-level currency for precision
             $itemDiff = [];
+            $itemCurrency = $item1['currency_code'] ?? $item2['currency_code'] ?? $currencyCode;
 
             // Compare currency_code
             if ($item1['currency_code'] !== $item2['currency_code']) {
                 $itemDiff['currency_code'] = $item1['currency_code'];
             }
 
-            // Compare value (normalized)
-            if (!self::areNumericValuesEqual($item1['value'], $item2['value'])) {
+            // Compare value (normalized with currency-aware decimal places)
+            if (!self::areNumericValuesEqual($item1['value'], $item2['value'], $itemCurrency)) {
                 $itemDiff['value'] = $item1['value'];
             }
 
@@ -141,14 +145,15 @@ class OrderPayloadUtility
     }
 
     /**
-     * Compares two numeric values after normalizing to 2 decimal places.
+     * Compares two numeric values after normalizing to the correct decimal places for the currency.
      *
      * @param mixed $value1
      * @param mixed $value2
+     * @param string|null $currencyCode ISO 4217 currency code; falls back to 2 dp when null
      *
      * @return bool True if values are equal after normalization
      */
-    private static function areNumericValuesEqual($value1, $value2): bool
+    private static function areNumericValuesEqual($value1, $value2, ?string $currencyCode = null): bool
     {
         if ($value1 === null && $value2 === null) {
             return true;
@@ -156,6 +161,11 @@ class OrderPayloadUtility
 
         if (!is_numeric($value1) || !is_numeric($value2)) {
             return $value1 === $value2;
+        }
+
+        if ($currencyCode !== null) {
+            return NumberUtility::formatAmount((float) $value1, $currencyCode)
+                === NumberUtility::formatAmount((float) $value2, $currencyCode);
         }
 
         $normalized1 = number_format((float) $value1, 2, '.', '');

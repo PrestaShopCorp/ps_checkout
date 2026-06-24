@@ -45,7 +45,7 @@ class CancelPayPalOrderAction implements CancelPayPalOrderActionInterface
             $paypalOrder = $this->payPalOrderRepository->getOneBy(['id' => $cancelOrderRequest->getOrderId()]);
 
             if (!$paypalOrder) {
-                return;
+                throw new PsCheckoutException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($cancelOrderRequest->getCartId(), true)), PsCheckoutException::UPDATE_FAILED);
             }
 
             $paypalOrder

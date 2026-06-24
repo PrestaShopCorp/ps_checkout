@@ -22,16 +22,20 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\BlikPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\Validate;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class BlikPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(): BlikPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'My Shop', string $countryCode = 'PL'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn('My Shop');
+        $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
         $link = $this->createMock(LinkInterface::class);
         $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
@@ -39,15 +43,27 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         });
 
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new BlikPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(): BlikPaymentSourceNodeBuilder
+    {
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturnCallback(
+            static function (string $email): bool {
+                return (bool) preg_match(Validate::PAYPAL_EMAIL_PATTERN, $email);
+            }
+        );
+
+        return new BlikPaymentSourceNodeBuilder($this->makeExperienceContextHelper(), $validate);
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function makeCart(string $email = 'anna@example.com'): array
+    private function makeCart(string $email = 'anna@example.com', string $locale = ''): array
     {
         $address = new \stdClass();
         $address->firstname = 'Anna';
@@ -57,10 +73,32 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         $customer = new \stdClass();
         $customer->email = $email;
 
-        return [
+        $cart = [
             'addresses' => ['invoice' => $address],
             'customer' => $customer,
         ];
+
+        if ($locale !== '') {
+            $language = new \stdClass();
+            $language->locale = $locale;
+            $cart['language'] = $language;
+        }
+
+        return $cart;
+    }
+
+    public function testLocaleIsIncludedWhenSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('anna@example.com', 'pl-PL'))->build();
+
+        $this->assertSame('pl-PL', $result['payment_source']['blik']['experience_context']['locale']);
+    }
+
+    public function testLocaleIsOmittedWhenNotSupported(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart('anna@example.com', 'pl_PL'))->build();
+
+        $this->assertArrayNotHasKey('locale', $result['payment_source']['blik']['experience_context']);
     }
 
     public function testBuildIncludesEmailWhenPresent(): void
@@ -74,6 +112,7 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
                     'country_code' => 'PL',
                     'experience_context' => [
                         'brand_name' => 'My Shop',
+                        'shipping_preference' => 'GET_FROM_FILE',
                         'return_url' => 'https://example.com/validate',
                         'cancel_url' => 'https://example.com/cancel',
                     ],
@@ -102,6 +141,14 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayNotHasKey('email', $result['payment_source']['blik']);
     }
 
+    public function testBuildOmitsEmailWhenEmailHasNoTld(): void
+    {
+        // Regression: emails without a TLD were silently forwarded to PayPal, causing INVALID_PARAMETER_SYNTAX.
+        $result = $this->makeBuilder()->setCart($this->makeCart('einkauf@my-shop'))->build();
+
+        $this->assertArrayNotHasKey('email', $result['payment_source']['blik']);
+    }
+
     public function testBuildReturnsCorrectNameAndCountryCode(): void
     {
         $result = $this->makeBuilder()->setCart($this->makeCart())->build();
@@ -112,16 +159,13 @@ class BlikPaymentSourceNodeBuilderTest extends TestCase
 
     public function testBrandNameIsTruncatedTo127Characters(): void
     {
-        $configuration = $this->createMock(ConfigurationInterface::class);
-        $configuration->method('get')->willReturn(str_repeat('F', 200));
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturn(true);
 
-        $link = $this->createMock(LinkInterface::class);
-        $link->method('getModuleLink')->willReturn('https://example.com/x');
-
-        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $countryRepository->method('getCountryIsoCodeById')->willReturn('PL');
-
-        $builder = new BlikPaymentSourceNodeBuilder($configuration, $link, $countryRepository);
+        $builder = new BlikPaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper(str_repeat('F', 200)),
+            $validate
+        );
         $result = $builder->setCart($this->makeCart())->build();
 
         $this->assertSame(127, mb_strlen($result['payment_source']['blik']['experience_context']['brand_name']));

@@ -31,7 +31,8 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
     /** @var \Db */
     private $db;
 
-    private ?UpdatePayPalOrderPurchaseUnitAction $updatePayPalOrderPurchaseUnitAction;
+    /** @var UpdatePayPalOrderPurchaseUnitAction */
+    private $updatePayPalOrderPurchaseUnitAction;
 
     protected function setUp(): void
     {
@@ -133,6 +134,8 @@ class UpdatePayPalOrderPurchaseUnitActionTest extends BaseTestCase
                                 'status' => 'CREATED',
                                 'expiration_time' => '2024-02-01T10:00:00Z',
                                 'seller_protection' => ['status' => 'ELIGIBLE'],
+                                'create_time' => '2024-01-01T10:00:00Z',
+                                'update_time' => '2024-01-01T10:01:00Z',
                             ],
                         ],
                     ],

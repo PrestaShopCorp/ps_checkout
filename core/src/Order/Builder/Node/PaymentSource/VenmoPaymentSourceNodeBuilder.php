@@ -20,8 +20,9 @@
 
 namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
-use PsCheckout\Utility\Common\StringUtility;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Core\Util\PhoneParser;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 
 class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInterface
 {
@@ -51,13 +52,28 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
     private $cart;
 
     /**
-     * @var ConfigurationInterface
+     * @var ExperienceContextHelper
      */
-    private $configuration;
+    private $experienceContextHelper;
 
-    public function __construct(ConfigurationInterface $configuration)
-    {
-        $this->configuration = $configuration;
+    /**
+     * @var ValidateInterface
+     */
+    private $validate;
+
+    /**
+     * @var PhoneParser
+     */
+    private $phoneParser;
+
+    public function __construct(
+        ExperienceContextHelper $experienceContextHelper,
+        ValidateInterface $validate,
+        PhoneParser $phoneParser
+    ) {
+        $this->experienceContextHelper = $experienceContextHelper;
+        $this->validate = $validate;
+        $this->phoneParser = $phoneParser;
     }
 
     /**
@@ -68,7 +84,18 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
         $data = [];
 
         if ($this->cart !== null) {
-            $data['email_address'] = (string) $this->cart['customer']->email;
+            $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+            if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+                $data['email_address'] = $email;
+            }
+        }
+
+        $customerAttributes = $this->buildCustomerAttributes();
+        if ($this->savePaymentMethod && $this->paypalCustomerId) {
+            $customerAttributes['id'] = $this->paypalCustomerId;
+        }
+        if (!empty($customerAttributes)) {
+            $data['attributes']['customer'] = $customerAttributes;
         }
 
         if ($this->savePaymentMethod) {
@@ -79,22 +106,11 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'customer_type' => 'CONSUMER',
                 'permit_multiple_payment_tokens' => false,
             ];
-            if ($this->paypalCustomerId) {
-                $data['attributes']['customer'] = [
-                    'id' => $this->paypalCustomerId,
-                ];
-            }
         }
 
-        if ($this->paypalVaultId) {
-            $data['vault_id'] = $this->paypalVaultId;
-        }
-
-        $isVirtual = isset($this->cart['cart']['is_virtual']) && (bool) $this->cart['cart']['is_virtual'];
-        $hasShipping = isset($this->cart['addresses']['shipping']) && $this->cart['addresses']['shipping']->id !== null;
         $data['experience_context'] = [
-            'brand_name' => StringUtility::normalizeBrandName((string) $this->configuration->get('PS_SHOP_NAME')),
-            'shipping_preference' => $isVirtual ? 'NO_SHIPPING' : ($hasShipping ? 'SET_PROVIDED_ADDRESS' : 'GET_FROM_FILE'),
+            'brand_name' => $this->experienceContextHelper->getBrandName(),
+            'shipping_preference' => ExperienceContextHelper::getShippingPreference($this->cart ?? []),
             'user_action' => (!$this->isExpressCheckout && $this->cart !== null) ? 'PAY_NOW' : 'CONTINUE',
         ];
 
@@ -103,6 +119,49 @@ class VenmoPaymentSourceNodeBuilder implements VenmoPaymentSourceNodeBuilderInte
                 'venmo' => $data,
             ],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildCustomerAttributes(): array
+    {
+        $attributes = [];
+
+        if ($this->cart === null || !isset($this->cart['addresses']['invoice'])) {
+            return $attributes;
+        }
+
+        $address = $this->cart['addresses']['invoice'];
+
+        if (!empty($address->firstname) || !empty($address->lastname)) {
+            $attributes['name'] = [
+                'given_name' => (string) $address->firstname,
+                'surname' => (string) $address->lastname,
+            ];
+        }
+
+        $email = $this->experienceContextHelper->getCustomerEmail($this->cart);
+        if ($email !== '' && $this->validate->isPayPalEmail($email)) {
+            $attributes['email_address'] = $email;
+        }
+
+        $countryIso = $this->experienceContextHelper->getInvoiceCountryCode($this->cart);
+
+        $cartId = isset($this->cart['cart']['id']) ? (int) $this->cart['cart']['id'] : null;
+        $parsedPhone = $this->phoneParser->parseFromAddress($address, $countryIso, $cartId);
+
+        if ($parsedPhone !== null) {
+            $attributes['phone'] = [
+                'phone_number' => [
+                    'national_number' => (string) $parsedPhone->getNationalNumber(),
+                    'country_code' => (string) $parsedPhone->getCountryCode(),
+                ],
+                'phone_type' => $this->phoneParser->getPhoneType($parsedPhone),
+            ];
+        }
+
+        return $attributes;
     }
 
     /** {@inheritDoc} */

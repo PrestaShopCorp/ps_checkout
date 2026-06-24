@@ -20,18 +20,80 @@
 
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
+use libphonenumber\PhoneNumber;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\PaymentSource\VenmoPaymentSourceNodeBuilder;
+use PsCheckout\Core\Util\ExperienceContextHelper;
+use PsCheckout\Core\Util\PhoneParser;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
+use PsCheckout\Infrastructure\Adapter\Validate;
+use PsCheckout\Infrastructure\Adapter\ValidateInterface;
+use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class VenmoPaymentSourceNodeBuilderTest extends TestCase
 {
-    private function makeBuilder(string $shopName = 'Test Shop'): VenmoPaymentSourceNodeBuilder
+    private function makeExperienceContextHelper(string $shopName = 'Test Shop', string $countryCode = 'US'): ExperienceContextHelper
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
         $configuration->method('get')->with('PS_SHOP_NAME')->willReturn($shopName);
 
-        return new VenmoPaymentSourceNodeBuilder($configuration);
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
+            return 'https://example.com/' . $action;
+        });
+
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
+
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+    }
+
+    private function makeBuilder(string $shopName = 'Test Shop', ?PhoneParser $phoneParser = null): VenmoPaymentSourceNodeBuilder
+    {
+        $validate = $this->createMock(ValidateInterface::class);
+        $validate->method('isPayPalEmail')->willReturnCallback(
+            static function (string $email): bool {
+                return (bool) preg_match(Validate::PAYPAL_EMAIL_PATTERN, $email);
+            }
+        );
+
+        $defaultPhoneParser = $this->createMock(PhoneParser::class);
+        $defaultPhoneParser->method('parseFromAddress')->willReturn(null);
+
+        return new VenmoPaymentSourceNodeBuilder(
+            $this->makeExperienceContextHelper($shopName),
+            $validate,
+            $phoneParser ?? $defaultPhoneParser
+        );
+    }
+
+    private function makeAddress(
+        string $firstName = 'John',
+        string $lastName = 'Doe',
+        string $phone = '+12025551234'
+    ): \stdClass {
+        $address = new \stdClass();
+        $address->firstname = $firstName;
+        $address->lastname = $lastName;
+        $address->phone = $phone;
+        $address->phone_mobile = '';
+        $address->id_country = 1;
+        $address->id = 1;
+
+        return $address;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function makeCartWithAddress(string $email = 'customer@example.com', ?\stdClass $address = null): array
+    {
+        $cart = $this->makeCart($email);
+        $cart['addresses']['invoice'] = $address ?? $this->makeAddress();
+
+        return $cart;
     }
 
     /**
@@ -129,8 +191,8 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                         'venmo' => [
                             'email_address' => 'customer@example.com',
                             'attributes' => [
-                                'vault' => $vaultAttributes,
                                 'customer' => ['id' => 'cust_abc'],
+                                'vault' => $vaultAttributes,
                             ],
                             'experience_context' => $experienceContext,
                         ],
@@ -143,7 +205,6 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                     'payment_source' => [
                         'venmo' => [
                             'email_address' => 'customer@example.com',
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -158,7 +219,6 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                             'attributes' => [
                                 'vault' => $vaultAttributes,
                             ],
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -171,10 +231,9 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
                         'venmo' => [
                             'email_address' => 'customer@example.com',
                             'attributes' => [
-                                'vault' => $vaultAttributes,
                                 'customer' => ['id' => 'cust_abc'],
+                                'vault' => $vaultAttributes,
                             ],
-                            'vault_id' => 'vault_xyz',
                             'experience_context' => $experienceContext,
                         ],
                     ],
@@ -253,17 +312,17 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $this->assertSame('MyShop', $result['payment_source']['venmo']['experience_context']['brand_name']);
     }
 
-    public function testEmailCastToString(): void
+    public function testEmailOmittedWhenNotValidEmailFormat(): void
     {
         $customer = new \stdClass();
-        $customer->email = 42;
+        $customer->email = 42; // non-string, not a valid email when cast
 
         $result = $this->makeBuilder()
             ->setCart(['customer' => $customer, 'cart' => ['is_virtual' => false]])
             ->setSavePaymentMethod(false)
             ->build();
 
-        $this->assertSame('42', $result['payment_source']['venmo']['email_address']);
+        $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
     }
 
     public function testEmailAddressOmittedWhenNoCart(): void
@@ -275,11 +334,108 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
     }
 
+    public function testEmailAddressOmittedWhenEmailHasNoTld(): void
+    {
+        // Regression: emails without a TLD (e.g. einkauf@my-shop) were accepted by
+        // PrestaShop's isEmail() but rejected by PayPal's API with INVALID_PARAMETER_SYNTAX.
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart('einkauf@my-shop'))
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('email_address', $result['payment_source']['venmo']);
+    }
+
     public function testCustomerIdIsIgnoredWhenSavePaymentMethodIsFalse(): void
     {
         $result = $this->makeBuilder()
             ->setCart($this->makeCart())
             ->setPaypalCustomerId('cust_abc')
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('attributes', $result['payment_source']['venmo']);
+    }
+
+    public function testCustomerNameAddedToAttributesCustomer(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCartWithAddress('customer@example.com', $this->makeAddress('Jane', 'Smith')))
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertSame('Jane', $result['payment_source']['venmo']['attributes']['customer']['name']['given_name']);
+        $this->assertSame('Smith', $result['payment_source']['venmo']['attributes']['customer']['name']['surname']);
+    }
+
+    public function testCustomerEmailAddedToAttributesCustomer(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCartWithAddress('customer@example.com'))
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertSame('customer@example.com', $result['payment_source']['venmo']['attributes']['customer']['email_address']);
+    }
+
+    public function testCustomerPhoneAddedToAttributesCustomer(): void
+    {
+        $parsedPhone = $this->createMock(PhoneNumber::class);
+        $parsedPhone->method('getNationalNumber')->willReturn('2025551234');
+
+        $phoneParser = $this->createMock(PhoneParser::class);
+        $phoneParser->method('parseFromAddress')->willReturn($parsedPhone);
+        $phoneParser->method('getPhoneType')->willReturn('MOBILE');
+
+        $result = $this->makeBuilder('Test Shop', $phoneParser)
+            ->setCart($this->makeCartWithAddress())
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $phone = $result['payment_source']['venmo']['attributes']['customer']['phone'];
+        $this->assertSame('2025551234', $phone['phone_number']['national_number']);
+        $this->assertSame('MOBILE', $phone['phone_type']);
+    }
+
+    public function testCustomerPhoneOmittedWhenParserReturnsNull(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCartWithAddress())
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('phone', $result['payment_source']['venmo']['attributes']['customer']);
+    }
+
+    public function testCustomerIdMergesWithCustomerAttributes(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCartWithAddress('customer@example.com'))
+            ->setPaypalCustomerId('cust_abc')
+            ->setSavePaymentMethod(true)
+            ->build();
+
+        $customer = $result['payment_source']['venmo']['attributes']['customer'];
+        $this->assertSame('cust_abc', $customer['id']);
+        $this->assertArrayHasKey('name', $customer);
+        $this->assertSame('customer@example.com', $customer['email_address']);
+    }
+
+    public function testVaultIdIsNotSentForVenmo(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_xyz')
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('vault_id', $result['payment_source']['venmo']);
+    }
+
+    public function testCustomerAttributesAbsentWhenNoInvoiceAddress(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
             ->setSavePaymentMethod(false)
             ->build();
 

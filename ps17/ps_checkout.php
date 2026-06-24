@@ -58,10 +58,10 @@ use PsCheckout\Presentation\Presenter\Settings\Front\FrontSettingsPresenter;
 use PsCheckout\Utility\Common\ArrayUtility;
 use Psr\Log\LoggerInterface;
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 class Ps_Checkout extends PaymentModule
 {
+    const MIN_PHP_VERSION_ID = 70100;
+
     /**
      * @var PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
@@ -113,10 +113,16 @@ class Ps_Checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '7.5.4.0';
+        $this->version = '7.5.5.1';
         $this->author = 'PrestaShop';
 
         parent::__construct();
+
+        if (!$this->isPhpVersionCompliant()) {
+            return;
+        }
+
+        require_once __DIR__ . '/vendor/autoload.php';
 
         $this->displayName = $this->l('PrestaShop Checkout');
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
@@ -127,6 +133,12 @@ class Ps_Checkout extends PaymentModule
 
     public function install(): bool
     {
+        if (!$this->isPhpVersionCompliant()) {
+            $this->_errors[] = $this->l('This module requires at least PHP 7.1.0 to work properly. Please upgrade your server configuration.');
+
+            return defined('PS_INSTALLATION_IN_PROGRESS');
+        }
+
         /** @var Installer $installer */
         $installer = $this->getService(Installer::class);
 
@@ -147,6 +159,10 @@ class Ps_Checkout extends PaymentModule
 
     public function uninstall(): bool
     {
+        if (!$this->isPhpVersionCompliant()) {
+            return parent::uninstall();
+        }
+
         /* @var Configuration $configuration */
         $configuration = $this->getService(Configuration::class);
 
@@ -1220,6 +1236,14 @@ class Ps_Checkout extends PaymentModule
         static::$currencyIsAllowed[$cart->id_currency] = false;
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPhpVersionCompliant(): bool
+    {
+        return PHP_VERSION_ID >= self::MIN_PHP_VERSION_ID;
     }
 
     /**

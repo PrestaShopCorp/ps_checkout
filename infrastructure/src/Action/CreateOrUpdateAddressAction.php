@@ -21,15 +21,17 @@
 namespace PsCheckout\Infrastructure\Action;
 
 use Address;
-use Country;
 use Exception;
+use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Adapter\CountryInterface;
-use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepositoryInterface;
+use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
 use PsCheckout\Utility\Payload\PaypalCountryCodeUtility;
+use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterface
 {
@@ -49,20 +51,27 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
     private $countryRepository;
 
     /**
-     * @var AddressRepositoryInterface
+     * @var PsCheckoutAddressRepositoryInterface
      */
-    private $addressRepository;
+    private $psCheckoutAddressRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         ContextInterface $context,
         CountryInterface $country,
         CountryRepositoryInterface $countryRepository,
-        AddressRepositoryInterface $addressRepository
+        PsCheckoutAddressRepositoryInterface $psCheckoutAddressRepository,
+        LoggerInterface $logger
     ) {
         $this->context = $context;
         $this->country = $country;
         $this->countryRepository = $countryRepository;
-        $this->addressRepository = $addressRepository;
+        $this->psCheckoutAddressRepository = $psCheckoutAddressRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -71,6 +80,8 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
     public function execute(ExpressCheckoutShippingData $shippingData)
     {
         if (!$shippingData->getCountryCode()) {
+            $this->logger->warning('CreateOrUpdateAddressAction: missing country code in shipping data', ['orderId' => $shippingData->getOrderId()]);
+
             return false;
         }
 
@@ -78,62 +89,101 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
         $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($shippingData->getCountryCode());
 
         $idCountry = $this->country->getIdByIsoCode($shopIsoCode);
+
+        if (!$idCountry) {
+            $this->logger->warning('CreateOrUpdateAddressAction: country not found', ['isoCode' => $shopIsoCode, 'orderId' => $shippingData->getOrderId()]);
+
+            return false;
+        }
+
         $idState = 0;
-        $country = new Country((int) $idCountry, null, (int) $this->context->getShop()->id);
+        $shopId = (int) $this->context->getShop()->id;
 
-        if (!$country->id
-            || !$country->active
-            || !$country->isAssociatedToShop((int) $this->context->getShop()->id)
-            || $this->country->isNeedDniByCountryId($idCountry)
+        if (!$this->country->isAvailableForDelivery((int) $idCountry, $shopId)
+            || $this->country->isNeedDniByCountryId((int) $idCountry)
         ) {
+            $this->logger->warning('CreateOrUpdateAddressAction: country not available for delivery', ['isoCode' => $shopIsoCode, 'idCountry' => $idCountry, 'orderId' => $shippingData->getOrderId()]);
+
             return false;
         }
 
-        if ($country->contains_states) {
-            $idState = $this->countryRepository->getStateId((int) $idCountry, $shippingData->getState());
+        if ($this->country->containsStates((int) $idCountry)) {
+            $state = $shippingData->getState();
+            if ($state !== null && $state !== '') {
+                if (PaypalAddressRequirementsUtility::usesStateIsoCode($shopIsoCode)) {
+                    $psIsoCode = PaypalStateCodeMapUtility::getShopStateCode($shopIsoCode, $state);
+                    $idState = $this->countryRepository->getStateIdByIsoCode((int) $idCountry, $psIsoCode);
+                } else {
+                    $idState = $this->countryRepository->getStateId((int) $idCountry, $state);
+                }
+            }
         }
 
-        // check if a PayPal address already exist for the customer and not used
-        $paypalAddressAlias = 'Paypal ' . $shippingData->getOrderId();
-        $paypalAddressId = $this->addressRepository->getAddressIdByAliasAndCustomer($paypalAddressAlias, $this->context->getCustomer()->id);
-        $paypalAddress = new Address($paypalAddressId);
-        $isPaypalValidAddressAndNotUsed = $paypalAddress->id && !$paypalAddress->isUsed();
+        $idCustomer = (int) $this->context->getCustomer()->id;
 
-        if ($isPaypalValidAddressAndNotUsed) {
-            $address = $paypalAddress; // if yes, update it with the new address
+        if ($idCustomer === 0) {
+            $this->logger->warning('CreateOrUpdateAddressAction: no customer in context', ['orderId' => $shippingData->getOrderId()]);
+
+            return false;
+        }
+
+        $checksum = md5((string) json_encode([
+            'id_customer' => $idCustomer,
+            'firstname' => $shippingData->getFirstName(),
+            'lastname' => $shippingData->getLastName(),
+            'address1' => $shippingData->getStreet(),
+            'address2' => $shippingData->getStreet2(),
+            'postcode' => $shippingData->getPostalCode(),
+            'city' => $shippingData->getCity(),
+            'id_country' => (int) $idCountry,
+            'id_state' => (int) $idState,
+            'phone' => $shippingData->getPhone(),
+        ]));
+
+        $existingAddressId = $this->psCheckoutAddressRepository->getAddressIdByChecksumAndCustomer($checksum, $idCustomer);
+
+        if ($existingAddressId > 0) {
+            $addressId = $existingAddressId;
         } else {
-            $address = new Address(); // otherwise create a new address
-        }
+            $address = new Address();
+            $address->alias = 'Paypal ' . $shippingData->getOrderId();
+            $address->id_customer = $idCustomer;
+            $address->firstname = $shippingData->getFirstName();
+            $address->lastname = $shippingData->getLastName();
+            $address->address1 = $shippingData->getStreet();
+            $address->address2 = $shippingData->getStreet2();
+            $address->postcode = $shippingData->getPostalCode();
+            $address->city = $shippingData->getCity();
+            $address->id_country = $idCountry;
+            $address->phone = $shippingData->getPhone();
+            $address->id_state = $idState;
 
-        $address->alias = $paypalAddressAlias;
-        $address->id_customer = $this->context->getCustomer()->id;
-        $address->firstname = $shippingData->getFirstName();
-        $address->lastname = $shippingData->getLastName();
-        $address->address1 = $shippingData->getStreet();
-        $address->address2 = $shippingData->getStreet2();
-        $address->postcode = $shippingData->getPostalCode();
-        $address->city = $shippingData->getCity();
-        $address->id_country = $idCountry;
-        $address->phone = $shippingData->getPhone();
-        $address->id_state = $idState;
+            if (!$address->validateFields(false)) {
+                $this->logger->warning('CreateOrUpdateAddressAction: address field validation failed', ['orderId' => $shippingData->getOrderId(), 'idCustomer' => $idCustomer]);
 
-        if (!$address->validateFields(false)) {
-            return false;
-        }
+                return false;
+            }
 
-        try {
-            $address->save();
-        } catch (Exception $exception) {
-            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
+            try {
+                $address->save();
+            } catch (Exception $exception) {
+                throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
+            }
+
+            if (!$this->psCheckoutAddressRepository->saveAddress($address->id, $idCustomer, $checksum)) {
+                $this->logger->error('CreateOrUpdateAddressAction: failed to track address in ps_checkout_address', ['idAddress' => $address->id, 'idCustomer' => $idCustomer, 'orderId' => $shippingData->getOrderId()]);
+            }
+
+            $addressId = $address->id;
         }
 
         $cart = $this->context->getCart();
-        $cart->id_address_delivery = $address->id;
-        $cart->id_address_invoice = $address->id;
+        $cart->id_address_delivery = $addressId;
+        $cart->id_address_invoice = $addressId;
 
         $products = $cart->getProducts();
         foreach ($products as $product) {
-            $cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $address->id);
+            $cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $addressId);
         }
 
         return $cart->save();

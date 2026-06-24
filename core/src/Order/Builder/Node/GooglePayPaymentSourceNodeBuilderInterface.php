@@ -23,7 +23,14 @@ namespace PsCheckout\Core\Order\Builder\Node;
 interface GooglePayPaymentSourceNodeBuilderInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function build(): array;
+
+    /**
+     * @param array<string, mixed> $cart
+     *
+     * @return static
+     */
+    public function setCart(array $cart);
 }

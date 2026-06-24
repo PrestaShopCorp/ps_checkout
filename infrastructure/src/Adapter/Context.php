@@ -174,4 +174,79 @@ class Context implements ContextInterface
             ? (float) $cart->getOrderTotal(true, \Cart::BOTH)
             : null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function loadCartForWebhook(\Cart $cart): void
+    {
+        $idShop = (int) $cart->id_shop;
+        $idLang = (int) $cart->id_lang;
+
+        $this->context->cart = $cart;
+        $this->context->shop = new \Shop($idShop, $idLang);
+        // Align the static shop context so shop-scoped Configuration::get() calls (e.g. PS_TAX_ADDRESS_TYPE,
+        // PS_COUNTRY_DEFAULT) resolve from the correct shop in a multistore setup.
+        \Shop::setContext(\Shop::CONTEXT_SHOP, $idShop);
+        $this->context->language = new \Language($idLang, null, $idShop);
+        $this->context->currency = new \Currency((int) $cart->id_currency, $idLang, $idShop);
+
+        if ((int) $cart->id_customer > 0) {
+            // \Customer::__construct only accepts $id — no $id_lang / $id_shop override
+            $this->context->customer = new \Customer((int) $cart->id_customer);
+        }
+
+        // Country resolution: try the cart address, fallback to shop default, leave null rather
+        // than fatalling if neither resolves (webhook carts may have inconsistent address data).
+        $country = $this->resolveWebhookCountry($cart, $idShop);
+        if ($country instanceof \Country && \Validate::isLoadedObject($country)) {
+            $this->context->country = $country;
+        }
+    }
+
+    /**
+     * Resolves the tax country for a webhook cart.
+     *
+     * Priority:
+     *   1. Address pointed to by PS_TAX_ADDRESS_TYPE (shop-scoped configuration)
+     *   2. Shop default country (PS_COUNTRY_DEFAULT, shop-scoped)
+     *   3. null — leave context->country unchanged rather than fatalling
+     *
+     * All PS object loads are guarded with Validate::isLoadedObject() to tolerate deleted
+     * or inconsistent address data that is common in webhook-delivered carts.
+     *
+     * @param \Cart $cart
+     * @param int $idShop
+     *
+     * @return \Country|null
+     */
+    private function resolveWebhookCountry(\Cart $cart, int $idShop): ?\Country
+    {
+        // Step 1 — try the address selected by PS_TAX_ADDRESS_TYPE (shop-scoped read)
+        $addressType = (string) \Configuration::get('PS_TAX_ADDRESS_TYPE', null, null, $idShop);
+        $addressId = $addressType === 'id_address_invoice'
+            ? (int) $cart->id_address_invoice
+            : (int) $cart->id_address_delivery;
+
+        if ($addressId > 0) {
+            $address = new \Address($addressId);
+            if (\Validate::isLoadedObject($address) && (int) $address->id_country > 0) {
+                $country = new \Country((int) $address->id_country);
+                if (\Validate::isLoadedObject($country)) {
+                    return $country;
+                }
+            }
+        }
+
+        // Step 2 — fallback to the shop default country (shop-scoped read)
+        $defaultCountryId = (int) \Configuration::get('PS_COUNTRY_DEFAULT', null, null, $idShop);
+        if ($defaultCountryId > 0) {
+            $country = new \Country($defaultCountryId);
+            if (\Validate::isLoadedObject($country)) {
+                return $country;
+            }
+        }
+
+        return null;
+    }
 }

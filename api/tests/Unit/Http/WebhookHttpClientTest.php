@@ -87,6 +87,56 @@ class WebhookHttpClientTest extends TestCase
         }
     }
 
+    public function testItExtractsMessageFromNestedErrorObjectWhenErrorFieldIsArray(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                (string) json_encode([
+                    'error' => [
+                        'code' => 401,
+                        'status' => 'Unauthorized',
+                        'message' => 'The request could not be authorized',
+                    ],
+                ]),
+                '1.1',
+                'Unauthorized'
+            ));
+
+        $httpClient = $this->createClient($psrClient);
+
+        try {
+            $httpClient->sendRequest(new Request('POST', 'webhooks/verify'));
+            $this->fail('A WebhookException was expected.');
+        } catch (WebhookException $exception) {
+            $this->assertSame('The request could not be authorized', $exception->getMessage());
+            $this->assertSame(401, $exception->getCode());
+            $this->assertInstanceOf(HttpException::class, $exception->getPrevious());
+        }
+    }
+
+    public function testItRethrowsHttpExceptionWhenErrorFieldIsAnArrayWithNoMessage(): void
+    {
+        $psrClient = $this->createMock(ClientInterface::class);
+        $psrClient->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn(new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                (string) json_encode(['error' => ['code' => 401]]),
+                '1.1',
+                'Unauthorized'
+            ));
+
+        $httpClient = $this->createClient($psrClient);
+
+        $this->expectException(HttpException::class);
+        $httpClient->sendRequest(new Request('POST', 'webhooks/verify'));
+    }
+
     private function createClient(ClientInterface $psrClient): WebhookHttpClient
     {
         $configurationBuilder = $this->createMock(HttpClientConfigurationBuilderInterface::class);
