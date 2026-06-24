@@ -32,6 +32,12 @@ use PsCheckout\Core\PayPal\ShippingTracking\Service\TrackingDatabaseHandler;
 use PsCheckout\Core\PayPal\ShippingTracking\Validator\OrderTrackerValidatorInterface;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingApiRequest;
 use PsCheckout\Core\PayPal\ShippingTracking\ValueObject\TrackingData;
+use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Utility\Payload\OrderPayloadUtility;
+use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
+use PsCheckout\Utility\Payload\PaypalCountryCodeUtility;
+use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 use Psr\Log\LoggerInterface;
 
 class ShipmentProcessor implements ShipmentProcessorInterface
@@ -71,6 +77,16 @@ class ShipmentProcessor implements ShipmentProcessorInterface
      */
     private $trackingDatabaseHandler;
 
+    /**
+     * @var CountryRepositoryInterface
+     */
+    private $countryRepository;
+
+    /**
+     * @var StateRepositoryInterface
+     */
+    private $stateRepository;
+
     public function __construct(
         OrderTrackerValidatorInterface $orderTrackerValidator,
         TrackingPayloadBuilderInterface $payloadBuilder,
@@ -78,7 +94,9 @@ class ShipmentProcessor implements ShipmentProcessorInterface
         LoggerInterface $logger,
         ShippingTrackingCacheInterface $cache,
         TrackingApiService $trackingApiService,
-        TrackingDatabaseHandler $trackingDatabaseHandler
+        TrackingDatabaseHandler $trackingDatabaseHandler,
+        CountryRepositoryInterface $countryRepository,
+        StateRepositoryInterface $stateRepository
     ) {
         $this->orderTrackerValidator = $orderTrackerValidator;
         $this->payloadBuilder = $payloadBuilder;
@@ -87,6 +105,8 @@ class ShipmentProcessor implements ShipmentProcessorInterface
         $this->cache = $cache;
         $this->trackingApiService = $trackingApiService;
         $this->trackingDatabaseHandler = $trackingDatabaseHandler;
+        $this->countryRepository = $countryRepository;
+        $this->stateRepository = $stateRepository;
     }
 
     /**
@@ -98,7 +118,7 @@ class ShipmentProcessor implements ShipmentProcessorInterface
             // Get order and carrier from OrderCarrier
             $order = new Order($orderCarrier->id_order);
             $carrier = new Carrier($orderCarrier->id_carrier);
-            $address = $this->getAddressFromExternalData([], $order);
+            $address = $this->getOrderDeliveryAddress($order);
 
             // Validate and get PayPal order data
             $orderData = $this->orderTrackerValidator->validate($order, $carrier);
@@ -268,36 +288,28 @@ class ShipmentProcessor implements ShipmentProcessorInterface
     }
 
     /**
-     * Get address from external data or order delivery address
-     *
-     * @param array $externalShipmentData
      * @param Order $order
      *
      * @return array
      */
-    private function getAddressFromExternalData(array $externalShipmentData, Order $order): array
+    private function getOrderDeliveryAddress(Order $order): array
     {
-        // If external data has address, use it (source of truth)
-        if (!empty($externalShipmentData['address'])) {
-            return $externalShipmentData['address'];
-        }
-
-        // Fallback to order delivery address
         $deliveryAddress = new \Address($order->id_address_delivery);
-        if (\Validate::isLoadedObject($deliveryAddress)) {
-            $country = new \Country($deliveryAddress->id_country);
-            $state = new \State($deliveryAddress->id_state);
-
-            return [
-                'address_line_1' => $deliveryAddress->address1,
-                'address_line_2' => $deliveryAddress->address2 ?: '',
-                'admin_area_2' => $deliveryAddress->city,
-                'admin_area_1' => $state->name ?: '',
-                'postal_code' => $deliveryAddress->postcode,
-                'country_code' => $country->iso_code,
-            ];
+        if (!\Validate::isLoadedObject($deliveryAddress)) {
+            return [];
         }
 
-        return [];
+        $countryIso = $this->countryRepository->getCountryIsoCodeById($deliveryAddress->id_country);
+        $countryIso = strtoupper($countryIso);
+
+        $stateName = PaypalAddressRequirementsUtility::usesStateIsoCode($countryIso)
+            ? $this->stateRepository->getIsoById($deliveryAddress->id_state)
+            : $this->stateRepository->getNameById($deliveryAddress->id_state);
+
+        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($countryIso, $stateName);
+
+        $paypalCountryIso = PaypalCountryCodeUtility::getPaypalIsoCode($countryIso);
+
+        return OrderPayloadUtility::getAddressPortable($deliveryAddress, $paypalCountryIso, $stateName);
     }
 }
