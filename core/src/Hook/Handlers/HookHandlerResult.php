@@ -18,30 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-<<<<<<<< HEAD:api/tests/bootstrap.php
-$rootDirectory = __DIR__ . '/../../../../../../';
-$projectDir = __DIR__ . '/../../../../';
-
-if (!getenv('IS_CI')) {
-    define('_PS_IN_TEST_', true);
-}
-
-require_once $projectDir . 'vendor/autoload.php';
-
-if (file_exists($rootDirectory . 'vendor/autoload.php')) {
-    require_once $rootDirectory . 'vendor/autoload.php';
-}
-
-if (file_exists($rootDirectory . 'autoload.php')) {
-    require_once $rootDirectory . 'autoload.php';
-}
-
-if (!defined('_PS_VERSION_')) {
-    if (class_exists('AppKernel')) {
-        define('_PS_VERSION_', AppKernel::VERSION);
-    } else {
-        define('_PS_VERSION_', '1.7');
-========
 namespace PsCheckout\Core\Hook\Handlers;
 
 class HookHandlerResult
@@ -66,6 +42,5 @@ class HookHandlerResult
     public function getMessage(): string
     {
         return $this->message;
->>>>>>>> 5.3.x:core/src/Hook/Handlers/HookHandlerResult.php
     }
 }
