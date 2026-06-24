@@ -20,14 +20,14 @@
 
 namespace PsCheckout\Infrastructure\Action;
 
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 
 interface CreateOrUpdateAddressActionInterface
 {
     /**
-     * @param ExpressCheckoutRequest $expressCheckoutRequest
+     * @param ExpressCheckoutShippingData $shippingData
      *
-     * @return void
+     * @return bool
      */
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest);
+    public function execute(ExpressCheckoutShippingData $shippingData);
 }

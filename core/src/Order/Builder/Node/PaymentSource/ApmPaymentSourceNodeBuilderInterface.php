@@ -18,14 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node;
+namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-interface PayerNodeBuilderInterface
+interface ApmPaymentSourceNodeBuilderInterface
 {
-    public function build();
+    /**
+     * @return array<string, mixed>
+     */
+    public function build(): array;
 
     /**
-     * @param array $cart
+     * @param array<string, mixed> $cart
      *
      * @return $this
      */

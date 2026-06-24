@@ -18,225 +18,251 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-use PHPUnit\Framework\MockObject\MockObject;
+namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
+
+use Address;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\CardPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
 {
-    /**
-     * @var PayPalConfiguration|MockObject
-     */
-    private $paypalConfiguration;
+    private function makeBuilder(
+        bool $is3dSecureEnabled = false,
+        string $contingency = 'SCA_ALWAYS',
+        string $countryIso = 'FR'
+    ): CardPaymentSourceNodeBuilder {
+        $paypalConfig = $this->createMock(PayPalConfiguration::class);
+        $paypalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
+        $paypalConfig->method('getCardFieldsContingencies')->willReturn($contingency);
 
-    /**
-     * @var CountryRepositoryInterface|MockObject
-     */
-    private $countryRepository;
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn($countryIso);
 
-    /**
-     * @var StateRepositoryInterface|MockObject
-     */
-    private $stateRepository;
+        $stateRepository = $this->createMock(StateRepositoryInterface::class);
+        $stateRepository->method('getNameById')->willReturn('Île-de-France');
+        $stateRepository->method('getIsoById')->willReturn('CA');
 
-    /**
-     * @var CardPaymentSourceNodeBuilder
-     */
-    private $cardPaymentSourceNodeBuilder;
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturnCallback(function (string $action): string {
+            return 'https://example.com/' . $action;
+        });
 
-    protected function setUp(): void
-    {
-        // Mock dependencies
-        $this->paypalConfiguration = $this->createMock(PayPalConfiguration::class);
-        $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
-        $this->stateRepository = $this->createMock(StateRepositoryInterface::class);
+        return new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+    }
 
-        $this->cardPaymentSourceNodeBuilder = new CardPaymentSourceNodeBuilder(
-            $this->paypalConfiguration,
-            $this->countryRepository,
-            $this->stateRepository
-        );
+    private function makeAddress(
+        string $firstName = 'John',
+        string $lastName = 'Doe',
+        int $idCountry = 1,
+        int $idState = 0
+    ): Address {
+        $address = new Address();
+        $address->firstname = $firstName;
+        $address->lastname = $lastName;
+        $address->id_country = $idCountry;
+        $address->id_state = $idState;
+
+        return $address;
     }
 
     /**
-     * Test that the build method returns the correct node structure when all data is valid
+     * @return array<string, mixed>
      */
-    public function testBuildValidData()
+    private function makeCart(?Address $address = null): array
     {
-        $address = new Address();
-        $address->firstname = 'John';
-        $address->lastname = 'Doe';
-        $address->id_country = 1;
-        $address->id_state = 10;
-
-        $cart = [
-            'addresses' => [
-                'invoice' => $address,
-            ],
-        ];
-
-        $this->countryRepository
-            ->method('getCountryIsoCodeById')
-            ->willReturn('US');
-
-        $this->stateRepository
-            ->method('getNameById')
-            ->willReturn('California');
-
-        $this->stateRepository
-            ->method('getIsoById')
-            ->willReturn('CA');
-
-        // Set cart data
-        $this->cardPaymentSourceNodeBuilder->setCart($cart);
-
-        // Set PayPal configuration mock
-        $this->paypalConfiguration
-            ->method('is3dSecureEnabled')
-            ->willReturn(true);
-
-        $this->paypalConfiguration
-            ->method('getCardFieldsContingencies')
-            ->willReturn('3DSecureMethod');
-
-        // Build the node
-        $node = $this->cardPaymentSourceNodeBuilder->build();
-
-        $this->assertArrayHasKey('payment_source', $node);
-        $this->assertArrayHasKey('card', $node['payment_source']);
-        $this->assertEquals('John Doe', $node['payment_source']['card']['name']);
-        $this->assertArrayHasKey('billing_address', $node['payment_source']['card']);
-        $this->assertEquals('3DSecureMethod', $node['payment_source']['card']['attributes']['verification']['method']);
+        return ['addresses' => ['invoice' => $address ?? $this->makeAddress()]];
     }
 
-    /**
-     * Test PayPal Vault ID is set correctly
-     */
-    public function testPaypalVaultId()
+    public function testNameIsConcatenatedFirstnameAndLastname(): void
     {
-        $address = new Address();
-        $address->firstname = 'John';
-        $address->lastname = 'Doe';
-        $address->id_country = 1;
-        $address->id_state = 10;
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart($this->makeAddress('Jane', 'Smith')))
+            ->build();
 
-        $cart = [
-            'addresses' => [
-                'invoice' => $address,
-            ],
-        ];
-
-        $this->countryRepository
-            ->method('getCountryIsoCodeById')
-            ->willReturn('US');
-
-        $this->stateRepository
-            ->method('getNameById')
-            ->willReturn('California');
-
-        $this->stateRepository
-            ->method('getIsoById')
-            ->willReturn('CA');
-
-        // Set cart data
-        $this->cardPaymentSourceNodeBuilder->setCart($cart);
-
-        // Set PayPal Vault ID
-        $this->cardPaymentSourceNodeBuilder->setPaypalVaultId('vault123');
-
-        // Build the node
-        $node = $this->cardPaymentSourceNodeBuilder->build();
-
-        $this->assertArrayHasKey('vault_id', $node['payment_source']['card']);
-        $this->assertEquals('vault123', $node['payment_source']['card']['vault_id']);
-        $this->assertArrayNotHasKey('billing_address', $node['payment_source']['card']);
+        $this->assertSame('Jane Smith', $result['payment_source']['card']['name']);
     }
 
-    /**
-     * Test that PayPal customer ID is added correctly
-     */
-    public function testPaypalCustomerId()
+    public function testBillingAddressPresentByDefault(): void
     {
-        $address = new Address();
-        $address->firstname = 'John';
-        $address->lastname = 'Doe';
-        $address->id_country = 1;
-        $address->id_state = 10;
+        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
 
-        $cart = [
-            'addresses' => [
-                'invoice' => $address,
-            ],
-        ];
-
-        $this->countryRepository
-            ->method('getCountryIsoCodeById')
-            ->willReturn('US');
-
-        $this->stateRepository
-            ->method('getNameById')
-            ->willReturn('California');
-
-        $this->stateRepository
-            ->method('getIsoById')
-            ->willReturn('CA');
-
-        // Set cart data
-        $this->cardPaymentSourceNodeBuilder->setCart($cart);
-
-        // Set PayPal customer ID
-        $this->cardPaymentSourceNodeBuilder->setPaypalCustomerId('customer123');
-
-        // Build the node
-        $node = $this->cardPaymentSourceNodeBuilder->build();
-
-        $this->assertArrayHasKey('attributes', $node['payment_source']['card']);
-        $this->assertArrayHasKey('customer', $node['payment_source']['card']['attributes']);
-        $this->assertEquals('customer123', $node['payment_source']['card']['attributes']['customer']['id']);
+        $this->assertArrayHasKey('billing_address', $result['payment_source']['card']);
     }
 
-    /**
-     * Test that the payment method is saved if the flag is true
-     */
-    public function testSavePaymentMethod()
+    public function testWithout3dSecureNoAttributesBlock(): void
     {
-        $address = new Address();
-        $address->firstname = 'John';
-        $address->lastname = 'Doe';
-        $address->id_country = 1;
-        $address->id_state = 10;
+        $result = $this->makeBuilder(false)->setCart($this->makeCart())->build();
 
-        $cart = [
-            'addresses' => [
-                'invoice' => $address,
-            ],
-        ];
+        $this->assertArrayNotHasKey('attributes', $result['payment_source']['card']);
+    }
 
-        $this->countryRepository
-            ->method('getCountryIsoCodeById')
-            ->willReturn('US');
+    public function testWith3dSecureAddsVerificationMethod(): void
+    {
+        $result = $this->makeBuilder(true)->setCart($this->makeCart())->build();
 
-        $this->stateRepository
-            ->method('getNameById')
-            ->willReturn('California');
+        $this->assertSame('SCA_ALWAYS', $result['payment_source']['card']['attributes']['verification']['method']);
+    }
 
-        $this->stateRepository
-            ->method('getIsoById')
-            ->willReturn('CA');
+    public function testVaultIdRemovesBillingAddressAndSetsVaultId(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_abc')
+            ->build();
 
-        // Set cart data
-        $this->cardPaymentSourceNodeBuilder->setCart($cart);
+        $this->assertArrayNotHasKey('billing_address', $result['payment_source']['card']);
+        $this->assertSame('vault_abc', $result['payment_source']['card']['vault_id']);
+    }
 
-        // Set save payment method flag
-        $this->cardPaymentSourceNodeBuilder->setSavePaymentMethod(true);
+    public function testVaultIdWith3dSecureKeepsVerificationAttribute(): void
+    {
+        $result = $this->makeBuilder(true, 'SCA_WHEN_REQUIRED')
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_abc')
+            ->build();
 
-        // Build the node
-        $node = $this->cardPaymentSourceNodeBuilder->build();
+        $this->assertArrayNotHasKey('billing_address', $result['payment_source']['card']);
+        $this->assertSame('SCA_WHEN_REQUIRED', $result['payment_source']['card']['attributes']['verification']['method']);
+        $this->assertSame('vault_abc', $result['payment_source']['card']['vault_id']);
+    }
 
-        $this->assertArrayHasKey('vault', $node['payment_source']['card']['attributes']);
-        $this->assertEquals('ON_SUCCESS', $node['payment_source']['card']['attributes']['vault']['store_in_vault']);
+    public function testCustomerIdAddsAttributesCustomer(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalCustomerId('cust_123')
+            ->build();
+
+        $this->assertSame('cust_123', $result['payment_source']['card']['attributes']['customer']['id']);
+    }
+
+    public function testSavePaymentMethodAddsVaultAttribute(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setSavePaymentMethod(true)
+            ->build();
+
+        $this->assertSame('ON_SUCCESS', $result['payment_source']['card']['attributes']['vault']['store_in_vault']);
+    }
+
+    public function testSavePaymentMethodFalseOmitsVaultAttribute(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setSavePaymentMethod(false)
+            ->build();
+
+        $this->assertArrayNotHasKey('attributes', $result['payment_source']['card']);
+    }
+
+    public function testCustomerIdAndSavePaymentMethodCoexistInAttributes(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalCustomerId('cust_123')
+            ->setSavePaymentMethod(true)
+            ->build();
+
+        $this->assertSame('cust_123', $result['payment_source']['card']['attributes']['customer']['id']);
+        $this->assertSame('ON_SUCCESS', $result['payment_source']['card']['attributes']['vault']['store_in_vault']);
+    }
+
+    public function testStoredCredentialIsAbsentWithoutVaultOrSave(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+
+        $this->assertArrayNotHasKey('stored_credential', $result['payment_source']['card']);
+    }
+
+    public function testStoredCredentialFirstUsageWhenSavingPaymentMethod(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setSavePaymentMethod(true)
+            ->build();
+
+        $this->assertSame([
+            'payment_initiator' => 'CUSTOMER',
+            'payment_type' => 'UNSCHEDULED',
+            'usage' => 'FIRST',
+        ], $result['payment_source']['card']['stored_credential']);
+    }
+
+    public function testStoredCredentialSubsequentUsageWhenVaultIdSet(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_abc')
+            ->build();
+
+        $this->assertSame([
+            'payment_initiator' => 'CUSTOMER',
+            'payment_type' => 'UNSCHEDULED',
+            'usage' => 'SUBSEQUENT',
+        ], $result['payment_source']['card']['stored_credential']);
+    }
+
+    public function testStoredCredentialSubsequentTakesPriorityOverFirst(): void
+    {
+        $result = $this->makeBuilder()
+            ->setCart($this->makeCart())
+            ->setPaypalVaultId('vault_abc')
+            ->setSavePaymentMethod(true)
+            ->build();
+
+        $this->assertSame('SUBSEQUENT', $result['payment_source']['card']['stored_credential']['usage']);
+    }
+
+    public function testExperienceContextContainsReturnAndCancelUrls(): void
+    {
+        $result = $this->makeBuilder()->setCart($this->makeCart())->build();
+
+        $this->assertSame('https://example.com/validate', $result['payment_source']['card']['experience_context']['return_url']);
+        $this->assertSame('https://example.com/cancel', $result['payment_source']['card']['experience_context']['cancel_url']);
+    }
+
+    public function testUsStateResolutionUsesIsoCode(): void
+    {
+        $paypalConfig = $this->createMock(PayPalConfiguration::class);
+
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn('US');
+
+        $stateRepository = $this->createMock(StateRepositoryInterface::class);
+        $stateRepository->expects($this->once())->method('getIsoById')->with(10)->willReturn('CA');
+        $stateRepository->expects($this->never())->method('getNameById');
+
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturn('https://example.com/link');
+
+        $builder = new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+        $result = $builder->setCart($this->makeCart($this->makeAddress('John', 'Doe', 1, 10)))->build();
+
+        $this->assertSame('CA', $result['payment_source']['card']['billing_address']['admin_area_1']);
+    }
+
+    public function testNonUsStateResolutionUsesName(): void
+    {
+        $paypalConfig = $this->createMock(PayPalConfiguration::class);
+
+        $countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $countryRepository->method('getCountryIsoCodeById')->willReturn('DE');
+
+        $stateRepository = $this->createMock(StateRepositoryInterface::class);
+        $stateRepository->expects($this->once())->method('getNameById')->with(5)->willReturn('Bayern');
+        $stateRepository->expects($this->never())->method('getIsoById');
+
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturn('https://example.com/link');
+
+        $builder = new CardPaymentSourceNodeBuilder($paypalConfig, $countryRepository, $stateRepository, $link);
+        $result = $builder->setCart($this->makeCart($this->makeAddress('Hans', 'Müller', 1, 5)))->build();
+
+        $this->assertSame('Bayern', $result['payment_source']['card']['billing_address']['admin_area_1']);
     }
 }

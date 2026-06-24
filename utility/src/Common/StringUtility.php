@@ -36,4 +36,19 @@ class StringUtility
 
         return mb_substr($str, 0, $limit);
     }
+
+    /**
+     * Normalize a PayPal brand_name value: strip control characters (pattern ^.*$ forbids newlines)
+     * and truncate to the 127-character API limit.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public static function normalizeBrandName(string $name): string
+    {
+        $normalized = preg_replace('/[\x00-\x1F\x7F]/u', '', $name);
+
+        return self::truncate((string) $normalized, 127);
+    }
 }

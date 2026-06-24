@@ -108,14 +108,24 @@ class LoggerFileFinder implements LoggerFileFinderInterface
      */
     private function formatFileDate($file): string
     {
-        // Extract the raw date from the file name (after the prefix)
-        $rawDate = str_replace($this->generateFileNamePrefix(), '', $file->getFilename());
+        $filename = $file->getFilename();
 
-        // Return the formatted date using the DateUtility class
-        return DateUtility::formatDate(
-            $rawDate,
+        if (!preg_match('/^(?<module>[a-z0-9_]+)-(?<id_shop>\d+)(?:-(?<channel>[a-z]+))?-(?<date>\d{4}-\d{2}-\d{2})$/', $filename, $matches)) {
+            return $filename;
+        }
+
+        if (empty($matches['date'])) {
+            return $filename;
+        }
+
+        $channel = !empty($matches['channel']) ? $matches['channel'] : 'main';
+
+        $formattedDate = DateUtility::formatDate(
+            $matches['date'],
             $this->context->getLanguage()->date_format_lite,
             $this->configuration->get('PS_TIMEZONE')
         );
+
+        return sprintf('%s (%s)', $formattedDate, $channel);
     }
 }

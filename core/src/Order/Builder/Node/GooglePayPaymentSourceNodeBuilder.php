@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Order\Builder\Node;
 
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
 class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBuilderInterface
 {
@@ -29,9 +30,15 @@ class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBui
      */
     private $payPalConfiguration;
 
-    public function __construct(PayPalConfiguration $payPalConfiguration)
+    /**
+     * @var LinkInterface
+     */
+    private $link;
+
+    public function __construct(PayPalConfiguration $payPalConfiguration, LinkInterface $link)
     {
         $this->payPalConfiguration = $payPalConfiguration;
+        $this->link = $link;
     }
 
     /**
@@ -39,20 +46,17 @@ class GooglePayPaymentSourceNodeBuilder implements GooglePayPaymentSourceNodeBui
      */
     public function build(): array
     {
-        if (!$this->payPalConfiguration->is3dSecureEnabled()) {
-            return [];
-        }
-
-        return [
-            'payment_source' => [
-                'google_pay' => [
-                    'attributes' => [
-                        'verification' => [
-                            'method' => $this->payPalConfiguration->getCardFieldsContingencies(),
-                        ],
-                    ],
-                ],
+        $data = [
+            'experience_context' => [
+                'return_url' => $this->link->getModuleLink('validate'),
+                'cancel_url' => $this->link->getModuleLink('cancel'),
             ],
         ];
+
+        if ($this->payPalConfiguration->is3dSecureEnabled()) {
+            $data['attributes'] = ['verification' => ['method' => $this->payPalConfiguration->getCardFieldsContingencies()]];
+        }
+
+        return ['payment_source' => ['google_pay' => $data]];
     }
 }

@@ -42,7 +42,6 @@ class DefaultConfiguration
         'PS_CHECKOUT_LOGGER_MAX_FILES' => '30',
         'PS_CHECKOUT_LOGGER_LEVEL' => '100',
         'PS_CHECKOUT_LOGGER_HTTP' => '1',
-        'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
         'PS_CHECKOUT_INTEGRATION_DATE' => '2024-04-01',
         'PS_CHECKOUT_WEBHOOK_SECRET' => '',
         'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',

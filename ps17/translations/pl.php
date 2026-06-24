@@ -281,4 +281,10 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'Płatnik nie autoryzował płatności.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'Autoryzacja została pomyślnie przechwycona.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'Wystąpił błąd podczas przechwytywania autoryzacji.';
+$_MODULE['<{ps_checkout}prestashop>translator_a922c1da0dc78c78fdf7f6782256bb4d'] = 'Obecnie nie można przetworzyć płatności kartą, proszę użyć innej metody płatności.';
+$_MODULE['<{ps_checkout}prestashop>translator_355b1fcf1c9c3940759af7e0171ddc47'] = 'Wybrana metoda płatności nie obsługuje tego typu transakcji. Proszę wybrać inną metodę płatności lub skontaktować się z pomocą techniczną w celu uzyskania wsparcia.';
+$_MODULE['<{ps_checkout}prestashop>translator_54fe49d73ccb07edee76f7e0e9ffd46b'] = 'Nie udało się zweryfikować kombinacji Twojego imienia i nazwiska oraz adresu. Proszę poprawić dane i spróbować ponownie. Więcej informacji można znaleźć w oświadczeniu o ochronie danych Ratepay lub kontaktując się z Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822'] = 'Nie można użyć wybranej metody płatności. Decyzja ta opiera się na zautomatyzowanym przetwarzaniu danych. Więcej informacji można znaleźć w oświadczeniu o ochronie danych Ratepay lub kontaktując się z Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'Wystąpił błąd w adresie rozliczeniowym. Proszę go sprawdzić i spróbować ponownie.';
+$_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'Wystąpił błąd w adresie dostawy. Proszę go sprawdzić i spróbować ponownie.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'Wybrana waluta nie jest obsługiwana. Proszę spróbować innej metody płatności lub skontaktować się z pomocą techniczną.';

@@ -69,6 +69,13 @@ interface PayPalOrderRepositoryInterface
     public function savePayPalOrder(PayPalOrder $payPalOrder): bool;
 
     /**
+     * @param PayPalOrder $payPalOrder
+     *
+     * @return void
+     */
+    public function softDelete(PayPalOrder $payPalOrder): void;
+
+    /**
      * @param int $cartId
      *
      * @return bool

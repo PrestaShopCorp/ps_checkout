@@ -17,5 +17,6 @@ parameters:
 	    - ../infrastructure/vendor
 	    - ../presentation/vendor
 	    - ../utility/vendor
+	    - ../infrastructure/src/Http/Subscriber/HttpLoggingSubscriber.php
 	scanDirectories:
 		- vendor/stancer/php-stubs-prestashop/stubs/

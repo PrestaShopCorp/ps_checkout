@@ -61,6 +61,7 @@ class PayPalOrderTranslationProvider implements PayPalOrderTranslationProviderIn
             'PENDING' => $this->translator->trans('Pending'),
             'REFUNDED' => $this->translator->trans('Refunded'),
             'FAILED' => $this->translator->trans('Failed'),
+            'PENDING_APPROVAL' => $this->translator->trans('Pending'),
         ];
     }
 }

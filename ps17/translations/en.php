@@ -281,4 +281,10 @@ $_MODULE['<{ps_checkout}prestashop>translator_a973592aec4f4e71998a112ec707c8ee']
 $_MODULE['<{ps_checkout}prestashop>translator_0c27df1feb8791f6c99a775a03b3293b'] = 'The payer did not authorize the payment.';
 $_MODULE['<{ps_checkout}prestashop>translator_3253bd5ea8ec8be1fd8679a3a9e1fb4f'] = 'The authorization has been successfully captured.';
 $_MODULE['<{ps_checkout}prestashop>translator_9242a892e473073c133a71a50eb29b99'] = 'An error occurred during the capture of the authorization.';
+$_MODULE['<{ps_checkout}prestashop>translator_a922c1da0dc78c78fdf7f6782256bb4d'] = 'Card payment cannot be processed at the moment, please use another payment method.';
+$_MODULE['<{ps_checkout}prestashop>translator_355b1fcf1c9c3940759af7e0171ddc47'] = 'The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.';
+$_MODULE['<{ps_checkout}prestashop>translator_54fe49d73ccb07edee76f7e0e9ffd46b'] = 'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_dab1ac52747dea779fdfbeec75b5f822'] = 'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.';
+$_MODULE['<{ps_checkout}prestashop>translator_08f25e0bca64aa5cbf223cb685b00cf1'] = 'There is an error in your billing address. Please check it and try again.';
+$_MODULE['<{ps_checkout}prestashop>translator_7969318ff189f3282f7e234a027ab9bf'] = 'There is an error in your shipping address. Please check it and try again.';
 $_MODULE['<{ps_checkout}prestashop>translator_9ff183ca42145195947b05173db23027'] = 'The currency you selected is not supported. Please try another payment method or contact support for assistance.';

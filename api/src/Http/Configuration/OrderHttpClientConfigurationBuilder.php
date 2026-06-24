@@ -20,20 +20,14 @@
 
 namespace PsCheckout\Api\Http\Configuration;
 
-use GuzzleHttp\Event\Emitter;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Subscriber\Log\Formatter;
-use GuzzleHttp\Subscriber\Log\LogSubscriber;
-use GuzzleLogMiddleware\LogMiddleware;
-use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
+use PsCheckout\Infrastructure\Http\Middleware\HttpLoggingMiddleware;
 use PsCheckout\Infrastructure\Repository\PsAccountRepository;
-use Psr\Log\LoggerInterface;
 
-class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class OrderHttpClientConfigurationBuilder extends AbstractHttpClientConfigurationBuilder
 {
     const TIMEOUT = 10;
 
@@ -46,11 +40,6 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
      * @var PsAccountRepository
      */
     private $psAccountRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @var ConfigurationInterface
@@ -70,14 +59,14 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
     public function __construct(
         EnvInterface $orderEnv,
         PsAccountRepository $psAccountRepository,
-        LoggerInterface $logger,
+        HttpLoggingMiddleware $httpLoggingMiddleware,
         ConfigurationInterface $configuration,
         LinkInterface $link,
         string $moduleVersion
     ) {
         $this->orderEnv = $orderEnv;
         $this->psAccountRepository = $psAccountRepository;
-        $this->logger = $logger;
+        $this->httpLoggingMiddleware = $httpLoggingMiddleware;
         $this->configuration = $configuration;
         $this->link = $link;
         $this->moduleVersion = $moduleVersion;
@@ -100,49 +89,12 @@ class OrderHttpClientConfigurationBuilder implements HttpClientConfigurationBuil
                 'Checkout-Hook-Url' => $this->link->getModuleLink('DispatchWebHook'),
                 'Checkout-Module-Version' => $this->moduleVersion, // version of the module
                 'Checkout-Prestashop-Version' => _PS_VERSION_, // prestashop version
-                'PayPal-Merchant-Id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT)
+                'PayPal-Merchant-Id' => $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT),
             ],
         ];
 
-        if (
-            $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP)
-            && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
-            && class_exists(HandlerStack::class)
-            && class_exists(LogMiddleware::class)
-        ) {
-            $handlerStack = HandlerStack::create();
-            $handlerStack->push(new LogMiddleware($this->logger));
-            $configuration['handler'] = $handlerStack;
-        } elseif (
-            $this->configuration->getInteger(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP)
-            && defined('\GuzzleHttp\ClientInterface::VERSION')
-            && class_exists(Emitter::class)
-            && class_exists(LogSubscriber::class)
-            && class_exists(Formatter::class)
-        ) {
-            $emitter = new Emitter();
-            $emitter->attach(new LogSubscriber(
-                $this->logger,
-                Formatter::DEBUG
-            ));
-
-            $configuration['emitter'] = $emitter;
-        }
+        $this->applyLoggingMiddleware($configuration, $this->configuration);
 
         return $configuration;
-    }
-
-    /**
-     * @see https://docs.guzzlephp.org/en/5.3/clients.html#verify
-     *
-     * @return true|string
-     */
-    protected function getVerify()
-    {
-        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
-            return constant('_PS_CACHE_CA_CERT_FILE_');
-        }
-
-        return true;
     }
 }

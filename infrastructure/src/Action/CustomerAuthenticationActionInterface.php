@@ -20,14 +20,10 @@
 
 namespace PsCheckout\Infrastructure\Action;
 
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
-
 interface CustomerAuthenticationActionInterface
 {
     /**
-     * @param ExpressCheckoutRequest $expressCheckoutRequest
-     *
      * @return void
      */
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest);
+    public function execute();
 }

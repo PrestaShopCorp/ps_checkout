@@ -135,7 +135,6 @@ class BaseTestCase extends TestCase
             'PS_CHECKOUT_LOGGER_MAX_FILES' => 15,
             'PS_CHECKOUT_LOGGER_LEVEL' => 400,
             'PS_CHECKOUT_LOGGER_HTTP' => 0,
-            'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
             'PS_CHECKOUT_INTEGRATION_DATE' => '2024-04-01',
             'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => 1,
             'PS_CHECKOUT_DISPLAY_LOGO_CART' => 1,

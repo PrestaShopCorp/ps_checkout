@@ -22,7 +22,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Monolog\Logger;
 use PsCheckout\Core\OrderState\OrderStateException;
 use PsCheckout\Core\OrderState\Service\OrderStateMapper;
 use PsCheckout\Core\PayPal\Order\Action\RefundPayPalOrderAction;
@@ -423,14 +422,14 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
     public function ajaxProcessUpdateLoggerLevel()
     {
         $levels = [
-            Logger::DEBUG,
-            Logger::INFO,
-            Logger::NOTICE,
-            Logger::WARNING,
-            Logger::ERROR,
-            Logger::CRITICAL,
-            Logger::ALERT,
-            Logger::EMERGENCY,
+            LoggerConfiguration::LEVEL_DEBUG,
+            LoggerConfiguration::LEVEL_INFO,
+            LoggerConfiguration::LEVEL_NOTICE,
+            LoggerConfiguration::LEVEL_WARNING,
+            LoggerConfiguration::LEVEL_ERROR,
+            LoggerConfiguration::LEVEL_CRITICAL,
+            LoggerConfiguration::LEVEL_ALERT,
+            LoggerConfiguration::LEVEL_EMERGENCY,
         ];
 
         $level = (int) Tools::getValue('level');
@@ -501,33 +500,14 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     /**
      * AJAX: Update logger http format
+     *
+     * @deprecated The HTTP log format is no longer configurable (always JSON).
+     *             Kept as a no-op stub for backward compatibility.
      */
     public function ajaxProcessUpdateLoggerHttpFormat()
     {
-        $formats = [
-            'CLF',
-            'DEBUG',
-            'SHORT',
-        ];
-
-        $format = Tools::getValue('httpFormat');
-
-        if (false === in_array($format, $formats, true)) {
-            $this->ajaxRender(json_encode([
-                'status' => false,
-                'errors' => [
-                    'Logger http format is invalid',
-                ],
-            ]));
-        }
-
-        $this->setConfiguration(LoggerConfiguration::PS_CHECKOUT_LOGGER_HTTP_FORMAT, $format);
-
         $this->ajaxRender(json_encode([
             'status' => true,
-            'content' => [
-                'httpFormat' => $format,
-            ],
         ]));
     }
 
