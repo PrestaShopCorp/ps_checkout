@@ -20,6 +20,7 @@
 
 namespace PsCheckout\Infrastructure\Logger;
 
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
@@ -59,11 +60,14 @@ class LoggerHandlerFactory implements LoggerHandlerInterface
      */
     public function build(): HandlerInterface
     {
-        return new RotatingFileHandler(
+        $handler = new RotatingFileHandler(
             $this->getPath() . $this->getFileName(),
             $this->getMaxFiles(),
             $this->getLoggerLevel()
         );
+        $handler->setFormatter(new JsonFormatter());
+
+        return $handler;
     }
 
     /**

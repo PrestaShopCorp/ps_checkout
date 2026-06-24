@@ -18,26 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PsCheckout\Core\Order\Builder\Node;
+namespace PsCheckout\Core\Order\Builder\Node\PaymentSource;
 
-interface ApplicationContextNodeBuilderInterface
+interface ApplePayPaymentSourceNodeBuilderInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function build(): array;
-
-    /**
-     * @param bool $shippingAddressExists
-     *
-     * @return $this
-     */
-    public function setShippingAddressExists(bool $shippingAddressExists): ApplicationContextNodeBuilder;
-
-    /**
-     * @param bool $isVirtualCart
-     *
-     * @return $this
-     */
-    public function setIsVirtualCart(bool $isVirtualCart): ApplicationContextNodeBuilder;
 }

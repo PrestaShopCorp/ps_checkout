@@ -108,18 +108,19 @@ class CapturePayPalOrderAction implements CapturePayPalOrderActionInterface
         $response = $this->orderHttpClient->captureOrder($payPalOrder->getId(), []);
 
         $orderPayPal = json_decode($response->getBody(), true);
-        $cachedOrder = $this->payPalOrderCache->getValue($orderPayPal['id']);
+        $orderId = $orderPayPal['id'] ?? $payPalOrder->getId();
 
-        $this->payPalOrderCache->set($orderPayPal['id'], array_replace_recursive($cachedOrder, $orderPayPal));
+        $cachedOrder = $this->payPalOrderCache->getValue($orderId);
+        $this->payPalOrderCache->set($orderId, array_replace_recursive($cachedOrder ?? [], $orderPayPal ?? []));
 
-        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderPayPal['id']);
+        $payPalOrderResponse = $this->payPalOrderProvider->getById($orderId);
 
         if (!$payPalOrderResponse) {
             throw new PsCheckoutException('Capture declined', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
         if ($payPalOrderResponse->getPaymentSource()) {
-            $payPalOrderEntity = $this->payPalOrderRepository->getOneBy(['id' => $orderPayPal['id']]);
+            $payPalOrderEntity = $this->payPalOrderRepository->getOneBy(['id' => $orderId]);
             if ($payPalOrderEntity) {
                 $payPalOrderEntity->setPaymentSource($payPalOrderResponse->getPaymentSource());
                 $this->payPalOrderRepository->save($payPalOrderEntity);

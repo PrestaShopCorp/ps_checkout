@@ -638,6 +638,14 @@ class PayPalOrderResponse
     /**
      * @return array|null
      */
+    public function getPayPalWallet()
+    {
+        return $this->paymentSource['paypal'] ?? null;
+    }
+
+    /**
+     * @return array|null
+     */
     public function getCard()
     {
         return $this->getPaymentSource()['card'] ?? null;

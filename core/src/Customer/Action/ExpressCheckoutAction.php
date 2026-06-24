@@ -21,7 +21,8 @@
 namespace PsCheckout\Core\Customer\Action;
 
 use Exception;
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutPayerData;
+use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Action\CreateOrUpdateAddressActionInterface;
 use PsCheckout\Infrastructure\Action\CustomerAuthenticationActionInterface;
@@ -54,15 +55,15 @@ class ExpressCheckoutAction implements ExpressCheckoutActionInterface
         $this->createOrUpdateAddressAction = $createOrUpdateAddressAction;
     }
 
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
+    public function execute(ExpressCheckoutPayerData $payerData, ExpressCheckoutShippingData $shippingData)
     {
         $customer = $this->context->getCustomer();
 
         if (!$customer->isLogged()) {
             $customer->is_guest = true;
-            $customer->email = $expressCheckoutRequest->getPayerEmail();
-            $customer->firstname = $expressCheckoutRequest->getPayerFirstName();
-            $customer->lastname = $expressCheckoutRequest->getPayerLastName();
+            $customer->email = $payerData->getEmail();
+            $customer->firstname = $payerData->getFirstName();
+            $customer->lastname = $payerData->getLastName();
             $customer->passwd = md5(time() . _COOKIE_KEY_);
 
             try {
@@ -74,12 +75,12 @@ class ExpressCheckoutAction implements ExpressCheckoutActionInterface
             $this->context->updateCustomer($customer);
         }
 
-        $this->context->setPayPalEmail($expressCheckoutRequest->getPayerEmail());
+        $this->context->setPayPalEmail($payerData->getEmail());
 
         $deliveryAddressId = $this->context->getCart() ? $this->context->getCart()->id_address_delivery : null;
         // If cart already has a shipping address, no need to fetch it from EC response
         if ($deliveryAddressId === null || $deliveryAddressId === 0) {
-            $this->createOrUpdateAddressAction->execute($expressCheckoutRequest);
+            $this->createOrUpdateAddressAction->execute($shippingData);
         }
     }
 }

@@ -2515,6 +2515,22 @@
         <source>An error occurred during the capture of the authorization.</source>
         <target>Er is een fout opgetreden tijdens het vastleggen van de autorisatie.</target>
       </trans-unit>
+      <trans-unit id="54fe49d73ccb07edee76f7e0e9ffd46b">
+        <source>The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.</source>
+        <target>De combinatie van uw naam en adres kon niet worden gevalideerd. Corrigeer uw gegevens en probeer het opnieuw. Meer informatie vindt u in de Ratepay-privacyverklaring of u kunt contact opnemen met Ratepay.</target>
+      </trans-unit>
+      <trans-unit id="dab1ac52747dea779fdfbeec75b5f822">
+        <source>It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the Ratepay Data Privacy Statement or you can contact Ratepay.</source>
+        <target>Het is niet mogelijk om de geselecteerde betaalmethode te gebruiken. Deze beslissing is gebaseerd op geautomatiseerde gegevensverwerking. Meer informatie vindt u in de Ratepay-privacyverklaring of u kunt contact opnemen met Ratepay.</target>
+      </trans-unit>
+      <trans-unit id="08f25e0bca64aa5cbf223cb685b00cf1">
+        <source>There is an error in your billing address. Please check it and try again.</source>
+        <target>Er is een fout in uw factuuradres. Controleer dit en probeer het opnieuw.</target>
+      </trans-unit>
+      <trans-unit id="7969318ff189f3282f7e234a027ab9bf">
+        <source>There is an error in your shipping address. Please check it and try again.</source>
+        <target>Er is een fout in uw verzendadres. Controleer dit en probeer het opnieuw.</target>
+      </trans-unit>
       <trans-unit id="9ff183ca42145195947b05173db23027">
         <source>The currency you selected is not supported. Please try another payment method or contact support for assistance.</source>
         <target>De door u geselecteerde valuta wordt niet ondersteund. Probeer een andere betaalmethode of neem contact op met de ondersteuning.</target>

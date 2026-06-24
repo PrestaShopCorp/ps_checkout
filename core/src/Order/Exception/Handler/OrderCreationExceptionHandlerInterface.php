@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\Order\Exception\Handler;
 
 use Exception;
+use PsCheckout\Core\Exception\PsCheckoutException;
 
 interface OrderCreationExceptionHandlerInterface
 {
@@ -30,4 +31,11 @@ interface OrderCreationExceptionHandlerInterface
      * @return array
      */
     public function handle(Exception $exception, string $paypalOrderId);
+
+    /**
+     * @param Exception $exception
+     * @param string|null $fundingSource
+     * @return PsCheckoutException
+     */
+    public function handleOrderCreateException(Exception $exception, ?string $fundingSource): PsCheckoutException;
 }

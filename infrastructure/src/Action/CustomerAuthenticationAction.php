@@ -20,7 +20,6 @@
 
 namespace PsCheckout\Infrastructure\Action;
 
-use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutRequest;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
@@ -54,13 +53,11 @@ class CustomerAuthenticationAction implements CustomerAuthenticationActionInterf
     }
 
     /**
-     * @param ExpressCheckoutRequest $expressCheckoutRequest
-     *
      * @return void
      *
      * @throws PsCheckoutException
      */
-    public function execute(ExpressCheckoutRequest $expressCheckoutRequest)
+    public function execute()
     {
         throw new PsCheckoutException('CustomerAuthenticationAction is deprecated and should not be used anymore.');
     }

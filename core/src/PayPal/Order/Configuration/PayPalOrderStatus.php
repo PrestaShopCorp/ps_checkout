@@ -40,6 +40,12 @@ class PayPalOrderStatus
 
     const REVERSED = 'REVERSED';
 
+    const EXPIRABLE_STATUSES = [
+        self::CREATED,
+        self::APPROVED,
+        self::PAYER_ACTION_REQUIRED,
+    ];
+
     const TRANSITION_AVAILABLE = [
         self::CREATED => [
             self::APPROVED,

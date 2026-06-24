@@ -23,32 +23,74 @@ namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Order\Builder\Node\GooglePayPaymentSourceNodeBuilder;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Infrastructure\Adapter\LinkInterface;
 
 class GooglePayPaymentSourceNodeBuilderTest extends TestCase
 {
-    /**
-     * @dataProvider buildDataProvider
-     */
-    public function testBuild($is3DSecureEnabled, $contingency, $expected): void
+    private function makeBuilder(bool $is3dSecureEnabled = false, string $contingency = 'SCA_ALWAYS'): GooglePayPaymentSourceNodeBuilder
     {
-        $payPalConfigMock = $this->createMock(PayPalConfiguration::class);
-        $payPalConfigMock->method('is3dSecureEnabled')->willReturn($is3DSecureEnabled);
+        $payPalConfig = $this->createMock(PayPalConfiguration::class);
+        $payPalConfig->method('is3dSecureEnabled')->willReturn($is3dSecureEnabled);
+        $payPalConfig->method('getCardFieldsContingencies')->willReturn($contingency);
 
-        // Ensure getCardFieldsContingencies() always returns a string
-        $payPalConfigMock->method('getCardFieldsContingencies')->willReturn($contingency ?? '');
+        $link = $this->createMock(LinkInterface::class);
+        $link->method('getModuleLink')->willReturnCallback(static function (string $action) {
+            return 'https://example.com/' . $action;
+        });
 
-        $builder = new GooglePayPaymentSourceNodeBuilder($payPalConfigMock);
-
-        $this->assertEquals($expected, $builder->build());
+        return new GooglePayPaymentSourceNodeBuilder($payPalConfig, $link);
     }
 
-    public function buildDataProvider(): array
+    public function testAlwaysReturnsExperienceContext(): void
     {
+        $result = $this->makeBuilder(false)->build();
+
+        $this->assertSame([
+            'payment_source' => [
+                'google_pay' => [
+                    'experience_context' => [
+                        'return_url' => 'https://example.com/validate',
+                        'cancel_url' => 'https://example.com/cancel',
+                    ],
+                ],
+            ],
+        ], $result);
+    }
+
+    /**
+     * @dataProvider buildDataProvider
+     * @param array<string, mixed> $expected
+     */
+    public function testBuild(bool $is3dSecureEnabled, string $contingency, array $expected): void
+    {
+        $this->assertSame($expected, $this->makeBuilder($is3dSecureEnabled, $contingency)->build());
+    }
+
+    /**
+     * @return array<string, array{bool, string, array<string, mixed>}>
+     */
+    public static function buildDataProvider(): array
+    {
+        $experienceContext = [
+            'return_url' => 'https://example.com/validate',
+            'cancel_url' => 'https://example.com/cancel',
+        ];
+
         return [
-            '3D Secure enabled with SCA_ALWAYS' => [
+            '3DS disabled returns only experience_context' => [
+                false, 'SCA_ALWAYS', [
+                    'payment_source' => [
+                        'google_pay' => [
+                            'experience_context' => $experienceContext,
+                        ],
+                    ],
+                ],
+            ],
+            '3DS enabled with SCA_ALWAYS' => [
                 true, 'SCA_ALWAYS', [
                     'payment_source' => [
                         'google_pay' => [
+                            'experience_context' => $experienceContext,
                             'attributes' => [
                                 'verification' => [
                                     'method' => 'SCA_ALWAYS',
@@ -58,42 +100,14 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
                     ],
                 ],
             ],
-            '3D Secure enabled with CVV_ONLY' => [
-                true, 'CVV_ONLY', [
+            '3DS enabled with SCA_WHEN_REQUIRED' => [
+                true, 'SCA_WHEN_REQUIRED', [
                     'payment_source' => [
                         'google_pay' => [
+                            'experience_context' => $experienceContext,
                             'attributes' => [
                                 'verification' => [
-                                    'method' => 'CVV_ONLY',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            '3D Secure disabled' => [
-                false, 'SCA_ALWAYS', [],
-            ],
-            '3D Secure enabled with empty string contingency' => [
-                true, '', [
-                    'payment_source' => [
-                        'google_pay' => [
-                            'attributes' => [
-                                'verification' => [
-                                    'method' => '',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            '3D Secure enabled with null contingency (converted to empty string)' => [
-                true, null, [  // null will be converted to ''
-                    'payment_source' => [
-                        'google_pay' => [
-                            'attributes' => [
-                                'verification' => [
-                                    'method' => '',
+                                    'method' => 'SCA_WHEN_REQUIRED',
                                 ],
                             ],
                         ],

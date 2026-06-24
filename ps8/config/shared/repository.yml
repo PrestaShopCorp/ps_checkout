@@ -96,6 +96,8 @@ services:
 
   PsCheckout\Infrastructure\Repository\OrderHistoryRepository:
     class: PsCheckout\Infrastructure\Repository\OrderHistoryRepository
+    arguments:
+      - '@ps_checkout.db'
 
   PsCheckout\Infrastructure\Repository\ShippingTrackingRepository:
     class: PsCheckout\Infrastructure\Repository\ShippingTrackingRepository

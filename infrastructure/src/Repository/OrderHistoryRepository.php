@@ -20,12 +20,21 @@
 
 namespace PsCheckout\Infrastructure\Repository;
 
+use Db;
 use Exception;
 use OrderHistory;
 use PsCheckout\Core\Order\Exception\OrderException;
 
 class OrderHistoryRepository implements OrderHistoryRepositoryInterface
 {
+    /** @var Db */
+    private $db;
+
+    public function __construct(Db $db)
+    {
+        $this->db =$db;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -47,5 +56,16 @@ class OrderHistoryRepository implements OrderHistoryRepositoryInterface
         }
 
         return $historyAdded;
+    }
+
+    public function getCurrentOrderState(int $orderId): int
+    {
+        $query = new \DbQuery();
+        $query->select('id_order_state')
+        ->from('order_history')
+        ->where('id_order = ' . (int) $orderId)
+        ->orderBy('id_order_history DESC');
+
+        return (int) $this->db->getValue($query, false);
     }
 }
