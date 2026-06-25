@@ -1,4 +1,4 @@
-name: Create module ZIP (INT/PREPROD)
+name: Build Module ZIPs - INT/PREPROD
 
 on:
   pull_request:
@@ -45,9 +45,9 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - { dir: ps17, suffix: 7, php: 7.2 }
-          - { dir: ps8, suffix: 8, php: 8.1 }
-          - { dir: ps9, suffix: 9, php: 8.4 }
+          - { dir: ps17, suffix: 7, php: '7.2' }
+          - { dir: ps8, suffix: 8, php: '8.1' }
+          - { dir: ps9, suffix: 9, php: '8.4' }
 
     steps:
       - name: Checkout repository
