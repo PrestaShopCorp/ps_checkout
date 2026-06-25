@@ -1,4 +1,4 @@
-name: Create module ZIP (INT/PREPROD)
+name: Build Module ZIPs - INT/PREPROD
 
 on:
   pull_request:
@@ -45,18 +45,13 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - { dir: ps17, suffix: 7, php: 7.2 }
-          - { dir: ps8, suffix: 8, php: 8.1 }
-          - { dir: ps9, suffix: 9, php: 8.4 }
+          - { dir: ps17, suffix: 7, php: '7.2' }
+          - { dir: ps8, suffix: 8, php: '8.1' }
+          - { dir: ps9, suffix: 9, php: '8.4' }
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
-      - name: Install PHP env
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.module.php }}
 
       - name: Determine Environment
         id: environment
@@ -106,41 +101,14 @@ jobs:
           GCP_PROJECT: ${{ secrets[steps.environment.outputs.gcp_project_secret] }}
           SECRET_NAME: ${{ steps.environment.outputs.secret_name }}
 
-      - name: Prepare and Package Module
-        run: |
-          MODULE_NAME=${{ matrix.module.dir }}
-          FINAL_NAME=ps_checkout
-          VERSION_SUFFIX=${{ matrix.module.suffix }}
-
-          echo "Preparing module: $MODULE_NAME (suffix: $VERSION_SUFFIX)"
-
-          cd $MODULE_NAME
-          composer install --no-dev --prefer-dist --optimize-autoloader
-          cd ..
-
-          mkdir -p $MODULE_NAME/vendor/invertus
-          cp -r api core infrastructure presentation utility $MODULE_NAME/vendor/invertus/
-          
-          rm -rf $MODULE_NAME/.php-cs-fixer.dist.php \
-                 $MODULE_NAME/tests \
-                 $MODULE_NAME/vendor/tests \
-                 $MODULE_NAME/.php-cs-fixer.cache
-
-          find $MODULE_NAME -type f -name "monorepo.json" -delete
-          for dir in api core infrastructure presentation utility; do
-            rm -rf $MODULE_NAME/vendor/invertus/$dir/tests
-          done
-
-          mkdir -p tmp_package/$FINAL_NAME
-          cp -r $MODULE_NAME/* tmp_package/$FINAL_NAME/
-          cp -r $MODULE_NAME/.htaccess tmp_package/$FINAL_NAME/ || true
-          cp -r $MODULE_NAME/.well-known tmp_package/$FINAL_NAME/ || true
-          cp -r .env tmp_package/$FINAL_NAME/.env || true
-
-          cd tmp_package
-          zip -r ../${FINAL_NAME}.${VERSION_SUFFIX}.zip $FINAL_NAME
-          cd ..
-          rm -rf tmp_package
+      - name: Package module
+        id: package
+        uses: ./.github/actions/package-module
+        with:
+          module_dir: ${{ matrix.module.dir }}
+          module_suffix: ${{ matrix.module.suffix }}
+          php_version: ${{ matrix.module.php }}
+          release_filename: ps_checkout.${{ matrix.module.suffix }}.zip
 
       - name: Generate GCP bucket filename
         id: bucket-filename
@@ -156,8 +124,5 @@ jobs:
 
       - name: Upload directly to GCP bucket storage
         run: |
-          FINAL_NAME=ps_checkout
-          VERSION_SUFFIX=${{ matrix.module.suffix }}
-          
-          # Upload the zip file directly to GCP bucket
-          gsutil cp ${FINAL_NAME}.${VERSION_SUFFIX}.zip gs://ps-eu-w1-checkout-assets-${{ steps.environment.outputs.environment }}/${{ steps.bucket-filename.outputs.filename }}
+          gsutil cp "${{ steps.package.outputs.zip_path }}" \
+            gs://ps-eu-w1-checkout-assets-${{ steps.environment.outputs.environment }}/${{ steps.bucket-filename.outputs.filename }}

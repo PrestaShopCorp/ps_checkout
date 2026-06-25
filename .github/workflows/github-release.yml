@@ -1,0 +1,108 @@
+name: Build Release ZIPs - PRODUCTION
+
+on:
+  release:
+    types: [prereleased, released]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+  cancel-in-progress: true
+
+jobs:
+  # Saves the release tag as a workflow artifact so publish-to-marketplace.yml
+  # can read it reliably via the workflow_run event (head_branch is not a safe
+  # source of the tag name in that context).
+  save-release-context:
+    name: Save release context
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write release tag to file
+        run: echo "${{ github.event.release.tag_name }}" > release-tag.txt
+
+      - name: Upload release tag artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-tag
+          path: release-tag.txt
+          retention-days: 1
+
+  prepare-zip:
+    name: Build and upload module ZIP
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - { dir: ps17, suffix: 7, php: '7.2' }
+          - { dir: ps8, suffix: 8, php: '8.1' }
+          - { dir: ps9, suffix: 9, php: '8.4' }
+
+    steps:
+      - name: Generate release filename
+        id: release-filename
+        run: |
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
+          echo "filename=ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip" >> $GITHUB_OUTPUT
+          echo "Generated release filename: ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip"
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check if ZIP already exists in release
+        id: check-artifact
+        run: |
+          ARTIFACT_NAME="${{ steps.release-filename.outputs.filename }}"
+          ASSET_NAMES=$(gh release view ${{ github.event.release.tag_name }} \
+            --json assets --jq '.assets[].name' 2>/dev/null || echo "")
+          if echo "$ASSET_NAMES" | grep -qx "$ARTIFACT_NAME"; then
+            echo "artifact_exists=true" >> $GITHUB_OUTPUT
+            echo "ZIP $ARTIFACT_NAME already exists in release — skipping build."
+          else
+            echo "artifact_exists=false" >> $GITHUB_OUTPUT
+            echo "ZIP $ARTIFACT_NAME not found — proceeding with build."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auth GCP
+        if: steps.check-artifact.outputs.artifact_exists != 'true'
+        uses: ./.github/actions/auth-gcp
+        with:
+          provider: ${{ secrets['WI_PROVIDER_V2_PRODUCTION'] }}
+          service-account: ${{ secrets['WI_SA_V2_PRODUCTION'] }}
+          registry-login: true
+          setup-gcloud: true
+
+      - name: Write production .env
+        if: steps.check-artifact.outputs.artifact_exists != 'true'
+        run: gcloud --quiet beta secrets versions access latest --project=$GCP_PROJECT --secret="module-v5-env" > .env
+        env:
+          GCP_PROJECT: ${{ secrets['GCP_PROJECT_PRODUCTION'] }}
+
+      - name: Package module
+        if: steps.check-artifact.outputs.artifact_exists != 'true'
+        id: package
+        uses: ./.github/actions/package-module
+        with:
+          module_dir: ${{ matrix.module.dir }}
+          module_suffix: ${{ matrix.module.suffix }}
+          php_version: ${{ matrix.module.php }}
+          release_filename: ${{ steps.release-filename.outputs.filename }}
+
+      - name: Upload ZIP to GitHub Release
+        if: steps.check-artifact.outputs.artifact_exists != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ steps.package.outputs.zip_path }}
+          asset_name: ${{ steps.release-filename.outputs.filename }}
+          asset_content_type: application/zip

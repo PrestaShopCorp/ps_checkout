@@ -115,9 +115,9 @@ The `ps<version>/src/` directory (namespace `PsCheckout\Module\`) contains only 
 
 - `ci.yml` — runs tests on pull requests
 - `lint.yml` — runs linting checks
-- `create-testing-zip.yml` — generates module ZIP for testing
-- `prerelease.yml` — pre-release pipeline
-- `publish-to-marketplace.yml` — publishes to PrestaShop Marketplace
+- `create-testing-zip.yml` — generates module ZIP for INT/PREPROD environments
+- `github-release.yml` — builds and attaches per-PS-version ZIPs to GitHub Releases (prereleased + released)
+- `publish-to-marketplace.yml` — publishes to PrestaShop Marketplace (triggered by `github-release.yml` completion, latest releases only)
 
 ### PHPStan workflow
 

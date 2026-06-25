@@ -1,43 +1,111 @@
-name: Publish to the Marketplace
+name: Publish to Marketplace
 
 on:
-  release:
-    types: [released]
+  workflow_run:
+    workflows: ["Build Release ZIPs - PRODUCTION"]
+    types: [completed]
 
 jobs:
-  publish_to_marketplace:
+  check-release:
+    name: Resolve release info
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [7, 8, 9]
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      tag: ${{ steps.info.outputs.tag }}
+      clean_tag: ${{ steps.info.outputs.clean_tag }}
+      is_prerelease: ${{ steps.info.outputs.is_prerelease }}
+      changelog_file: ${{ steps.info.outputs.changelog_file }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
+      # Download the release tag saved by github-release.yml as an artifact.
+      # head_branch in workflow_run context resolves to the branch name ("main"),
+      # not the tag, so the artifact is the only reliable source of the tag name.
+      - name: Download release tag artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-tag
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate clean tag name
-        id: clean-tag
+      - name: Resolve release tag and pre-release status
+        id: info
         run: |
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
-          RELEASE_TAG_CLEAN=$(echo "$RELEASE_TAG" | sed 's/^v//')
+          TAG=$(cat release-tag.txt)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+          RELEASE_TAG_CLEAN=$(echo "$TAG" | sed 's/^v//')
           echo "clean_tag=$RELEASE_TAG_CLEAN" >> $GITHUB_OUTPUT
 
-      - name: Download release asset
-        uses: dsaltares/fetch-gh-release-asset@0.0.4
-        with:
-          repo: ${{ github.event.repository.full_name }}
-          version: ${{ github.event.release.id }}
-          file: ps_checkout-v${{ matrix.version }}.${{ steps.clean-tag.outputs.clean_tag }}.zip
+          RELEASE_JSON=$(gh api /repos/${{ github.repository }}/releases/tags/$TAG)
+          IS_PRERELEASE=$(echo "$RELEASE_JSON" | jq -r '.prerelease')
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+
+          echo "$RELEASE_JSON" | jq -r '.body' > CHANGELOG.tmp
+          echo "changelog_file=CHANGELOG.tmp" >> $GITHUB_OUTPUT
+
+          echo "Release: $TAG | pre-release: $IS_PRERELEASE"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare publishing tool
-        run: |
-          composer global require prestashop/publish-on-marketplace
+      - name: Upload changelog for publish jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-changelog
+          path: CHANGELOG.tmp
+          retention-days: 1
 
-      - name: Release zip
+  publish:
+    name: Publish PS${{ matrix.module.suffix }} ZIP to Marketplace
+    needs: [check-release]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-release.outputs.is_prerelease == 'false' }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - { suffix: 7 }
+          - { suffix: 8 }
+          - { suffix: 9 }
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download release changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: release-changelog
+
+      - name: Verify release ZIP is available
         run: |
-          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/ps_checkout-v${{ matrix.version }}.${{ steps.clean-tag.outputs.clean_tag }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
+          ASSET_NAME="ps_checkout-v${{ matrix.module.suffix }}.${{ needs.check-release.outputs.clean_tag }}.zip"
+          FOUND=$(gh release view ${{ needs.check-release.outputs.tag }} \
+            --json assets --jq ".assets[] | select(.name == \"$ASSET_NAME\") | .name" 2>/dev/null || echo "")
+          if [ -z "$FOUND" ]; then
+            echo "::error::$ASSET_NAME not found in release ${{ needs.check-release.outputs.tag }}. Ensure the ZIP build workflow completed successfully."
+            exit 1
+          fi
+          echo "Asset $ASSET_NAME confirmed."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download release ZIP
+        run: |
+          gh release download ${{ needs.check-release.outputs.tag }} \
+            --pattern "ps_checkout-v${{ matrix.module.suffix }}.${{ needs.check-release.outputs.clean_tag }}.zip"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install publishing tool
+        run: composer global require prestashop/publish-on-marketplace
+
+      - name: Publish to Marketplace
+        run: |
+          ~/.composer/vendor/bin/publish-on-marketplace \
+            --archive=$PWD/ps_checkout-v${{ matrix.module.suffix }}.${{ needs.check-release.outputs.clean_tag }}.zip \
+            --metadata-json=$PWD/.github/mktp-metadata-${{ matrix.module.suffix }}.json \
+            --changelog-file=$PWD/CHANGELOG.tmp \
+            --debug
         env:
           MARKETPLACE_API_KEY: ${{ secrets.MARKETPLACE_API_KEY }}

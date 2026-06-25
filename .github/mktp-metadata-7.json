@@ -1,0 +1,8 @@
+{
+    "id_product": "46347",
+    "technical_name": "ps_checkout",
+    "display_name": "PrestaShop Checkout",
+    "channel": "stable",
+    "product_type": "module",
+    "compatible_from": "1.7.7.0"
+}
