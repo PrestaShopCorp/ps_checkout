@@ -51,7 +51,7 @@ jobs:
           echo "Generated release filename: ps_checkout-v${{ matrix.module.suffix }}.$RELEASE_TAG_CLEAN.zip"
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
