@@ -28,6 +28,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class ShippingNodeBuilderTest extends TestCase
 {
@@ -52,7 +53,7 @@ class ShippingNodeBuilderTest extends TestCase
         $this->builder = new ShippingNodeBuilder(
             $this->logger,
             $this->countryRepository,
-            $this->stateRepository
+            new PaypalStateNameResolver($this->stateRepository)
         );
     }
 

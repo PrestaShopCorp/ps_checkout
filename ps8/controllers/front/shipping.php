@@ -42,17 +42,19 @@ class Ps_CheckoutShippingModuleFrontController extends AbstractFrontController
      */
     public function postProcess()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->exitWithServerResponse(405, 'Method Not Allowed');
-        }
-
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $logger->warning('ShippingController - Method not allowed', ['method' => $_SERVER['REQUEST_METHOD']]);
+            $this->exitWithServerResponse(405, 'Method Not Allowed');
+        }
 
         try {
             $idCart = (int) Tools::getValue('id_cart');
 
             if (!$idCart) {
+                $logger->warning('ShippingController - Missing or invalid id_cart parameter');
                 $this->exitWithServerResponse(400, 'Missing id_cart parameter');
             }
 
@@ -61,12 +63,14 @@ class Ps_CheckoutShippingModuleFrontController extends AbstractFrontController
             $bodyContent = $inputStreamUtility->getBodyContent();
 
             if (empty($bodyContent)) {
+                $logger->warning('ShippingController - Empty payload', ['id_cart' => $idCart]);
                 $this->exitWithServerResponse(400, 'Empty payload');
             }
 
             $data = json_decode($bodyContent, true);
 
             if (!is_array($data)) {
+                $logger->warning('ShippingController - Invalid JSON payload', ['id_cart' => $idCart]);
                 $this->exitWithServerResponse(400, 'Invalid JSON payload');
             }
 

@@ -44,12 +44,12 @@ class PsCheckoutCarrierRepository
      * The returned array contains the raw DB values; callers are responsible for applying
      * business logic such as hook dispatch and disabled filtering.
      *
-     * @return array{id_reference: int, type: string, disabled: bool}|null
+     * @return array{id_reference: int, external_module_name: string, type: string, disabled: bool}|null
      */
     public function getCarrierData(int $carrierId): ?array
     {
         $query = new \DbQuery();
-        $query->select('c.id_reference, p.type, p.disabled')
+        $query->select('c.id_reference, c.external_module_name, p.type, p.disabled')
             ->from('carrier', 'c')
             ->leftJoin(self::TABLE_NAME, 'p', 'c.id_reference = p.id_reference')
             ->where('c.id_carrier = ' . (int) $carrierId);
@@ -62,6 +62,7 @@ class PsCheckoutCarrierRepository
 
         return [
             'id_reference' => (int) $row['id_reference'],
+            'external_module_name' => (string) $row['external_module_name'],
             'type' => $row['type'] ?: self::TYPE_SHIPPING,
             'disabled' => (bool) $row['disabled'],
         ];

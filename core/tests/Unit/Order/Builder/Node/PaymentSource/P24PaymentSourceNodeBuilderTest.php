@@ -31,6 +31,7 @@ use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use Psr\Log\LoggerInterface;
 
 class P24PaymentSourceNodeBuilderTest extends TestCase
@@ -48,7 +49,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($this->createMock(StateRepositoryInterface::class)));
     }
 
     private function makeBuilder(): P24PaymentSourceNodeBuilder
@@ -218,7 +219,7 @@ class P24PaymentSourceNodeBuilderTest extends TestCase
         $customer->email = 'jan@example.com';
 
         $builder = new P24PaymentSourceNodeBuilder(
-            new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class)),
+            new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($this->createMock(StateRepositoryInterface::class))),
             $logger,
             $validate
         );

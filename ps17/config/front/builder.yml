@@ -8,12 +8,19 @@ services:
   PsCheckout\Infrastructure\Adapter\HookInterface:
     alias: PsCheckout\Infrastructure\Adapter\Hook
 
+  PsCheckout\Infrastructure\Adapter\Module:
+    class: PsCheckout\Infrastructure\Adapter\Module
+
+  PsCheckout\Infrastructure\Adapter\ModuleInterface:
+    alias: PsCheckout\Infrastructure\Adapter\Module
+
   PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder:
     class: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Cart'
       - '@PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository'
       - '@PsCheckout\Infrastructure\Adapter\HookInterface'
+      - '@PsCheckout\Infrastructure\Adapter\ModuleInterface'
 
   PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterface:
     alias: PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder
@@ -37,9 +44,44 @@ services:
       - '@PsCheckout\Module\Presentation\Translator'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayAmountNodeBuilder:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayAmountNodeBuilder
+    arguments:
+      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
+      - '@PsCheckout\Module\Presentation\Translator'
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayContactNodeBuilder:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayContactNodeBuilder
+    arguments:
+      - '@PsCheckout\Core\Util\ExperienceContextHelper'
+      - '@PsCheckout\Infrastructure\Repository\CountryRepository'
+      - '@PsCheckout\Infrastructure\Service\PaypalStateNameResolver'
+      - '@PsCheckout\Core\Util\PhoneParser'
+      - '@PsCheckout\Infrastructure\Adapter\Validate'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingTypeResolver:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingTypeResolver
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingNodeBuilder:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingNodeBuilder
+    arguments:
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingTypeResolver'
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayCouponNodeBuilder:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayCouponNodeBuilder
+
+  PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayApplicationDataBuilder:
+    class: PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayApplicationDataBuilder
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
   PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder:
     class: 'PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayPaymentRequestDataBuilder'
     arguments:
-      - '@PsCheckout\Core\Order\Builder\OrderPayloadBuilder'
       - '@PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface'
-      - '@PsCheckout\Module\Presentation\Translator'
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayAmountNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayContactNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayShippingNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayCouponNodeBuilder'
+      - '@PsCheckout\Core\PayPal\ApplePay\Builder\ApplePayApplicationDataBuilder'

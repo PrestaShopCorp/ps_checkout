@@ -34,6 +34,7 @@ use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class GooglePayPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -55,7 +56,7 @@ class GooglePayPaymentSourceNodeBuilderTest extends TestCase
         $defaultStateRepository->method('getIsoById')->willReturn('CA');
         $defaultStateRepository->method('getNameById')->willReturn('');
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $stateRepository ?? $defaultStateRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($stateRepository ?? $defaultStateRepository));
     }
 
     private function makeBuilder(

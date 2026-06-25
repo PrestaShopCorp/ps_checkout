@@ -173,6 +173,10 @@ class ProcessExpressCheckoutAction
                 $wallet['birth_date'] ?? null
             );
 
+            $shippingPhone = $purchaseUnits[0]['shipping']['phone_number']['national_number']
+                ?? $wallet['phone_number']['national_number']
+                ?? null;
+
             $shippingData = new ExpressCheckoutShippingData(
                 $orderID,
                 $wallet['name']['given_name'] ?? null,
@@ -183,7 +187,7 @@ class ProcessExpressCheckoutAction
                 $shippingAddress['admin_area_2'] ?? null,
                 $shippingAddress['admin_area_1'] ?? null,
                 $shippingAddress['country_code'] ?? null,
-                $wallet['phone_number']['national_number'] ?? null
+                $shippingPhone
             );
 
             $this->saveExpressCheckoutFlagsAction->execute($orderID, $fundingSource);

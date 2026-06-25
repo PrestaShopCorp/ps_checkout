@@ -24,6 +24,7 @@ use PsCheckout\Core\PayPal\ShippingCallback\Builder\ShippingOptionsBuilderInterf
 use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\HookInterface;
+use PsCheckout\Infrastructure\Adapter\ModuleInterface;
 use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
 
 class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
@@ -37,17 +38,21 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
     /** @var HookInterface */
     private $hook;
 
-    public function __construct(CartInterface $cartAdapter, PsCheckoutCarrierRepository $carrierRepository, HookInterface $hook)
+    /** @var ModuleInterface */
+    private $module;
+
+    public function __construct(CartInterface $cartAdapter, PsCheckoutCarrierRepository $carrierRepository, HookInterface $hook, ModuleInterface $module)
     {
         $this->cartAdapter = $cartAdapter;
         $this->carrierRepository = $carrierRepository;
         $this->hook = $hook;
+        $this->module = $module;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function build(int $cartId, ?string $selectedOptionId): array
+    public function build(int $cartId, ?string $selectedOptionId, array $preComputedDeliveryOptions = []): array
     {
         $cart = $this->cartAdapter->getCart($cartId);
 
@@ -55,7 +60,9 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
             return [];
         }
 
-        $deliveryOptions = $cart->getDeliveryOptionList();
+        $deliveryOptions = !empty($preComputedDeliveryOptions)
+            ? $preComputedDeliveryOptions
+            : $cart->getDeliveryOptionList();
 
         if (empty($deliveryOptions)) {
             return [];
@@ -104,13 +111,17 @@ class ShippingOptionsBuilder implements ShippingOptionsBuilderInterface
                     $carrierType = $data ? $data['type'] : PsCheckoutCarrierRepository::TYPE_SHIPPING;
                     $disabled = $data ? $data['disabled'] : false;
 
-                    $hookParams = [
-                        'id_carrier' => (int) $carrierId,
-                        'id_reference' => $data ? $data['id_reference'] : 0,
-                        'type' => &$carrierType,
-                        'disabled' => &$disabled,
-                    ];
-                    $this->hook->exec('actionGetPsCheckoutCarrierType', $hookParams);
+                    $externalModuleName = $data ? $data['external_module_name'] : '';
+                    if ($externalModuleName !== '') {
+                        $idModule = $this->module->getModuleIdByName($externalModuleName);
+                        $hookParams = [
+                            'id_carrier' => (int) $carrierId,
+                            'id_reference' => $data ? $data['id_reference'] : 0,
+                            'type' => &$carrierType,
+                            'disabled' => &$disabled,
+                        ];
+                        $this->hook->exec('actionGetPsCheckoutCarrierType', $hookParams, $idModule);
+                    }
 
                     if ($disabled) {
                         continue;

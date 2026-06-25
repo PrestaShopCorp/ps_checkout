@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
 use PsCheckout\Infrastructure\Adapter\HookInterface;
+use PsCheckout\Infrastructure\Adapter\ModuleInterface;
 use PsCheckout\Infrastructure\Builder\ShippingOptionsBuilder;
 use PsCheckout\Infrastructure\Repository\PsCheckoutCarrierRepository;
 
@@ -39,6 +40,9 @@ class ShippingOptionsBuilderTest extends TestCase
     /** @var HookInterface|MockObject */
     private $hook;
 
+    /** @var ModuleInterface|MockObject */
+    private $module;
+
     /** @var ShippingOptionsBuilder */
     private $builder;
 
@@ -49,7 +53,8 @@ class ShippingOptionsBuilderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->hook = $this->createMock(HookInterface::class);
-        $this->builder = new ShippingOptionsBuilder($this->cartAdapter, $this->carrierRepository, $this->hook);
+        $this->module = $this->createMock(ModuleInterface::class);
+        $this->builder = new ShippingOptionsBuilder($this->cartAdapter, $this->carrierRepository, $this->hook, $this->module);
     }
 
     public function testBuildReturnsEmptyArrayWhenCartNotFound(): void
@@ -72,7 +77,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => true]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => true]
         );
 
         $this->assertSame([], $this->builder->build(1, null));
@@ -83,7 +88,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99, 'price' => 3.00]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -96,7 +101,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price' => 3.50]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -112,7 +117,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99, 'instance' => $instance]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -125,7 +130,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -141,8 +146,8 @@ class ShippingOptionsBuilderTest extends TestCase
         ]), 5);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturnMap([
-            [3, ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => true]],
-            [5, ['id_reference' => 5, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]],
+            [3, ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => true]],
+            [5, ['id_reference' => 5, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]],
         ]);
 
         $options = $this->builder->build(1, null);
@@ -159,7 +164,7 @@ class ShippingOptionsBuilderTest extends TestCase
         ]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, 'delivery-option-5');
@@ -177,7 +182,7 @@ class ShippingOptionsBuilderTest extends TestCase
         ]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -195,7 +200,7 @@ class ShippingOptionsBuilderTest extends TestCase
         ]), 0);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -214,7 +219,7 @@ class ShippingOptionsBuilderTest extends TestCase
         $cart = $this->makeCart($deliveryOptions, 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
 
         $options = $this->builder->build(1, null);
@@ -223,11 +228,53 @@ class ShippingOptionsBuilderTest extends TestCase
         $this->assertSame('delivery-option-3', $options[0]['id']);
     }
 
-    public function testFiresHookForCarrierWithNoRepositoryData(): void
+    public function testBuildSetsCarrierTypeFromRepository(): void
+    {
+        $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->carrierRepository->method('getCarrierData')->willReturn(
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_PICKUP, 'disabled' => false]
+        );
+
+        $options = $this->builder->build(1, null);
+
+        $this->assertSame(PsCheckoutCarrierRepository::TYPE_PICKUP, $options[0]['type']);
+    }
+
+    // --- Hook dispatch ---
+
+    public function testHookIsNotFiredForNativeCarrier(): void
+    {
+        $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->carrierRepository->method('getCarrierData')->willReturn(
+            ['id_reference' => 3, 'external_module_name' => '', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+        );
+
+        $this->hook->expects($this->never())->method('exec');
+
+        $this->builder->build(1, null);
+    }
+
+    public function testHookIsNotFiredWhenCarrierHasNoRepositoryData(): void
     {
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(null);
+
+        $this->hook->expects($this->never())->method('exec');
+
+        $this->builder->build(1, null);
+    }
+
+    public function testHookIsFiredForModuleCarrierWithCorrectIdModule(): void
+    {
+        $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->carrierRepository->method('getCarrierData')->willReturn(
+            ['id_reference' => 3, 'external_module_name' => 'mycarriermodule', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+        );
+        $this->module->method('getModuleIdByName')->with('mycarriermodule')->willReturn(42);
 
         $this->hook
             ->expects($this->once())
@@ -235,25 +282,47 @@ class ShippingOptionsBuilderTest extends TestCase
             ->with(
                 'actionGetPsCheckoutCarrierType',
                 $this->callback(function ($params) {
-                    return $params['id_carrier'] === 3 && $params['id_reference'] === 0;
-                })
+                    return $params['id_carrier'] === 3 && $params['id_reference'] === 3;
+                }),
+                42
             );
 
         $this->builder->build(1, null);
     }
 
-    public function testBuildSetsCarrierTypeFromRepository(): void
+    public function testHookCanOverrideCarrierTypeToPickup(): void
     {
         $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
         $this->cartAdapter->method('getCart')->willReturn($cart);
         $this->carrierRepository->method('getCarrierData')->willReturn(
-            ['id_reference' => 3, 'type' => PsCheckoutCarrierRepository::TYPE_PICKUP, 'disabled' => false]
+            ['id_reference' => 3, 'external_module_name' => 'mycarriermodule', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
         );
+        $this->module->method('getModuleIdByName')->willReturn(42);
+        $this->hook->method('exec')->willReturnCallback(function (string $hookName, array &$params): void {
+            $params['type'] = PsCheckoutCarrierRepository::TYPE_PICKUP;
+        });
 
         $options = $this->builder->build(1, null);
 
         $this->assertSame(PsCheckoutCarrierRepository::TYPE_PICKUP, $options[0]['type']);
     }
+
+    public function testHookCanDisableModuleCarrier(): void
+    {
+        $cart = $this->makeCart($this->deliveryOptions([3 => ['price_with_tax' => 4.99]]), 3);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->carrierRepository->method('getCarrierData')->willReturn(
+            ['id_reference' => 3, 'external_module_name' => 'mycarriermodule', 'type' => PsCheckoutCarrierRepository::TYPE_SHIPPING, 'disabled' => false]
+        );
+        $this->module->method('getModuleIdByName')->willReturn(42);
+        $this->hook->method('exec')->willReturnCallback(function (string $hookName, array &$params): void {
+            $params['disabled'] = true;
+        });
+
+        $this->assertSame([], $this->builder->build(1, null));
+    }
+
+    // --- getSelectedShippingPrice ---
 
     public function testGetSelectedShippingPriceReturnsSelectedOptionPrice(): void
     {

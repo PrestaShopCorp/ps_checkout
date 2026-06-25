@@ -27,6 +27,7 @@ use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class ExperienceContextHelperTest extends TestCase
 {
@@ -50,7 +51,7 @@ class ExperienceContextHelperTest extends TestCase
         $defaultStateRepository->method('getIsoById')->willReturn('');
         $defaultStateRepository->method('getNameById')->willReturn('');
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $stateRepository ?? $defaultStateRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($stateRepository ?? $defaultStateRepository));
     }
 
     private function makeAddress(

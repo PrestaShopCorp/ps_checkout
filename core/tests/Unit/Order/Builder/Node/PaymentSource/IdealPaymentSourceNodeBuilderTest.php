@@ -28,6 +28,7 @@ use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class IdealPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -44,7 +45,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($this->createMock(StateRepositoryInterface::class)));
     }
 
     private function makeBuilder(string $shopName = 'My Shop'): IdealPaymentSourceNodeBuilder
@@ -163,7 +164,7 @@ class IdealPaymentSourceNodeBuilderTest extends TestCase
         $address->lastname = 'Bakker';
         $address->id_country = 42;
 
-        $builder = new IdealPaymentSourceNodeBuilder(new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class)));
+        $builder = new IdealPaymentSourceNodeBuilder(new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($this->createMock(StateRepositoryInterface::class))));
         $result = $builder->build($this->makeContext(['addresses' => ['invoice' => $address]]));
 
         $this->assertSame('NL', $result['payment_source']['ideal']['country_code']);

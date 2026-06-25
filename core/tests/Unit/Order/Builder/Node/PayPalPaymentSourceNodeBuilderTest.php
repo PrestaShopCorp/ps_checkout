@@ -33,6 +33,7 @@ use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use Psr\Log\LoggerInterface;
 
 class PayPalPaymentSourceNodeBuilderTest extends TestCase
@@ -73,7 +74,7 @@ class PayPalPaymentSourceNodeBuilderTest extends TestCase
             return 'https://example.com/' . $action . $query;
         });
 
-        return new ExperienceContextHelper($configuration, $link, $this->countryRepository, $this->stateRepository);
+        return new ExperienceContextHelper($configuration, $link, $this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
     }
 
     private function makeBuilder(string $shopName = 'Test Shop'): PayPalPaymentSourceNodeBuilder

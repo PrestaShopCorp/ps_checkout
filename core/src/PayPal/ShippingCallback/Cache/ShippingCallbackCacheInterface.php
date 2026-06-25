@@ -34,7 +34,7 @@ interface ShippingCallbackCacheInterface
      *
      * @return string|null
      */
-    public function get(string $cacheKey): ?string;
+    public function getValue(string $cacheKey): ?string;
 
     /**
      * @param string   $cacheKey

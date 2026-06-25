@@ -26,6 +26,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class SupplementaryDataNodeBuilderTest extends TestCase
 {
@@ -48,7 +49,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         $this->stateRepository->method('getNameById')->willReturn('California');
         $this->stateRepository->method('getIsoById')->willReturn('CA');
 
-        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
         $builder->setCart($cart);
         $builder->setPayload($payload);
 
@@ -115,7 +116,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         $payload = $this->getSamplePayload();
         unset($payload['purchase_units'][0]['items']);
 
-        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
         $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
         $builder->setPayload($payload);
 
@@ -141,7 +142,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         $address->city = 'Paris';
         $address->postcode = '75001';
 
-        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
         $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
         $builder->setPayload($this->getSamplePayload());
 
@@ -157,7 +158,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
 
     public function testBuildWithoutSettingCartThrowsException(): void
     {
-        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
         $builder->setPayload($this->getSamplePayload());
 
         $this->expectException(PsCheckoutException::class);
@@ -176,7 +177,7 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         $address->city = 'Paris';
         $address->postcode = '75001';
 
-        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, new PaypalStateNameResolver($this->stateRepository));
         $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
 
         $this->expectException(PsCheckoutException::class);

@@ -60,6 +60,11 @@ class CartData implements CartDataInterface
         $this->psCart->updateDeliveryAddressId($currentAddressId, $addressId);
     }
 
+    public function migrateProductsToDeliveryAddress(int $fromAddressId, int $toAddressId): void
+    {
+        $this->psCart->updateDeliveryAddressId($fromAddressId, $toAddressId);
+    }
+
     public function setDeliveryOption(int $deliveryAddressId, int $carrierId): void
     {
         $this->psCart->setDeliveryOption([$deliveryAddressId => $carrierId . ',']);

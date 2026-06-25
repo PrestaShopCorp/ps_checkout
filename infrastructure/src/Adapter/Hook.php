@@ -25,8 +25,8 @@ class Hook implements HookInterface
     /**
      * {@inheritDoc}
      */
-    public function exec(string $hookName, array &$hookParams): void
+    public function exec(string $hookName, array &$hookParams, ?int $idModule = null): void
     {
-        \Hook::exec($hookName, $hookParams);
+        \Hook::exec($hookName, $hookParams, $idModule);
     }
 }

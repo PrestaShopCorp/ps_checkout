@@ -52,13 +52,25 @@ class ShippingCallbackCertProvider implements ShippingCallbackCertProviderInterf
         $cacheKey = md5($certUrl);
 
         if ($this->cache->has($cacheKey)) {
-            return (string) $this->cache->get($cacheKey);
+            $cert = (string) $this->cache->getValue($cacheKey);
+            // Defence-in-depth: the cache TTL is derived from the cert's notAfter, but
+            // re-check on every hit to reject a cert that expired while in cache.
+            if ($this->computeTtlFromCert($cert) === 0) {
+                throw new \RuntimeException(sprintf('Cached PayPal cert from %s has expired', $certUrl));
+            }
+
+            return $cert;
         }
 
         $cert = $this->fetchCert($certUrl);
         $ttl = $this->computeTtlFromCert($cert);
-        if ($ttl > 0) {
-            $this->cache->set($cacheKey, $cert, $ttl);
+        // Cache using at least MIN_TTL even when the cert is already expired so a
+        // rogue/rotated cert does not cause a re-fetch storm on every callback request.
+        // The exception below prevents the expired cert from being used for verification.
+        $this->cache->set($cacheKey, $cert, max($ttl, ShippingCallbackCache::MIN_TTL));
+
+        if ($ttl === 0) {
+            throw new \RuntimeException(sprintf('PayPal cert from %s is expired', $certUrl));
         }
 
         return $cert;

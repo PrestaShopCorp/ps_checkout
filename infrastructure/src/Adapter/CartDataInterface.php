@@ -32,6 +32,8 @@ interface CartDataInterface
 
     public function setDeliveryAddressId(int $addressId): void;
 
+    public function migrateProductsToDeliveryAddress(int $fromAddressId, int $toAddressId): void;
+
     public function setDeliveryOption(int $deliveryAddressId, int $carrierId): void;
 
     public function getCurrencyIsoCode(): string;

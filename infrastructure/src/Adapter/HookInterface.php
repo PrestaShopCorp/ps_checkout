@@ -25,5 +25,5 @@ interface HookInterface
     /**
      * @param array<string, mixed> $hookParams
      */
-    public function exec(string $hookName, array &$hookParams): void;
+    public function exec(string $hookName, array &$hookParams, ?int $idModule = null): void;
 }

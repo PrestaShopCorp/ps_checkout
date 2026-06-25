@@ -28,12 +28,10 @@ use PsCheckout\Core\PayPal\ShippingCallback\Service\ShippingCallbackProcessorInt
 use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
 use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
-use PsCheckout\Infrastructure\Adapter\CountryInterface;
+use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
-use PsCheckout\Utility\Payload\PaypalCountryCodeUtility;
-use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
+use PsCheckout\Infrastructure\Service\CountryResolutionException;
+use PsCheckout\Infrastructure\Service\PaypalAddressResolverInterface;
 use Psr\Log\LoggerInterface;
 
 class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
@@ -56,14 +54,14 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
     private $purchaseUnitsNodeBuilder;
 
     /**
-     * @var CountryInterface
+     * @var ContextInterface
      */
-    private $country;
+    private $context;
 
     /**
-     * @var CountryRepositoryInterface
+     * @var PaypalAddressResolverInterface
      */
-    private $countryRepository;
+    private $addressResolver;
 
     /**
      * @var AddressRepositoryInterface
@@ -79,16 +77,16 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
         CartInterface $cartAdapter,
         ShippingOptionsBuilderInterface $shippingOptionsBuilder,
         PurchaseUnitsNodeBuilderInterface $purchaseUnitsNodeBuilder,
-        CountryInterface $country,
-        CountryRepositoryInterface $countryRepository,
+        ContextInterface $context,
+        PaypalAddressResolverInterface $addressResolver,
         AddressRepositoryInterface $addressRepository,
         LoggerInterface $logger
     ) {
         $this->cartAdapter = $cartAdapter;
         $this->shippingOptionsBuilder = $shippingOptionsBuilder;
         $this->purchaseUnitsNodeBuilder = $purchaseUnitsNodeBuilder;
-        $this->country = $country;
-        $this->countryRepository = $countryRepository;
+        $this->context = $context;
+        $this->addressResolver = $addressResolver;
         $this->addressRepository = $addressRepository;
         $this->logger = $logger;
     }
@@ -98,6 +96,14 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
      */
     public function process(int $cartId, ShippingCallbackPayload $payload): array
     {
+        $this->logger->info('PayPal shipping callback: processing', [
+            'id_cart' => $cartId,
+            'is_address_event' => $payload->isAddressEvent(),
+            'country_code' => $payload->getCountryCode(),
+            'postal_code' => $payload->getPostalCode(),
+            'shipping_option_id' => $payload->getShippingOptionId(),
+        ]);
+
         $cart = $this->cartAdapter->getCart($cartId);
 
         if (!$cart) {
@@ -114,9 +120,27 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
         ) {
             $addressId = $this->createTemporaryDeliveryAddress($cart, $payload);
             if ($addressId) {
+                // Migrate product rows from every address currently in the delivery option list to
+                // the temp address. Using only psCart->id_address_delivery as the "from" address
+                // misses product rows that were never migrated on a prior callback (they remain
+                // keyed under the original customer address), causing getDeliveryOptionList to
+                // compute carriers for the wrong address.
+                $existingAddressKeys = array_keys($deliveryOptions);
+                foreach ($existingAddressKeys as $fromAddressId) {
+                    if ((int) $fromAddressId !== $addressId) {
+                        $cart->migrateProductsToDeliveryAddress((int) $fromAddressId, $addressId);
+                    }
+                }
                 $cart->setDeliveryAddressId($addressId);
                 $cart->save();
                 $deliveryOptions = $cart->getDeliveryOptionList(true);
+
+                $this->logger->info('PayPal shipping callback: delivery address updated', [
+                    'id_cart' => $cartId,
+                    'id_address' => $addressId,
+                    'migrated_from_addresses' => $existingAddressKeys,
+                    'delivery_option_keys_after' => array_keys($deliveryOptions),
+                ]);
             }
         }
 
@@ -137,7 +161,7 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
             );
         }
 
-        $shippingOptions = $this->shippingOptionsBuilder->build($cartId, $payload->getShippingOptionId());
+        $shippingOptions = $this->shippingOptionsBuilder->build($cartId, $payload->getShippingOptionId(), $deliveryOptions);
 
         if (empty($shippingOptions)) {
             $this->logger->warning('No ps_checkout-enabled carriers available for cart', [
@@ -164,6 +188,15 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
             }
 
             $carrierId = (int) substr($shippingOptionId, strlen($prefix));
+
+            $knownIds = array_column($shippingOptions, 'id');
+            if (!in_array($shippingOptionId, $knownIds, true)) {
+                throw new ShippingCallbackException(
+                    ShippingCallbackException::METHOD_UNAVAILABLE,
+                    sprintf('Unknown shipping option ID: %s', $shippingOptionId)
+                );
+            }
+
             $deliveryAddressId = $cart->getDeliveryAddressId();
 
             if ($carrierId > 0 && $deliveryAddressId > 0) {
@@ -214,49 +247,37 @@ class ShippingCallbackProcessor implements ShippingCallbackProcessorInterface
 
     private function createTemporaryDeliveryAddress(CartDataInterface $cart, ShippingCallbackPayload $payload): ?int
     {
-        $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($payload->getCountryCode());
-        $idCountry = (int) $this->country->getIdByIsoCode($shopIsoCode);
+        $idShop = (int) $this->context->getShop()->id;
 
-        if (!$idCountry) {
-            $this->logger->warning('PayPal shipping callback: country not found', [
-                'id_cart' => $cart->getId(),
-                'country_code' => $payload->getCountryCode(),
-                'shop_iso_code' => $shopIsoCode,
-            ]);
-
-            throw new ShippingCallbackException(
-                ShippingCallbackException::COUNTRY_ERROR,
-                sprintf('Country not found for code: %s', $payload->getCountryCode())
+        try {
+            $resolved = $this->addressResolver->resolveCountryState(
+                (string) $payload->getCountryCode(),
+                $payload->getAdminArea1(),
+                $idShop
             );
-        }
-
-        $idShop = (int) \Context::getContext()->shop->id;
-
-        if (!$this->country->isAvailableForDelivery($idCountry, $idShop)
-            || $this->country->isNeedDniByCountryId($idCountry)
-        ) {
-            $this->logger->warning('PayPal shipping callback: country not available for delivery', [
-                'id_cart' => $cart->getId(),
-                'shop_iso_code' => $shopIsoCode,
-                'id_country' => $idCountry,
-            ]);
-
-            throw new ShippingCallbackException(
-                ShippingCallbackException::COUNTRY_ERROR,
-                sprintf('Country %s (id=%d) is not available for delivery', $shopIsoCode, $idCountry)
-            );
-        }
-
-        $idState = 0;
-
-        if ($this->country->containsStates($idCountry) && $payload->getAdminArea1()) {
-            if (PaypalAddressRequirementsUtility::usesStateIsoCode($shopIsoCode)) {
-                $psIsoCode = PaypalStateCodeMapUtility::getShopStateCode($shopIsoCode, $payload->getAdminArea1());
-                $idState = $this->countryRepository->getStateIdByIsoCode($idCountry, $psIsoCode);
+        } catch (CountryResolutionException $e) {
+            if ($e->getCode() === CountryResolutionException::COUNTRY_NOT_FOUND) {
+                $this->logger->warning('PayPal shipping callback: country not found', [
+                    'id_cart' => $cart->getId(),
+                    'country_code' => $payload->getCountryCode(),
+                    'shop_iso_code' => $e->getShopIsoCode(),
+                ]);
             } else {
-                $idState = (int) $this->countryRepository->getStateId($idCountry, $payload->getAdminArea1());
+                $this->logger->warning('PayPal shipping callback: country not available for delivery', [
+                    'id_cart' => $cart->getId(),
+                    'shop_iso_code' => $e->getShopIsoCode(),
+                    'id_country' => $e->getIdCountry(),
+                ]);
             }
+
+            throw new ShippingCallbackException(
+                ShippingCallbackException::COUNTRY_ERROR,
+                $e->getMessage()
+            );
         }
+
+        $idCountry = $resolved->idCountry;
+        $idState = $resolved->idState;
 
         $alias = self::TEMPORARY_ADDRESS_ALIAS_PREFIX . $cart->getId();
         $existingId = $this->addressRepository->getAddressIdByAliasAndCustomer($alias, $cart->getCustomerId());

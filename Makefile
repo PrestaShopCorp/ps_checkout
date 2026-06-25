@@ -31,7 +31,7 @@ php-cs-fixer:
 	composer cs:fix
 
 autoindex:
-	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index /var/www/html/modules/ps_checkout/vendor"
+	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/autoindex prestashop:add:index --exclude=vendor /var/www/html/modules/ps_checkout"
 
 add-header-stamp:
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} /bin/bash -c "cd modules/ps_checkout && php vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt"

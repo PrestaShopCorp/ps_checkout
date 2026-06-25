@@ -63,7 +63,7 @@ class ShippingCallbackCache extends ChainAdapter implements ShippingCallbackCach
     /**
      * {@inheritDoc}
      */
-    public function get(string $cacheKey): ?string
+    public function getValue(string $cacheKey): ?string
     {
         $item = parent::getItem($cacheKey);
 

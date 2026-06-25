@@ -23,10 +23,9 @@ namespace PsCheckout\Core\Order\Builder\Node;
 use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
-use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class ShippingNodeBuilder implements ShippingNodeBuilderInterface
 {
@@ -41,9 +40,9 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
     private $countryRepository;
 
     /**
-     * @var StateRepositoryInterface
+     * @var PaypalStateNameResolver
      */
-    private $stateRepository;
+    private $stateNameResolver;
 
     /**
      * @var array
@@ -53,11 +52,11 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
     public function __construct(
         LoggerInterface $logger,
         CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository
+        PaypalStateNameResolver $stateNameResolver
     ) {
         $this->logger = $logger;
         $this->countryRepository = $countryRepository;
-        $this->stateRepository = $stateRepository;
+        $this->stateNameResolver = $stateNameResolver;
     }
 
     /**
@@ -89,11 +88,7 @@ class ShippingNodeBuilder implements ShippingNodeBuilderInterface
             );
         }
 
-        $stateName = PaypalAddressRequirementsUtility::usesStateIsoCode($countryIso)
-            ? $this->stateRepository->getIsoById($address->id_state)
-            : $this->stateRepository->getNameById($address->id_state);
-
-        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($countryIso, $stateName);
+        $stateName = $this->stateNameResolver->resolve($countryIso, (int) $address->id_state);
 
         $portableAddress = OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
 

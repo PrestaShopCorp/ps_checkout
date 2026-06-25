@@ -21,36 +21,54 @@
 namespace PsCheckout\Core\PayPal\ApplePay\Builder;
 
 use PsCheckout\Core\Order\Builder\CheckoutContextBuilderInterface;
-use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\ApplePay\ValueObject\ApplePayPaymentRequestData;
-use PsCheckout\Core\PayPal\ApplePay\ValueObject\ApplePayTotalData;
-use PsCheckout\Presentation\TranslatorInterface;
 
 class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBuilderInterface
 {
-    /**
-     * @var OrderPayloadBuilderInterface
-     */
-    private $orderPayloadBuilder;
-
     /**
      * @var CheckoutContextBuilderInterface
      */
     private $checkoutContextBuilder;
 
     /**
-     * @var TranslatorInterface
+     * @var ApplePayNodeBuilderInterface
      */
-    private $translator;
+    private $amountBuilder;
+
+    /**
+     * @var ApplePayNodeBuilderInterface
+     */
+    private $contactBuilder;
+
+    /**
+     * @var ApplePayNodeBuilderInterface
+     */
+    private $shippingBuilder;
+
+    /**
+     * @var ApplePayNodeBuilderInterface
+     */
+    private $couponBuilder;
+
+    /**
+     * @var ApplePayNodeBuilderInterface
+     */
+    private $applicationDataBuilder;
 
     public function __construct(
-        OrderPayloadBuilderInterface $orderPayloadBuilder,
         CheckoutContextBuilderInterface $checkoutContextBuilder,
-        TranslatorInterface $translator
+        ApplePayNodeBuilderInterface $amountBuilder,
+        ApplePayNodeBuilderInterface $contactBuilder,
+        ApplePayNodeBuilderInterface $shippingBuilder,
+        ApplePayNodeBuilderInterface $couponBuilder,
+        ApplePayNodeBuilderInterface $applicationDataBuilder
     ) {
-        $this->orderPayloadBuilder = $orderPayloadBuilder;
         $this->checkoutContextBuilder = $checkoutContextBuilder;
-        $this->translator = $translator;
+        $this->amountBuilder = $amountBuilder;
+        $this->contactBuilder = $contactBuilder;
+        $this->shippingBuilder = $shippingBuilder;
+        $this->couponBuilder = $couponBuilder;
+        $this->applicationDataBuilder = $applicationDataBuilder;
     }
 
     /**
@@ -62,16 +80,14 @@ class ApplePayPaymentRequestDataBuilder implements ApplePayPaymentRequestDataBui
             ->setFundingSource('applepay')
             ->build();
 
-        $payload = $this->orderPayloadBuilder->build($context);
-
-        $applePayTotal = new ApplePayTotalData(
-            $this->translator->trans('Total'),
-            $payload['purchase_units'][0]['amount']['value']
+        $data = array_merge(
+            $this->amountBuilder->build($context),
+            $this->contactBuilder->build($context),
+            $this->shippingBuilder->build($context),
+            $this->couponBuilder->build($context),
+            $this->applicationDataBuilder->build($context)
         );
 
-        return new ApplePayPaymentRequestData(
-            $payload['purchase_units'][0]['amount']['currency_code'],
-            $applePayTotal
-        );
+        return new ApplePayPaymentRequestData($data);
     }
 }

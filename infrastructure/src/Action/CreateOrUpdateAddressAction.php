@@ -26,12 +26,9 @@ use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Infrastructure\Adapter\CountryInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepositoryInterface;
-use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
-use PsCheckout\Utility\Payload\PaypalCountryCodeUtility;
-use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
+use PsCheckout\Infrastructure\Service\CountryResolutionException;
+use PsCheckout\Infrastructure\Service\PaypalAddressResolverInterface;
 
 class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterface
 {
@@ -41,14 +38,9 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
     private $context;
 
     /**
-     * @var CountryInterface
+     * @var PaypalAddressResolverInterface
      */
-    private $country;
-
-    /**
-     * @var CountryRepositoryInterface
-     */
-    private $countryRepository;
+    private $addressResolver;
 
     /**
      * @var PsCheckoutAddressRepositoryInterface
@@ -62,14 +54,12 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
 
     public function __construct(
         ContextInterface $context,
-        CountryInterface $country,
-        CountryRepositoryInterface $countryRepository,
+        PaypalAddressResolverInterface $addressResolver,
         PsCheckoutAddressRepositoryInterface $psCheckoutAddressRepository,
         LoggerInterface $logger
     ) {
         $this->context = $context;
-        $this->country = $country;
-        $this->countryRepository = $countryRepository;
+        $this->addressResolver = $addressResolver;
         $this->psCheckoutAddressRepository = $psCheckoutAddressRepository;
         $this->logger = $logger;
     }
@@ -85,39 +75,26 @@ class CreateOrUpdateAddressAction implements CreateOrUpdateAddressActionInterfac
             return false;
         }
 
-        // check if country is available for delivery
-        $shopIsoCode = PaypalCountryCodeUtility::getShopIsoCode($shippingData->getCountryCode());
-
-        $idCountry = $this->country->getIdByIsoCode($shopIsoCode);
-
-        if (!$idCountry) {
-            $this->logger->warning('CreateOrUpdateAddressAction: country not found', ['isoCode' => $shopIsoCode, 'orderId' => $shippingData->getOrderId()]);
-
-            return false;
-        }
-
-        $idState = 0;
         $shopId = (int) $this->context->getShop()->id;
 
-        if (!$this->country->isAvailableForDelivery((int) $idCountry, $shopId)
-            || $this->country->isNeedDniByCountryId((int) $idCountry)
-        ) {
-            $this->logger->warning('CreateOrUpdateAddressAction: country not available for delivery', ['isoCode' => $shopIsoCode, 'idCountry' => $idCountry, 'orderId' => $shippingData->getOrderId()]);
+        try {
+            $resolved = $this->addressResolver->resolveCountryState(
+                $shippingData->getCountryCode(),
+                $shippingData->getState() ?: null,
+                $shopId
+            );
+        } catch (CountryResolutionException $e) {
+            if ($e->getCode() === CountryResolutionException::COUNTRY_NOT_FOUND) {
+                $this->logger->warning('CreateOrUpdateAddressAction: country not found', ['isoCode' => $e->getShopIsoCode(), 'orderId' => $shippingData->getOrderId()]);
+            } else {
+                $this->logger->warning('CreateOrUpdateAddressAction: country not available for delivery', ['isoCode' => $e->getShopIsoCode(), 'idCountry' => $e->getIdCountry(), 'orderId' => $shippingData->getOrderId()]);
+            }
 
             return false;
         }
 
-        if ($this->country->containsStates((int) $idCountry)) {
-            $state = $shippingData->getState();
-            if ($state !== null && $state !== '') {
-                if (PaypalAddressRequirementsUtility::usesStateIsoCode($shopIsoCode)) {
-                    $psIsoCode = PaypalStateCodeMapUtility::getShopStateCode($shopIsoCode, $state);
-                    $idState = $this->countryRepository->getStateIdByIsoCode((int) $idCountry, $psIsoCode);
-                } else {
-                    $idState = $this->countryRepository->getStateId((int) $idCountry, $state);
-                }
-            }
-        }
+        $idCountry = $resolved->idCountry;
+        $idState = $resolved->idState;
 
         $idCustomer = (int) $this->context->getCustomer()->id;
 

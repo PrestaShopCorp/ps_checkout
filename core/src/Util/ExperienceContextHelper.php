@@ -23,11 +23,9 @@ namespace PsCheckout\Core\Util;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use PsCheckout\Utility\Common\StringUtility;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
-use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
-use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class ExperienceContextHelper
 {
@@ -47,20 +45,20 @@ class ExperienceContextHelper
     private $countryRepository;
 
     /**
-     * @var StateRepositoryInterface
+     * @var PaypalStateNameResolver
      */
-    private $stateRepository;
+    private $stateNameResolver;
 
     public function __construct(
         ConfigurationInterface $configuration,
         LinkInterface $link,
         CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository
+        PaypalStateNameResolver $stateNameResolver
     ) {
         $this->configuration = $configuration;
         $this->link = $link;
         $this->countryRepository = $countryRepository;
-        $this->stateRepository = $stateRepository;
+        $this->stateNameResolver = $stateNameResolver;
     }
 
     /**
@@ -175,10 +173,7 @@ class ExperienceContextHelper
             return [];
         }
 
-        $stateName = PaypalAddressRequirementsUtility::usesStateIsoCode($countryIso)
-            ? $this->stateRepository->getIsoById($address->id_state)
-            : $this->stateRepository->getNameById($address->id_state);
-        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($countryIso, $stateName);
+        $stateName = $this->stateNameResolver->resolve($countryIso, (int) $address->id_state);
 
         return OrderPayloadUtility::getAddressPortable($address, $countryIso, $stateName);
     }

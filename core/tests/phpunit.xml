@@ -14,7 +14,7 @@
     </php>
     <testsuites>
         <testsuite name="Unit">
-            <directory>Unit</directory>
+            <directory suffix="Test.php">Unit</directory>
         </testsuite>
     </testsuites>
     <filter>

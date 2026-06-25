@@ -23,23 +23,16 @@ namespace PsCheckout\Core\PayPal\ApplePay\ValueObject;
 class ApplePayPaymentRequestData
 {
     /**
-     * @var string
+     * @var array<string, mixed>
      */
-    private $currencyCode;
+    private $data;
 
     /**
-     * @var ApplePayTotalData
+     * @param array<string, mixed> $data Full assembled Apple Pay payment request fields.
      */
-    private $total;
-
-    /**
-     * @param string $currencyCode
-     * @param ApplePayTotalData $total
-     */
-    public function __construct(string $currencyCode, ApplePayTotalData $total)
+    public function __construct(array $data)
     {
-        $this->currencyCode = $currencyCode;
-        $this->total = $total;
+        $this->data = $data;
     }
 
     /**
@@ -47,7 +40,10 @@ class ApplePayPaymentRequestData
      */
     public function getCurrencyCode(): string
     {
-        return $this->currencyCode;
+        /** @var string $currencyCode */
+        $currencyCode = $this->data['currency_code'] ?? '';
+
+        return $currencyCode;
     }
 
     /**
@@ -59,21 +55,21 @@ class ApplePayPaymentRequestData
      */
     public function getTotal(): ApplePayTotalData
     {
-        return $this->total;
+        $total = isset($this->data['total']) && is_array($this->data['total']) ? $this->data['total'] : [];
+
+        /** @var string $label */
+        $label = $total['label'] ?? '';
+        /** @var string $amount */
+        $amount = $total['amount'] ?? '';
+
+        return new ApplePayTotalData($label, $amount);
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return [
-            'currency_code' => $this->currencyCode,
-            'total' => [
-                'type' => $this->total->getType(),
-                'label' => $this->total->getLabel(),
-                'amount' => $this->total->getAmount(),
-            ],
-        ];
+        return $this->data;
     }
 }

@@ -32,6 +32,7 @@ use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 
 class VenmoPaymentSourceNodeBuilderTest extends TestCase
 {
@@ -50,7 +51,7 @@ class VenmoPaymentSourceNodeBuilderTest extends TestCase
         $countryRepository = $this->createMock(CountryRepositoryInterface::class);
         $countryRepository->method('getCountryIsoCodeById')->willReturn($countryCode);
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $this->createMock(StateRepositoryInterface::class));
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($this->createMock(StateRepositoryInterface::class)));
     }
 
     private function makeBuilder(string $shopName = 'Test Shop', ?PhoneParser $phoneParser = null): VenmoPaymentSourceNodeBuilder

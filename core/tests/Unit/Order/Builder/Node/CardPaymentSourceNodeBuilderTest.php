@@ -34,6 +34,7 @@ use PsCheckout\Infrastructure\Adapter\LinkInterface;
 use PsCheckout\Infrastructure\Adapter\ValidateInterface;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use Psr\Log\LoggerInterface;
 
 class CardPaymentSourceNodeBuilderTest extends TestCase
@@ -65,7 +66,7 @@ class CardPaymentSourceNodeBuilderTest extends TestCase
         $defaultStateRepository->method('getNameById')->willReturn('Île-de-France');
         $defaultStateRepository->method('getIsoById')->willReturn('CA');
 
-        return new ExperienceContextHelper($configuration, $link, $countryRepository, $stateRepository ?? $defaultStateRepository);
+        return new ExperienceContextHelper($configuration, $link, $countryRepository, new PaypalStateNameResolver($stateRepository ?? $defaultStateRepository));
     }
 
     private function makeBuilder(

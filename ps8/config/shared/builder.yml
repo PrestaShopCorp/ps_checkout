@@ -10,12 +10,17 @@ services:
   PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode:
     class: PsCheckout\Core\Order\Builder\Node\AmountBreakdownNode
 
+  PsCheckout\Infrastructure\Service\PaypalStateNameResolver:
+    class: PsCheckout\Infrastructure\Service\PaypalStateNameResolver
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+
   PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\ShippingNodeBuilder
     arguments:
       - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
-      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+      - '@PsCheckout\Infrastructure\Service\PaypalStateNameResolver'
 
   PsCheckout\Core\Util\PhoneParser:
     class: PsCheckout\Core\Util\PhoneParser
@@ -35,7 +40,7 @@ services:
     class: PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder
     arguments:
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
-      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+      - '@PsCheckout\Infrastructure\Service\PaypalStateNameResolver'
 
   PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\PayPalPaymentSourceNodeBuilder
@@ -77,7 +82,7 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Adapter\Link'
       - '@PsCheckout\Infrastructure\Repository\CountryRepository'
-      - '@PsCheckout\Infrastructure\Repository\StateRepository'
+      - '@PsCheckout\Infrastructure\Service\PaypalStateNameResolver'
 
   PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder:
     class: PsCheckout\Core\Order\Builder\Node\PaymentSource\IdealPaymentSourceNodeBuilder

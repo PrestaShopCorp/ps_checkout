@@ -29,9 +29,10 @@ use PsCheckout\Core\PayPal\ShippingCallback\ValueObject\ShippingCallbackPayload;
 use PsCheckout\Infrastructure\Action\ShippingCallbackProcessor;
 use PsCheckout\Infrastructure\Adapter\CartDataInterface;
 use PsCheckout\Infrastructure\Adapter\CartInterface;
-use PsCheckout\Infrastructure\Adapter\CountryInterface;
+use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Repository\AddressRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
+use PsCheckout\Infrastructure\Service\CountryResolutionException;
+use PsCheckout\Infrastructure\Service\PaypalAddressResolverInterface;
 use Psr\Log\LoggerInterface;
 
 class ShippingCallbackProcessorTest extends TestCase
@@ -45,8 +46,11 @@ class ShippingCallbackProcessorTest extends TestCase
     /** @var PurchaseUnitsNodeBuilderInterface|MockObject */
     private $purchaseUnitsNodeBuilder;
 
-    /** @var CountryInterface|MockObject */
-    private $country;
+    /** @var ContextInterface|MockObject */
+    private $context;
+
+    /** @var PaypalAddressResolverInterface|MockObject */
+    private $addressResolver;
 
     /** @var LoggerInterface|MockObject */
     private $logger;
@@ -59,14 +63,18 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->cartAdapter = $this->createMock(CartInterface::class);
         $this->shippingOptionsBuilder = $this->createMock(ShippingOptionsBuilderInterface::class);
         $this->purchaseUnitsNodeBuilder = $this->createMock(PurchaseUnitsNodeBuilderInterface::class);
-        $this->country = $this->createMock(CountryInterface::class);
+        $shop = new \stdClass();
+        $shop->id = 1;
+        $this->context = $this->createMock(ContextInterface::class);
+        $this->context->method('getShop')->willReturn($shop);
+        $this->addressResolver = $this->createMock(PaypalAddressResolverInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->processor = new ShippingCallbackProcessor(
             $this->cartAdapter,
             $this->shippingOptionsBuilder,
             $this->purchaseUnitsNodeBuilder,
-            $this->country,
-            $this->createMock(CountryRepositoryInterface::class),
+            $this->context,
+            $this->addressResolver,
             $this->createMock(AddressRepositoryInterface::class),
             $this->logger
         );
@@ -230,6 +238,26 @@ class ShippingCallbackProcessorTest extends TestCase
         }
     }
 
+    public function testThrowsMethodUnavailableWhenShippingOptionIdNotInAvailableOptions(): void
+    {
+        $cart = $this->makeCart(['placeholder' => true]);
+        $this->cartAdapter->method('getCart')->willReturn($cart);
+        $this->shippingOptionsBuilder->method('build')->willReturn([
+            ['id' => 'delivery-option-3', 'amount' => ['value' => '4.99'], 'selected' => true],
+        ]);
+        $this->shippingOptionsBuilder->method('getSelectedShippingPrice')->willReturn(4.99);
+
+        try {
+            $this->processor->process(1, new ShippingCallbackPayload([
+                'id' => 'ORDER-1',
+                'shipping_option' => ['id' => 'delivery-option-99'],
+            ]));
+            $this->fail('Expected ShippingCallbackException');
+        } catch (ShippingCallbackException $e) {
+            $this->assertSame(ShippingCallbackException::METHOD_UNAVAILABLE, $e->getIssue());
+        }
+    }
+
     public function testThrowsMethodUnavailableWhenShippingOptionIdHasUnrecognisedFormat(): void
     {
         $cart = $this->makeCart(['placeholder' => true]);
@@ -270,7 +298,7 @@ class ShippingCallbackProcessorTest extends TestCase
         $this->shippingOptionsBuilder
             ->expects($this->once())
             ->method('build')
-            ->with(1, 'delivery-option-5')
+            ->with(1, 'delivery-option-5', $this->anything())
             ->willReturn($shippingOptions);
 
         $this->processor->process(1, $payload);
@@ -280,7 +308,9 @@ class ShippingCallbackProcessorTest extends TestCase
     {
         $cart = $this->makeCart([]);
         $this->cartAdapter->method('getCart')->willReturn($cart);
-        $this->country->method('getIdByIsoCode')->willReturn(0);
+        $this->addressResolver->method('resolveCountryState')->willThrowException(
+            new CountryResolutionException('Country not found', CountryResolutionException::COUNTRY_NOT_FOUND, 'ZZ')
+        );
 
         try {
             $this->processor->process(1, new ShippingCallbackPayload([
@@ -297,8 +327,9 @@ class ShippingCallbackProcessorTest extends TestCase
     {
         $cart = $this->makeCart([]);
         $this->cartAdapter->method('getCart')->willReturn($cart);
-        $this->country->method('getIdByIsoCode')->willReturn(5);
-        $this->country->method('isAvailableForDelivery')->willReturn(false);
+        $this->addressResolver->method('resolveCountryState')->willThrowException(
+            new CountryResolutionException('Country not available', CountryResolutionException::COUNTRY_NOT_AVAILABLE, 'US', 5)
+        );
 
         try {
             $this->processor->process(1, new ShippingCallbackPayload([

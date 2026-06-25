@@ -23,9 +23,11 @@ namespace PsCheckout\Core\PayPal\ShippingCallback\Builder;
 interface ShippingOptionsBuilderInterface
 {
     /**
+     * @param array<mixed> $preComputedDeliveryOptions Pre-fetched result of getDeliveryOptionList(); skips the internal call when non-empty.
+     *
      * @return array<int, array<string, mixed>>
      */
-    public function build(int $cartId, ?string $selectedOptionId): array;
+    public function build(int $cartId, ?string $selectedOptionId, array $preComputedDeliveryOptions = []): array;
 
     /**
      * @param array<int, array<string, mixed>> $shippingOptions

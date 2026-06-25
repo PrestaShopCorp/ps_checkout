@@ -22,10 +22,9 @@ namespace PsCheckout\Core\Order\Builder\Node;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
-use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
+use PsCheckout\Infrastructure\Service\PaypalStateNameResolver;
 use PsCheckout\Utility\Payload\OrderPayloadUtility;
 use PsCheckout\Utility\Payload\PaypalAddressRequirementsUtility;
-use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 
 class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterface
 {
@@ -40,16 +39,16 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
     private $countryRepository;
 
     /**
-     * @var StateRepositoryInterface
+     * @var PaypalStateNameResolver
      */
-    private $stateRepository;
+    private $stateNameResolver;
 
     public function __construct(
         CountryRepositoryInterface $countryRepository,
-        StateRepositoryInterface $stateRepository
+        PaypalStateNameResolver $stateNameResolver
     ) {
         $this->countryRepository = $countryRepository;
-        $this->stateRepository = $stateRepository;
+        $this->stateNameResolver = $stateNameResolver;
     }
 
     /**
@@ -72,12 +71,8 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
         $validCountryIso = preg_match('/^[A-Za-z]{2}$/', (string) $countryIso) ? $countryIso : null;
 
         $stateName = $validCountryIso !== null
-            ? (PaypalAddressRequirementsUtility::usesStateIsoCode($validCountryIso)
-                ? $this->stateRepository->getIsoById($address->id_state)
-                : $this->stateRepository->getNameById($address->id_state))
+            ? $this->stateNameResolver->resolve($validCountryIso, (int) $address->id_state)
             : '';
-
-        $stateName = PaypalStateCodeMapUtility::getPaypalStateCode($validCountryIso ?? '', $stateName);
 
         $level3 = [
             'shipping_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['shipping'],

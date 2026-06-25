@@ -26,20 +26,18 @@ use Psr\Log\LoggerInterface;
 use PsCheckout\Core\Customer\Request\ValueObject\ExpressCheckoutShippingData;
 use PsCheckout\Infrastructure\Action\CreateOrUpdateAddressAction;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Infrastructure\Adapter\CountryInterface;
-use PsCheckout\Infrastructure\Repository\CountryRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\PsCheckoutAddressRepositoryInterface;
+use PsCheckout\Infrastructure\Service\CountryResolutionException;
+use PsCheckout\Infrastructure\Service\PaypalAddressResolverInterface;
+use PsCheckout\Infrastructure\Service\ResolvedCountryState;
 
 class CreateOrUpdateAddressActionTest extends TestCase
 {
     /** @var ContextInterface|MockObject */
     private $context;
 
-    /** @var CountryInterface|MockObject */
-    private $country;
-
-    /** @var CountryRepositoryInterface|MockObject */
-    private $countryRepository;
+    /** @var PaypalAddressResolverInterface|MockObject */
+    private $addressResolver;
 
     /** @var PsCheckoutAddressRepositoryInterface|MockObject */
     private $psCheckoutAddressRepository;
@@ -53,15 +51,13 @@ class CreateOrUpdateAddressActionTest extends TestCase
     protected function setUp(): void
     {
         $this->context = $this->createMock(ContextInterface::class);
-        $this->country = $this->createMock(CountryInterface::class);
-        $this->countryRepository = $this->createMock(CountryRepositoryInterface::class);
+        $this->addressResolver = $this->createMock(PaypalAddressResolverInterface::class);
         $this->psCheckoutAddressRepository = $this->createMock(PsCheckoutAddressRepositoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->action = new CreateOrUpdateAddressAction(
             $this->context,
-            $this->country,
-            $this->countryRepository,
+            $this->addressResolver,
             $this->psCheckoutAddressRepository,
             $this->logger
         );
@@ -93,27 +89,34 @@ class CreateOrUpdateAddressActionTest extends TestCase
         );
     }
 
-    /**
-     * Sets up country + shop + customer mocks.
-     *
-     * $customerId = 0 (default) makes the action return false at the customer guard
-     * after the state resolution block, which avoids Address::save() DB calls.
-     * Use $customerId = 1 for tests that need to reach the checksum/address code.
-     */
-    private function setUpAvailableCountry(bool $containsStates = false, int $customerId = 0): void
+    private function setUpShop(int $shopId = 1): void
     {
-        $this->country->method('getIdByIsoCode')->willReturn(75);
-        $this->country->method('isAvailableForDelivery')->willReturn(true);
-        $this->country->method('containsStates')->willReturn($containsStates);
-        $this->country->method('isNeedDniByCountryId')->willReturn(false);
-
         $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
-        $shop->id = 1;
+        $shop->id = $shopId;
         $this->context->method('getShop')->willReturn($shop);
+    }
 
+    private function setUpCustomer(int $customerId = 0): void
+    {
         $customer = $this->getMockBuilder(\Customer::class)->disableOriginalConstructor()->getMock();
         $customer->id = $customerId;
         $this->context->method('getCustomer')->willReturn($customer);
+    }
+
+    /**
+     * Sets up a successful country resolution and context mocks.
+     *
+     * $customerId = 0 (default) makes the action return false at the customer guard
+     * after country resolution, which avoids Address::save() DB calls.
+     * Use $customerId = 1 for tests that need to reach the checksum/address code.
+     */
+    private function setUpAvailableCountry(int $customerId = 0): void
+    {
+        $this->addressResolver->method('resolveCountryState')->willReturn(
+            new ResolvedCountryState(75, 0, 'FR')
+        );
+        $this->setUpShop(1);
+        $this->setUpCustomer($customerId);
     }
 
     private function setUpCartMock(): void
@@ -130,42 +133,31 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testReturnsFalseWhenCountryCodeIsNull(): void
     {
-        $shippingData = $this->makeShippingData('ORDER-1', null);
+        $this->addressResolver->expects($this->never())->method('resolveCountryState');
 
-        $this->country->expects($this->never())->method('getIdByIsoCode');
-
-        $result = $this->action->execute($shippingData);
+        $result = $this->action->execute($this->makeShippingData('ORDER-1', null));
 
         $this->assertFalse($result);
     }
 
     public function testReturnsFalseWhenCountryCodeIsEmpty(): void
     {
-        $shippingData = $this->makeShippingData('ORDER-1', '');
+        $this->addressResolver->expects($this->never())->method('resolveCountryState');
 
-        $this->country->expects($this->never())->method('getIdByIsoCode');
-
-        $result = $this->action->execute($shippingData);
+        $result = $this->action->execute($this->makeShippingData('ORDER-1', ''));
 
         $this->assertFalse($result);
     }
 
     // -------------------------------------------------------------------------
-    // Country not found — getIdByIsoCode returns 0 or false
+    // Country not found — resolver throws COUNTRY_NOT_FOUND
     // -------------------------------------------------------------------------
 
-    public function testReturnsFalseWhenCountryIdIsZero(): void
+    public function testReturnsFalseWhenCountryNotFound(): void
     {
-        $this->country->method('getIdByIsoCode')->willReturn(0);
-
-        $result = $this->action->execute($this->makeShippingData('ORDER-1', 'XX'));
-
-        $this->assertFalse($result);
-    }
-
-    public function testReturnsFalseWhenCountryIdIsFalse(): void
-    {
-        $this->country->method('getIdByIsoCode')->willReturn(false);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('Country not found', CountryResolutionException::COUNTRY_NOT_FOUND, 'XX'));
 
         $result = $this->action->execute($this->makeShippingData('ORDER-1', 'XX'));
 
@@ -186,7 +178,9 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testChecksumLookupIsNeverCalledWhenCountryNotFound(): void
     {
-        $this->country->method('getIdByIsoCode')->willReturn(0);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('Country not found', CountryResolutionException::COUNTRY_NOT_FOUND, 'XX'));
 
         $this->psCheckoutAddressRepository->expects($this->never())
             ->method('getAddressIdByChecksumAndCustomer');
@@ -196,7 +190,9 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testSaveAddressIsNeverCalledWhenCountryNotFound(): void
     {
-        $this->country->method('getIdByIsoCode')->willReturn(0);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('Country not found', CountryResolutionException::COUNTRY_NOT_FOUND, 'XX'));
 
         $this->psCheckoutAddressRepository->expects($this->never())
             ->method('saveAddress');
@@ -205,25 +201,16 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Country code ↔ ISO mapping
+    // Country code passthrough to resolver
     // -------------------------------------------------------------------------
-
-    public function testPassesPayPalC2IsoCodesToCountryAdapterAsCn(): void
-    {
-        $this->country->expects($this->once())
-            ->method('getIdByIsoCode')
-            ->with('CN')
-            ->willReturn(0);
-
-        $this->action->execute($this->makeShippingData('ORDER-1', 'C2'));
-    }
 
     /**
      * @return array<string, array{string}>
      */
-    public function providePassthroughIsoCodes(): array
+    public function providePayPalCountryCodes(): array
     {
         return [
+            'C2 (PayPal code for China)' => ['C2'],
             'US' => ['US'],
             'AR' => ['AR'],
             'GB' => ['GB'],
@@ -234,49 +221,39 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     /**
-     * @dataProvider providePassthroughIsoCodes
+     * @dataProvider providePayPalCountryCodes
      */
-    public function testPassesOtherIsoCodesUnchangedToCountryAdapter(string $isoCode): void
+    public function testPassesRawPayPalCountryCodeToResolver(string $paypalCode): void
     {
-        $this->country->expects($this->once())
-            ->method('getIdByIsoCode')
-            ->with($isoCode)
-            ->willReturn(0);
+        $this->setUpShop(1);
+        $this->addressResolver->expects($this->once())
+            ->method('resolveCountryState')
+            ->with($paypalCode, $this->anything(), $this->anything())
+            ->willThrowException(new CountryResolutionException('not found', CountryResolutionException::COUNTRY_NOT_FOUND, $paypalCode));
 
-        $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
+        $this->action->execute($this->makeShippingData('ORDER-1', $paypalCode));
     }
 
     // -------------------------------------------------------------------------
-    // Country not available — isAvailableForDelivery returns false
+    // Country not available — resolver throws COUNTRY_NOT_AVAILABLE
     // -------------------------------------------------------------------------
 
     public function testReturnsFalseWhenCountryIsNotAvailableForDelivery(): void
     {
-        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-
-        $this->country->method('getIdByIsoCode')->willReturn(75);
-        $this->country->method('isAvailableForDelivery')->willReturn(false);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('Not available', CountryResolutionException::COUNTRY_NOT_AVAILABLE, 'FR', 75));
 
         $result = $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
 
         $this->assertFalse($result);
     }
 
-    // -------------------------------------------------------------------------
-    // DNI required
-    // -------------------------------------------------------------------------
-
     public function testReturnsFalseWhenDniIsRequired(): void
     {
-        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-
-        $this->country->method('getIdByIsoCode')->willReturn(75);
-        $this->country->method('isAvailableForDelivery')->willReturn(true);
-        $this->country->method('isNeedDniByCountryId')->willReturn(true);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('DNI required', CountryResolutionException::COUNTRY_NOT_AVAILABLE, 'ES', 6));
 
         $this->psCheckoutAddressRepository->expects($this->never())
             ->method('getAddressIdByChecksumAndCustomer');
@@ -288,13 +265,9 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testSaveAddressIsNeverCalledWhenDniIsRequired(): void
     {
-        $shop = $this->getMockBuilder(\Shop::class)->disableOriginalConstructor()->getMock();
-        $shop->id = 1;
-        $this->context->method('getShop')->willReturn($shop);
-
-        $this->country->method('getIdByIsoCode')->willReturn(75);
-        $this->country->method('isAvailableForDelivery')->willReturn(true);
-        $this->country->method('isNeedDniByCountryId')->willReturn(true);
+        $this->setUpShop(1);
+        $this->addressResolver->method('resolveCountryState')
+            ->willThrowException(new CountryResolutionException('DNI required', CountryResolutionException::COUNTRY_NOT_AVAILABLE, 'ES', 6));
 
         $this->psCheckoutAddressRepository->expects($this->never())
             ->method('saveAddress');
@@ -303,12 +276,41 @@ class CreateOrUpdateAddressActionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // State passthrough to resolver
+    // -------------------------------------------------------------------------
+
+    public function testStateIsPassedToResolverAsAdminArea1(): void
+    {
+        $this->setUpShop(1);
+        $this->addressResolver->expects($this->once())
+            ->method('resolveCountryState')
+            ->with('US', 'NY', 1)
+            ->willReturn(new ResolvedCountryState(21, 5, 'US'));
+        $this->setUpCustomer(0);
+
+        $this->action->execute($this->makeShippingData('ORDER-1', 'US', 'John', 'Doe', '123 Main St', '', '10001', 'New York', 'NY'));
+    }
+
+    public function testNullStateIsPassedToResolverAsNull(): void
+    {
+        $this->setUpShop(1);
+        $this->addressResolver->expects($this->once())
+            ->method('resolveCountryState')
+            ->with('US', null, 1)
+            ->willReturn(new ResolvedCountryState(21, 0, 'US'));
+        $this->setUpCustomer(0);
+
+        $shippingData = new ExpressCheckoutShippingData('ORDER-1', 'John', 'Doe', '123 Main St', '', '10001', 'New York', null, 'US', '5551234567');
+        $this->action->execute($shippingData);
+    }
+
+    // -------------------------------------------------------------------------
     // Customer ID guard
     // -------------------------------------------------------------------------
 
     public function testReturnsFalseWhenCustomerIdIsZero(): void
     {
-        $this->setUpAvailableCountry(false, 0);
+        $this->setUpAvailableCountry(0);
 
         $this->psCheckoutAddressRepository->expects($this->never())
             ->method('getAddressIdByChecksumAndCustomer');
@@ -316,80 +318,6 @@ class CreateOrUpdateAddressActionTest extends TestCase
         $result = $this->action->execute($this->makeShippingData('ORDER-1', 'FR'));
 
         $this->assertFalse($result);
-    }
-
-    // -------------------------------------------------------------------------
-    // State resolution
-    //
-    // customer id = 0 (default) → action returns false at customer guard
-    // after the state resolution block, so no Address DB calls are needed.
-    // -------------------------------------------------------------------------
-
-    /**
-     * @return array<string, array{string}>
-     */
-    public function provideIsoCodeCountriesWithStates(): array
-    {
-        return [
-            'US — ISO code states' => ['US'],
-            'AR — ISO code states' => ['AR'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideIsoCodeCountriesWithStates
-     */
-    public function testStateResolutionUsesIsoCodeLookupForIsoCodeCountries(string $isoCode): void
-    {
-        $this->setUpAvailableCountry(true);
-
-        $this->countryRepository->expects($this->once())
-            ->method('getStateIdByIsoCode');
-        $this->countryRepository->expects($this->never())
-            ->method('getStateId');
-
-        $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
-    }
-
-    /**
-     * @return array<string, array{string}>
-     */
-    public function provideCountriesWithoutStates(): array
-    {
-        return [
-            'GB — no states' => ['GB'],
-            'FR — no states' => ['FR'],
-            'ES — no states' => ['ES'],
-            'IT — no states' => ['IT'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideCountriesWithoutStates
-     */
-    public function testStateResolutionIsSkippedForCountriesWithoutStates(string $isoCode): void
-    {
-        $this->setUpAvailableCountry(false);
-
-        $this->countryRepository->expects($this->never())
-            ->method('getStateId');
-        $this->countryRepository->expects($this->never())
-            ->method('getStateIdByIsoCode');
-
-        $this->action->execute($this->makeShippingData('ORDER-1', $isoCode));
-    }
-
-    public function testStateResolutionIsSkippedWhenStateIsNull(): void
-    {
-        $this->setUpAvailableCountry(true);
-
-        $this->countryRepository->expects($this->never())
-            ->method('getStateId');
-        $this->countryRepository->expects($this->never())
-            ->method('getStateIdByIsoCode');
-
-        $shippingData = new ExpressCheckoutShippingData('ORDER-1', 'John', 'Doe', '123 Main St', '', '10001', 'New York', null, 'US', '5551234567');
-        $this->action->execute($shippingData);
     }
 
     // -------------------------------------------------------------------------
@@ -402,7 +330,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testSaveAddressIsNeverCalledWhenChecksumMatchFound(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
         $this->setUpCartMock();
 
         $this->psCheckoutAddressRepository
@@ -417,7 +345,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testChecksumLookupReceivesCustomerIdAndMd5String(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
         $this->setUpCartMock();
 
         $this->psCheckoutAddressRepository
@@ -446,7 +374,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
                 return 42;
             });
 
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
         $this->setUpCartMock();
 
         $this->action->execute($this->makeShippingData('ORDER-A', 'FR', 'John', 'Doe', '1 Rue de la Paix'));
@@ -468,7 +396,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
                 return 42;
             });
 
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
         $this->setUpCartMock();
 
         $this->action->execute($this->makeShippingData('ORDER-X', 'FR'));
@@ -484,16 +412,14 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testBothShippingPathsReachCountryLookup(): void
     {
-        $fromShippingUnit = $this->makeShippingData('ORDER-A', 'FR');
-        $fromWalletFallback = $this->makeShippingData('ORDER-B', 'FR');
+        $this->setUpShop(1);
+        $this->addressResolver->expects($this->exactly(2))
+            ->method('resolveCountryState')
+            ->with('FR', $this->anything(), $this->anything())
+            ->willThrowException(new CountryResolutionException('not found', CountryResolutionException::COUNTRY_NOT_FOUND, 'FR'));
 
-        $this->country->expects($this->exactly(2))
-            ->method('getIdByIsoCode')
-            ->with('FR')
-            ->willReturn(0);
-
-        $this->action->execute($fromShippingUnit);
-        $this->action->execute($fromWalletFallback);
+        $this->action->execute($this->makeShippingData('ORDER-A', 'FR'));
+        $this->action->execute($this->makeShippingData('ORDER-B', 'FR'));
     }
 
     // -------------------------------------------------------------------------
@@ -506,7 +432,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testMigratesDeliveryOptionFromOldAddressToNewAddressOnAddressChange(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
 
         $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->id_address_delivery = 500;
@@ -527,7 +453,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testDoesNotMigrateDeliveryOptionWhenAddressUnchanged(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
 
         $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->id_address_delivery = 42;
@@ -547,7 +473,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testDoesNotMigrateDeliveryOptionWhenOldAddressIsZero(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
 
         $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->id_address_delivery = 0;
@@ -570,7 +496,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
         // delivery_option key (999) does not match id_address_delivery (500): this happens when
         // ps_cart_product rows kept the original customer address while id_address_delivery was set
         // to the temp address. The fallback picks any key that is not the new real address (42).
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
 
         $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->id_address_delivery = 500;
@@ -591,7 +517,7 @@ class CreateOrUpdateAddressActionTest extends TestCase
 
     public function testDoesNotMigrateDeliveryOptionWhenOnlyEntryIsAlreadyKeyedByNewAddress(): void
     {
-        $this->setUpAvailableCountry(false, 1);
+        $this->setUpAvailableCountry(1);
 
         $cart = $this->getMockBuilder(\Cart::class)->disableOriginalConstructor()->getMock();
         $cart->id_address_delivery = 500;
