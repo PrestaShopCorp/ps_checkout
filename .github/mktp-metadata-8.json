@@ -4,5 +4,6 @@
     "display_name": "PrestaShop Checkout",
     "channel": "stable",
     "product_type": "module",
-    "compatible_from": "8.0.0"
+    "compatible_from": "8.0.0",
+    "compatible_to": "8.2.7"
 }
