@@ -1,0 +1,76 @@
+name: Package Module
+description: >
+  Set up PHP, build, and package a ps_checkout module version into a ZIP.
+  The calling workflow must write the correct .env file to the workspace root
+  before invoking this action — it will be embedded in the ZIP.
+
+inputs:
+  module_dir:
+    description: 'Module directory (ps17, ps8, ps9)'
+    required: true
+  module_suffix:
+    description: 'PS major version suffix (7, 8, 9)'
+    required: true
+  php_version:
+    description: 'PHP version for composer install'
+    required: true
+  release_filename:
+    description: 'Output ZIP filename (e.g. ps_checkout-v8.5.5.0.zip)'
+    required: true
+
+outputs:
+  zip_path:
+    description: 'Absolute path to the generated ZIP'
+    value: ${{ steps.package.outputs.zip_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php_version }}
+
+    - name: Prepare and package module
+      id: package
+      shell: bash
+      run: |
+        MODULE_NAME="${{ inputs.module_dir }}"
+        FINAL_NAME=ps_checkout
+
+        if [ ! -f .env ]; then
+          echo "::error::.env is missing. The calling workflow must write the correct environment .env before invoking this action."
+          exit 1
+        fi
+
+        cd "$MODULE_NAME"
+        composer install --no-dev --prefer-dist --optimize-autoloader
+        cd ..
+
+        mkdir -p "$MODULE_NAME/vendor/invertus"
+        cp -r api core infrastructure presentation utility "$MODULE_NAME/vendor/invertus/"
+
+        rm -rf "$MODULE_NAME/.php-cs-fixer.dist.php" \
+               "$MODULE_NAME/.php-cs-fixer.cache" \
+               "$MODULE_NAME/tests" \
+               "$MODULE_NAME/vendor/tests" \
+               "$MODULE_NAME/phpstan.neon" \
+               "$MODULE_NAME/phpstan-baseline.neon"
+
+        find "$MODULE_NAME" -type f -name "monorepo.json" -delete
+        for dir in api core infrastructure presentation utility; do
+          rm -rf "$MODULE_NAME/vendor/invertus/$dir/tests"
+        done
+
+        mkdir -p "tmp_package/$FINAL_NAME"
+        cp -r "$MODULE_NAME"/* "tmp_package/$FINAL_NAME/"
+        cp "$MODULE_NAME/.htaccess" "tmp_package/$FINAL_NAME/" 2>/dev/null || true
+        cp -r "$MODULE_NAME/.well-known" "tmp_package/$FINAL_NAME/" 2>/dev/null || true
+        cp .env "tmp_package/$FINAL_NAME/.env"
+
+        cd tmp_package
+        zip -r "../${{ inputs.release_filename }}" "$FINAL_NAME"
+        cd ..
+        rm -rf tmp_package
+
+        echo "zip_path=$PWD/${{ inputs.release_filename }}" >> "$GITHUB_OUTPUT"
