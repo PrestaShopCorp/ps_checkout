@@ -55,9 +55,10 @@ jobs:
 
       - name: Determine Environment
         id: environment
+        env:
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
         run: |
           # Get all labels as a JSON array and extract names
-          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
           echo "Labels JSON: $LABELS_JSON"
           
           # Extract label names using jq
