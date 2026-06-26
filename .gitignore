@@ -1,4 +1,5 @@
 .env
+.env.*
 .idea
 .gitmodules
 prestashop
@@ -15,3 +16,5 @@ vendor
 docker-compose.local.yml
 composer2.2.phar
 .claude.local.md
+views
+.history
