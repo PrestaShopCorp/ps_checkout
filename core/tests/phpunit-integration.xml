@@ -3,6 +3,7 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          bootstrap="bootstrap-integration.php"
          colors="true"
+         stderr="true"
          executionOrder="random"
          beStrictAboutChangesToGlobalState="true"
          beStrictAboutResourceUsageDuringSmallTests="true"

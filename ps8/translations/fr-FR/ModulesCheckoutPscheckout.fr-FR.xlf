@@ -2629,6 +2629,21 @@
         <target>Le paiement ne peut pas être traité pour le moment. Veuillez contacter notre service client.</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="a56b2a00cf5a5d064ba5cda91b756da5">
+        <source>PayPal payments are currently blocked.</source>
+        <target>Les paiements PayPal sont actuellement bloqués.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b4d2f434d0f642613efa63e50f079ffd">
+        <source>This shop is not registered in the PrestaShop Checkout services. PayPal payments cannot be processed until the issue is resolved. Please check your module configuration and re-onboard if necessary.</source>
+        <target>Cette boutique n'est pas enregistrée dans les services PrestaShop Checkout. Les paiements PayPal ne peuvent pas être traités jusqu'à ce que le problème soit résolu. Veuillez vérifier la configuration de votre module et vous réintégrer si nécessaire.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d3d2e617335f08df83599665eef8a418">
+        <source>Close</source>
+        <target>Fermer</target>
+        <note>Line: </note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

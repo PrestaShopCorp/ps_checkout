@@ -175,4 +175,6 @@ class PsCheckoutException extends \Exception
     const CART_CUSTOMER_EMAIL_INVALID = 80;
 
     const CART_CUSTOMER_PHONE_INVALID = 81;
+
+    const SHOP_NOT_REGISTERED_IN_MDU = 82;
 }

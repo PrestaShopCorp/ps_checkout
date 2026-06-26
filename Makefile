@@ -49,7 +49,11 @@ php-unit-presentation:
 
 unit-test: php-unit-api php-unit-utility php-unit-core php-unit-presentation
 
-php-integration-core:
+create-test-db:
+	docker exec -i $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} bash -c "mysql -uroot -pprestashop -e \"DROP DATABASE IF EXISTS test_prestashop; CREATE DATABASE test_prestashop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\""
+	docker exec -i $${MODULE_VERSION}-ps-mysql-$${PS_VERSION_TAG} bash -c "mysqldump -uroot -pprestashop prestashop | mysql -uroot -pprestashop test_prestashop"
+
+php-integration-core: create-test-db
 	docker exec -i $${MODULE_VERSION}-ps-prestashop-$${PS_VERSION_TAG} bash -c "php modules/ps_checkout/vendor/bin/phpunit --configuration=modules/ps_checkout/vendor/invertus/core/tests/phpunit-integration.xml --bootstrap=modules/ps_checkout/vendor/invertus/core/tests/bootstrap-integration.php"
 
 integration-test: php-integration-core
