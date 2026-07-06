@@ -47,19 +47,15 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
             $response = $exception->getResponse();
             $decodedBody = json_decode((string) $response->getBody(), true);
 
-            if ($response->getStatusCode() === 422 && is_array($decodedBody)) {
-                $errorName = isset($decodedBody['name']) && is_string($decodedBody['name']) ? $decodedBody['name'] : '';
-
-                if ($errorName === 'SHOP_NOT_REGISTERED_IN_MDU') {
-                    throw new PsCheckoutException(
-                        'Shop is not registered in the PrestaShop Checkout services.',
-                        PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU,
-                        $exception
-                    );
-                }
-            }
-
             $message = $this->extractMessage(is_array($decodedBody) ? $decodedBody : []);
+
+            if ($message === 'SHOP_NOT_REGISTERED_IN_MDU') {
+                throw new PsCheckoutException(
+                    'Shop is not registered in the PrestaShop Checkout services.',
+                    PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU,
+                    $exception
+                );
+            }
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);
