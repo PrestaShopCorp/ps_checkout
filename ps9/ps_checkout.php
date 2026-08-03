@@ -366,7 +366,7 @@ class Ps_Checkout extends PaymentModule
                 if (Module::isEnabled('ps_onepagecheckout')) {
                     /** @var Configuration $configuration */
                     $configuration = $this->getService(Configuration::class);
-                    if ($configuration->getBoolean('PS_ONEPAGE_CHECKOUT_ENABLED')) {
+                    if ($configuration->getBoolean('PS_ONE_PAGE_CHECKOUT_ENABLED')) {
                         $foSdkUrl = str_replace('/frontoffice', '/frontoffice-v2', $foSdkUrl);
                     }
                 }
