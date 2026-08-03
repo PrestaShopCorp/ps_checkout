@@ -362,6 +362,14 @@ class Ps_Checkout extends PaymentModule
         if (substr($foSdkUrl, -3) !== '.js') {
             $foSdkVersion = $env->getEnv('CHECKOUT_FO_SDK_VERSION');
 
+            if (Module::isEnabled('ps_onepagecheckout')) {
+                /** @var Configuration $configuration */
+                $configuration = $this->getService(Configuration::class);
+                if ($configuration->getBoolean('PS_ONEPAGE_CHECKOUT_ENABLED')) {
+                    $foSdkUrl = str_replace('/frontoffice', '/frontoffice-v2', $foSdkUrl);
+                }
+            }
+
             $foSdkUrl = $foSdkUrl . $foSdkVersion . PayPalSdkConfiguration::SDK_FO_ENDPOINT;
         }
 
