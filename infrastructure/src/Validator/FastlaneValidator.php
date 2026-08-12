@@ -59,14 +59,18 @@ class FastlaneValidator implements FastlaneValidatorInterface
     {
         $controller = $this->tools->getValue('controller');
 
-        if (empty($controller) && isset($this->context->getController()->php_self)) {
-            $controller = $this->context->getController()->php_self;
+        $contextController = $this->context->getController();
+
+        if (empty($controller) && $contextController instanceof \Controller && !empty($contextController->php_self)) {
+            $controller = $contextController->php_self;
         }
+
+        $customer = $this->context->getCustomer();
 
         if (
             $this->configuration->getBoolean(PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_ENABLED) &&
             $controller === 'order' &&
-            !$this->context->getCustomer()->isLogged()
+            (!$customer || !$customer->isLogged())
         ) {
             return true;
         }

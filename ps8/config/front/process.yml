@@ -154,8 +154,6 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Address'
-      - '@PsCheckout\Infrastructure\Adapter\Country'
-      - '@PsCheckout\Infrastructure\Adapter\State'
       - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\Customer\Action\ExpressCheckoutAction:

@@ -190,7 +190,7 @@ class PayPalSdkConfiguration
 
         if ($this->fastlaneValidator->shouldLoadFastlane()) {
             try {
-                $merchantId = $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
+                $merchantId = (string) $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
 
                 $clientToken = $this->oAuthService->getClientToken($merchantId, $this->tools->getShopDomain());
 

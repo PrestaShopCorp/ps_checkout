@@ -137,7 +137,7 @@ class SaveFastlaneAddressAction implements SaveFastlaneAddressActionInterface
 
             $address->add();
 
-            $this->context->setContextCartAddresses($address->id);
+            $this->context->setContextCartAddresses((int) $address->id);
         } catch (Exception $exception) {
             $this->logger->error(
                 sprintf(

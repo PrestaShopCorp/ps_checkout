@@ -25,8 +25,6 @@ use Country;
 use Exception;
 use PsCheckout\Infrastructure\Adapter\AddressInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
-use PsCheckout\Infrastructure\Adapter\CountryInterface;
-use PsCheckout\Infrastructure\Adapter\StateInterface;
 use Psr\Log\LoggerInterface;
 use State;
 
@@ -43,16 +41,6 @@ class GetBillingAddressAction implements GetBillingAddressActionInterface
     private $address;
 
     /**
-     * @var CountryInterface
-     */
-    private $country;
-
-    /**
-     * @var StateInterface
-     */
-    private $state;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -60,14 +48,10 @@ class GetBillingAddressAction implements GetBillingAddressActionInterface
     public function __construct(
         ContextInterface $context,
         AddressInterface $address,
-        CountryInterface $country,
-        StateInterface $state,
         LoggerInterface $logger
     ) {
         $this->context = $context;
         $this->address = $address;
-        $this->country = $country;
-        $this->state = $state;
         $this->logger = $logger;
     }
 

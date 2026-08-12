@@ -25,7 +25,7 @@ interface GetBillingAddressActionInterface
     /**
      * Get billing address formatted for PayPal Fastlane API
      *
-     * @return array
+     * @return array{name: array{firstName: string, lastName: string, fullName: string}, address: array{addressLine1: string, addressLine2: string, adminArea2: string, adminArea1: string, postalCode: string, countryCode: string}}
      */
     public function execute(): array;
 }

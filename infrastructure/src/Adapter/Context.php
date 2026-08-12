@@ -257,16 +257,30 @@ class Context implements ContextInterface
      */
     public function setContextCartAddresses(int $addressId)
     {
-        $this->context->cart->id_address_delivery = $addressId;
-        $this->context->cart->id_address_invoice = $addressId;
+        $cart = $this->context->cart;
 
-        $products = $this->context->cart->getProducts();
-
-        foreach ($products as $product) {
-            $this->context->cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $addressId);
+        if ($cart === null) {
+            return;
         }
 
-        return $this->context->cart->save();
+        $cart->id_address_delivery = $addressId;
+        $cart->id_address_invoice = $addressId;
+
+        $products = $cart->getProducts();
+
+        foreach ($products as $product) {
+            if (!is_array($product)) {
+                continue;
+            }
+
+            $idProduct = is_numeric($product['id_product'] ?? null) ? (int) $product['id_product'] : 0;
+            $idProductAttribute = is_numeric($product['id_product_attribute'] ?? null) ? (int) $product['id_product_attribute'] : 0;
+            $idAddressDelivery = is_numeric($product['id_address_delivery'] ?? null) ? (int) $product['id_address_delivery'] : 0;
+
+            $cart->setProductAddressDelivery($idProduct, $idProductAttribute, $idAddressDelivery, $addressId);
+        }
+
+        $cart->save();
     }
 
     /**
@@ -275,6 +289,11 @@ class Context implements ContextInterface
     public function updateCartChecksum()
     {
         $cart = $this->context->cart;
+
+        if ($cart === null) {
+            return;
+        }
+
         $cartChecksum = new CartChecksum(new AddressChecksum());
 
         $selectQuery = new \DbQuery();
@@ -284,7 +303,7 @@ class Context implements ContextInterface
             ->where('id_cart = ' . (int) $cart->id);
         $rawData = \Db::getInstance()->getValue($selectQuery);
 
-        $data = json_decode($rawData ?? '', true);
+        $data = json_decode(is_string($rawData) ? $rawData : '', true);
 
         if (!is_array($data)) {
             $data = [];

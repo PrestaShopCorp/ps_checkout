@@ -67,9 +67,9 @@ class OAuthService implements OAuthServiceInterface
                 throw new Exception('Unexpected status code: ' . $response->getStatusCode());
             }
 
-            $data = json_decode($response->getBody(), true);
+            $data = json_decode((string) $response->getBody(), true);
 
-            if (empty($data['access_token'])) {
+            if (!is_array($data) || empty($data['access_token']) || !is_string($data['access_token'])) {
                 throw new Exception('Failed to get PayPal client token from response.');
             }
 

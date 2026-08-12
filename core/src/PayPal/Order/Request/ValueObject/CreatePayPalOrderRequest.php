@@ -112,7 +112,7 @@ class CreatePayPalOrderRequest
         $this->metaDataId = isset($request['metadataId']) ? (string) $request['metadataId'] : null;
         $this->birthDate = isset($request['birthDate']) ? (string) $request['birthDate'] : null;
         $this->phone = isset($request['phone']) ? (string) $request['phone'] : null;
-        $this->singleUseToken = isset($request['paymentToken']) ? (string) $request['paymentToken'] : '';
+        $this->singleUseToken = isset($request['paymentToken']) && is_string($request['paymentToken']) ? $request['paymentToken'] : '';
     }
 
     /**

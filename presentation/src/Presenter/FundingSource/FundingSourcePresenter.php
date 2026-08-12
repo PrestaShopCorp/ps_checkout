@@ -106,7 +106,7 @@ class FundingSourcePresenter implements FundingSourcePresenterInterface
         }
 
         foreach ($fundingSourceData as $fundingSource) {
-            if ($fundingSource['name'] === 'card' && $this->fastlaneValidator->shouldLoadFastlane()) {
+            if (is_array($fundingSource) && ($fundingSource['name'] ?? null) === 'card' && $this->fastlaneValidator->shouldLoadFastlane()) {
                 continue;
             }
 

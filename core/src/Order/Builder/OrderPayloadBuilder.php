@@ -244,7 +244,7 @@ class OrderPayloadBuilder implements OrderPayloadBuilderInterface
     /**
      * Builds the card payment source payload element.
      *
-     * @return array the card payment source payload
+     * @return array<string, mixed> the card payment source payload
      */
     private function buildCardPaymentSource(): array
     {

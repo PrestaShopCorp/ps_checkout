@@ -49,11 +49,13 @@ class Address implements AddressInterface
         }
 
         foreach ($ids as $row) {
-            if (!$row['id_address']) {
+            $addressId = is_array($row) && is_numeric($row['id_address'] ?? null) ? (int) $row['id_address'] : 0;
+
+            if (!$addressId) {
                 continue;
             }
 
-            $address = new PrestaShopAddress($row['id_address']);
+            $address = new PrestaShopAddress($addressId);
 
             if (\Validate::isLoadedObject($address)) {
                 $address->delete();

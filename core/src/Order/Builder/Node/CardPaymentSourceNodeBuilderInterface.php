@@ -23,7 +23,7 @@ namespace PsCheckout\Core\Order\Builder\Node;
 interface CardPaymentSourceNodeBuilderInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function build(): array;
 

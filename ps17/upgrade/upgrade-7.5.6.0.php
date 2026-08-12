@@ -17,16 +17,27 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-namespace PsCheckout\Infrastructure\Action;
-
-interface SaveFastlaneAddressActionInterface
+/**
+ * Update main function for module version 7.5.6.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_7_5_6_0($module)
 {
-    /**
-     * @param int $customerId
-     * @param array{name?: array{firstName?: string, lastName?: string}, address?: array{addressLine1?: string, addressLine2?: string, postalCode?: string, adminArea1?: string, adminArea2?: string, countryCode?: string}, phoneNumber?: array{countryCode?: string, nationalNumber?: string}, companyName?: string} $shippingAddress
-     *
-     * @return void
-     */
-    public function execute(int $customerId, array $shippingAddress);
+    try {
+        $module->registerHook('displayHeader');
+        $module->registerHook('actionCustomerAccountAdd');
+
+        return true;
+    } catch (Throwable $exception) {
+        PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
+
+        return false;
+    }
 }

@@ -147,9 +147,12 @@ class PayPalModule implements PresenterInterface
         }
 
 
+        $language = $this->context->getLanguage();
+        $languageIsoCode = $language instanceof \Language ? (string) $language->iso_code : '';
+
         if ($this->fastlaneValidator->shouldLoadFastlane()) {
             $shouldLoadFastlane = true;
-            $fastlaneLocale = strtoupper($this->context->getLanguage()->iso_code === "en" ? "us" : $this->context->getLanguage()->iso_code);
+            $fastlaneLocale = strtoupper($languageIsoCode === 'en' ? 'us' : $languageIsoCode);
         } else {
             $shouldLoadFastlane = false;
             $fastlaneLocale = '';

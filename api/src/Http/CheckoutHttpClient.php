@@ -106,7 +106,7 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
                 'POST',
                 self::SUFFIX_IDENTITY . '/oauth2/domain-token',
                 [],
-                json_encode($payload)
+                json_encode($payload) ?: '{}'
             )
         );
     }
