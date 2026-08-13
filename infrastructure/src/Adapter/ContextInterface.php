@@ -96,8 +96,6 @@ interface ContextInterface
      */
     public function resetContextCartAddresses();
 
-    public function setPayPalEmail(string $email): void;
-
     /**
      * Returns the current cart order total (incl. taxes), or null when no cart is loaded.
      *
@@ -115,4 +113,18 @@ interface ContextInterface
      * @return void
      */
     public function loadCartForWebhook(\Cart $cart): void;
+
+    /**
+     * @param int $addressId
+     *
+     * @return void
+     */
+    public function setContextCartAddresses(int $addressId);
+
+    /**
+     * @return void
+     */
+    public function updateCartChecksum();
+
+    public function setPayPalEmail(string $email): void;
 }

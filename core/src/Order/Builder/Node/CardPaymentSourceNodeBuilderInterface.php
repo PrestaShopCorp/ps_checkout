@@ -23,7 +23,7 @@ namespace PsCheckout\Core\Order\Builder\Node;
 interface CardPaymentSourceNodeBuilderInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function build(): array;
 
@@ -54,4 +54,11 @@ interface CardPaymentSourceNodeBuilderInterface
      * @return self
      */
     public function setSavePaymentMethod(bool $savePaymentMethod);
+
+    /**
+     * @param string $singleUseToken
+     *
+     * @return self
+     */
+    public function setSingleUseToken(string $singleUseToken);
 }

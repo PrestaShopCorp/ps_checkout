@@ -126,7 +126,7 @@ class Ps_CheckoutApplepayModuleFrontController extends AbstractFrontController
             header('Content-Type: text/plain', true, 200);
         }
 
-        echo file_get_contents($associationFile);
+        echo Tools::file_get_contents($associationFile);
 
         exit;
     }

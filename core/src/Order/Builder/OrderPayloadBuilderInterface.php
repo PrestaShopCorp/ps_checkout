@@ -96,4 +96,9 @@ interface OrderPayloadBuilderInterface
      * @param ?string $phone
      */
     public function setCustomerPhone($phone): OrderPayloadBuilder;
+
+    /**
+     * @param string $singleUseToken
+     */
+    public function setSingleUseToken(string $singleUseToken): OrderPayloadBuilder;
 }

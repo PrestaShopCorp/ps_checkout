@@ -35,7 +35,9 @@ use PsCheckout\Core\PayPal\ShippingTracking\Action\ProcessExternalShipmentAction
 use PsCheckout\Core\Settings\Configuration\DefaultConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalCodeConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalFastlaneConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration;
+use PsCheckout\Infrastructure\Action\SaveFastlaneAddressAction;
 use PsCheckout\Infrastructure\Adapter\Configuration;
 use PsCheckout\Infrastructure\Adapter\Link;
 use PsCheckout\Infrastructure\Adapter\ShopContext;
@@ -46,6 +48,7 @@ use PsCheckout\Infrastructure\Repository\CountryRepository;
 use PsCheckout\Infrastructure\Repository\CurrencyRepository;
 use PsCheckout\Infrastructure\Repository\FundingSourceRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
+use PsCheckout\Infrastructure\Validator\FastlaneValidator;
 use PsCheckout\Infrastructure\Validator\FrontControllerValidator;
 use PsCheckout\Infrastructure\Validator\MerchantValidator;
 use PsCheckout\Module\Presentation\Translator;
@@ -89,7 +92,9 @@ class Ps_Checkout extends PaymentModule
         'actionObjectOrderCarrierUpdateAfter',
         'actionGetOrderShipments',
         'actionOrderStatusPostUpdate',
+        'actionCustomerAccountAdd',
         'paymentOptions',
+        'displayHeader',
         'displayPaymentTop',
         'displayPaymentByBinaries',
         'displayOrderConfirmation',
@@ -97,6 +102,7 @@ class Ps_Checkout extends PaymentModule
         'displayOrderDetail',
         'displayInvoiceLegalFreeText',
         'displayAdminAfterHeader',
+        'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'displayAdminOrderLeft',
         'moduleRoutes',
@@ -341,7 +347,7 @@ class Ps_Checkout extends PaymentModule
 
         if ($frontControllerValidator->shouldLoadFrontCss($controller)) {
             $this->context->controller->registerStylesheet(
-                'ps-checkout-css-paymentOptions',
+                $this->name . '-css-paymentOptions',
                 $this->getPathUri() . 'views/css/payments.css?version=' . $this->version,
                 [
                     'server' => 'remote',
@@ -359,6 +365,7 @@ class Ps_Checkout extends PaymentModule
         Media::addJsDef($settingsPresenter->present());
         Media::addJsDef([
             $this->name . 'RenderPaymentMethodLogos' => $frontControllerValidator->shouldDisplayFundingLogo($controller),
+            $this->name . 'FastlaneEmailInfoTemplate' => $this->display(__FILE__, 'views/templates/front/fastlaneEmailInfo.tpl'),
         ]);
         /** @var Env $env */
         $env = $this->getService(Env::class);
@@ -379,6 +386,29 @@ class Ps_Checkout extends PaymentModule
                 'server' => 'remote',
             ]
         );
+
+        /** @var FastlaneValidator $fastlaneValidator */
+        $fastlaneValidator = $this->getService(FastlaneValidator::class);
+
+        if ($fastlaneValidator->shouldLoadFastlane()) {
+            $this->context->controller->registerStylesheet(
+                $this->name . '-css-fastlane',
+                $this->getPathUri() . 'views/css/fastlane.css?version=' . $this->version,
+                [
+                    'server' => 'remote',
+                ]
+            );
+
+            if ($this->context->cookie->__get(PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SAVED_SHIPPING_ADDRESS . $this->context->customer->email)) {
+                $this->context->controller->registerStylesheet(
+                    $this->name . '-css-fastlane-address',
+                    $this->getPathUri() . 'views/css/fastlane-address.css?version=' . $this->version,
+                    [
+                        'server' => 'remote',
+                    ]
+                );
+            }
+        }
     }
 
     public function hookActionObjectProductInCartDeleteAfter()
@@ -680,12 +710,34 @@ class Ps_Checkout extends PaymentModule
             } elseif ($fundingSource->getName() === 'paypal' && $vaultedPayPal) {
                 $this->context->smarty->assign($vaultedPayPal);
                 $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/vaultTokenForm.tpl'));
+            } elseif ($fundingSource->getName() === 'fastlane') {
+                $paymentOption->setForm($this->context->smarty->fetch('module:' . $this->name . '/views/templates/hook/partials/fastlaneCard.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
         }
 
         return $paymentOptions;
+    }
+
+    /**
+     * Load assets in FO <head>
+     *
+     * @return string
+     */
+    public function hookDisplayHeader()
+    {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+        /** @var FastlaneValidator $fastlaneValidator */
+        $fastlaneValidator = $this->getService(FastlaneValidator::class);
+
+        if ($fastlaneValidator->shouldLoadFastlane()) {
+            return $this->display(__FILE__, 'views/templates/hook/displayHeader.tpl');
+        }
+
+        return '';
     }
 
     /**
@@ -1298,10 +1350,43 @@ class Ps_Checkout extends PaymentModule
                 $logger = $this->getService(LoggerInterface::class);
                 $logger->error('Failed to process external shipment data', [
                     'order_id' => $order->id ?? 'unknown',
-                    'exception' => $exception->getMessage()
+                    'exception' => $exception->getMessage(),
                 ]);
             }
         }
+    }
+
+    public function hookActionCustomerAccountAdd($params)
+    {
+        if (!$this->merchantIsValid()) {
+            return;
+        }
+
+        /** @var Customer $customer */
+        $customer = $params['newCustomer'] ?? null;
+
+        /** @var FastlaneValidator $fastlaneValidator */
+        $fastlaneValidator = $this->getService(FastlaneValidator::class);
+
+        if (!$fastlaneValidator->shouldLoadFastlane() || !Validate::isLoadedObject($customer)) {
+            return;
+        }
+
+        $cookieKey = PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_SHIPPING_ADDRESS . $customer->email;
+
+        $fastlaneShippingAddress = $this->context->cookie->__get($cookieKey) ?? null;
+
+        $this->context->cookie->__unset($cookieKey);
+
+        if (!$fastlaneShippingAddress) {
+            return;
+        }
+
+        $shippingAddress = json_decode($fastlaneShippingAddress, true);
+
+        /** @var SaveFastlaneAddressAction $saveFastlaneAddressAction */
+        $saveFastlaneAddressAction = $this->getService(SaveFastlaneAddressAction::class);
+        $saveFastlaneAddressAction->execute($customer->id, $shippingAddress);
     }
 
     /**
@@ -1367,7 +1452,7 @@ class Ps_Checkout extends PaymentModule
             $logger->error('Failed to process tracking number update', [
                 'order_id' => $order->id ?? 'unknown',
                 'carrier_id' => $carrier->id ?? 'unknown',
-                'exception' => $exception->getMessage()
+                'exception' => $exception->getMessage(),
             ]);
         }
     }

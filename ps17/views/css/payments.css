@@ -549,7 +549,9 @@
 }
 
 #ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
-#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader,
+#ps_checkout-fastlane-card-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-fastlane-card-form:not(.loading) > #ps_checkout-card-fields-form-loader {
   display: none;
 }
 

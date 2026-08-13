@@ -131,5 +131,7 @@ services:
       - '@PsCheckout\Core\Util\CountryResolver'
       - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
+      - '@PsCheckout\Infrastructure\Validator\FastlaneValidator'
+      - '@PsCheckout\Infrastructure\Adapter\Tools'
       - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'

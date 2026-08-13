@@ -33,6 +33,7 @@ use PsCheckout\Core\PayPal\Refund\ValueObject\PayPalRefund;
 use PsCheckout\Core\Settings\Configuration\LoggerConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalFastlaneConfiguration;
 use PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration;
 use PsCheckout\Core\Webhook\Service\WebhookSecretToken;
 use PsCheckout\Infrastructure\Action\SaveBatchConfigurationActionInterface;
@@ -634,6 +635,13 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
         $this->ajaxRender(json_encode(true));
     }
 
+    public function ajaxProcessUpdateFastlaneGuestCheckout()
+    {
+        $this->setConfiguration(PayPalFastlaneConfiguration::PS_CHECKOUT_FASTLANE_ENABLED, (int) Tools::getValue('fastlane_status'));
+
+        $this->ajaxRender(json_encode(true));
+    }
+
     public function ajaxProcessFetchOrder()
     {
         /** @var Translator $translator **/
@@ -752,7 +760,7 @@ class AdminAjaxPrestashopCheckoutController extends AbstractAdminController
 
     public function ajaxProcessRefundOrder()
     {
-        /** @var Translator $translator **/
+        /** @var Translator $translator */
         $translator = $this->module->getService(Translator::class);
 
         $id_order = (int) Tools::getValue('id_order');

@@ -24,11 +24,11 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 3.0.0
  *
- * @param Ps_checkout $module
+ * @param Ps_Checkout $module
  *
  * @return bool
  */
-function upgrade_module_3_0_0(Ps_checkout $module)
+function upgrade_module_3_0_0(Ps_Checkout $module)
 {
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();

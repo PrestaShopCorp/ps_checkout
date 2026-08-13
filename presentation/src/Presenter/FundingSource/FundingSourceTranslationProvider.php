@@ -60,6 +60,7 @@ class FundingSourceTranslationProvider implements FundingSourceTranslationProvid
 
         switch ($fundingSourceName) {
             case 'card':
+            case 'fastlane':
                 return $this->translator->trans('Pay by Card - Secure payments');
             case 'paypal':
                 return $this->translator->trans('Pay with a PayPal account');
@@ -87,6 +88,7 @@ class FundingSourceTranslationProvider implements FundingSourceTranslationProvid
     {
         $this->fundingSourceNames = [
             'card' => $this->translator->trans('Card'),
+            'fastlane' => $this->translator->trans('Card'),
             'paypal' => 'PayPal',
             'venmo' => 'Venmo',
             'itau' => 'Itau',

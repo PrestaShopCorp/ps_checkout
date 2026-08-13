@@ -20,6 +20,8 @@
 
 namespace PsCheckout\Infrastructure\Adapter;
 
+use AddressChecksum;
+use CartChecksum;
 use Context as PrestashopContext;
 
 class Context implements ContextInterface
@@ -248,5 +250,73 @@ class Context implements ContextInterface
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContextCartAddresses(int $addressId)
+    {
+        $cart = $this->context->cart;
+
+        if ($cart === null) {
+            return;
+        }
+
+        $cart->id_address_delivery = $addressId;
+        $cart->id_address_invoice = $addressId;
+
+        $products = $cart->getProducts();
+
+        foreach ($products as $product) {
+            if (!is_array($product)) {
+                continue;
+            }
+
+            $idProduct = is_numeric($product['id_product'] ?? null) ? (int) $product['id_product'] : 0;
+            $idProductAttribute = is_numeric($product['id_product_attribute'] ?? null) ? (int) $product['id_product_attribute'] : 0;
+            $idAddressDelivery = is_numeric($product['id_address_delivery'] ?? null) ? (int) $product['id_address_delivery'] : 0;
+
+            $cart->setProductAddressDelivery($idProduct, $idProductAttribute, $idAddressDelivery, $addressId);
+        }
+
+        $cart->save();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateCartChecksum()
+    {
+        $cart = $this->context->cart;
+
+        if ($cart === null) {
+            return;
+        }
+
+        $cartChecksum = new CartChecksum(new AddressChecksum());
+
+        $selectQuery = new \DbQuery();
+        $selectQuery
+            ->select('checkout_session_data')
+            ->from('cart')
+            ->where('id_cart = ' . (int) $cart->id);
+        $rawData = \Db::getInstance()->getValue($selectQuery);
+
+        $data = json_decode(is_string($rawData) ? $rawData : '', true);
+
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        $data['checksum'] = $cartChecksum->generateChecksum($cart);
+
+        \Db::getInstance()->update(
+            'cart',
+            [
+                'checkout_session_data' => pSQL(json_encode($data)),
+            ],
+            'id_cart = ' . (int) $cart->id
+        );
     }
 }
