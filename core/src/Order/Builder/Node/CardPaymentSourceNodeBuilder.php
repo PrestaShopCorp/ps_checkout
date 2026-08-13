@@ -129,7 +129,9 @@ class CardPaymentSourceNodeBuilder implements CardPaymentSourceNodeBuilderInterf
             $node['payment_source']['card']['vault_id'] = $this->paypalVaultId;
         }
 
-        $customerAttributes = $this->buildCustomerAttributes($address, $countryIso);
+        // A Fastlane single-use token already carries the customer identity — sending
+        // customer email/phone attributes alongside it is rejected by PayPal with INCOMPATIBLE_PARAMETER_VALUE
+        $customerAttributes = empty($this->singleUseToken) ? $this->buildCustomerAttributes($address, $countryIso) : [];
         if ($this->paypalCustomerId) {
             $customerAttributes['id'] = $this->paypalCustomerId;
         }

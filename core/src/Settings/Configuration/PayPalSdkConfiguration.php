@@ -235,6 +235,11 @@ class PayPalSdkConfiguration
 
         $eligibleAlternativePaymentMethods = $this->eligibilityService->getEligibleFundingSources();
 
+        // fastlane is a PayPal SDK component, not a funding source — passing it to enable-funding makes the SDK fail with a 400
+        if (array_key_exists('fastlane', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['fastlane']);
+        }
+
         if (array_key_exists('google_pay', $eligibleAlternativePaymentMethods)) {
             unset($eligibleAlternativePaymentMethods['google_pay']);
             $components[] = 'googlepay';
