@@ -21,6 +21,7 @@
 namespace Tests\Unit\PsCheckout\Core\Order\Builder\Node;
 
 use Address;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\Node\SupplementaryDataNodeBuilder;
@@ -29,8 +30,10 @@ use PsCheckout\Infrastructure\Repository\StateRepositoryInterface;
 
 class SupplementaryDataNodeBuilderTest extends TestCase
 {
+    /** @var CountryRepositoryInterface&MockObject */
     private $countryRepository;
 
+    /** @var StateRepositoryInterface&MockObject */
     private $stateRepository;
 
     protected function setUp(): void
@@ -119,9 +122,99 @@ class SupplementaryDataNodeBuilderTest extends TestCase
         $builder->setCart(['addresses' => ['invoice' => $address], 'cart' => ['is_virtual' => false]]);
         $builder->setPayload($payload);
 
+        /** @var array{supplementary_data: array{card: array{level_3: array<string, mixed>}}} $result */
         $result = $builder->build();
 
-        $this->assertSame([], $result['supplementary_data']['card']['level_3']['line_items']);
+        $this->assertArrayNotHasKey('line_items', $result['supplementary_data']['card']['level_3']);
+    }
+
+    public function testBuildWithEmptyItemsOmitsLineItems(): void
+    {
+        $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
+        $this->stateRepository->method('getIsoById')->willReturn('CA');
+
+        /** @var array{purchase_units: array<int, array<string, mixed>>} $payload */
+        $payload = $this->getSamplePayload();
+        $payload['purchase_units'][0]['items'] = [];
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $this->getFullAddress()], 'cart' => ['is_virtual' => false]]);
+        $builder->setPayload($payload);
+
+        /** @var array{supplementary_data: array{card: array{level_3: array<string, mixed>}}} $result */
+        $result = $builder->build();
+
+        $this->assertArrayNotHasKey('line_items', $result['supplementary_data']['card']['level_3']);
+    }
+
+    public function testBuildKeepsAllLineItemsAtPayPalLimit(): void
+    {
+        $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
+        $this->stateRepository->method('getIsoById')->willReturn('CA');
+
+        /** @var array{purchase_units: array<int, array<string, mixed>>} $payload */
+        $payload = $this->getSamplePayload();
+        $payload['purchase_units'][0]['items'] = $this->generateItems(100);
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $this->getFullAddress()], 'cart' => ['is_virtual' => false]]);
+        $builder->setPayload($payload);
+
+        /** @var array{supplementary_data: array{card: array{level_3: array{line_items: array<int, mixed>}}}} $result */
+        $result = $builder->build();
+
+        $this->assertCount(100, $result['supplementary_data']['card']['level_3']['line_items']);
+    }
+
+    public function testBuildCapsLineItemsToPayPalLimit(): void
+    {
+        $this->countryRepository->method('getCountryIsoCodeById')->willReturn('US');
+        $this->stateRepository->method('getIsoById')->willReturn('CA');
+
+        $items = $this->generateItems(101);
+        /** @var array{purchase_units: array<int, array<string, mixed>>} $payload */
+        $payload = $this->getSamplePayload();
+        $payload['purchase_units'][0]['items'] = $items;
+
+        $builder = new SupplementaryDataNodeBuilder($this->countryRepository, $this->stateRepository);
+        $builder->setCart(['addresses' => ['invoice' => $this->getFullAddress()], 'cart' => ['is_virtual' => false]]);
+        $builder->setPayload($payload);
+
+        /** @var array{supplementary_data: array{card: array{level_3: array{line_items: array<int, mixed>}}}} $result */
+        $result = $builder->build();
+        $lineItems = $result['supplementary_data']['card']['level_3']['line_items'];
+
+        $this->assertCount(100, $lineItems);
+        $this->assertSame(array_slice($items, 0, 100), $lineItems);
+        // The purchase unit items given to PayPal must stay untouched
+        $this->assertCount(101, $payload['purchase_units'][0]['items']);
+    }
+
+    private function getFullAddress(): Address
+    {
+        $address = new Address();
+        $address->id_country = 1;
+        $address->id_state = 2;
+        $address->address1 = '123 Main St';
+        $address->address2 = '';
+        $address->city = 'Los Angeles';
+        $address->postcode = '90001';
+
+        return $address;
+    }
+
+    /**
+     * @return array<int, array{item_id: int, name: string, quantity: int, price: float}>
+     */
+    private function generateItems(int $count): array
+    {
+        $items = [];
+
+        for ($i = 1; $i <= $count; ++$i) {
+            $items[] = ['item_id' => $i, 'name' => 'Product ' . $i, 'quantity' => 1, 'price' => 1.00];
+        }
+
+        return $items;
     }
 
     public function testBuildWithInvalidCountryCodeOmitsShippingAddress(): void
