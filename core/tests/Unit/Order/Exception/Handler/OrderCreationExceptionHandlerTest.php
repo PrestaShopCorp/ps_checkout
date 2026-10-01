@@ -24,7 +24,9 @@ use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler;
+use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Action\CustomerNotifyActionInterface;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Presentation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 
@@ -42,6 +44,9 @@ class OrderCreationExceptionHandlerTest extends TestCase
     /** @var CustomerNotifyActionInterface&\PHPUnit\Framework\MockObject\MockObject */
     private $customerNotifyAction;
 
+    /** @var ConfigurationInterface&\PHPUnit\Framework\MockObject\MockObject */
+    private $configuration;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,11 +58,13 @@ class OrderCreationExceptionHandlerTest extends TestCase
 
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->customerNotifyAction = $this->createMock(CustomerNotifyActionInterface::class);
+        $this->configuration = $this->createMock(ConfigurationInterface::class);
 
         $this->handler = new OrderCreationExceptionHandler(
             $this->translator,
             $this->logger,
-            $this->customerNotifyAction
+            $this->customerNotifyAction,
+            $this->configuration
         );
     }
 
@@ -337,5 +344,61 @@ class OrderCreationExceptionHandlerTest extends TestCase
         $this->assertSame(500, $result['httpCode']);
         $this->assertFalse($result['status']);
         $this->assertSame('Something went wrong', $result['body']['error']['message']);
+    }
+
+    public function testShopNotRegisteredInMduReturnsPoliteMessageAndLogsExplicitError(): void
+    {
+        $exception = new PsCheckoutException(
+            'Shop is not registered in the PrestaShop Checkout services.',
+            PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU
+        );
+
+        $this->logger->expects($this->never())->method('notice');
+        $this->logger->expects($this->once())->method('error')->with(
+            $this->stringContains('not registered in the PrestaShop Checkout services')
+        );
+        $this->configuration->expects($this->once())->method('set')->with(
+            PayPalConfiguration::PS_CHECKOUT_SHOP_NOT_REGISTERED_IN_MDU,
+            '1'
+        );
+
+        /** @var array{httpCode: int, status: bool, body: array{error: array{message: string}}} $result */
+        $result = $this->handler->handleOrderCreateException($exception, null);
+
+        $this->assertSame(500, $result['httpCode']);
+        $this->assertFalse($result['status']);
+        $this->assertSame(
+            'This payment method is temporarily unavailable, please choose another one.',
+            $result['body']['error']['message']
+        );
+    }
+
+    public function testShopNotRegisteredInMduDoesNotNotifyCustomerService(): void
+    {
+        $exception = new PsCheckoutException(
+            'Shop is not registered in the PrestaShop Checkout services.',
+            PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU
+        );
+
+        $this->customerNotifyAction->expects($this->never())->method('execute');
+        $this->configuration->method('set')->willReturn(true);
+
+        $this->handler->handleOrderCreateException($exception, null);
+    }
+
+    public function testShopNotRegisteredInMduPersistsFlagRegardlessOfFundingSource(): void
+    {
+        $exception = new PsCheckoutException(
+            'Shop is not registered in the PrestaShop Checkout services.',
+            PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU
+        );
+
+        $this->configuration->expects($this->once())->method('set')->with(
+            PayPalConfiguration::PS_CHECKOUT_SHOP_NOT_REGISTERED_IN_MDU,
+            '1'
+        )->willReturn(true);
+        $this->logger->method('error');
+
+        $this->handler->handleOrderCreateException($exception, 'paypal');
     }
 }

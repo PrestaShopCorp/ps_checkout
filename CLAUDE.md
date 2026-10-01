@@ -35,7 +35,8 @@ make phpstan-baseline      # Regenerate PHPStan baseline for current $MODULE_VER
 make phpstan-baseline-all  # Regenerate baselines for all versions
 
 make unit-test             # All unit tests (api, utility, core, presentation)
-make integration-test      # All integration tests (module, core, infrastructure)
+make create-test-db        # Drop + recreate test_prestashop from prestashop (required before integration tests)
+make integration-test      # create-test-db + all integration tests (module, core, infrastructure)
 make test                  # Full test suite
 
 # Run a single test suite directly
@@ -55,6 +56,7 @@ Module logs (inside project root, not container): `prestashop/<PS_VERSION_TAG>/v
 
 All `make` test commands run inside the Docker container using `$MODULE_VERSION` and `$PS_VERSION_TAG` from `.env`.
 `make phpstan` runs locally without Docker. All `make *-test` commands require a running Docker container (`make up`).
+Integration tests additionally require the `test_prestashop` database; `make integration-test` creates it automatically via `make create-test-db`.
 
 Do not run `phpunit` directly from the host — cross-package autoloading (e.g., `api/` classes in `core/` tests) only resolves inside the Docker container via the module's `vendor/autoload.php`. Always use `make` commands for tests.
 

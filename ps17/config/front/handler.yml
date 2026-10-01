@@ -20,6 +20,7 @@ services:
       - '@PsCheckout\Module\Presentation\Translator'
       - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Infrastructure\Action\CustomerNotifyAction'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
 
   PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler:
     class: PsCheckout\Core\PayPal\Refund\Exception\Handler\RefundExceptionHandler
