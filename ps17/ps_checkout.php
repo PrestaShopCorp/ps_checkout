@@ -1326,7 +1326,15 @@ class Ps_Checkout extends PaymentModule
         ));
 
         if ($result instanceof HookHandlerResult) {
-            if ($result->isError()) {
+            if (!isset($this->context->controller) || !is_object($this->context->controller)) {
+                \PrestaShopLogger::addLog(
+                    'ps_checkout hookActionOrderStatusPostUpdate: ' . $result->getMessage(),
+                    $result->isError() ? 3 : 1,
+                    null,
+                    'Order',
+                    (int) $params['id_order']
+                );
+            } elseif ($result->isError()) {
                 $this->context->controller->errors[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
             } else {
                 $this->context->controller->confirmations[] = $this->trans($result->getMessage(), [], 'Modules.Checkout.Pscheckout');
