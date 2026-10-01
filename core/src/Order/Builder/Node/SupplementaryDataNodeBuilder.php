@@ -30,6 +30,13 @@ use PsCheckout\Utility\Payload\PaypalStateCodeMapUtility;
 class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterface
 {
     /**
+     * PayPal Orders v2 schema: level_3.line_items accepts at most 100 items (and at least 1).
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-level_3_card_processing_data
+     */
+    const LEVEL_3_LINE_ITEMS_MAX = 100;
+
+    /**
      * @var array
      */
     private $cart;
@@ -86,8 +93,16 @@ class SupplementaryDataNodeBuilder implements SupplementaryDataNodeBuilderInterf
                 'value' => $this->payload['purchase_units'][0]['amount']['value'],
             ],
             'discount_amount' => $this->payload['purchase_units'][0]['amount']['breakdown']['discount'],
-            'line_items' => $this->payload['purchase_units'][0]['items'] ?? [],
         ];
+
+        // Level 3 data is optional enrichment: send at most the first 100 items and skip the
+        // field entirely when there is nothing to send, otherwise PayPal rejects the whole order.
+        $items = $this->payload['purchase_units'][0]['items'] ?? [];
+        $lineItems = is_array($items) ? array_slice($items, 0, self::LEVEL_3_LINE_ITEMS_MAX) : [];
+
+        if (!empty($lineItems)) {
+            $level3['line_items'] = $lineItems;
+        }
 
         if ($validCountryIso !== null) {
             $portableAddress = OrderPayloadUtility::getAddressPortable($address, $validCountryIso, $stateName);
