@@ -16,3 +16,10 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Core\Settings\Configuration\PayPalConfiguration'
+  PsCheckout\Infrastructure\Validator\FastlaneValidator:
+    class: PsCheckout\Infrastructure\Validator\FastlaneValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Infrastructure\Adapter\Tools'
+      

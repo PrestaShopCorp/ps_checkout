@@ -77,7 +77,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             /** @var PayPalOrderRepository $payPalOrderRepository */
             $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
 
-            /** @var PayPalOrder $payPalOrder */
+            /** @var PayPalOrder|null $payPalOrder */
             $payPalOrder = $payPalOrderRepository->getOneBy(['id' => $bodyValues['orderID']]);
 
             if (!$payPalOrder) {

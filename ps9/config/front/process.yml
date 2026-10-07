@@ -139,6 +139,23 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
 
+  PsCheckout\Infrastructure\Action\SaveFastlaneAddressAction:
+    class: PsCheckout\Infrastructure\Action\SaveFastlaneAddressAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Address'
+      - '@PsCheckout\Infrastructure\Adapter\Country'
+      - '@PsCheckout\Infrastructure\Adapter\State'
+      - '@PsCheckout\Module\Presentation\Translator'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Infrastructure\Action\GetBillingAddressAction:
+    class: PsCheckout\Infrastructure\Action\GetBillingAddressAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Address'
+      - '@Psr\Log\LoggerInterface'
+
   PsCheckout\Core\Customer\Action\ExpressCheckoutAction:
     class: PsCheckout\Core\Customer\Action\ExpressCheckoutAction
     arguments:

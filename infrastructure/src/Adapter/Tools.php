@@ -47,4 +47,12 @@ class Tools implements ToolsInterface
     {
         return PrestaShopTools::getToken($page);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getShopDomain(): string
+    {
+        return PrestaShopTools::getShopDomain();
+    }
 }

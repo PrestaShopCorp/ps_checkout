@@ -5,13 +5,12 @@ services:
   PsCheckout\Presentation\Presenter\Settings\Front\FrontSettingsPresenter:
     class: PsCheckout\Presentation\Presenter\Settings\Front\FrontSettingsPresenter
     arguments:
-      - [
-        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\PayPalModule',
-        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule',
-        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule',
-        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\LinkModule',
-        '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule',
-      ]
+      -
+        - '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\PayPalModule'
+        - '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule'
+        - '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\MediaModule'
+        - '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\LinkModule'
+        - '@PsCheckout\Presentation\Presenter\Settings\Front\Modules\TranslationModule'
 
   PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter:
     class: PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter
@@ -30,6 +29,7 @@ services:
       - '@PsCheckout\Presentation\Presenter\Settings\Front\SupportedCardBrandsPresenter'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Presentation\Presenter\FundingSource\FundingSourceTranslationProvider'
+      - '@PsCheckout\Infrastructure\Validator\FastlaneValidator'
 
   PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule:
     class: PsCheckout\Presentation\Presenter\Settings\Front\Modules\ConfigurationModule

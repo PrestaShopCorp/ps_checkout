@@ -79,6 +79,10 @@ class OrderAuthorizationValidator implements OrderAuthorizationValidatorInterfac
     public function validate(int $cartId, PayPalOrderResponse $payPalOrder)
     {
         if ($payPalOrder->getStatus() === 'COMPLETED') {
+            if (in_array($payPalOrder->getTransactionStatus(), ['FAILED', 'DECLINED'])) {
+                throw new PsCheckoutException(sprintf('PayPal Order %s capture has failed or been declined', $payPalOrder->getId()), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
+            }
+
             throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $payPalOrder->getId()), PsCheckoutException::PAYPAL_ORDER_ALREADY_CAPTURED);
         }
 
