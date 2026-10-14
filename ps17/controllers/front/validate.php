@@ -33,8 +33,10 @@ use PsCheckout\Core\PayPal\Order\ValueObject\PayPalOrderCompletionData;
 use PsCheckout\Infrastructure\Adapter\Tools;
 use PsCheckout\Infrastructure\Adapter\Validate;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
+use PsCheckout\Infrastructure\Repository\CartRepository;
 use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Utility\Common\InputStreamUtility;
+use Psr\Log\LoggerInterface;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -84,6 +86,15 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
             }
 
+            // NOTE: the PayPal Order must belong to the current customer, otherwise it is handled as not found
+            if (!$this->isPayPalOrderOwnedByCurrentCustomer($payPalOrder)) {
+                /** @var LoggerInterface $logger */
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->warning('PayPal Order does not belong to the current customer: ' . $payPalOrder->getId());
+
+                throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
+            }
+
             $checkoutRequest = new ValidateOrderRequest($bodyValues, $payPalOrder->getIdCart());
 
             if (empty($checkoutRequest->getOrderId()) || !$validate->isGenericName($checkoutRequest->getOrderId())) {
@@ -129,6 +140,26 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 $exception
             ));
         }
+    }
+
+    /**
+     * @param PayPalOrder $payPalOrder
+     *
+     * @return bool
+     */
+    private function isPayPalOrderOwnedByCurrentCustomer(PayPalOrder $payPalOrder): bool
+    {
+        if (!$this->context->customer || !$this->context->customer->id) {
+            return false;
+        }
+
+        /** @var CartRepository $cartRepository */
+        $cartRepository = $this->module->getService(CartRepository::class);
+
+        /** @var Cart|null $cart */
+        $cart = $cartRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
+
+        return $cart && (int) $cart->id_customer === (int) $this->context->customer->id;
     }
 
     /**
