@@ -17,6 +17,12 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator'
 
+  PsCheckout\Core\Order\Validator\CartOwnershipValidator:
+    class: PsCheckout\Core\Order\Validator\CartOwnershipValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Infrastructure\Adapter\Cart'
+
   PsCheckout\Core\Order\Validator\CheckoutValidator:
     class: PsCheckout\Core\Order\Validator\CheckoutValidator
     arguments:
