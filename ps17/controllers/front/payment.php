@@ -24,6 +24,7 @@ if (!defined('_PS_VERSION_')) {
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderAction;
+use PsCheckout\Core\Order\Validator\CartOwnershipValidator;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureConfiguration;
 use PsCheckout\Core\PayPal\Card3DSecure\Card3DSecureValidator;
 use PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction;
@@ -121,6 +122,15 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
 
             if (!$payPalOrder) {
                 $logger->error('PayPal Order not found: ' . $this->paypalOrderId);
+                $tools->redirect($this->orderPageUrl);
+            }
+
+            /** @var CartOwnershipValidator $cartOwnershipValidator */
+            $cartOwnershipValidator = $this->module->getService(CartOwnershipValidator::class);
+
+            // NOTE: must be checked before any redirection to the order confirmation page
+            if (!$cartOwnershipValidator->isOwnedByCurrentCustomer($payPalOrder->getIdCart())) {
+                $logger->warning('PayPal Order does not belong to the current customer: ' . $this->paypalOrderId);
                 $tools->redirect($this->orderPageUrl);
             }
 
