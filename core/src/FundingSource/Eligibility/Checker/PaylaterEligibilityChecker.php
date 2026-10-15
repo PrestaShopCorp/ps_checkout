@@ -20,10 +20,43 @@
 
 namespace PsCheckout\Core\FundingSource\Eligibility\Checker;
 
+use PsCheckout\Core\FundingSource\Constraint\FundingSourceConstraint;
+use PsCheckout\Core\FundingSource\ValueObject\FundingSource;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 
 class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
 {
+    /**
+     * Pay Later amount range per buyer country, in the country's currency (values as of 2026-09):
+     * the union of the country's Pay Later offers, PayPal picks the offer matching the amount.
+     *
+     * @see https://developer.paypal.com/pay-later/overview
+     *
+     * @var array<string, array{min: float, max: float}>
+     */
+    private const AMOUNT_RANGES = [
+        'AU' => ['min' => 1.0, 'max' => 1999.99],
+        'CA' => ['min' => 10.0, 'max' => 2000.0],
+        'DE' => ['min' => 1.0, 'max' => 10000.0],
+        'ES' => ['min' => 20.0, 'max' => 5000.0],
+        'FR' => ['min' => 20.0, 'max' => 3000.0],
+        'GB' => ['min' => 1.0, 'max' => 3000.0],
+        'IT' => ['min' => 20.0, 'max' => 5000.0],
+        'US' => ['min' => 10.0, 'max' => 10000.0],
+    ];
+
+    /**
+     * @inheritDoc
+     */
+    public function isEligible(FundingSource $fundingSource): bool
+    {
+        if ($this->getAmountRange($this->context->getCurrencyIsoCode()) === null) {
+            return false;
+        }
+
+        return parent::isEligible($fundingSource);
+    }
+
     protected function getSupportedName(): string
     {
         return 'paylater';
@@ -31,7 +64,7 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
 
     protected function getAllowedCurrenciesIsoCodes(): array
     {
-        return ['CAD', 'EUR', 'GBP', 'USD', 'AUD'];
+        return array_values(array_unique(FundingSourceConstraint::getPayLaterCurrencies()));
     }
 
     protected function getSupportedIntents(): array
@@ -49,13 +82,39 @@ class PaylaterEligibilityChecker extends BaseFundingSourceEligibilityChecker
         return [];
     }
 
+    /**
+     * Depends on the buyer country. Null means Pay Later is not offered (see isEligible), not "no limit".
+     */
     public function getMinAmount(string $currency): ?float
     {
-        return ['AUD' => 1, 'CAD' => 30, 'USD' => 30, 'EUR' => 30, 'GBP' => 20][$currency] ?? null;
+        $range = $this->getAmountRange($currency);
+
+        return $range !== null ? $range['min'] : null;
     }
 
+    /**
+     * Depends on the buyer country. Null means Pay Later is not offered (see isEligible), not "no limit".
+     */
     public function getMaxAmount(string $currency): ?float
     {
-        return ['AUD' => 1999.99, 'CAD' => 1500, 'USD' => 10000, 'EUR' => 2000, 'GBP' => 3000][$currency] ?? null;
+        $range = $this->getAmountRange($currency);
+
+        return $range !== null ? $range['max'] : null;
+    }
+
+    /**
+     * Range for the buyer country, or null when the country has none or $currency is not its currency.
+     *
+     * @return array{min: float, max: float}|null
+     */
+    private function getAmountRange(string $currency): ?array
+    {
+        $country = $this->countryResolver->getBuyerCountryIsoCode();
+
+        if ((FundingSourceConstraint::getPayLaterCurrencies()[$country] ?? null) !== $currency) {
+            return null;
+        }
+
+        return self::AMOUNT_RANGES[$country] ?? null;
     }
 }

@@ -23,6 +23,22 @@ namespace PsCheckout\Core\FundingSource\Constraint;
 class FundingSourceConstraint
 {
     /**
+     * Pay Later countries and the currency each one transacts in.
+     *
+     * @see https://developer.paypal.com/pay-later/overview
+     */
+    private const PAYLATER_CURRENCIES = [
+        'AU' => 'AUD',
+        'DE' => 'EUR',
+        'ES' => 'EUR',
+        'FR' => 'EUR',
+        'GB' => 'GBP',
+        'IT' => 'EUR',
+        'US' => 'USD',
+        'CA' => 'CAD',
+    ];
+
+    /**
      * Get eligible countries to PayPal funding sources
      *
      * @param string $fundingSourceName
@@ -38,7 +54,7 @@ class FundingSourceConstraint
             'ideal' => ['NL'],
             'mybank' => ['IT'],
             'p24' => ['PL'],
-            'paylater' => ['AU', 'DE', 'ES', 'FR', 'GB', 'IT', 'US', 'CA'],
+            'paylater' => array_keys(self::PAYLATER_CURRENCIES),
             'google_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             'apple_pay' => ['AU', 'AT', 'BE', 'BG', 'CA', 'CN', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HK', 'HU', 'IE', 'IT', 'JP', 'LV', 'LI', 'LT', 'LU', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SG', 'SK', 'SI', 'ES', 'SE', 'GB', 'US'],
             'venmo' => ['US'],
@@ -46,5 +62,15 @@ class FundingSourceConstraint
         ];
 
         return $countries[$fundingSourceName] ?? [];
+    }
+
+    /**
+     * Get the currency each Pay Later country transacts in, keyed by country ISO code
+     *
+     * @return array<string, string>
+     */
+    public static function getPayLaterCurrencies(): array
+    {
+        return self::PAYLATER_CURRENCIES;
     }
 }

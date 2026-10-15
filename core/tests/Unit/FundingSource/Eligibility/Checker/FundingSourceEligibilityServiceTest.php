@@ -22,6 +22,7 @@ namespace FundingSource\Eligibility\Checker;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PsCheckout\Core\FundingSource\Constraint\FundingSourceConstraint;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\ApplePayEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\BancontactEligibilityChecker;
 use PsCheckout\Core\FundingSource\Eligibility\Checker\BlikEligibilityChecker;
@@ -802,28 +803,6 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => true,
             ],
-            'eligible_paylater_ca_cad_at_min' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'CA',
-                    'currency' => 'CAD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 30.0,
-                ],
-                'eligible' => true,
-            ],
-            'eligible_paylater_ca_cad_at_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'CA',
-                    'currency' => 'CAD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 1500.0,
-                ],
-                'eligible' => true,
-            ],
             'ineligible_paylater_wrong_buyer_country' => [
                 'name' => 'paylater',
                 'context' => [
@@ -855,113 +834,13 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
-            'ineligible_paylater_ca_cad_below_min' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'CA',
-                    'currency' => 'CAD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 10.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_ca_cad_above_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'CA',
-                    'currency' => 'CAD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 2000.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_eur_below_min' => [
+            'ineligible_paylater_currency_not_of_buyer_country' => [
                 'name' => 'paylater',
                 'context' => [
                     'country' => 'FR',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 10.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_eur_above_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'FR',
-                    'currency' => 'EUR',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 3000.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_gbp_below_min' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'GB',
-                    'currency' => 'GBP',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 5.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_gbp_above_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'GB',
-                    'currency' => 'GBP',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 5000.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_usd_below_min' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'US',
                     'currency' => 'USD',
                     'intent' => PayPalOrderIntent::CAPTURE,
                     'configurations' => [],
-                    'amount' => 10.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_usd_above_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'US',
-                    'currency' => 'USD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 15000.0,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_aud_below_min' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'AU',
-                    'currency' => 'AUD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 0.5,
-                ],
-                'eligible' => false,
-            ],
-            'ineligible_paylater_aud_above_max' => [
-                'name' => 'paylater',
-                'context' => [
-                    'country' => 'AU',
-                    'currency' => 'AUD',
-                    'intent' => PayPalOrderIntent::CAPTURE,
-                    'configurations' => [],
-                    'amount' => 2500.0,
                 ],
                 'eligible' => false,
             ],
@@ -1006,6 +885,73 @@ class FundingSourceEligibilityServiceTest extends TestCase
                 ],
                 'eligible' => false,
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider paylaterAmountRangeDataProvider
+     */
+    public function testPaylaterAmountRange(string $country, string $currency, ?float $amount, bool $eligible): void
+    {
+        $checker = new PaylaterEligibilityChecker($this->context, $this->configuration, $this->countryResolver);
+
+        $this->configuration->method('get')->willReturnMap([
+            [PayPalConfiguration::PS_CHECKOUT_INTENT, PayPalOrderIntent::CAPTURE],
+        ]);
+        $this->countryResolver->method('getBuyerCountryIsoCode')->willReturn($country);
+        $this->context->method('getCurrencyIsoCode')->willReturn($currency);
+        $this->context->method('getCartOrderTotal')->willReturn($amount);
+
+        self::assertSame($eligible, $checker->isEligible(new FundingSource('paylater', 'Pay Later', 0, true, null)));
+    }
+
+    /**
+     * @return array<string, array{country: string, currency: string, amount: float|null, eligible: bool}>
+     */
+    public function paylaterAmountRangeDataProvider(): array
+    {
+        $cases = [];
+        foreach (self::paylaterRanges() as $country => [$currency, $min, $max]) {
+            $cases[$country . '_below_min'] = ['country' => $country, 'currency' => $currency, 'amount' => round($min - 0.01, 2), 'eligible' => false];
+            $cases[$country . '_at_min'] = ['country' => $country, 'currency' => $currency, 'amount' => $min, 'eligible' => true];
+            $cases[$country . '_at_max'] = ['country' => $country, 'currency' => $currency, 'amount' => $max, 'eligible' => true];
+            $cases[$country . '_above_max'] = ['country' => $country, 'currency' => $currency, 'amount' => round($max + 0.01, 2), 'eligible' => false];
+        }
+
+        // No loaded cart (product page): no amount check, but the currency must still be the buyer country's
+        $cases['FR_no_cart'] = ['country' => 'FR', 'currency' => 'EUR', 'amount' => null, 'eligible' => true];
+        $cases['FR_USD_no_cart'] = ['country' => 'FR', 'currency' => 'USD', 'amount' => null, 'eligible' => false];
+        $cases['GB_EUR'] = ['country' => 'GB', 'currency' => 'EUR', 'amount' => 100.0, 'eligible' => false];
+
+        return $cases;
+    }
+
+    public function testPaylaterRangesCoverEveryPaylaterCountry(): void
+    {
+        $currencies = array_map(function (array $range): string {
+            return $range[0];
+        }, self::paylaterRanges());
+
+        self::assertEqualsCanonicalizing(FundingSourceConstraint::getPayLaterCurrencies(), $currencies);
+        self::assertEqualsCanonicalizing(FundingSourceConstraint::getCountries('paylater'), array_keys($currencies));
+    }
+
+    /**
+     * Pay Later ranges from https://developer.paypal.com/pay-later/overview
+     *
+     * @return array<string, array{string, float, float}>
+     */
+    private static function paylaterRanges(): array
+    {
+        return [
+            'AU' => ['AUD', 1.0, 1999.99],
+            'CA' => ['CAD', 10.0, 2000.0],
+            'DE' => ['EUR', 1.0, 10000.0],
+            'ES' => ['EUR', 20.0, 5000.0],
+            'FR' => ['EUR', 20.0, 3000.0],
+            'GB' => ['GBP', 1.0, 3000.0],
+            'IT' => ['EUR', 20.0, 5000.0],
+            'US' => ['USD', 10.0, 10000.0],
         ];
     }
 }
