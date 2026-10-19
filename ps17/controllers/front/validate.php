@@ -83,7 +83,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $payPalOrder = $payPalOrderRepository->getOneBy(['id' => $bodyValues['orderID']]);
 
             if (!$payPalOrder) {
-                throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
+                $this->sendNotFoundResponse();
             }
 
             // NOTE: the PayPal Order must belong to the current customer, otherwise it is handled as not found
@@ -95,7 +95,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->warning('PayPal Order does not belong to the current customer: ' . $payPalOrder->getId());
 
-                throw new PsCheckoutException('PayPal Order not found', PsCheckoutException::PAYPAL_ORDER_NOT_FOUND);
+                $this->sendNotFoundResponse();
             }
 
             $checkoutRequest = new ValidateOrderRequest($bodyValues, $payPalOrder->getIdCart());
@@ -143,6 +143,30 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 $exception
             ));
         }
+    }
+
+    /**
+     * Unknown PayPal Order, or one that belongs to another customer: both get the same
+     * answer, so that the response does not tell whether the order exists.
+     *
+     * Exits directly instead of throwing: OrderCreationExceptionHandler would answer with
+     * a 500, tell the visitor they could have been charged and notify the customer service
+     * of the cart owner.
+     *
+     * @return void
+     */
+    private function sendNotFoundResponse()
+    {
+        $this->exitWithResponse([
+            'status' => false,
+            'httpCode' => 404,
+            'body' => [
+                'error' => [
+                    'code' => PsCheckoutException::PAYPAL_ORDER_NOT_FOUND,
+                    'message' => 'PayPal Order not found',
+                ],
+            ],
+        ]);
     }
 
     /**
