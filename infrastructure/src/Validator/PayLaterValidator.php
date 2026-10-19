@@ -50,17 +50,7 @@ class PayLaterValidator implements PayLaterValidatorInterface
         $locale = $this->context->getLanguage()->locale;
         $customerCountry = $this->context->getCountry()->iso_code;
 
-        // Define supported country-currency combinations for Pay Later messaging
-        $supportedCountryCurrencyMap = [
-            'AU' => 'AUD', // Australia
-            'FR' => 'EUR', // France
-            'DE' => 'EUR', // Germany
-            'IT' => 'EUR', // Italy
-            'ES' => 'EUR', // Spain
-            'GB' => 'GBP', // United Kingdom
-            'US' => 'USD', // United States,
-            'CA' => 'CAD', // Canada
-        ];
+        $supportedCountryCurrencyMap = FundingSourceConstraint::getPayLaterCurrencies();
 
         // Define locale to country mapping for website locale validation
         $localeCountryMap = [
