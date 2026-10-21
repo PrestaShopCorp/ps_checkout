@@ -188,6 +188,12 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
             return CreatePayPalOrderResponse::createFromResponse(json_decode($response->getBody(), true));
         } catch (Exception $exception) {
+            // Kept as is: wrapped as UNKNOWN, it never reaches the dedicated handling of
+            // OrderCreationExceptionHandler (polite message, merchant flag and log).
+            if ($exception instanceof PsCheckoutException && $exception->getCode() === PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU) {
+                throw $exception;
+            }
+
             throw new PsCheckoutException('Failed to create order', PsCheckoutException::UNKNOWN, $exception);
         }
     }
