@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -24,6 +25,7 @@ use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
 use PsCheckout\Api\Http\Configuration\HttpClientConfigurationBuilderInterface;
 use PsCheckout\Api\Http\Exception\PayPalError;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -44,7 +46,16 @@ class OrderHttpClient extends PsrHttpClientAdapter implements OrderHttpClientInt
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $decodedBody = json_decode((string) $response->getBody(), true);
+
             $message = $this->extractMessage(is_array($decodedBody) ? $decodedBody : []);
+
+            if ($message === 'SHOP_NOT_REGISTERED_IN_MDU') {
+                throw new PsCheckoutException(
+                    'Shop is not registered in the PrestaShop Checkout services.',
+                    PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU,
+                    $exception
+                );
+            }
 
             if ($message) {
                 (new PayPalError($message))->throwException($exception);

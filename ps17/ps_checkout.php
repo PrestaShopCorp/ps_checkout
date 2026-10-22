@@ -240,9 +240,14 @@ class Ps_Checkout extends PaymentModule
             }
         }
 
+        /** @var Configuration $configuration */
+        $configuration = $this->getService(Configuration::class);
+        $shopNotRegisteredInMdu = (bool) $configuration->get(PayPalConfiguration::PS_CHECKOUT_SHOP_NOT_REGISTERED_IN_MDU);
+
         $this->context->smarty->assign([
             'requiredDependencies' => $requiredDependencies,
             'hasRequiredDependencies' => $hasRequiredDependencies,
+            'shopNotRegisteredInMdu' => $shopNotRegisteredInMdu,
         ]);
 
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');

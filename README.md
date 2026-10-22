@@ -103,7 +103,16 @@ Run `make unit-test` in terminal.
 
 #### Integration tests
 
-Run `make integration-test` in terminal.
+Integration tests require a running Docker environment and a dedicated test database.
+
+```bash
+make up                  # Start containers (required)
+make integration-test    # Creates test_prestashop DB, then runs tests
+```
+
+The `make integration-test` target automatically runs `make create-test-db` first, which drops and recreates a `test_prestashop` database from the current `prestashop` database. This ensures a consistent state before each run.
+
+> **Note:** If you only need to recreate the test database without running tests, use `make create-test-db` directly.
 
 ## Contributing
 

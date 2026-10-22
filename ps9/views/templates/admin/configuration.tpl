@@ -16,6 +16,16 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
+{if isset($shopNotRegisteredInMdu) && $shopNotRegisteredInMdu}
+  <div class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="{l s='Close' mod='ps_checkout'}">&times;</button>
+    <p>
+      <strong>{l s='PayPal payments are currently blocked.' mod='ps_checkout'}</strong>
+      {l s='This shop is not registered in the PrestaShop Checkout services. PayPal payments cannot be processed until the issue is resolved. Please check your module configuration and re-onboard if necessary.' mod='ps_checkout'}
+    </p>
+  </div>
+{/if}
+
 {if isset($hasRequiredDependencies) && !$hasRequiredDependencies}
   <script src="https://assets.prestashop3.com/dst/mbo/v1/mbo-cdc-dependencies-resolver.umd.js"></script>
   <div id="mbo-cdc-container"></div>

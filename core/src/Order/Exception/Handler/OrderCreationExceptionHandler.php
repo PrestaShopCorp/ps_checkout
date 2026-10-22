@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,7 +24,9 @@ namespace PsCheckout\Core\Order\Exception\Handler;
 use Exception;
 use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Settings\Configuration\PayPalConfiguration;
 use PsCheckout\Infrastructure\Action\CustomerNotifyActionInterface;
+use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Presentation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 
@@ -44,14 +47,21 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
      */
     private $customerNotifyAction;
 
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
     public function __construct(
         TranslatorInterface $translator,
         LoggerInterface $logger,
-        CustomerNotifyActionInterface $customerNotifyAction
+        CustomerNotifyActionInterface $customerNotifyAction,
+        ConfigurationInterface $configuration
     ) {
         $this->translator = $translator;
         $this->logger = $logger;
         $this->customerNotifyAction = $customerNotifyAction;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -341,7 +351,6 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     $exceptionMessageForCustomer = $this->translator->trans('The currency you selected is not supported. Please try another payment method or contact support for assistance.');
 
                     break;
-
             }
         }
 
@@ -442,10 +451,21 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     $exceptionMessageForCustomer = $this->translator->trans('Your date of birth is invalid or missing. Please check and try again.');
 
                     break;
+                case PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU:
+                    $exceptionMessageForCustomer = $this->translator->trans('This payment method is temporarily unavailable, please choose another one.');
+
+                    $this->configuration->set(PayPalConfiguration::PS_CHECKOUT_SHOP_NOT_REGISTERED_IN_MDU, '1');
+
+                    break;
             }
         }
 
-        if ($isClientError) {
+        if ($exception instanceof PsCheckoutException && $exception->getCode() === PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU) {
+            $this->logger->error(
+                'CreateOrder - Shop is not registered in the PrestaShop Checkout services: PayPal payments are blocked. Please re-onboard via the PrestaShop back office.',
+                ['exception' => $exception]
+            );
+        } elseif ($isClientError) {
             $this->logger->notice('CreateOrder - Exception ' . $exception->getCode(), ['exception' => $exception]);
         } else {
             $this->logger->error('CreateOrder - Exception ' . $exception->getCode(), ['exception' => $exception]);

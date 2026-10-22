@@ -315,3 +315,6 @@ $_MODULE['<{ps_checkout}prestashop>translator_4be7c795a0d474a222fb28d2e309062f']
 $_MODULE['<{ps_checkout}prestashop>translator_d74dc4730c60108b5245dd5852ed20b8'] = 'Este método de pago no está disponible para transacciones internacionales. Por favor, pruebe otro método de pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_6000b48fba6aa3541fef1b45dee3275f'] = 'Se ha superado el límite de transacción. Por favor, pruebe con un importe menor o con otro método de pago.';
 $_MODULE['<{ps_checkout}prestashop>translator_f04233142f9f1d876c8d2539ad65dade'] = 'El pago no puede procesarse en este momento. Por favor, póngase en contacto con nuestro servicio de atención al cliente.';
+$_MODULE['<{ps_checkout}prestashop>configuration_a56b2a00cf5a5d064ba5cda91b756da5'] = 'Los pagos de PayPal están actualmente bloqueados.';
+$_MODULE['<{ps_checkout}prestashop>configuration_b4d2f434d0f642613efa63e50f079ffd'] = 'Esta tienda no está registrada en los servicios de PrestaShop Checkout. Los pagos de PayPal no se pueden procesar hasta que se resuelva el problema. Por favor, compruebe la configuración de su módulo y vuelva a incorporarse si es necesario.';
+$_MODULE['<{ps_checkout}prestashop>configuration_d3d2e617335f08df83599665eef8a418'] = 'Cerrar';

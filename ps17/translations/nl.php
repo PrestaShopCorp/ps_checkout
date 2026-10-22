@@ -315,3 +315,6 @@ $_MODULE['<{ps_checkout}prestashop>translator_4be7c795a0d474a222fb28d2e309062f']
 $_MODULE['<{ps_checkout}prestashop>translator_d74dc4730c60108b5245dd5852ed20b8'] = 'Deze betaalmethode is niet beschikbaar voor internationale transacties. Probeer een andere betaalmethode.';
 $_MODULE['<{ps_checkout}prestashop>translator_6000b48fba6aa3541fef1b45dee3275f'] = 'De transactielimiet is overschreden. Probeer een kleiner bedrag of een andere betaalmethode.';
 $_MODULE['<{ps_checkout}prestashop>translator_f04233142f9f1d876c8d2539ad65dade'] = 'De betaling kan momenteel niet worden verwerkt. Neem contact op met onze klantenservice.';
+$_MODULE['<{ps_checkout}prestashop>configuration_a56b2a00cf5a5d064ba5cda91b756da5'] = 'PayPal-betalingen zijn momenteel geblokkeerd.';
+$_MODULE['<{ps_checkout}prestashop>configuration_b4d2f434d0f642613efa63e50f079ffd'] = 'Deze winkel is niet geregistreerd bij de PrestaShop Checkout-services. PayPal-betalingen kunnen niet worden verwerkt totdat het probleem is opgelost. Controleer uw moduleconfiguratie en registreer opnieuw indien nodig.';
+$_MODULE['<{ps_checkout}prestashop>configuration_d3d2e617335f08df83599665eef8a418'] = 'Sluiten';
