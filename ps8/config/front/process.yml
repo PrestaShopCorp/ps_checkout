@@ -169,12 +169,18 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
 
+  PsCheckout\Infrastructure\Lock\DatabasePayPalOrderLock:
+    class: PsCheckout\Infrastructure\Lock\DatabasePayPalOrderLock
+    arguments:
+      - '@ps_checkout.db'
+
   PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler
     arguments:
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@PsCheckout\Core\Order\Action\CreateOrderPaymentAction'
       - '@PsCheckout\Core\OrderState\Action\SetCompletedOrderStateAction'
+      - '@PsCheckout\Infrastructure\Lock\DatabasePayPalOrderLock'
 
   PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\PaymentPendingEventHandler
