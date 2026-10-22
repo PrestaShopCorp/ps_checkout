@@ -99,9 +99,14 @@ class TrackingItemsNodeBuilder implements TrackingItemsNodeBuilderInterface
             $item = [
                 'name' => $name,
                 'quantity' => $quantity,
-                'url' => $this->getProductUrl($productData['product'], $productAttributeId),
-                'image_url' => $this->getProductImageUrl($productData['product'], $productAttributeId),
             ];
+
+            // The product may no longer exist (deleted product, or an order line not linked to a product):
+            // url and image_url are optional, so omit them instead of passing null to the typed helpers.
+            if (isset($productData['product']) && $productData['product'] instanceof \Product) {
+                $item['url'] = $this->getProductUrl($productData['product'], $productAttributeId);
+                $item['image_url'] = $this->getProductImageUrl($productData['product'], $productAttributeId);
+            }
 
             if (!empty($sku)) {
                 $item['sku'] = $sku;
