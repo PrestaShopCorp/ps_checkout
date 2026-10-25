@@ -67,6 +67,7 @@ class LinkModule implements PresenterInterface
             $this->moduleName . 'PaymentUrl' => $this->link->getModuleLink('payment', $params),
             $this->moduleName . 'GooglePayUrl' => $this->link->getModuleLink('googlepay', $params),
             $this->moduleName . 'ApplePayUrl' => $this->link->getModuleLink('applepay', $params),
+            $this->moduleName . 'FastlaneUrl' => $this->link->getModuleLink('fastlane'),
             $this->moduleName . 'CheckoutUrl' => $this->link->getPageLink('order'),
             $this->moduleName . 'ConfirmUrl' => $this->link->getPageLink('order-confirmation'),
         ];

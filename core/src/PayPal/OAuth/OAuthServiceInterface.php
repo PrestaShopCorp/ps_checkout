@@ -33,4 +33,14 @@ interface OAuthServiceInterface
      * @throws Exception
      */
     public function getUserIdToken(string $merchantId, $payPalCustomerId = null): string;
+
+    /**
+     * @param string $merchantId
+     * @param string $domain
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    public function getClientToken(string $merchantId, string $domain): string;
 }

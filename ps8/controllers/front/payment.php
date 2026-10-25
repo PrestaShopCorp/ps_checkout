@@ -314,7 +314,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
     }
 
     /**
-     * @param PayPalOrderResponse $paypalOrder
+     * @param PayPalOrderResponse $payPalOrderResponse
      *
      * @return void
      */

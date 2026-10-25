@@ -28,7 +28,9 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderIntent;
 use PsCheckout\Core\Util\CountryResolverInterface;
 use PsCheckout\Infrastructure\Adapter\ConfigurationInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
+use PsCheckout\Infrastructure\Adapter\ToolsInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
+use PsCheckout\Infrastructure\Validator\FastlaneValidatorInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterface;
 use Psr\Log\LoggerInterface;
 
@@ -82,6 +84,16 @@ class PayPalSdkConfiguration
     private $oAuthService;
 
     /**
+     * @var FastlaneValidatorInterface
+     */
+    private $fastlaneValidator;
+
+    /**
+     * @var ToolsInterface
+     */
+    private $tools;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -104,6 +116,8 @@ class PayPalSdkConfiguration
      * @param FundingSourcePresenterInterface $fundingSourcePresenter
      * @param PayPalCustomerRepositoryInterface $payPalCustomerRepository
      * @param OAuthServiceInterface $oAuthService
+     * @param FastlaneValidatorInterface $fastlaneValidator
+     * @param ToolsInterface $tools
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -116,6 +130,8 @@ class PayPalSdkConfiguration
         CountryResolverInterface $countryResolver,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
+        FastlaneValidatorInterface $fastlaneValidator,
+        ToolsInterface $tools,
         LoggerInterface $logger,
         PayPalPayLaterConfiguration $payPalPayLaterConfiguration
     ) {
@@ -128,6 +144,8 @@ class PayPalSdkConfiguration
         $this->countryResolver = $countryResolver;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
         $this->oAuthService = $oAuthService;
+        $this->fastlaneValidator = $fastlaneValidator;
+        $this->tools = $tools;
         $this->logger = $logger;
         $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
     }
@@ -169,6 +187,21 @@ class PayPalSdkConfiguration
         ];
 
         $customer = $this->context->getCustomer();
+
+        if ($this->fastlaneValidator->shouldLoadFastlane()) {
+            try {
+                $merchantId = (string) $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
+
+                $clientToken = $this->oAuthService->getClientToken($merchantId, $this->tools->getShopDomain());
+
+                $params['dataSdkClientToken'] = $clientToken;
+
+                $components[] = 'fastlane';
+            } catch (Exception $exception) {
+                $this->logger->error('Failed to get PayPal client token.', ['exception' => $exception]);
+            }
+        }
+
         if (
             $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_VAULTING)
             && $customer && $customer->isLogged() && $customer->id
@@ -201,6 +234,11 @@ class PayPalSdkConfiguration
         }
 
         $eligibleAlternativePaymentMethods = $this->eligibilityService->getEligibleFundingSources();
+
+        // fastlane is a PayPal SDK component, not a funding source — passing it to enable-funding makes the SDK fail with a 400
+        if (array_key_exists('fastlane', $eligibleAlternativePaymentMethods)) {
+            unset($eligibleAlternativePaymentMethods['fastlane']);
+        }
 
         if (array_key_exists('google_pay', $eligibleAlternativePaymentMethods)) {
             unset($eligibleAlternativePaymentMethods['google_pay']);

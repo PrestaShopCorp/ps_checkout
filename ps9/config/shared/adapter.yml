@@ -43,5 +43,8 @@ services:
   PsCheckout\Infrastructure\Adapter\Country:
     class: PsCheckout\Infrastructure\Adapter\Country
 
+  PsCheckout\Infrastructure\Adapter\State:
+    class: PsCheckout\Infrastructure\Adapter\State
+
   PsCheckout\Infrastructure\Adapter\SystemConfiguration:
     class: PsCheckout\Infrastructure\Adapter\SystemConfiguration
