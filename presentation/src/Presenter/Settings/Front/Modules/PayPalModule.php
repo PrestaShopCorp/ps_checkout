@@ -172,6 +172,7 @@ class PayPalModule implements PresenterInterface
      */
     private function isCheckoutPage(): bool
     {
+        /** @var object|null $controller The controller class differs between PrestaShop versions */
         $controller = $this->context->getController();
 
         return isset($controller->php_self) && in_array($controller->php_self, self::CHECKOUT_CONTROLLERS, true);
