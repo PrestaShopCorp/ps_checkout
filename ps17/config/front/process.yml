@@ -27,6 +27,7 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor'
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
 
   PsCheckout\Infrastructure\Action\AddProductToCartAction:
     class: PsCheckout\Infrastructure\Action\AddProductToCartAction
