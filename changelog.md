@@ -21,5 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- **XO-3132** — Do not expose visitor-specific data in the HTML of cacheable pages
+  - Saved payment methods (vault ID and label), the PayPal order ID of the cart, the express checkout flag and the cart product count are now only injected on the checkout pages (`order`, `order-opc`, `orderopc`)
+  - Product, cart and other pages no longer leak these values to other visitors when served from a full-page cache
 - Integration tests: create a fresh `test_prestashop` database automatically before each run (`make create-test-db`)
 - Integration tests: add `stderr="true"` to `phpunit-integration.xml` to prevent "headers already sent" errors caused by PHPUnit output conflicting with PHP session start

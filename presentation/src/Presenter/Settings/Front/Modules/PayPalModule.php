@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,6 +33,15 @@ use PsCheckout\Presentation\Presenter\PresenterInterface;
 class PayPalModule implements PresenterInterface
 {
     /**
+     * Pages that are never served from a shared full-page cache: the only ones where
+     * data specific to the current visitor can be safely injected in the HTML.
+     * "order-opc" is the php_self of the one-page checkout controller, "orderopc" is the spelling
+     * used elsewhere in the module (FrontControllerValidator) and kept in case a third-party
+     * one-page checkout module uses it as php_self.
+     */
+    const CHECKOUT_CONTROLLERS = ['order', 'order-opc', 'orderopc'];
+
+    /**
      * @var string
      */
     private $moduleName;
@@ -57,7 +67,7 @@ class PayPalModule implements PresenterInterface
     private $fundingSourcePresenter;
 
     /**
-     * @var FundingSourcePresenterInterface
+     * @var FundingSourceTokenPresenterInterface
      */
     private $fundingSourceTokenPresenter;
 
@@ -114,11 +124,15 @@ class PayPalModule implements PresenterInterface
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $customMarks = [];
+        $isCheckoutPage = $this->isCheckoutPage();
 
-        foreach ($this->fundingSourceTokenPresenter->getFundingSourceTokens($this->context->getCustomer()->id ?? 0) as $fundingSource) {
-            $fundingSourcesSorted[] = $fundingSource->getName();
-            $payWithTranslations[$fundingSource->getName()] = $fundingSource->getLabel();
-            $customMarks[$fundingSource->getName()] = $fundingSource->getCustomMark();
+        // Saved payment methods belong to the visitor: product, cart and other pages may be cached and shared.
+        if ($isCheckoutPage) {
+            foreach ($this->fundingSourceTokenPresenter->getFundingSourceTokens($this->context->getCustomer()->id ?? 0) as $fundingSource) {
+                $fundingSourcesSorted[] = $fundingSource->getName();
+                $payWithTranslations[$fundingSource->getName()] = $fundingSource->getLabel();
+                $customMarks[$fundingSource->getName()] = $fundingSource->getCustomMark();
+            }
         }
 
         foreach ($this->fundingSourcePresenter->getAllActiveForSpecificShop($this->context->getShop()->id) as $fundingSource) {
@@ -133,8 +147,10 @@ class PayPalModule implements PresenterInterface
             }
         }
 
-        if (isset($this->context->getCart()->id)) {
-            $payPalOrder = $this->payPalOrderRepository->getOneByCartId($this->context->getCart()->id);
+        $cartId = $this->context->getCart()->id ?? null;
+
+        if ($isCheckoutPage && isset($cartId)) {
+            $payPalOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
         }
 
         return [
@@ -145,9 +161,19 @@ class PayPalModule implements PresenterInterface
             $this->moduleName . 'FundingSource' => isset($payPalOrder) ? $payPalOrder->getFundingSource() : 'paypal',
             $this->moduleName . 'ExpressCheckoutSelected' => isset($payPalOrder) && $payPalOrder->isExpressCheckout(),
             $this->moduleName . 'PartnerAttributionId' => $this->env->getBnCode(),
-            $this->moduleName . 'CartProductCount' => $this->context->getCart()->nbProducts(),
+            $this->moduleName . 'CartProductCount' => $isCheckoutPage ? $this->context->getCart()->nbProducts() : 0,
             $this->moduleName . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->moduleName . 'PayWithTranslations' => $payWithTranslations,
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isCheckoutPage(): bool
+    {
+        $controller = $this->context->getController();
+
+        return isset($controller->php_self) && in_array($controller->php_self, self::CHECKOUT_CONTROLLERS, true);
     }
 }

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l presentation/src/Presenter/Settings/Front/Modules/PayPalModule.php)",
+      "Bash(make phpstan *)"
+    ]
+  }
+}
