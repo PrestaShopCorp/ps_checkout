@@ -6,8 +6,6 @@ services:
     class: PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
-      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
-      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository'
@@ -27,6 +25,7 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor'
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
+      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
 
   PsCheckout\Infrastructure\Action\AddProductToCartAction:
     class: PsCheckout\Infrastructure\Action\AddProductToCartAction

@@ -26,11 +26,14 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
+use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
+use PsCheckout\Core\PaymentToken\ValueObject\PaymentToken;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
+use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
@@ -42,21 +45,34 @@ class CreatePayPalOrderActionTest extends TestCase
     /** @var CreatePayPalOrderAction */
     private $action;
 
+    /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $context;
+
+    /** @var PayPalCustomerRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $payPalCustomerRepository;
+
+    /** @var PaymentTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTokenRepository;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->orderHttpClient = $this->createMock(OrderHttpClientInterface::class);
+        $this->context = $this->createMock(ContextInterface::class);
+        $this->payPalCustomerRepository = $this->createMock(PayPalCustomerRepositoryInterface::class);
+        $this->paymentTokenRepository = $this->createMock(PaymentTokenRepositoryInterface::class);
         $this->action = new CreatePayPalOrderAction(
-            $this->createMock(ContextInterface::class),
-            $this->createMock(PayPalCustomerRepositoryInterface::class),
+            $this->context,
+            $this->payPalCustomerRepository,
             $this->createMock(PayPalOrderRepositoryInterface::class),
             $this->orderHttpClient,
             $this->createMock(OrderPayloadBuilderInterface::class),
             $this->createMock(PresenterInterface::class),
             $this->createMock(CreatePayPalOrderProcessorInterface::class),
             $this->createMock(PayPalOrderCacheInterface::class),
-            $this->createMock(DeletePaymentTokenActionInterface::class)
+            $this->createMock(DeletePaymentTokenActionInterface::class),
+            $this->paymentTokenRepository
         );
     }
 
@@ -111,6 +127,45 @@ class CreatePayPalOrderActionTest extends TestCase
         } catch (PsCheckoutException $exception) {
             $this->assertSame(PsCheckoutException::UNKNOWN, $exception->getCode());
             $this->assertSame($cause, $exception->getPrevious());
+        }
+    }
+
+    /**
+     * @return array<string, array{int, string|null, PaymentToken|null}>
+     */
+    public function invalidVaultOwnershipProvider(): array
+    {
+        $tokenOfAnotherCustomer = $this->createMock(PaymentToken::class);
+        $tokenOfAnotherCustomer->method('getPayPalCustomerId')->willReturn('OTHER_PAYPAL_CUSTOMER');
+
+        return [
+            'unknown token' => [1, 'PAYPAL_CUSTOMER', null],
+            'token of another customer' => [1, 'PAYPAL_CUSTOMER', $tokenOfAnotherCustomer],
+            'guest without PayPal customer' => [0, null, $tokenOfAnotherCustomer],
+            'customer without PayPal customer' => [1, null, $tokenOfAnotherCustomer],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidVaultOwnershipProvider
+     */
+    public function testVaultIdOwnershipIsCheckedBeforeAnyPayPalCall(int $customerId, ?string $payPalCustomerId, ?PaymentToken $paymentToken): void
+    {
+        $this->context->method('getCustomer')->willReturn((object) ['id' => $customerId]);
+        $this->payPalCustomerRepository->method('getPayPalCustomerIdByCustomerId')->willReturn($payPalCustomerId);
+        $this->paymentTokenRepository->method('getOneById')->with('VAULT_ID')->willReturn($paymentToken);
+
+        $this->orderHttpClient->expects($this->never())->method('createOrder');
+
+        try {
+            $this->action->execute(1, new CreatePayPalOrderRequest([
+                'vaultId' => 'VAULT_ID',
+                'fundingSource' => 'card',
+                'isExpressCheckout' => false,
+            ]));
+            $this->fail('An exception was expected');
+        } catch (PsCheckoutException $exception) {
+            $this->assertSame('Payment token does not belong to the customer', $exception->getMessage());
         }
     }
 }
