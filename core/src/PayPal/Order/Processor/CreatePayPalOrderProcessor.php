@@ -21,9 +21,6 @@
 namespace PsCheckout\Core\PayPal\Order\Processor;
 
 use PrestaShopException;
-use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
-use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderAuthorization;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderCapture;
@@ -46,16 +43,6 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
      * @var ContextInterface
      */
     private $context;
-
-    /**
-     * @var PayPalCustomerRepositoryInterface
-     */
-    private $payPalCustomerRepository;
-
-    /**
-     * @var PaymentTokenRepositoryInterface
-     */
-    private $paymentTokenRepository;
 
     /**
      * @var PayPalOrderRepositoryInterface
@@ -89,8 +76,6 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
 
     public function __construct(
         ContextInterface $context,
-        PayPalCustomerRepositoryInterface $payPalCustomerRepository,
-        PaymentTokenRepositoryInterface $paymentTokenRepository,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         ConfigurationInterface $configuration,
         PayPalOrderPurchaseUnitRepositoryInterface $payPalOrderPurchaseUnitRepository,
@@ -99,8 +84,6 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
         PayPalOrderRefundRepositoryInterface $payPalOrderRefundRepository
     ) {
         $this->context = $context;
-        $this->payPalCustomerRepository = $payPalCustomerRepository;
-        $this->paymentTokenRepository = $paymentTokenRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->configuration = $configuration;
         $this->payPalOrderPurchaseUnitRepository = $payPalOrderPurchaseUnitRepository;
@@ -140,7 +123,7 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
             $this->configuration->get(PayPalConfiguration::PS_CHECKOUT_PAYMENT_MODE),
             $request->isCardFields(),
             $request->isExpressCheckout(),
-            $this->getCustomerIntent($request, $this->getPayPalCustomerId()),
+            $this->getCustomerIntent($request),
             $request->getVaultId()
         );
 
@@ -149,19 +132,15 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
 
     /**
      * @param CreatePayPalOrderRequest $request
-     * @param string|null $payPalCustomerId
      *
      * @return array
-     *
-     * @throws PsCheckoutException
      */
-    private function getCustomerIntent(CreatePayPalOrderRequest $request, $payPalCustomerId): array
+    private function getCustomerIntent(CreatePayPalOrderRequest $request): array
     {
         $customerIntent = [];
 
         if ($request->getVaultId()) {
             $customerIntent[] = PayPalConfiguration::PS_CHECKOUT_CUSTOMER_INTENT_USES_VAULTING;
-            $this->validatePaymentToken($request->getVaultId(), $payPalCustomerId);
         }
 
         if ($request->isVault()) {
@@ -174,38 +153,6 @@ class CreatePayPalOrderProcessor implements CreatePayPalOrderProcessorInterface
         }
 
         return $customerIntent;
-    }
-
-    /**
-     * @return string|null
-     */
-    private function getPayPalCustomerId()
-    {
-        if (!$this->context->getCustomer()->id) {
-            return null;
-        }
-
-        $paypalCustomerId = $this->payPalCustomerRepository
-            ->getPayPalCustomerIdByCustomerId($this->context->getCustomer()->id);
-
-        return $paypalCustomerId ?? null;
-    }
-
-    /**
-     * @param string $vaultId
-     * @param string|null $payPalCustomerId
-     *
-     * @return void
-     *
-     * @throws PsCheckoutException
-     */
-    private function validatePaymentToken(string $vaultId, $payPalCustomerId)
-    {
-        $paymentToken = $this->paymentTokenRepository->getOneById($vaultId);
-
-        if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId() !== $payPalCustomerId) {
-            throw new PsCheckoutException('Payment token does not belong to the customer');
-        }
     }
 
     /**

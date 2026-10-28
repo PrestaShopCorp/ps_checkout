@@ -27,6 +27,7 @@ use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenActionInterface;
+use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
@@ -83,6 +84,11 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     private $deletePaymentTokenAction;
 
+    /**
+     * @var PaymentTokenRepositoryInterface
+     */
+    private $paymentTokenRepository;
+
     public function __construct(
         ContextInterface $context,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
@@ -92,7 +98,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         PresenterInterface $cartPresenter,
         CreatePayPalOrderProcessorInterface $createPayPalOrderProcessor,
         PayPalOrderCacheInterface $payPalOrderCache,
-        DeletePaymentTokenActionInterface $deletePaymentTokenAction
+        DeletePaymentTokenActionInterface $deletePaymentTokenAction,
+        PaymentTokenRepositoryInterface $paymentTokenRepository
     ) {
         $this->context = $context;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
@@ -103,6 +110,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $this->cartPresenter = $cartPresenter;
         $this->payPalOrderCache = $payPalOrderCache;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
+        $this->paymentTokenRepository = $paymentTokenRepository;
     }
 
     /**
@@ -110,6 +118,18 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     public function execute(int $cartId, CreatePayPalOrderRequest $request): bool
     {
+        $customerId = $this->context->getCustomer()->id;
+        $payPalCustomerId = null;
+
+        if ($customerId) {
+            $payPalCustomerId = $this->payPalCustomerRepository->getPayPalCustomerIdByCustomerId($customerId);
+        }
+
+        // Must run before any PayPal call: the vault ID is used to create (and possibly capture) the order.
+        if ($request->getVaultId()) {
+            $this->validatePaymentToken($request->getVaultId(), $payPalCustomerId);
+        }
+
         $this->orderPayloadBuilder
             ->setCart($this->cartPresenter->present())
             ->setIsCard($this->isCardPayment($request))
@@ -122,12 +142,6 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
 
         if ($request->getVaultId()) {
             $this->orderPayloadBuilder->setPaypalVaultId($request->getVaultId());
-        }
-
-        $payPalCustomerId = null;
-
-        if ($this->context->getCustomer()->id) {
-            $payPalCustomerId = $this->payPalCustomerRepository->getPayPalCustomerIdByCustomerId($this->context->getCustomer()->id);
         }
 
         if ($payPalCustomerId) {
@@ -146,7 +160,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             if ($request->getVaultId() && $exception->getCode() === PayPalException::CARD_CLOSED) {
                 $this->deletePaymentTokenAction->execute(
                     $request->getVaultId(),
-                    $this->context->getCustomer()->id
+                    $customerId
                 );
             }
 
@@ -160,6 +174,23 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $this->createPayPalOrderProcessor->createPayPalOrder($orderResponse, $request);
 
         return true;
+    }
+
+    /**
+     * @param string $vaultId
+     * @param string|null $payPalCustomerId
+     *
+     * @return void
+     *
+     * @throws PsCheckoutException
+     */
+    private function validatePaymentToken(string $vaultId, $payPalCustomerId)
+    {
+        $paymentToken = $this->paymentTokenRepository->getOneById($vaultId);
+
+        if (!$paymentToken || !$payPalCustomerId || $paymentToken->getPayPalCustomerId() !== $payPalCustomerId) {
+            throw new PsCheckoutException('Payment token does not belong to the customer');
+        }
     }
 
     /**

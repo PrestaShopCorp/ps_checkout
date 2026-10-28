@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l *)",
+      "Bash(make phpstan)",
+      "Bash(make lint)",
+      "Bash(make php-cs-fixer)",
+      "Bash(composer cs)"
+    ]
+  }
+}
