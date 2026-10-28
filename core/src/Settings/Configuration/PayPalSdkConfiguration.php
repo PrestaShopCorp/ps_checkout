@@ -105,6 +105,11 @@ class PayPalSdkConfiguration
     private $countryResolver;
 
     /**
+     * @var PayPalPayLaterConfiguration
+     */
+    private $payPalPayLaterConfiguration;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
