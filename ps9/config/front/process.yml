@@ -6,8 +6,6 @@ services:
     class: PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessor
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Context'
-      - '@PsCheckout\Infrastructure\Repository\PayPalCustomerRepository'
-      - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderPurchaseUnitRepository'
