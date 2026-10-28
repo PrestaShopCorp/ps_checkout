@@ -23,6 +23,7 @@ namespace PsCheckout\Presentation\Presenter\Settings\Front\Modules;
 
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\Settings\Configuration\PayPalCardConfiguration;
+use PsCheckout\Core\Settings\Configuration\PayPalSdkConfiguration;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Infrastructure\Environment\EnvInterface;
 use PsCheckout\Presentation\Presenter\FundingSource\FundingSourcePresenterInterface;
@@ -32,15 +33,6 @@ use PsCheckout\Presentation\Presenter\PresenterInterface;
 
 class PayPalModule implements PresenterInterface
 {
-    /**
-     * Pages that are never served from a shared full-page cache: the only ones where
-     * data specific to the current visitor can be safely injected in the HTML.
-     * "order-opc" is the php_self of the one-page checkout controller, "orderopc" is the spelling
-     * used elsewhere in the module (FrontControllerValidator) and kept in case a third-party
-     * one-page checkout module uses it as php_self.
-     */
-    const CHECKOUT_CONTROLLERS = ['order', 'order-opc', 'orderopc'];
-
     /**
      * @var string
      */
@@ -175,6 +167,6 @@ class PayPalModule implements PresenterInterface
         /** @var object|null $controller The controller class differs between PrestaShop versions */
         $controller = $this->context->getController();
 
-        return isset($controller->php_self) && in_array($controller->php_self, self::CHECKOUT_CONTROLLERS, true);
+        return isset($controller->php_self) && in_array($controller->php_self, PayPalSdkConfiguration::CHECKOUT_PAGES, true);
     }
 }

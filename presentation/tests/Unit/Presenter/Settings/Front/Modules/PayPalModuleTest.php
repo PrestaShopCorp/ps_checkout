@@ -158,7 +158,6 @@ class PayPalModuleTest extends TestCase
         return [
             'order' => ['order'],
             'order-opc' => ['order-opc'],
-            'orderopc' => ['orderopc'],
         ];
     }
 

@@ -47,6 +47,14 @@ class PayPalSdkConfiguration
     const NOT_FUNDING_SOURCES = ['google_pay', 'apple_pay', 'pay_upon_invoice'];
 
     /**
+     * php_self values of the checkout page. These pages are never served from a shared full-page cache:
+     * they are the only ones where data specific to the current visitor can be safely injected in the HTML.
+     * The OrderController of PrestaShop 1.7, 8 and 9, also used by ps_onepagecheckout, has the php_self "order".
+     * "order-opc" is not the php_self of any of them, it is kept because it was already handled as the checkout.
+     */
+    const CHECKOUT_PAGES = ['order', 'order-opc'];
+
+    /**
      * @var ContextInterface
      */
     private $context;
@@ -333,7 +341,7 @@ class PayPalSdkConfiguration
         }
 
         if (isset($controller->php_self)) {
-            return 'order-opc' === $controller->php_self ? 'order' : $controller->php_self;
+            return in_array($controller->php_self, self::CHECKOUT_PAGES, true) ? 'order' : $controller->php_self;
         }
 
         return '';
