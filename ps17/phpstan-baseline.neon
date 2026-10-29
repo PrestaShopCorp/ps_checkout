@@ -6163,12 +6163,6 @@ parameters:
 			path: ../core/src/Settings/Configuration/PayPalPayLaterConfiguration.php
 
 		-
-			message: '#^Access to an undefined property PsCheckout\\Core\\Settings\\Configuration\\PayPalSdkConfiguration\:\:\$payPalPayLaterConfiguration\.$#'
-			identifier: property.notFound
-			count: 4
-			path: ../core/src/Settings/Configuration/PayPalSdkConfiguration.php
-
-		-
 			message: '#^Access to property \$php_self on an unknown class PrestaShopBundle\\Bridge\\AdminController\\LegacyControllerBridgeInterface\.$#'
 			identifier: class.notFound
 			count: 3

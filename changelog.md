@@ -24,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3131** — Validate the vault ID ownership before creating the PayPal order
   - The check that the vault ID belongs to the current customer now runs before any call to PayPal, instead of after the order creation
   - A vault ID that is unknown, belongs to another PayPal customer, or is sent by a guest / customer without PayPal customer ID is rejected without creating a PayPal order
+- **XO-3132** — Do not expose visitor-specific data in the HTML of cacheable pages
+  - Saved payment methods (vault ID and label), the PayPal order ID of the cart, the express checkout flag and the cart product count are now only injected on the checkout pages (`order`, `order-opc`)
+  - Product, cart and other pages no longer leak these values to other visitors when served from a full-page cache
 - **XO-3137** — Mask vault IDs in module and HTTP logs
   - HTTP request and response bodies are now scrubbed by `SensitiveDataProcessor` (they were logged as raw JSON strings)
   - `vault_id`, `vaultId`, `customer_id` and the `id` / `customer.id` of a `vault` node are masked, keeping the last 4 characters
