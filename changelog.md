@@ -24,5 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3131** — Validate the vault ID ownership before creating the PayPal order
   - The check that the vault ID belongs to the current customer now runs before any call to PayPal, instead of after the order creation
   - A vault ID that is unknown, belongs to another PayPal customer, or is sent by a guest / customer without PayPal customer ID is rejected without creating a PayPal order
+- **XO-3137** — Mask vault IDs in module and HTTP logs
+  - HTTP request and response bodies are now scrubbed by `SensitiveDataProcessor` (they were logged as raw JSON strings)
+  - `vault_id`, `vaultId`, `customer_id` and the `id` / `customer.id` of a `vault` node are masked, keeping the last 4 characters
+  - The vault ID segment of payment-token URLs is masked
 - Integration tests: create a fresh `test_prestashop` database automatically before each run (`make create-test-db`)
 - Integration tests: add `stderr="true"` to `phpunit-integration.xml` to prevent "headers already sent" errors caused by PHPUnit output conflicting with PHP session start
