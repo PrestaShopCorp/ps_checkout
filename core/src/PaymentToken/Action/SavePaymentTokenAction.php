@@ -182,7 +182,7 @@ class SavePaymentTokenAction implements SavePaymentTokenActionInterface
         } catch (\Exception $exception) {
             $this->logger->error('Failed to save payment token.', [
                 'exception' => $exception,
-                'resource' => $resource,
+                'vault' => $resource,
             ]);
         }
     }
