@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Resume a PayPal order approved by the buyer after a client-side cancel instead of silently dropping it
+  - On mobile, the app switch to the bank app (Bancontact, iDEAL...) or to the PayPal app can close the SDK popup: `onCancel` fires and the local record is flagged `CANCELED` while nothing is voided on the PayPal side, so the buyer completes the payment anyway
+  - `OrderApprovedEventHandler` now resumes the nominal flow (validation, capture, order creation) when the local status is `CANCELED`, PayPal reports `APPROVED` and no PrestaShop order exists for the cart
+  - New `ReconcileCanceledPayPalOrdersAction`, triggered at most once per hour from `actionFrontControllerSetMedia` after the response is flushed, re-checks recent `CANCELED` records against PayPal in case the webhook was lost (no cron required)
+  - New `PS_CHECKOUT_CANCELED_ORDER_RECONCILIATION_LAST_RUN` configuration value and `RECONCILED` tag on `pscheckout_order`
+
 ### Added
 
 - **XO-3014** — Handle 422 MDU registration error on order creation

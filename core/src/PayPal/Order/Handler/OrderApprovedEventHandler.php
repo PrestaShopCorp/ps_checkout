@@ -29,6 +29,7 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
 
 class OrderApprovedEventHandler implements EventHandlerInterface
 {
@@ -57,18 +58,25 @@ class OrderApprovedEventHandler implements EventHandlerInterface
      */
     private $updatePayPalOrderPurchaseUnit;
 
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
     public function __construct(
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         PayPalCheckOrderStatusActionInterface $checkPayPalOrderStatusAction,
         OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
         CapturePayPalOrderActionInterface $capturePayPalOrderAction,
-        UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit
+        UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->checkPayPalOrderStatusAction = $checkPayPalOrderStatusAction;
         $this->orderAuthorizationValidator = $orderAuthorizationValidator;
         $this->capturePayPalOrderAction = $capturePayPalOrderAction;
         $this->updatePayPalOrderPurchaseUnit = $updatePayPalOrderPurchaseUnit;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -82,7 +90,10 @@ class OrderApprovedEventHandler implements EventHandlerInterface
             throw new PsCheckoutException('PayPal order not found.', PsCheckoutException::ORDER_NOT_FOUND);
         }
 
-        if (!$this->checkPayPalOrderStatusAction->execute($payPalOrder->getStatus(), PayPalOrderStatus::APPROVED)) {
+        if (
+            !$this->checkPayPalOrderStatusAction->execute($payPalOrder->getStatus(), PayPalOrderStatus::APPROVED)
+            && !$this->canResumeAfterClientSideCancel($payPalOrder, $payPalOrderResponse)
+        ) {
             return;
         }
 
@@ -105,5 +116,29 @@ class OrderApprovedEventHandler implements EventHandlerInterface
         }
 
         $this->capturePayPalOrderAction->execute($payPalOrderResponse);
+    }
+
+    /**
+     * A buyer-side cancel (PayPal JS SDK `onCancel`, for instance when the popup is closed by an app switch
+     * on mobile) only flags the local record as CANCELED: nothing is voided on the PayPal side, so the buyer
+     * can still complete the payment. When PayPal then reports the order as APPROVED, the nominal flow must
+     * resume instead of silently dropping the event, unless a PrestaShop order already exists for the cart.
+     *
+     * @param PayPalOrder $payPalOrder
+     * @param PayPalOrderResponse $payPalOrderResponse
+     *
+     * @return bool
+     */
+    private function canResumeAfterClientSideCancel(PayPalOrder $payPalOrder, PayPalOrderResponse $payPalOrderResponse): bool
+    {
+        if ($payPalOrder->getStatus() !== PayPalOrderStatus::CANCELED) {
+            return false;
+        }
+
+        if ($payPalOrderResponse->getStatus() !== PayPalOrderStatus::APPROVED) {
+            return false;
+        }
+
+        return empty($this->orderRepository->getAllBy(['id_cart' => $payPalOrder->getIdCart()]));
     }
 }

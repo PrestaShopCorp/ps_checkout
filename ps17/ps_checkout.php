@@ -26,6 +26,8 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter;
 use PsCheckout\Core\FundingSource\Eligibility\FundingSourceEligibilityService;
+use PsCheckout\Core\Hook\Handlers\CanceledPayPalOrderReconciliationHookHandler;
+use PsCheckout\Core\Hook\Handlers\CanceledPayPalOrderReconciliationHookParams;
 use PsCheckout\Core\Hook\Handlers\HookHandlerResult;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookHandler;
 use PsCheckout\Core\Hook\Handlers\OrderCaptureAuthorizationStatusPostUpdateHookParams;
@@ -335,6 +337,8 @@ class Ps_Checkout extends PaymentModule
             return;
         }
 
+        $this->scheduleCanceledPayPalOrderReconciliation();
+
         $controller = (string) Tools::getValue('controller');
 
         if (empty($controller) && isset($this->context->controller->php_self)) {
@@ -384,6 +388,32 @@ class Ps_Checkout extends PaymentModule
                 'server' => 'remote',
             ]
         );
+    }
+
+    /**
+     * Periodic safety net, see CanceledPayPalOrderReconciliationHookHandler. Deferred to the end of the request so
+     * the visitor never waits for the PayPal API: with PHP-FPM the response is flushed first.
+     */
+    private function scheduleCanceledPayPalOrderReconciliation()
+    {
+        try {
+            /** @var CanceledPayPalOrderReconciliationHookHandler $handler */
+            $handler = $this->getService(CanceledPayPalOrderReconciliationHookHandler::class);
+
+            if (!$handler->isDue()) {
+                return;
+            }
+        } catch (Exception $exception) {
+            return;
+        }
+
+        register_shutdown_function(static function () use ($handler) {
+            if (function_exists('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            }
+
+            $handler->handle(new CanceledPayPalOrderReconciliationHookParams());
+        });
     }
 
     public function hookActionObjectProductInCartDeleteAfter()

@@ -44,6 +44,17 @@ interface PayPalOrderRepositoryInterface
     public function getOneBy(array $keyValueCriteria);
 
     /**
+     * Get the records flagged CANCELED locally since the given date, oldest first, excluding express checkout,
+     * soft-deleted and already reconciled records.
+     *
+     * @param \DateTimeInterface $since
+     * @param int $limit
+     *
+     * @return PayPalOrder[]
+     */
+    public function getCanceledSince(\DateTimeInterface $since, int $limit): array;
+
+    /**
      * @param PayPalOrder $payPalOrder
      *
      * @return bool
