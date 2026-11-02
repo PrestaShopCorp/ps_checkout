@@ -35,6 +35,11 @@ class PayPalOrder
     const DELETED = 'DELETED';
 
     /**
+     * Set once the periodic reconciliation checked this record against PayPal and found nothing to resume.
+     */
+    const RECONCILED = 'RECONCILED';
+
+    /**
      * @var string
      */
     private $id;

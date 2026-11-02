@@ -26,6 +26,7 @@ class DefaultConfiguration
 {
     const DEFAULT_CONFIGURATION_VALUES = [
         'PS_CHECKOUT_INTENT' => PayPalOrderIntent::CAPTURE,
+        'PS_CHECKOUT_CANCELED_ORDER_RECONCILIATION_LAST_RUN' => 0,
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',

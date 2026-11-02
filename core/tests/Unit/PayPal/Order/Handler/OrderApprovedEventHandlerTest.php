@@ -28,6 +28,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use PsCheckout\Infrastructure\Repository\OrderRepositoryInterface;
 
 class OrderApprovedEventHandlerTest extends TestCase
 {
@@ -46,6 +47,9 @@ class OrderApprovedEventHandlerTest extends TestCase
     /** @var UpdatePayPalOrderPurchaseUnitActionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $updatePayPalOrderPurchaseUnit;
 
+    /** @var OrderRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderRepository;
+
     /** @var OrderApprovedEventHandler */
     private $handler;
 
@@ -56,13 +60,17 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->orderAuthorizationValidator = $this->createMock(OrderAuthorizationValidatorInterface::class);
         $this->capturePayPalOrderAction = $this->createMock(CapturePayPalOrderActionInterface::class);
         $this->updatePayPalOrderPurchaseUnit = $this->createMock(UpdatePayPalOrderPurchaseUnitActionInterface::class);
+        $this->orderRepository = $this->getMockBuilder(OrderRepositoryInterface::class)
+            ->addMethods(['getAllBy'])
+            ->getMock();
 
         $this->handler = new OrderApprovedEventHandler(
             $this->payPalOrderRepository,
             $this->checkPayPalOrderStatusAction,
             $this->orderAuthorizationValidator,
             $this->capturePayPalOrderAction,
-            $this->updatePayPalOrderPurchaseUnit
+            $this->updatePayPalOrderPurchaseUnit,
+            $this->orderRepository
         );
     }
 
@@ -81,6 +89,57 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock());
         $this->checkPayPalOrderStatusAction->method('execute')->willReturn(false);
 
+        $this->capturePayPalOrderAction->expects($this->never())->method('execute');
+
+        $this->handler->handle($this->createPayPalOrderResponseMock());
+    }
+
+    public function testHandleResumesCanceledOrderWhenPayPalReportsApprovedAndNoOrderExists(): void
+    {
+        $payPalOrder = $this->createStatefulPayPalOrderMock('CANCELED');
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($payPalOrder);
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(false);
+        $this->orderRepository->method('getAllBy')->with(['id_cart' => 42])->willReturn([]);
+
+        $payPalOrder->expects($this->once())->method('setStatus')->with('APPROVED');
+        $this->payPalOrderRepository->expects($this->once())->method('save');
+        $this->orderAuthorizationValidator->expects($this->once())->method('validate');
+        $this->capturePayPalOrderAction->expects($this->once())->method('execute');
+
+        $this->handler->handle($this->createPayPalOrderResponseMock());
+    }
+
+    public function testHandleDoesNotResumeCanceledOrderWhenPrestaShopOrderExists(): void
+    {
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock('CANCELED'));
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(false);
+        $this->orderRepository->method('getAllBy')->willReturn([new \stdClass()]);
+
+        $this->payPalOrderRepository->expects($this->never())->method('save');
+        $this->capturePayPalOrderAction->expects($this->never())->method('execute');
+
+        $this->handler->handle($this->createPayPalOrderResponseMock());
+    }
+
+    public function testHandleDoesNotResumeCanceledOrderWhenPayPalStatusIsNotApproved(): void
+    {
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock('CANCELED'));
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(false);
+        $this->orderRepository->method('getAllBy')->willReturn([]);
+
+        $this->payPalOrderRepository->expects($this->never())->method('save');
+        $this->capturePayPalOrderAction->expects($this->never())->method('execute');
+
+        $this->handler->handle($this->createPayPalOrderResponseMock('CREATED'));
+    }
+
+    public function testHandleDoesNotResumeWhenLocalStatusIsNotCanceled(): void
+    {
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock('COMPLETED'));
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(false);
+        $this->orderRepository->method('getAllBy')->willReturn([]);
+
+        $this->payPalOrderRepository->expects($this->never())->method('save');
         $this->capturePayPalOrderAction->expects($this->never())->method('execute');
 
         $this->handler->handle($this->createPayPalOrderResponseMock());
@@ -150,6 +209,29 @@ class OrderApprovedEventHandlerTest extends TestCase
         $payPalOrder->method('getIdCart')->willReturn($cartId);
         $payPalOrder->method('isExpressCheckout')->willReturn($isExpressCheckout);
         $payPalOrder->method('hasTag')->willReturn($isDeleted);
+
+        return $payPalOrder;
+    }
+
+    /**
+     * Same as createPayPalOrderMock() but getStatus() reflects the last setStatus() call, as the entity does.
+     *
+     * @return PayPalOrder|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function createStatefulPayPalOrderMock(string $status, int $cartId = 42)
+    {
+        $payPalOrder = $this->createMock(PayPalOrder::class);
+        $payPalOrder->method('getIdCart')->willReturn($cartId);
+        $payPalOrder->method('isExpressCheckout')->willReturn(false);
+        $payPalOrder->method('hasTag')->willReturn(false);
+        $payPalOrder->method('getStatus')->willReturnCallback(static function () use (&$status) {
+            return $status;
+        });
+        $payPalOrder->method('setStatus')->willReturnCallback(static function (string $newStatus) use (&$status, $payPalOrder) {
+            $status = $newStatus;
+
+            return $payPalOrder;
+        });
 
         return $payPalOrder;
     }

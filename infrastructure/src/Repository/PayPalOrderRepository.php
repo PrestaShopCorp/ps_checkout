@@ -22,6 +22,7 @@ namespace PsCheckout\Infrastructure\Repository;
 
 use Exception;
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 
@@ -83,6 +84,31 @@ class PayPalOrderRepository implements PayPalOrderRepositoryInterface
         $payPalOrderData = end($payPalOrderDataList);
 
         return $this->buildPayPalOrder($payPalOrderData);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCanceledSince(\DateTimeInterface $since, int $limit): array
+    {
+        $query = new \DbQuery();
+
+        $query->select('*')
+            ->from(self::TABLE_NAME)
+            ->where('status = "' . pSQL(PayPalOrderStatus::CANCELED) . '"')
+            ->where('is_express_checkout = 0')
+            ->where('date_add >= "' . pSQL($since->format('Y-m-d H:i:s')) . '"')
+            ->where('(tags IS NULL OR (tags NOT LIKE "%' . pSQL(PayPalOrder::DELETED) . '%" AND tags NOT LIKE "%' . pSQL(PayPalOrder::RECONCILED) . '%"))')
+            ->orderBy('date_add ASC')
+            ->limit($limit);
+
+        $payPalOrderDataList = $this->db->executeS($query);
+
+        if (empty($payPalOrderDataList)) {
+            return [];
+        }
+
+        return array_map([$this, 'buildPayPalOrder'], $payPalOrderDataList);
     }
 
     /**

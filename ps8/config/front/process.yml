@@ -199,6 +199,26 @@ services:
       - '@PsCheckout\Core\Order\Validator\OrderAuthorizationValidator'
       - '@PsCheckout\Core\PayPal\Order\Action\CapturePayPalOrderAction'
       - '@PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitAction'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+
+  PsCheckout\Core\PayPal\Order\Action\ReconcileCanceledPayPalOrdersAction:
+    class: PsCheckout\Core\PayPal\Order\Action\ReconcileCanceledPayPalOrdersAction
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\CartRepository'
+      - '@PsCheckout\Infrastructure\Adapter\Context'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
+      - '@PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler'
+      - '@Psr\Log\LoggerInterface'
+
+  PsCheckout\Core\Hook\Handlers\CanceledPayPalOrderReconciliationHookHandler:
+    class: PsCheckout\Core\Hook\Handlers\CanceledPayPalOrderReconciliationHookHandler
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
+      - '@PsCheckout\Core\PayPal\Order\Action\ReconcileCanceledPayPalOrdersAction'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler:
     class: PsCheckout\Core\PayPal\Order\Handler\OrderCompletedEventHandler
