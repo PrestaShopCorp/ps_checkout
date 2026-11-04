@@ -48,6 +48,81 @@ class SensitiveDataProcessorTest extends TestCase
         $this->assertStringContainsString('"intent":"CAPTURE"', $logged);
     }
 
+    /**
+     * @dataProvider paymentSourceProvider
+     */
+    public function testMasksCustomerIdInCreateOrderRequestBody(string $source): void
+    {
+        $body = json_encode([
+            'intent' => 'CAPTURE',
+            'payment_source' => [
+                $source => [
+                    'vault_id' => self::VAULT_ID,
+                    'attributes' => [
+                        'customer' => [
+                            'id' => self::CUSTOMER_ID,
+                        ],
+                        'verification' => [
+                            'method' => 'SCA_WHEN_REQUIRED',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $logged = $this->valueAt($this->process(['method' => 'POST', 'body' => $body]), 'body');
+        $this->assertIsString($logged);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, $logged);
+        $this->assertStringNotContainsString(self::CUSTOMER_ID, $logged);
+
+        $decoded = json_decode($logged, true);
+        $this->assertIsArray($decoded);
+
+        $this->assertSame('****1JaY', $this->valueAt($decoded, 'payment_source.' . $source . '.attributes.customer.id'));
+        $this->assertSame('SCA_WHEN_REQUIRED', $this->valueAt($decoded, 'payment_source.' . $source . '.attributes.verification.method'));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public function paymentSourceProvider(): array
+    {
+        return [
+            'card' => ['card'],
+            'paypal' => ['paypal'],
+            'venmo' => ['venmo'],
+            'apple_pay' => ['apple_pay'],
+        ];
+    }
+
+    public function testMasksVaultIdsInOrderWebhookBody(): void
+    {
+        $context = $this->process([
+            'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
+            'resource' => [
+                'id' => '5O190127TN364715T',
+                'payment_source' => [
+                    'card' => [
+                        'last_digits' => '1111',
+                        'attributes' => [
+                            'vault' => [
+                                'id' => self::VAULT_ID,
+                                'status' => 'VAULTED',
+                                'customer' => ['id' => self::CUSTOMER_ID],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertSame('****wbvp', $this->valueAt($context, 'resource.payment_source.card.attributes.vault.id'));
+        $this->assertSame('****1JaY', $this->valueAt($context, 'resource.payment_source.card.attributes.vault.customer.id'));
+        $this->assertSame('5O190127TN364715T', $this->valueAt($context, 'resource.id'));
+        $this->assertSame('1111', $this->valueAt($context, 'resource.payment_source.card.last_digits'));
+    }
+
     public function testMasksVaultAndCustomerIdsInJsonResponseBody(): void
     {
         $body = json_encode([

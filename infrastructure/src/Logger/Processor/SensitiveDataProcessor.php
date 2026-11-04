@@ -99,6 +99,10 @@ class SensitiveDataProcessor
                 $value = $this->maskVault($value);
             }
 
+            if ($lowerKey === 'attributes' && is_array($value)) {
+                $value = $this->maskCustomer($value);
+            }
+
             if ($lowerKey === 'url' && is_string($value)) {
                 $data[$key] = $this->maskUrl($value);
 
@@ -132,11 +136,23 @@ class SensitiveDataProcessor
             $vault['id'] = $this->mask($vault['id']);
         }
 
-        if (isset($vault['customer']) && is_array($vault['customer']) && isset($vault['customer']['id'])) {
-            $vault['customer']['id'] = $this->mask($vault['customer']['id']);
+        return $this->maskCustomer($vault);
+    }
+
+    /**
+     * Masks the PayPal customer ID of a node with a `customer` child (`attributes` or `vault`).
+     *
+     * @param array<mixed> $node
+     *
+     * @return array<mixed>
+     */
+    private function maskCustomer(array $node)
+    {
+        if (isset($node['customer']) && is_array($node['customer']) && isset($node['customer']['id'])) {
+            $node['customer']['id'] = $this->mask($node['customer']['id']);
         }
 
-        return $vault;
+        return $node;
     }
 
     /**
