@@ -98,18 +98,21 @@ class SensitiveDataProcessorTest extends TestCase
 
     public function testMasksVaultIdsInOrderWebhookBody(): void
     {
+        // Same shape as the DispatchWebhookProcessor log context: ['payload' => DispatchWebhookRequest::toArray()]
         $context = $this->process([
-            'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => [
-                'id' => '5O190127TN364715T',
-                'payment_source' => [
-                    'card' => [
-                        'last_digits' => '1111',
-                        'attributes' => [
-                            'vault' => [
-                                'id' => self::VAULT_ID,
-                                'status' => 'VAULTED',
-                                'customer' => ['id' => self::CUSTOMER_ID],
+            'payload' => [
+                'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
+                'resource' => [
+                    'id' => '5O190127TN364715T',
+                    'payment_source' => [
+                        'card' => [
+                            'last_digits' => '1111',
+                            'attributes' => [
+                                'vault' => [
+                                    'id' => self::VAULT_ID,
+                                    'status' => 'VAULTED',
+                                    'customer' => ['id' => self::CUSTOMER_ID],
+                                ],
                             ],
                         ],
                     ],
@@ -117,10 +120,21 @@ class SensitiveDataProcessorTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('****wbvp', $this->valueAt($context, 'resource.payment_source.card.attributes.vault.id'));
-        $this->assertSame('****1JaY', $this->valueAt($context, 'resource.payment_source.card.attributes.vault.customer.id'));
-        $this->assertSame('5O190127TN364715T', $this->valueAt($context, 'resource.id'));
-        $this->assertSame('1111', $this->valueAt($context, 'resource.payment_source.card.last_digits'));
+        $this->assertSame('****wbvp', $this->valueAt($context, 'payload.resource.payment_source.card.attributes.vault.id'));
+        $this->assertSame('****1JaY', $this->valueAt($context, 'payload.resource.payment_source.card.attributes.vault.customer.id'));
+        $this->assertSame('5O190127TN364715T', $this->valueAt($context, 'payload.resource.id'));
+        $this->assertSame('1111', $this->valueAt($context, 'payload.resource.payment_source.card.last_digits'));
+    }
+
+    public function testMasksVaultIdsInDeeplyNestedContext(): void
+    {
+        $context = $this->process([
+            'a' => ['b' => ['c' => ['payload' => ['resource' => ['payment_source' => ['card' => ['attributes' => [
+                'vault' => ['id' => self::VAULT_ID],
+            ]]]]]]]],
+        ]);
+
+        $this->assertSame('****wbvp', $this->valueAt($context, 'a.b.c.payload.resource.payment_source.card.attributes.vault.id'));
     }
 
     public function testMasksVaultAndCustomerIdsInJsonResponseBody(): void

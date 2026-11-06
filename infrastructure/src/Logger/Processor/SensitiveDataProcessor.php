@@ -68,7 +68,7 @@ class SensitiveDataProcessor
      */
     private function scrub(array $data, $depth = 0)
     {
-        if ($depth > 5) {
+        if ($depth > 10) {
             return $data;
         }
 
