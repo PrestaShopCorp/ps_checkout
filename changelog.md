@@ -27,5 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3132** — Do not expose visitor-specific data in the HTML of cacheable pages
   - Saved payment methods (vault ID and label), the PayPal order ID of the cart, the express checkout flag and the cart product count are now only injected on the checkout pages (`order`, `order-opc`)
   - Product, cart and other pages no longer leak these values to other visitors when served from a full-page cache
+- **XO-3160** — Use the card 3D Secure result again when validating a payment (regression since v5.3.2)
+  - `PayPalOrderResponse::getAuthenticationResult()` always returned `null`, so the 3D Secure decision was always "no decision"
+  - With `SCA_ALWAYS`, every card payment was rejected, even after a successful 3D Secure
+  - With `SCA_WHEN_REQUIRED`, payments with a failed (`NO` liability shift + `N`/`R`) 3D Secure are rejected again, and `UNKNOWN` results ask the customer to retry
+  - Log a warning when a `CHECKOUT.ORDER.APPROVED` webhook does not capture because the order validation failed
 - Integration tests: create a fresh `test_prestashop` database automatically before each run (`make create-test-db`)
 - Integration tests: add `stderr="true"` to `phpunit-integration.xml` to prevent "headers already sent" errors caused by PHPUnit output conflicting with PHP session start

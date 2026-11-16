@@ -28,6 +28,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use Psr\Log\LoggerInterface;
 
 class OrderApprovedEventHandlerTest extends TestCase
 {
@@ -46,6 +47,9 @@ class OrderApprovedEventHandlerTest extends TestCase
     /** @var UpdatePayPalOrderPurchaseUnitActionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $updatePayPalOrderPurchaseUnit;
 
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
     /** @var OrderApprovedEventHandler */
     private $handler;
 
@@ -56,13 +60,15 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->orderAuthorizationValidator = $this->createMock(OrderAuthorizationValidatorInterface::class);
         $this->capturePayPalOrderAction = $this->createMock(CapturePayPalOrderActionInterface::class);
         $this->updatePayPalOrderPurchaseUnit = $this->createMock(UpdatePayPalOrderPurchaseUnitActionInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = new OrderApprovedEventHandler(
             $this->payPalOrderRepository,
             $this->checkPayPalOrderStatusAction,
             $this->orderAuthorizationValidator,
             $this->capturePayPalOrderAction,
-            $this->updatePayPalOrderPurchaseUnit
+            $this->updatePayPalOrderPurchaseUnit,
+            $this->logger
         );
     }
 
@@ -121,10 +127,34 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->handler->handle($this->createPayPalOrderResponseMock());
     }
 
+    public function testHandleLogsWhenValidatorRefuses(): void
+    {
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock());
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(true);
+        $this->orderAuthorizationValidator->method('validate')->willThrowException(
+            new PsCheckoutException('Cart invoice address is incorrect.', PsCheckoutException::CART_ADDRESS_INVOICE_INVALID)
+        );
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                $this->stringContains('not captured'),
+                $this->callback(function (array $context): bool {
+                    return $context['paypal_order_id'] === 'ORDER-123'
+                        && $context['cart_id'] === 42
+                        && $context['exception_code'] === PsCheckoutException::CART_ADDRESS_INVOICE_INVALID
+                        && $context['exception_message'] === 'Cart invoice address is incorrect.';
+                })
+            );
+
+        $this->handler->handle($this->createPayPalOrderResponseMock());
+    }
+
     public function testHandleCapturesWhenValidatorPasses(): void
     {
         $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock());
         $this->checkPayPalOrderStatusAction->method('execute')->willReturn(true);
+        $this->logger->expects($this->never())->method('warning');
 
         $this->capturePayPalOrderAction->expects($this->once())->method('execute');
 
