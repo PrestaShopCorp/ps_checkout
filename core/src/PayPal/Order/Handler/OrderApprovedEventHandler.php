@@ -110,7 +110,7 @@ class OrderApprovedEventHandler implements EventHandlerInterface
             $this->orderAuthorizationValidator->validate($payPalOrder->getIdCart(), $payPalOrderResponse);
         } catch (PsCheckoutException $e) {
             $this->logger->warning(
-                'PayPal order approved but not captured: authorization validation failed',
+                'PayPal order approved but not captured: order validation failed',
                 [
                     'paypal_order_id' => $payPalOrderResponse->getId(),
                     'cart_id' => $payPalOrder->getIdCart(),

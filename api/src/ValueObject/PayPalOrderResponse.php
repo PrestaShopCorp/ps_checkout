@@ -485,7 +485,7 @@ class PayPalOrderResponse
             return null;
         }
 
-        $fundingSourceDetails = $this->paymentSource[$fundingSource] ?? null;
+        $fundingSourceDetails = $this->getPaymentSource()[$fundingSource] ?? null;
         $authenticationResult = is_array($fundingSourceDetails) ? ($fundingSourceDetails['authentication_result'] ?? null) : null;
 
         return is_array($authenticationResult) ? $authenticationResult : null;

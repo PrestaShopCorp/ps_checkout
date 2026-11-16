@@ -285,6 +285,28 @@ class Card3DSecureValidatorTest extends TestCase
                 ],
                 Card3DSecureConfiguration::DECISION_PROCEED,
             ],
+            'no liability shift, 3DS bypassed' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_BYPASS,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'no liability shift, 3DS unavailable' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_UNAVAILABLE,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'no liability shift, no three_d_secure block' => [
+                ['liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO],
+                Card3DSecureConfiguration::DECISION_NO_DECISION,
+            ],
         ];
     }
 }
