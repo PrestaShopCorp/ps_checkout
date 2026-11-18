@@ -259,7 +259,17 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
         /** @var PayPalConfiguration $payPalConfiguration */
         $payPalConfiguration = $this->module->getService(PayPalConfiguration::class);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         switch ($card3DSecure->getAuthorizationDecision($payPalOrderResponse)) {
+            case Card3DSecureConfiguration::DECISION_REJECT:
+                $logger->warning(
+                    'PayPal order not captured: 3D Secure authentication failed',
+                    $this->get3DSecureLogContext($payPalOrderResponse, $payPalOrder)
+                );
+
+                break;
             case Card3DSecureConfiguration::DECISION_RETRY:
                 $this->redirectTo3DSVerification($payPalOrderResponse);
 
@@ -273,10 +283,33 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 if ($payPalConfiguration->getCardFieldsContingencies() !== 'SCA_ALWAYS') {
                     $capturePayPalOrderAction->execute($payPalOrderResponse);
                     $this->createOrder($payPalOrderProvider->getById($this->paypalOrderId), $payPalOrder);
+
+                    break;
                 }
+
+                $logger->warning(
+                    'PayPal order not captured: no 3D Secure result and 3D Secure is required (SCA_ALWAYS)',
+                    $this->get3DSecureLogContext($payPalOrderResponse, $payPalOrder)
+                );
 
                 break;
         }
+    }
+
+    /**
+     * @param PayPalOrderResponse $payPalOrderResponse
+     * @param PayPalOrder|null $payPalOrder
+     *
+     * @return array<string, mixed>
+     */
+    private function get3DSecureLogContext(PayPalOrderResponse $payPalOrderResponse, $payPalOrder = null)
+    {
+        return [
+            'paypal_order_id' => $payPalOrderResponse->getId(),
+            'cart_id' => $payPalOrder ? $payPalOrder->getIdCart() : null,
+            'funding_source' => $payPalOrderResponse->getFundingSource(),
+            'authentication_result' => $payPalOrderResponse->getAuthenticationResult(),
+        ];
     }
 
     /**
@@ -337,7 +370,16 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $logger->info('Redirecting to 3DS verification: ' . $redirectUrl);
 
             $tools->redirect($redirectUrl);
+
+            return;
         }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->warning(
+            'PayPal order not captured: 3D Secure must be retried but PayPal returned no payer-action link',
+            $this->get3DSecureLogContext($payPalOrderResponse)
+        );
     }
 
     /**

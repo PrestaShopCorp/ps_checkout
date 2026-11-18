@@ -29,6 +29,7 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use Psr\Log\LoggerInterface;
 
 class OrderApprovedEventHandler implements EventHandlerInterface
 {
@@ -57,18 +58,25 @@ class OrderApprovedEventHandler implements EventHandlerInterface
      */
     private $updatePayPalOrderPurchaseUnit;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         PayPalCheckOrderStatusActionInterface $checkPayPalOrderStatusAction,
         OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
         CapturePayPalOrderActionInterface $capturePayPalOrderAction,
-        UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit
+        UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit,
+        LoggerInterface $logger
     ) {
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->checkPayPalOrderStatusAction = $checkPayPalOrderStatusAction;
         $this->orderAuthorizationValidator = $orderAuthorizationValidator;
         $this->capturePayPalOrderAction = $capturePayPalOrderAction;
         $this->updatePayPalOrderPurchaseUnit = $updatePayPalOrderPurchaseUnit;
+        $this->logger = $logger;
     }
 
     /**
@@ -101,6 +109,16 @@ class OrderApprovedEventHandler implements EventHandlerInterface
         try {
             $this->orderAuthorizationValidator->validate($payPalOrder->getIdCart(), $payPalOrderResponse);
         } catch (PsCheckoutException $e) {
+            $this->logger->warning(
+                'PayPal order approved but not captured: order validation failed',
+                [
+                    'paypal_order_id' => $payPalOrderResponse->getId(),
+                    'cart_id' => $payPalOrder->getIdCart(),
+                    'exception_code' => $e->getCode(),
+                    'exception_message' => $e->getMessage(),
+                ]
+            );
+
             return;
         }
 

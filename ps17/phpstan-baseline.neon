@@ -505,12 +505,6 @@ parameters:
 			path: ../api/src/ValueObject/PayPalOrderResponse.php
 
 		-
-			message: '#^Variable \$paymentSource on left side of \?\? is never defined\.$#'
-			identifier: nullCoalesce.variable
-			count: 1
-			path: ../api/src/ValueObject/PayPalOrderResponse.php
-
-		-
 			message: '#^Cannot access offset ''href'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
