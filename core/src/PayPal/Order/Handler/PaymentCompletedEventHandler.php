@@ -25,6 +25,7 @@ use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
+use PsCheckout\Core\PayPal\Order\Lock\PayPalOrderLockInterface;
 
 class PaymentCompletedEventHandler implements EventHandlerInterface
 {
@@ -43,14 +44,21 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     private $setCompletedOrderStateAction;
 
+    /**
+     * @var PayPalOrderLockInterface
+     */
+    private $payPalOrderLock;
+
     public function __construct(
         CreateOrderActionInterface $createOrderAction,
         CreateOrderPaymentActionInterface $createOrderPaymentAction,
-        SetOrderStateActionInterface $setCompletedOrderStateAction
+        SetOrderStateActionInterface $setCompletedOrderStateAction,
+        PayPalOrderLockInterface $payPalOrderLock
     ) {
         $this->createOrderAction = $createOrderAction;
         $this->createOrderPaymentAction = $createOrderPaymentAction;
         $this->setCompletedOrderStateAction = $setCompletedOrderStateAction;
+        $this->payPalOrderLock = $payPalOrderLock;
     }
 
     /**
@@ -58,17 +66,35 @@ class PaymentCompletedEventHandler implements EventHandlerInterface
      */
     public function handle(PayPalOrderResponse $payPalOrderResponse)
     {
+        $payPalOrderId = $payPalOrderResponse->getId();
+
+        // This event is handled twice for every capture: synchronously by the front-office
+        // request, then again when PayPal delivers the webhook. The idempotency checks of
+        // the three actions below only work once the first run has fully completed: while
+        // PaymentModule::validateOrder() is still running, the PrestaShop order row exists
+        // but has no order details, no payment and no state yet, so a concurrent run would
+        // create the invoice before the order details are inserted (empty invoice PDF),
+        // add a second order payment and set the order state twice. The lock makes the
+        // second request wait for the first one instead.
+        $locked = $this->payPalOrderLock->acquire($payPalOrderId);
+
         try {
-            $this->createOrderAction->execute($payPalOrderResponse);
-        } catch (PsCheckoutException $e) {
-            if ($e->getCode() !== PsCheckoutException::PRESTASHOP_ORDER_ALREADY_EXISTS) {
-                throw $e;
+            try {
+                $this->createOrderAction->execute($payPalOrderResponse);
+            } catch (PsCheckoutException $e) {
+                if ($e->getCode() !== PsCheckoutException::PRESTASHOP_ORDER_ALREADY_EXISTS) {
+                    throw $e;
+                }
+                // Order already exists (duplicate webhook delivery or retry after partial failure).
+                // Fall through: createOrderPaymentAction and setCompletedOrderStateAction are both
+                // idempotent and must still run to ensure the payment record and order state are set.
             }
-            // Order already exists (duplicate webhook delivery or retry after partial failure).
-            // Fall through: createOrderPaymentAction and setCompletedOrderStateAction are both
-            // idempotent and must still run to ensure the payment record and order state are set.
+            $this->createOrderPaymentAction->execute($payPalOrderResponse);
+            $this->setCompletedOrderStateAction->execute($payPalOrderId);
+        } finally {
+            if ($locked) {
+                $this->payPalOrderLock->release($payPalOrderId);
+            }
         }
-        $this->createOrderPaymentAction->execute($payPalOrderResponse);
-        $this->setCompletedOrderStateAction->execute($payPalOrderResponse->getId());
     }
 }

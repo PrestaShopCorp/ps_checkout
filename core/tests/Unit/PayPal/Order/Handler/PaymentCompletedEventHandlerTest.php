@@ -25,6 +25,7 @@ use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\Order\Action\CreateOrderPaymentActionInterface;
 use PsCheckout\Core\OrderState\Action\SetOrderStateActionInterface;
 use PsCheckout\Core\PayPal\Order\Handler\PaymentCompletedEventHandler;
+use PsCheckout\Core\PayPal\Order\Lock\PayPalOrderLockInterface;
 
 class PaymentCompletedEventHandlerTest extends TestCase
 {
@@ -37,6 +38,9 @@ class PaymentCompletedEventHandlerTest extends TestCase
     /** @var SetOrderStateActionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $setCompletedOrderStateAction;
 
+    /** @var PayPalOrderLockInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $payPalOrderLock;
+
     /** @var PaymentCompletedEventHandler */
     private $handler;
 
@@ -45,12 +49,66 @@ class PaymentCompletedEventHandlerTest extends TestCase
         $this->createOrderAction = $this->createMock(CreateOrderActionInterface::class);
         $this->createOrderPaymentAction = $this->createMock(CreateOrderPaymentActionInterface::class);
         $this->setCompletedOrderStateAction = $this->createMock(SetOrderStateActionInterface::class);
+        $this->payPalOrderLock = $this->createMock(PayPalOrderLockInterface::class);
+        $this->payPalOrderLock->method('acquire')->willReturn(true);
 
         $this->handler = new PaymentCompletedEventHandler(
             $this->createOrderAction,
             $this->createOrderPaymentAction,
-            $this->setCompletedOrderStateAction
+            $this->setCompletedOrderStateAction,
+            $this->payPalOrderLock
         );
+    }
+
+    public function testHandleAcquiresAndReleasesTheLockForThePayPalOrder(): void
+    {
+        $response = $this->createMock(PayPalOrderResponse::class);
+        $response->method('getId')->willReturn('paypal-order-123');
+
+        $this->payPalOrderLock->expects($this->once())->method('acquire')->with('paypal-order-123')->willReturn(true);
+        $this->payPalOrderLock->expects($this->once())->method('release')->with('paypal-order-123');
+
+        $this->handler->handle($response);
+    }
+
+    public function testHandleReleasesTheLockEvenWhenAnActionThrows(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $response = $this->createMock(PayPalOrderResponse::class);
+        $response->method('getId')->willReturn('paypal-order-123');
+
+        $this->createOrderPaymentAction
+            ->method('execute')
+            ->willThrowException(new \RuntimeException('Unexpected failure'));
+
+        $this->payPalOrderLock->expects($this->once())->method('release')->with('paypal-order-123');
+
+        $this->handler->handle($response);
+    }
+
+    public function testHandleDoesNotReleaseALockItCouldNotAcquireAndStillProcessesTheOrder(): void
+    {
+        $response = $this->createMock(PayPalOrderResponse::class);
+        $response->method('getId')->willReturn('paypal-order-123');
+
+        $payPalOrderLock = $this->createMock(PayPalOrderLockInterface::class);
+        $payPalOrderLock->method('acquire')->willReturn(false);
+        $payPalOrderLock->expects($this->never())->method('release');
+
+        $handler = new PaymentCompletedEventHandler(
+            $this->createOrderAction,
+            $this->createOrderPaymentAction,
+            $this->setCompletedOrderStateAction,
+            $payPalOrderLock
+        );
+
+        // A lock that cannot be acquired must never block a payment from being recorded.
+        $this->createOrderAction->expects($this->once())->method('execute')->with($response);
+        $this->createOrderPaymentAction->expects($this->once())->method('execute')->with($response);
+        $this->setCompletedOrderStateAction->expects($this->once())->method('execute')->with('paypal-order-123');
+
+        $handler->handle($response);
     }
 
     public function testHandleCallsAllThreeActionsOnHappyPath(): void
