@@ -72,9 +72,13 @@ class CustomerNotifyAction implements CustomerNotifyActionInterface
     {
         $payPalOrder = $this->payPalOrderRepository->getOneBy(['id' => $paypalOrderId]);
 
+        if (!$payPalOrder) {
+            return null;
+        }
+
         $order = $this->orderRepository->getOneBy(['id_cart' => $payPalOrder->getIdCart()]);
 
-        if (!$payPalOrder || !$order) {
+        if (!$order) {
             return null;
         }
 
