@@ -200,4 +200,113 @@ class Card3DSecureValidatorTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * Uses real PayPal order payloads instead of mocking PayPalOrderResponse,
+     * so a broken getter on the response cannot hide behind the mock.
+     *
+     * @dataProvider provideRealPayPalOrderAuthorizationScenarios
+     *
+     * @param array<string, mixed>|null $authenticationResult
+     */
+    public function testGetAuthorizationDecisionFromRealPayPalOrderPayload($authenticationResult, int $expectedDecision): void
+    {
+        $card = ['last_digits' => '0004', 'brand' => 'VISA', 'type' => 'CREDIT'];
+
+        if ($authenticationResult !== null) {
+            $card['authentication_result'] = $authenticationResult;
+        }
+
+        $payPalOrder = new PayPalOrderResponse('4RA67742YD489830M', 'CREATED', 'CAPTURE', null, ['card' => $card], [], []);
+
+        $this->assertSame($expectedDecision, $this->validator->getAuthorizationDecision($payPalOrder));
+    }
+
+    /**
+     * @return array<string, array{0: array<string, mixed>|null, 1: int}>
+     */
+    public function provideRealPayPalOrderAuthorizationScenarios(): array
+    {
+        return [
+            'card without 3DS' => [
+                null,
+                Card3DSecureConfiguration::DECISION_NO_DECISION,
+            ],
+            'challenge succeeded, liability shift possible' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_POSSIBLE,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_YES,
+                        'authentication_status' => Card3DSecureConfiguration::AUTH_RESULT_YES,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'liability shift unknown' => [
+                ['liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_UNKNOWN],
+                Card3DSecureConfiguration::DECISION_RETRY,
+            ],
+            'no liability shift, authentication failed' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_YES,
+                        'authentication_status' => Card3DSecureConfiguration::AUTH_RESULT_NO,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_REJECT,
+            ],
+            'no liability shift, authentication rejected' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_YES,
+                        'authentication_status' => Card3DSecureConfiguration::AUTH_RESULT_REJECTED,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_REJECT,
+            ],
+            'no liability shift, unable to authenticate' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_YES,
+                        'authentication_status' => Card3DSecureConfiguration::AUTH_RESULT_UNABLE,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_RETRY,
+            ],
+            'no liability shift, card not enrolled' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_NO,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'no liability shift, 3DS bypassed' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_BYPASS,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'no liability shift, 3DS unavailable' => [
+                [
+                    'liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO,
+                    'three_d_secure' => [
+                        'enrollment_status' => Card3DSecureConfiguration::ENROLLMENT_STATUS_UNAVAILABLE,
+                    ],
+                ],
+                Card3DSecureConfiguration::DECISION_PROCEED,
+            ],
+            'no liability shift, no three_d_secure block' => [
+                ['liability_shift' => Card3DSecureConfiguration::LIABILITY_SHIFT_NO],
+                Card3DSecureConfiguration::DECISION_NO_DECISION,
+            ],
+        ];
+    }
 }
