@@ -61,6 +61,14 @@ class CountryResolver implements CountryResolverInterface
         if ($code === 'UK') {
             $code = 'GB';
         }
+ 
+        // French overseas departments and regions (DROM) are an integral part of
+        // France and use the Euro, but PayPal funding-source eligibility lists only
+        // expect the "FR" country code. Map them to FR so payment methods such as
+        // Apple Pay and Google Pay are correctly offered to buyers located there.
+        if (in_array($code, ['GF', 'GP', 'MQ', 'RE', 'YT'], true)) {
+            $code = 'FR';
+        }
 
         return $code;
     }
