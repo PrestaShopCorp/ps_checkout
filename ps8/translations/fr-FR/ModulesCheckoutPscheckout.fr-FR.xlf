@@ -2644,6 +2644,26 @@
         <target>Fermer</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="f218cbdfdaf3c004af0f035e77207bbc">
+        <source>The module installation is incomplete.</source>
+        <target>L'installation du module est incomplète.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3bfedc6511527b2893c23313579127c7">
+        <source>Some components required by PrestaShop Checkout are missing, usually after a failed module reset or installation. Click Repair to restore them. Your existing settings and orders are kept.</source>
+        <target>Certains composants nécessaires à PrestaShop Checkout sont manquants, généralement après l'échec d'une réinitialisation ou d'une installation du module. Cliquez sur Réparer pour les restaurer. Vos paramètres et commandes existants sont conservés.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0493d27e20d11e356e53e0a730b0ad08">
+        <source>Repair</source>
+        <target>Réparer</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a4dae593bc9de4a215d28dea80759059">
+        <source>The repair could not be completed. Check the module logs for details, then try again or contact support.</source>
+        <target>La réparation n'a pas pu être effectuée. Consultez les logs du module pour plus de détails, puis réessayez ou contactez le support.</target>
+        <note>Line: </note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

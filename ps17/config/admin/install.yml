@@ -47,3 +47,12 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\SystemConfiguration'
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Infrastructure\Bootstrap\Repair\ModuleRepair:
+    class: PsCheckout\Infrastructure\Bootstrap\Repair\ModuleRepair
+    arguments:
+      - '@ps_checkout.module'
+      - '@ps_checkout.db'
+      - '@PsCheckout\Infrastructure\Bootstrap\Install\Installer'
+      - '@PsCheckout\Infrastructure\Adapter\ShopContext'
+      - '@Psr\Log\LoggerInterface'
