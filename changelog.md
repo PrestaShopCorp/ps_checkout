@@ -27,6 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3132** — Do not expose visitor-specific data in the HTML of cacheable pages
   - Saved payment methods (vault ID and label), the PayPal order ID of the cart, the express checkout flag and the cart product count are now only injected on the checkout pages (`order`, `order-opc`)
   - Product, cart and other pages no longer leak these values to other visitors when served from a full-page cache
+- **XO-3137** — Mask vault IDs in module and HTTP logs
+  - HTTP request and response bodies are now scrubbed by `SensitiveDataProcessor` (they were logged as raw JSON strings)
+  - `vault_id`, `vaultId`, `customer_id`, the `id` / `customer.id` of a `vault` node and `attributes.customer.id` are masked, keeping the last 4 characters
+  - The vault ID segment of payment-token URLs is masked
 - **XO-3174** — Use the card 3D Secure result again when validating a payment (regression since v5.3.2)
   - `PayPalOrderResponse::getAuthenticationResult()` always returned `null`, so the 3D Secure decision was always "no decision"
   - With `SCA_ALWAYS`, every card payment was rejected, even after a successful 3D Secure
