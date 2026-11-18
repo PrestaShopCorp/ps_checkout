@@ -318,3 +318,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_f04233142f9f1d876c8d2539ad65dade']
 $_MODULE['<{ps_checkout}prestashop>configuration_a56b2a00cf5a5d064ba5cda91b756da5'] = 'I pagamenti PayPal sono attualmente bloccati.';
 $_MODULE['<{ps_checkout}prestashop>configuration_b4d2f434d0f642613efa63e50f079ffd'] = 'Questo negozio non è registrato nei servizi PrestaShop Checkout. I pagamenti PayPal non possono essere elaborati finché il problema non viene risolto. Si prega di controllare la configurazione del modulo e di effettuare nuovamente l\'onboarding se necessario.';
 $_MODULE['<{ps_checkout}prestashop>configuration_d3d2e617335f08df83599665eef8a418'] = 'Chiudi';
+$_MODULE['<{ps_checkout}prestashop>repair_f218cbdfdaf3c004af0f035e77207bbc'] = 'L\'installazione del modulo è incompleta.';
+$_MODULE['<{ps_checkout}prestashop>repair_3bfedc6511527b2893c23313579127c7'] = 'Mancano alcuni componenti necessari a PrestaShop Checkout, di solito dopo un ripristino o un\'installazione del modulo non riusciti. Fai clic su Ripara per ripristinarli. Le impostazioni e gli ordini esistenti vengono conservati.';
+$_MODULE['<{ps_checkout}prestashop>repair_0493d27e20d11e356e53e0a730b0ad08'] = 'Ripara';
+$_MODULE['<{ps_checkout}prestashop>repair_a4dae593bc9de4a215d28dea80759059'] = 'Impossibile completare la riparazione. Controlla i log del modulo per i dettagli, quindi riprova o contatta l\'assistenza.';

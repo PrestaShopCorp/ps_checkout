@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Repair an incomplete module installation from the configuration page
+  - A failed module reset or installation can leave the module installed without its admin tab and hooks, so the configuration page no longer works
+  - The configuration page now detects a missing admin tab or a module without any registered hook, and shows a warning with a **Repair** button
+  - Repair registers the missing admin tabs, runs the installer again (tables, default configuration, order states, funding sources) and registers the module hooks. Existing settings are kept
+  - Each repair step is logged in the module logs
+  - Translations added for the warning in: English, French, German, Spanish, Italian, Dutch, Polish, Portuguese
 - **XO-3014** — Handle 422 MDU registration error on order creation
   - Detect `SHOP_NOT_REGISTERED_IN_MDU` error code returned by `order-api` with HTTP 422
   - Display a polite, generic message to the buyer: *"This payment method is temporarily unavailable, please choose another one."*

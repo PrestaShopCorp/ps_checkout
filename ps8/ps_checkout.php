@@ -41,6 +41,7 @@ use PsCheckout\Infrastructure\Adapter\Configuration;
 use PsCheckout\Infrastructure\Adapter\Link;
 use PsCheckout\Infrastructure\Adapter\ShopContext;
 use PsCheckout\Infrastructure\Bootstrap\Install\Installer;
+use PsCheckout\Infrastructure\Bootstrap\Repair\ModuleRepair;
 use PsCheckout\Infrastructure\Environment\Env;
 use PsCheckout\Infrastructure\Repository\ConfigurationRepository;
 use PsCheckout\Infrastructure\Repository\CountryRepository;
@@ -180,6 +181,24 @@ class Ps_Checkout extends PaymentModule
 
     public function getContent()
     {
+        /** @var ModuleRepair $moduleRepair */
+        $moduleRepair = $this->getService(ModuleRepair::class);
+        $repairFailed = false;
+
+        if (Tools::isSubmit('submitPsCheckoutRepair')) {
+            if ($moduleRepair->repair(self::HOOK_LIST)) {
+                Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true, [], ['configure' => $this->name]));
+            }
+
+            $repairFailed = true;
+        }
+
+        if ($repairFailed || $moduleRepair->isRepairNeeded()) {
+            $this->context->smarty->assign('repairFailed', $repairFailed);
+
+            return $this->display(__FILE__, 'views/templates/admin/repair.tpl');
+        }
+
         try {
             /** @var PsAccounts $psAccountsFacade */
             $psAccountsFacade = $this->getService(PsAccounts::class);

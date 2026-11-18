@@ -318,3 +318,7 @@ $_MODULE['<{ps_checkout}prestashop>translator_f04233142f9f1d876c8d2539ad65dade']
 $_MODULE['<{ps_checkout}prestashop>configuration_a56b2a00cf5a5d064ba5cda91b756da5'] = 'PayPal-betalingen zijn momenteel geblokkeerd.';
 $_MODULE['<{ps_checkout}prestashop>configuration_b4d2f434d0f642613efa63e50f079ffd'] = 'Deze winkel is niet geregistreerd bij de PrestaShop Checkout-services. PayPal-betalingen kunnen niet worden verwerkt totdat het probleem is opgelost. Controleer uw moduleconfiguratie en registreer opnieuw indien nodig.';
 $_MODULE['<{ps_checkout}prestashop>configuration_d3d2e617335f08df83599665eef8a418'] = 'Sluiten';
+$_MODULE['<{ps_checkout}prestashop>repair_f218cbdfdaf3c004af0f035e77207bbc'] = 'De installatie van de module is onvolledig.';
+$_MODULE['<{ps_checkout}prestashop>repair_3bfedc6511527b2893c23313579127c7'] = 'Enkele onderdelen die PrestaShop Checkout nodig heeft ontbreken, meestal na een mislukte reset of installatie van de module. Klik op Herstellen om ze terug te zetten. Uw bestaande instellingen en bestellingen blijven behouden.';
+$_MODULE['<{ps_checkout}prestashop>repair_0493d27e20d11e356e53e0a730b0ad08'] = 'Herstellen';
+$_MODULE['<{ps_checkout}prestashop>repair_a4dae593bc9de4a215d28dea80759059'] = 'Het herstel kon niet worden voltooid. Bekijk de logs van de module voor details en probeer het opnieuw of neem contact op met support.';
