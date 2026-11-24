@@ -34,6 +34,7 @@ use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Core\PayPal\Order\Response\ValueObject\CreatePayPalOrderResponse;
+use PsCheckout\Core\PayPal\Order\Validator\PaidCartValidatorInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
@@ -89,6 +90,11 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     private $paymentTokenRepository;
 
+    /**
+     * @var PaidCartValidatorInterface
+     */
+    private $paidCartValidator;
+
     public function __construct(
         ContextInterface $context,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
@@ -99,7 +105,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         CreatePayPalOrderProcessorInterface $createPayPalOrderProcessor,
         PayPalOrderCacheInterface $payPalOrderCache,
         DeletePaymentTokenActionInterface $deletePaymentTokenAction,
-        PaymentTokenRepositoryInterface $paymentTokenRepository
+        PaymentTokenRepositoryInterface $paymentTokenRepository,
+        PaidCartValidatorInterface $paidCartValidator
     ) {
         $this->context = $context;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
@@ -111,6 +118,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $this->payPalOrderCache = $payPalOrderCache;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->paidCartValidator = $paidCartValidator;
     }
 
     /**
@@ -129,6 +137,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         if ($request->getVaultId()) {
             $this->validatePaymentToken($request->getVaultId(), $payPalCustomerId);
         }
+
+        $this->paidCartValidator->validate($cartId);
 
         $this->orderPayloadBuilder
             ->setCart($this->cartPresenter->present())

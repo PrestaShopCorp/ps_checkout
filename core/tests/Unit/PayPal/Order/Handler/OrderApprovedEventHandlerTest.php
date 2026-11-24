@@ -28,6 +28,7 @@ use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Handler\OrderApprovedEventHandler;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use PsCheckout\Infrastructure\Repository\ReadOnlyCollectionRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class OrderApprovedEventHandlerTest extends TestCase
@@ -50,6 +51,9 @@ class OrderApprovedEventHandlerTest extends TestCase
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
+    /** @var ReadOnlyCollectionRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderRepository;
+
     /** @var OrderApprovedEventHandler */
     private $handler;
 
@@ -61,6 +65,7 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->capturePayPalOrderAction = $this->createMock(CapturePayPalOrderActionInterface::class);
         $this->updatePayPalOrderPurchaseUnit = $this->createMock(UpdatePayPalOrderPurchaseUnitActionInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->orderRepository = $this->createMock(ReadOnlyCollectionRepositoryInterface::class);
 
         $this->handler = new OrderApprovedEventHandler(
             $this->payPalOrderRepository,
@@ -68,7 +73,8 @@ class OrderApprovedEventHandlerTest extends TestCase
             $this->orderAuthorizationValidator,
             $this->capturePayPalOrderAction,
             $this->updatePayPalOrderPurchaseUnit,
-            $this->logger
+            $this->logger,
+            $this->orderRepository
         );
     }
 
@@ -150,10 +156,31 @@ class OrderApprovedEventHandlerTest extends TestCase
         $this->handler->handle($this->createPayPalOrderResponseMock());
     }
 
+    public function testHandleDoesNotCaptureWhenCartAlreadyHasAnOrder(): void
+    {
+        $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock());
+        $this->checkPayPalOrderStatusAction->method('execute')->willReturn(true);
+        $this->orderRepository->method('getAllBy')->with(['id_cart' => 42])->willReturn([new \stdClass()]);
+
+        $this->orderAuthorizationValidator->expects($this->never())->method('validate');
+        $this->capturePayPalOrderAction->expects($this->never())->method('execute');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                $this->stringContains('not captured'),
+                $this->callback(function (array $context): bool {
+                    return $context['paypal_order_id'] === 'ORDER-123' && $context['cart_id'] === 42;
+                })
+            );
+
+        $this->handler->handle($this->createPayPalOrderResponseMock());
+    }
+
     public function testHandleCapturesWhenValidatorPasses(): void
     {
         $this->payPalOrderRepository->method('getOneBy')->willReturn($this->createPayPalOrderMock());
         $this->checkPayPalOrderStatusAction->method('execute')->willReturn(true);
+        $this->orderRepository->method('getAllBy')->willReturn([]);
         $this->logger->expects($this->never())->method('warning');
 
         $this->capturePayPalOrderAction->expects($this->once())->method('execute');
