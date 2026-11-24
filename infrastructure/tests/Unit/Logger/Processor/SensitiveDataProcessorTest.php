@@ -175,6 +175,86 @@ class SensitiveDataProcessorTest extends TestCase
         $this->assertSame('1111', $this->valueAt($decoded, 'payment_source.card.last_digits'));
     }
 
+    public function testMasksVaultIdInVaultLinksOfCaptureResponseBody(): void
+    {
+        $tokenUrl = 'https://api.sandbox.paypal.com/v3/vault/payment-tokens/' . self::VAULT_ID;
+        $body = json_encode([
+            'id' => '5O190127TN364715T',
+            'status' => 'COMPLETED',
+            'payment_source' => [
+                'card' => [
+                    'last_digits' => '1111',
+                    'attributes' => [
+                        'vault' => [
+                            'id' => self::VAULT_ID,
+                            'status' => 'VAULTED',
+                            'customer' => [
+                                'id' => self::CUSTOMER_ID,
+                            ],
+                            'links' => [
+                                ['href' => $tokenUrl, 'rel' => 'self', 'method' => 'GET'],
+                                ['href' => $tokenUrl, 'rel' => 'delete', 'method' => 'DELETE'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'links' => [
+                ['href' => 'https://api.sandbox.paypal.com/v2/checkout/orders/5O190127TN364715T', 'rel' => 'self', 'method' => 'GET'],
+            ],
+        ]);
+
+        $logged = $this->valueAt($this->process(['status_code' => 201, 'body' => $body]), 'body');
+        $this->assertIsString($logged);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, $logged);
+        $this->assertStringNotContainsString(self::CUSTOMER_ID, $logged);
+
+        $decoded = json_decode($logged, true);
+        $this->assertIsArray($decoded);
+
+        $this->assertSame('https://api.sandbox.paypal.com/v3/vault/payment-tokens/****wbvp', $this->valueAt($decoded, 'payment_source.card.attributes.vault.links.0.href'));
+        $this->assertSame('https://api.sandbox.paypal.com/v3/vault/payment-tokens/****wbvp', $this->valueAt($decoded, 'payment_source.card.attributes.vault.links.1.href'));
+        $this->assertSame('delete', $this->valueAt($decoded, 'payment_source.card.attributes.vault.links.1.rel'));
+        $this->assertSame('https://api.sandbox.paypal.com/v2/checkout/orders/5O190127TN364715T', $this->valueAt($decoded, 'links.0.href'));
+        $this->assertSame('5O190127TN364715T', $this->valueAt($decoded, 'id'));
+    }
+
+    /**
+     * @dataProvider tokenUrlProvider
+     */
+    public function testMasksTokenIdInUrlsFoundInAnyStringValue(string $url, string $expected): void
+    {
+        $context = $this->process([
+            'message' => 'PayPal responded with ' . $url . ' (self)',
+            'url' => $url,
+        ]);
+
+        $this->assertSame($expected, $context['url']);
+        $this->assertSame('PayPal responded with ' . $expected . ' (self)', $context['message']);
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public function tokenUrlProvider(): array
+    {
+        return [
+            'paypal payment token' => [
+                'https://api.sandbox.paypal.com/v3/vault/payment-tokens/' . self::VAULT_ID,
+                'https://api.sandbox.paypal.com/v3/vault/payment-tokens/****wbvp',
+            ],
+            'paypal setup token' => [
+                'https://api-m.paypal.com/v3/vault/setup-tokens/' . self::VAULT_ID . '?fields=all',
+                'https://api-m.paypal.com/v3/vault/setup-tokens/****wbvp?fields=all',
+            ],
+            'module payment token route' => [
+                'https://api.example.com/v1/vault-merchant/payment-token/MERCHANT123/' . self::VAULT_ID,
+                'https://api.example.com/v1/vault-merchant/payment-token/MERCHANT123/****wbvp',
+            ],
+        ];
+    }
+
     public function testMasksVaultIdInPaymentTokenUrl(): void
     {
         $context = $this->process([

@@ -103,14 +103,8 @@ class SensitiveDataProcessor
                 $value = $this->maskCustomer($value);
             }
 
-            if ($lowerKey === 'url' && is_string($value)) {
-                $data[$key] = $this->maskUrl($value);
-
-                continue;
-            }
-
             if (is_string($value)) {
-                $data[$key] = $this->scrubJson($value, $depth);
+                $data[$key] = $this->maskTokenUrls($this->scrubJson($value, $depth));
 
                 continue;
             }
@@ -156,20 +150,28 @@ class SensitiveDataProcessor
     }
 
     /**
-     * Masks the vault ID path segment of payment token URLs.
+     * Masks the token path segment of payment token URLs found in any string value.
      *
-     * @param string $url
+     * Covers the module's own route (`/payment-token/<merchant>/<vault id>`) and the PayPal
+     * vault routes (`/v3/vault/payment-tokens/<id>`, `/v3/vault/setup-tokens/<id>`), which
+     * PayPal returns in the `links[].href` of the `vault` node of order and capture responses.
+     *
+     * @param string $value
      *
      * @return string
      */
-    private function maskUrl($url)
+    private function maskTokenUrls($value)
     {
+        if (strpos($value, '-token') === false) {
+            return $value;
+        }
+
         $masked = preg_replace_callback(
-            '#(/payment-token/[^/]+/)([^/?\#]+)#',
+            '#(/payment-token/[^/?\#"]+/|/vault/(?:payment|setup)-tokens/)([^/?\#"\s]+)#',
             function (array $matches) {
                 return $matches[1] . $this->maskString($matches[2]);
             },
-            $url
+            $value
         );
 
         return $masked === null ? '[REDACTED]' : $masked;

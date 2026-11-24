@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3137** — Mask vault IDs in module and HTTP logs
   - HTTP request and response bodies are now scrubbed by `SensitiveDataProcessor` (they were logged as raw JSON strings)
   - `vault_id`, `vaultId`, `customer_id`, the `id` / `customer.id` of a `vault` node and `attributes.customer.id` are masked, keeping the last 4 characters
-  - The vault ID segment of payment-token URLs is masked
+  - The token segment of payment-token URLs (module `payment-token/<merchant>/<id>` route and PayPal `/v3/vault/payment-tokens/<id>` / `setup-tokens/<id>` links) is masked in every logged string, including the `links[].href` of the `vault` node of capture and order responses
 - **XO-3174** — Use the card 3D Secure result again when validating a payment (regression since v5.3.2)
   - `PayPalOrderResponse::getAuthenticationResult()` always returned `null`, so the 3D Secure decision was always "no decision"
   - With `SCA_ALWAYS`, every card payment was rejected, even after a successful 3D Secure
