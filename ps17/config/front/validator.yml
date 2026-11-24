@@ -7,6 +7,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
       - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration'
 
   PsCheckout\Core\Order\Validator\OrderAuthorizationValidator:
     class: PsCheckout\Core\Order\Validator\OrderAuthorizationValidator

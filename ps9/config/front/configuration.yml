@@ -133,3 +133,4 @@ services:
       - '@PsCheckout\Core\PayPal\OAuth\OAuthService'
       - '@Psr\Log\LoggerInterface'
       - '@PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration'
+      - '@PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration'
