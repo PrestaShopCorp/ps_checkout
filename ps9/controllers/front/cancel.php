@@ -22,9 +22,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\Order\Validator\CartOwnershipValidator;
 use PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CancelPayPalOrderRequest;
 use PsCheckout\Infrastructure\Controller\AbstractFrontController;
+use PsCheckout\Infrastructure\Repository\PayPalOrderRepository;
 use PsCheckout\Utility\Common\InputStreamUtility;
 use Psr\Log\LoggerInterface;
 
@@ -71,6 +73,8 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $orderCancelRequest = new CancelPayPalOrderRequest($bodyValues, $this->context->cart->id);
 
             if ($orderCancelRequest->getOrderId()) {
+                $this->assertPayPalOrderBelongsToCurrentCustomer($orderCancelRequest->getOrderId());
+
                 /** @var CancelPayPalOrderAction $cancelPayPalOrderAction */
                 $cancelPayPalOrderAction = $this->module->getService(CancelPayPalOrderAction::class);
                 $cancelPayPalOrderAction->execute($orderCancelRequest);
@@ -113,5 +117,51 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 $exception
             ));
         }
+    }
+
+    /**
+     * The PayPal Order must exist and belong to the current customer, otherwise anyone holding
+     * a PayPal Order id could rebind that order to their own cart. Unknown and foreign orders
+     * get the same answer, so that the response does not tell whether the order exists.
+     *
+     * @param string $payPalOrderId
+     *
+     * @return void
+     */
+    private function assertPayPalOrderBelongsToCurrentCustomer($payPalOrderId)
+    {
+        /** @var PayPalOrderRepository $payPalOrderRepository */
+        $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
+
+        /** @var CartOwnershipValidator $cartOwnershipValidator */
+        $cartOwnershipValidator = $this->module->getService(CartOwnershipValidator::class);
+
+        $payPalOrder = $payPalOrderRepository->getOneBy(['id' => $payPalOrderId]);
+
+        if ($payPalOrder && $cartOwnershipValidator->isOwnedByCurrentCustomer($payPalOrder->getIdCart())) {
+            return;
+        }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->warning(
+            $payPalOrder ? 'PayPal Order does not belong to the current customer' : 'PayPal Order not found',
+            [
+                'PayPalOrderId' => $payPalOrderId,
+                'id_cart' => (int) $this->context->cart->id,
+                'PayPalOrderCartId' => $payPalOrder ? $payPalOrder->getIdCart() : null,
+            ]
+        );
+
+        $this->exitWithResponse([
+            'status' => false,
+            'httpCode' => 404,
+            'body' => [
+                'error' => [
+                    'code' => PsCheckoutException::PAYPAL_ORDER_NOT_FOUND,
+                    'message' => 'PayPal Order not found',
+                ],
+            ],
+        ]);
     }
 }

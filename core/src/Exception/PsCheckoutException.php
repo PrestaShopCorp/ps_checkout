@@ -177,4 +177,6 @@ class PsCheckoutException extends \Exception
     const CART_CUSTOMER_PHONE_INVALID = 81;
 
     const SHOP_NOT_REGISTERED_IN_MDU = 82;
+
+    const PAYPAL_ORDER_CART_MISMATCH = 83;
 }

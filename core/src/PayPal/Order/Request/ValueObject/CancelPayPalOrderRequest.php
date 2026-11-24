@@ -33,11 +33,6 @@ class CancelPayPalOrderRequest
     private $orderId;
 
     /**
-     * @var string
-     */
-    private $orderStatus;
-
-    /**
      * @var string|null
      */
     private $fundingSource;
@@ -71,7 +66,6 @@ class CancelPayPalOrderRequest
     {
         $this->cartId = $cartId;
         $this->orderId = isset($request['orderID']) ? (string) $request['orderID'] : null;
-        $this->orderStatus = isset($request['orderStatus']) ? (string) $request['orderStatus'] : 'CANCELED';
         $this->fundingSource = isset($request['fundingSource']) ? (string) $request['fundingSource'] : null;
         $this->isExpressCheckout = isset($request['isExpressCheckout']) && (bool) $request['isExpressCheckout'];
         $this->isHostedFields = isset($request['isHostedFields']) && (bool) $request['isHostedFields'];
@@ -99,16 +93,6 @@ class CancelPayPalOrderRequest
     public function getOrderId()
     {
         return $this->orderId;
-    }
-
-    /**
-     * Get the order status.
-     *
-     * @return string
-     */
-    public function getOrderStatus(): string
-    {
-        return $this->orderStatus;
     }
 
     /**
