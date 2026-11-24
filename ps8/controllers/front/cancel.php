@@ -120,9 +120,14 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
     }
 
     /**
-     * The PayPal Order must exist and belong to the current customer, otherwise anyone holding
+     * The PayPal Order must exist and belong to the current visitor, otherwise anyone holding
      * a PayPal Order id could rebind that order to their own cart. Unknown and foreign orders
      * get the same answer, so that the response does not tell whether the order exists.
+     *
+     * Unlike validate and payment, this controller is reachable before a customer exists: an
+     * anonymous visitor starting an express checkout from the product or cart page owns a
+     * PayPal Order linked to a cart without customer, so the order is also accepted when it is
+     * linked to the cart of the current context (the visitor's signed cookie).
      *
      * @param string $payPalOrderId
      *
@@ -138,14 +143,14 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
 
         $payPalOrder = $payPalOrderRepository->getOneBy(['id' => $payPalOrderId]);
 
-        if ($payPalOrder && $cartOwnershipValidator->isOwnedByCurrentCustomer($payPalOrder->getIdCart())) {
+        if ($payPalOrder && $cartOwnershipValidator->isOwnedByCurrentVisitor($payPalOrder->getIdCart())) {
             return;
         }
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
         $logger->warning(
-            $payPalOrder ? 'PayPal Order does not belong to the current customer' : 'PayPal Order not found',
+            $payPalOrder ? 'PayPal Order does not belong to the current visitor' : 'PayPal Order not found',
             [
                 'PayPalOrderId' => $payPalOrderId,
                 'id_cart' => (int) $this->context->cart->id,
