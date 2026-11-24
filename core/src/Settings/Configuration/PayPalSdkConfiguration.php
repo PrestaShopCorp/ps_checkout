@@ -110,6 +110,11 @@ class PayPalSdkConfiguration
     private $payPalPayLaterConfiguration;
 
     /**
+     * @var PayPalExpressCheckoutConfiguration
+     */
+    private $expressCheckoutConfiguration;
+
+    /**
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
      * @param PayPalConfiguration $payPalConfiguration
@@ -130,7 +135,8 @@ class PayPalSdkConfiguration
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
         OAuthServiceInterface $oAuthService,
         LoggerInterface $logger,
-        PayPalPayLaterConfiguration $payPalPayLaterConfiguration
+        PayPalPayLaterConfiguration $payPalPayLaterConfiguration,
+        PayPalExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
         $this->context = $context;
         $this->configuration = $configuration;
@@ -143,6 +149,7 @@ class PayPalSdkConfiguration
         $this->oAuthService = $oAuthService;
         $this->logger = $logger;
         $this->payPalPayLaterConfiguration = $payPalPayLaterConfiguration;
+        $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
     }
 
     /**
@@ -260,9 +267,9 @@ class PayPalSdkConfiguration
 
         if ('cart' === $pageName
             && (
-                $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE) ||
-                $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON)
+                $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE) ||
+                $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE) ||
+                $this->expressCheckoutConfiguration->isButtonEnabled(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON)
             )
         ) {
             return true;
@@ -270,8 +277,8 @@ class PayPalSdkConfiguration
 
         if ('product' === $pageName
             && (
-                $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE) ||
-                $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON)
+                $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE) ||
+                $this->expressCheckoutConfiguration->isButtonEnabled(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON)
             )
         ) {
             return true;

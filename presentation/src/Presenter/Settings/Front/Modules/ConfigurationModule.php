@@ -73,6 +73,11 @@ class ConfigurationModule implements PresenterInterface
     private $payLaterValidator;
 
     /**
+     * @var PayPalExpressCheckoutConfiguration
+     */
+    private $expressCheckoutConfiguration;
+
+    /**
      * @param string $moduleName
      * @param ContextInterface $context
      * @param ConfigurationInterface $configuration
@@ -81,6 +86,7 @@ class ConfigurationModule implements PresenterInterface
      * @param PayPalSdkConfiguration $payPalSdkConfiguration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param PayLaterValidatorInterface $payLaterValidator
+     * @param PayPalExpressCheckoutConfiguration $expressCheckoutConfiguration
      */
     public function __construct(
         string $moduleName,
@@ -90,7 +96,8 @@ class ConfigurationModule implements PresenterInterface
         FundingSourcePresenterInterface $fundingSourcePresenter,
         PayPalSdkConfiguration $payPalSdkConfiguration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
-        PayLaterValidatorInterface $payLaterValidator
+        PayLaterValidatorInterface $payLaterValidator,
+        PayPalExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
         $this->moduleName = $moduleName;
         $this->context = $context;
@@ -100,6 +107,7 @@ class ConfigurationModule implements PresenterInterface
         $this->payPalSdkConfiguration = $payPalSdkConfiguration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->payLaterValidator = $payLaterValidator;
+        $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
     }
 
     public function present(): array
@@ -124,12 +132,12 @@ class ConfigurationModule implements PresenterInterface
             $this->moduleName . 'AutoRenderDisabled' => $this->configuration->getBoolean('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->moduleName . 'HostedFieldsEnabled' => $isCardAvailable && $this->configuration->getBoolean(PayPalConfiguration::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED) && in_array($this->configuration->get(PayPalConfiguration::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS), ['SUBSCRIBED', 'LIMITED'], true),
             $this->moduleName . 'HostedFieldsContingencies' => $this->payPalConfiguration->getCardFieldsContingencies(),
-            $this->moduleName . 'ExpressCheckoutCartEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'ExpressCheckoutOrderEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'ExpressCheckoutProductEnabled' => $this->configuration->getBoolean(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
-            $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->configuration->getBoolean(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'ExpressCheckoutCartEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_ORDER_PAGE) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'ExpressCheckoutOrderEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_CHECKOUT_PAGE) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'ExpressCheckoutProductEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalExpressCheckoutConfiguration::PS_CHECKOUT_EC_PRODUCT_PAGE) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'PayLaterOrderPageButtonEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'PayLaterCartPageButtonEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_CART_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
+            $this->moduleName . 'PayLaterProductPageButtonEnabled' => $this->expressCheckoutConfiguration->isButtonEnabled(PayPalPayLaterConfiguration::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BUTTON) && $isPayPalPaymentsReceivable,
             $this->moduleName . 'PayLaterMessagingConfig' => $isPayPalPaymentsReceivable && $isPayLaterAvailable
                     ? $this->payLaterConfiguration->getPayLaterMessagingConfiguration()
                     : $this->payLaterConfiguration->getPayLaterMessagingConfigurationDefault(),

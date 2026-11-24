@@ -34,5 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - The `3DS_NOT_REQUIRED` tag is only added again to orders that really had no 3D Secure. Orders saved since v5.3.2 with `SCA_WHEN_REQUIRED` keep a wrong tag
   - Log a warning when a `CHECKOUT.ORDER.APPROVED` webhook does not capture because the order validation failed
   - Log a warning in the `payment` front controller when the order is not captured after the 3D Secure step (failed 3D Secure, no 3D Secure result with `SCA_ALWAYS`, retry without a `payer-action` link)
+- **XO-3161** — Hide the Express Checkout and Pay Later buttons when guest checkout is disabled (regression from v7.4.4.1)
+  - With `PS_GUEST_CHECKOUT_ENABLED` off, the buttons were shown on the product page, the cart page and the checkout personal-information step, but `/ExpressCheckout` refused the payment with a 403 after the PayPal approval
+  - The six `ps_checkout*Enabled` front-office flags for these buttons are now `false`, and the `buttons` SDK component is no longer loaded for them on the cart and product pages
+  - Display and server check now use the same rule: `PayPalExpressCheckoutConfiguration::isButtonEnabled()`
+  - Payment methods on the payment step are not affected
 - Integration tests: create a fresh `test_prestashop` database automatically before each run (`make create-test-db`)
 - Integration tests: add `stderr="true"` to `phpunit-integration.xml` to prevent "headers already sent" errors caused by PHPUnit output conflicting with PHP session start

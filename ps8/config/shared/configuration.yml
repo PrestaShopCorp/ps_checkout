@@ -11,3 +11,8 @@ services:
     class: PsCheckout\Core\Settings\Configuration\PayPalPayLaterConfiguration
     arguments:
       - '@PsCheckout\Infrastructure\Adapter\Configuration'
+
+  PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration:
+    class: PsCheckout\Core\Settings\Configuration\PayPalExpressCheckoutConfiguration
+    arguments:
+      - '@PsCheckout\Infrastructure\Adapter\Configuration'
