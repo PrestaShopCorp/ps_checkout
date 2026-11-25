@@ -78,7 +78,9 @@ class PayPalOrderStatus
         ],
         self::VOIDED => [],
         self::COMPLETED => [],
-        self::CANCELED => [],
+        self::CANCELED => [
+            self::APPROVED,
+        ],
         self::REVERSED => [],
     ];
 }
