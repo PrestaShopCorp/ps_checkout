@@ -35,6 +35,7 @@ services:
     arguments:
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
       - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@Psr\Log\LoggerInterface'

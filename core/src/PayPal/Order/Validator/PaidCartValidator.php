@@ -24,8 +24,11 @@ use Exception;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
+use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderCaptureRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Infrastructure\Repository\ReadOnlyCollectionRepositoryInterface;
 use Psr\Log\LoggerInterface;
@@ -41,6 +44,11 @@ class PaidCartValidator implements PaidCartValidatorInterface
      * @var PayPalOrderRepositoryInterface
      */
     private $payPalOrderRepository;
+
+    /**
+     * @var PayPalOrderCaptureRepositoryInterface
+     */
+    private $payPalOrderCaptureRepository;
 
     /**
      * @var PayPalOrderProviderInterface
@@ -60,12 +68,14 @@ class PaidCartValidator implements PaidCartValidatorInterface
     public function __construct(
         ReadOnlyCollectionRepositoryInterface $orderRepository,
         PayPalOrderRepositoryInterface $payPalOrderRepository,
+        PayPalOrderCaptureRepositoryInterface $payPalOrderCaptureRepository,
         PayPalOrderProviderInterface $payPalOrderProvider,
         CreateOrderActionInterface $createOrderAction,
         LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->payPalOrderCaptureRepository = $payPalOrderCaptureRepository;
         $this->payPalOrderProvider = $payPalOrderProvider;
         $this->createOrderAction = $createOrderAction;
         $this->logger = $logger;
@@ -99,8 +109,8 @@ class PaidCartValidator implements PaidCartValidatorInterface
         }
 
         $isPaid = $payPalOrderResponse
-            ? $payPalOrderResponse->getStatus() === PayPalOrderStatus::COMPLETED
-            : $previousPayPalOrder->getStatus() === PayPalOrderStatus::COMPLETED;
+            ? $this->isPaidAtPayPal($payPalOrderResponse)
+            : $this->isPaidLocally($previousPayPalOrder->getId());
 
         if (!$isPaid) {
             return;
@@ -113,6 +123,52 @@ class PaidCartValidator implements PaidCartValidatorInterface
         }
 
         throw new PsCheckoutException('Previous PayPal order of the cart is already paid', PsCheckoutException::CART_ALREADY_PAID);
+    }
+
+    /**
+     * A COMPLETED PayPal order is not always paid: a declined capture also completes the order.
+     *
+     * @param PayPalOrderResponse $payPalOrderResponse
+     *
+     * @return bool
+     */
+    private function isPaidAtPayPal(PayPalOrderResponse $payPalOrderResponse): bool
+    {
+        if ($payPalOrderResponse->getStatus() !== PayPalOrderStatus::COMPLETED) {
+            return false;
+        }
+
+        foreach ($payPalOrderResponse->getCaptures() as $capture) {
+            if (in_array($capture['status'] ?? '', [PayPalCaptureStatus::COMPLETED, PayPalCaptureStatus::PENDING], true)) {
+                return true;
+            }
+        }
+
+        foreach ($payPalOrderResponse->getAuthorizations() as $authorization) {
+            if (in_array($authorization['status'], [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PENDING, PayPalAuthorizationStatus::CAPTURED, PayPalAuthorizationStatus::PARTIALLY_CAPTURED], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Used when PayPal cannot be read: only a capture saved by the module proves the payment.
+     *
+     * @param string $payPalOrderId
+     *
+     * @return bool
+     */
+    private function isPaidLocally(string $payPalOrderId): bool
+    {
+        foreach ($this->payPalOrderCaptureRepository->getByOrderId($payPalOrderId) as $capture) {
+            if (in_array($capture->getStatus(), [PayPalCaptureStatus::COMPLETED, PayPalCaptureStatus::PENDING], true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
