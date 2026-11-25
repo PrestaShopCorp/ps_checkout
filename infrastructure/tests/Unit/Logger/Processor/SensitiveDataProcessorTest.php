@@ -299,6 +299,119 @@ class SensitiveDataProcessorTest extends TestCase
         $this->assertSame('VaultModuleFrontController', $context['controller']);
     }
 
+    public function testMasksVaultWebhookResourceAndResourceId(): void
+    {
+        $context = $this->process([
+            'webhookId' => 'WH-1',
+            'eventType' => 'VAULT.PAYMENT-TOKEN.CREATED',
+            'orderId' => null,
+            'resourceId' => self::VAULT_ID,
+            'payload' => [
+                'eventType' => 'VAULT.PAYMENT-TOKEN.CREATED',
+                'resource' => [
+                    'id' => self::VAULT_ID,
+                    'customer' => ['id' => self::CUSTOMER_ID],
+                    'payment_source' => ['card' => ['last_digits' => '1111']],
+                    'links' => [['href' => 'https://api.paypal.com/v3/vault/payment-tokens/' . self::VAULT_ID, 'rel' => 'self']],
+                ],
+            ],
+        ]);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, (string) json_encode($context));
+        $this->assertStringNotContainsString(self::CUSTOMER_ID, (string) json_encode($context));
+        $this->assertSame('****wbvp', $context['resourceId']);
+        $this->assertSame('****wbvp', $this->valueAt($context, 'payload.resource.id'));
+        $this->assertSame('****1JaY', $this->valueAt($context, 'payload.resource.customer.id'));
+        $this->assertSame('VAULT.PAYMENT-TOKEN.CREATED', $this->valueAt($context, 'payload.eventType'));
+        $this->assertSame('1111', $this->valueAt($context, 'payload.resource.payment_source.card.last_digits'));
+    }
+
+    public function testKeepsResourceIdOfOtherWebhooks(): void
+    {
+        $context = $this->process([
+            'eventType' => 'PAYMENT.CAPTURE.COMPLETED',
+            'resourceId' => '3C679366HH908993F',
+            'payload' => ['eventType' => 'PAYMENT.CAPTURE.COMPLETED', 'resource' => ['id' => '3C679366HH908993F']],
+        ]);
+
+        $this->assertSame('3C679366HH908993F', $context['resourceId']);
+        $this->assertSame('3C679366HH908993F', $this->valueAt($context, 'payload.resource.id'));
+    }
+
+    public function testMasksRejectedVaultIdInValidationErrorBody(): void
+    {
+        $body = json_encode([
+            'name' => 'UNPROCESSABLE_ENTITY',
+            'details' => [
+                ['field' => '/payment_source/card/vault_id', 'value' => self::VAULT_ID, 'issue' => 'VAULT_TOKEN_NOT_FOUND'],
+                ['field' => '/purchase_units/@reference_id==\'default\'/amount/value', 'value' => '10.00', 'issue' => 'INVALID_PARAMETER'],
+            ],
+            'debug_id' => 'abc123',
+        ]);
+
+        $logged = $this->valueAt($this->process(['status_code' => 422, 'body' => $body]), 'body');
+        $this->assertIsString($logged);
+        $decoded = json_decode($logged, true);
+        $this->assertIsArray($decoded);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, $logged);
+        $this->assertSame('****wbvp', $this->valueAt($decoded, 'details.0.value'));
+        $this->assertSame('VAULT_TOKEN_NOT_FOUND', $this->valueAt($decoded, 'details.0.issue'));
+        $this->assertSame('10.00', $this->valueAt($decoded, 'details.1.value'));
+        $this->assertSame('abc123', $decoded['debug_id']);
+    }
+
+    public function testMasksIdentifiersInTruncatedJsonOfGuzzleErrorMessage(): void
+    {
+        $error = 'Client error: `POST https://api.example.com/v2/checkout/orders` resulted in a `422 Unprocessable Entity` response:'
+            . "\n" . '{"name":"UNPROCESSABLE_ENTITY","details":[{"field":"/payment_source/card/vault_id","value":"' . self::VAULT_ID . '","iss (truncated...)';
+        $request = '{"intent":"CAPTURE","payment_source":{"card":{"vault_id":"' . self::VAULT_ID . '","stored_credential":{"payment_initiator":"MERCHANT"}}}, "identity": {"id_token":"eyJhbGciOiJSUzI1NiJ9.x.y"';
+
+        $context = $this->process(['error' => $error, 'request' => $request]);
+        $loggedError = $context['error'];
+        $loggedRequest = $context['request'];
+        $this->assertIsString($loggedError);
+        $this->assertIsString($loggedRequest);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, (string) json_encode($context));
+        $this->assertStringContainsString('"value":"****wbvp","iss (truncated...)', $loggedError);
+        $this->assertStringContainsString('resulted in a `422 Unprocessable Entity` response', $loggedError);
+        $this->assertStringContainsString('"vault_id":"****wbvp"', $loggedRequest);
+        $this->assertStringContainsString('"id_token":"[REDACTED]"', $loggedRequest);
+        $this->assertStringContainsString('"payment_initiator":"MERCHANT"', $loggedRequest);
+    }
+
+    public function testKeepsLastFourCharactersWhenTokenUrlIsFollowedByPunctuation(): void
+    {
+        $context = $this->process([
+            'error' => 'Client error: `DELETE https://api.example.com/v1/vault-merchant/payment-token/M123/' . self::VAULT_ID . '` resulted in a `404 Not Found` response',
+            'note' => '(https://api.paypal.com/v3/vault/payment-tokens/' . self::VAULT_ID . '), then \'https://api.paypal.com/v3/vault/payment-tokens/' . self::VAULT_ID . '\'.',
+        ]);
+
+        $this->assertSame('Client error: `DELETE https://api.example.com/v1/vault-merchant/payment-token/M123/****wbvp` resulted in a `404 Not Found` response', $context['error']);
+        $this->assertSame('(https://api.paypal.com/v3/vault/payment-tokens/****wbvp), then \'https://api.paypal.com/v3/vault/payment-tokens/****wbvp\'.', $context['note']);
+    }
+
+    public function testKeepsNumbersOfScrubbedJsonBody(): void
+    {
+        $body = '{"vault_id":"' . self::VAULT_ID . '","big":12345678901234567890,"amount":1.0,"count":3}';
+
+        $logged = $this->valueAt($this->process(['body' => $body]), 'body');
+
+        $this->assertSame('{"vault_id":"****wbvp","big":"12345678901234567890","amount":1.0,"count":3}', $logged);
+    }
+
+    public function testScrubsArrayHeldByPaymentIdentifierKey(): void
+    {
+        $context = $this->process([
+            'vault_id' => ['id' => self::VAULT_ID, 'token' => 'abc', 'vault' => ['id' => self::VAULT_ID]],
+        ]);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, (string) json_encode($context));
+        $this->assertSame('[REDACTED]', $this->valueAt($context, 'vault_id.token'));
+        $this->assertSame('****wbvp', $this->valueAt($context, 'vault_id.vault.id'));
+    }
+
     public function testMasksVaultIdInPaymentTokenUrl(): void
     {
         $context = $this->process([

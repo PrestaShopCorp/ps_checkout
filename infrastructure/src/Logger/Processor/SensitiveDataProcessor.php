@@ -77,6 +77,9 @@ class SensitiveDataProcessor
             return $data;
         }
 
+        $data = $this->maskVaultWebhookResource($data);
+        $data = $this->maskRejectedIdentifierValue($data);
+
         foreach ($data as $key => $value) {
             $lowerKey = strtolower((string) $key);
 
@@ -89,9 +92,13 @@ class SensitiveDataProcessor
             }
 
             if (in_array($lowerKey, self::$paymentIdentifierKeys, true)) {
-                $data[$key] = $this->mask($value);
+                if (!is_array($value)) {
+                    $data[$key] = $this->mask($value);
 
-                continue;
+                    continue;
+                }
+
+                $value = $this->maskVault($value);
             }
 
             if (is_string($value) && strpos($value, 'Bearer ') === 0) {
@@ -109,7 +116,7 @@ class SensitiveDataProcessor
             }
 
             if (is_string($value)) {
-                $data[$key] = $this->maskTokenUrls($this->scrubJson($value, $depth));
+                $data[$key] = $this->maskEmbeddedJsonIdentifiers($this->maskTokenUrls($this->scrubJson($value, $depth)));
 
                 continue;
             }
@@ -169,6 +176,63 @@ class SensitiveDataProcessor
     }
 
     /**
+     * Masks the payment token of a `VAULT.PAYMENT-TOKEN.*` webhook, whose `resource` is the token itself
+     * (`resource.id` is the vault ID, `resource.customer.id` the PayPal customer ID) and whose `resourceId`
+     * is logged next to it. These events are not routed to shops today, this is defence in depth.
+     *
+     * @param array<mixed> $node
+     *
+     * @return array<mixed>
+     */
+    private function maskVaultWebhookResource(array $node)
+    {
+        $eventType = null;
+
+        foreach (['eventType', 'event_type'] as $eventTypeKey) {
+            if (isset($node[$eventTypeKey]) && is_string($node[$eventTypeKey])) {
+                $eventType = $node[$eventTypeKey];
+            }
+        }
+
+        if ($eventType === null || strpos(strtoupper($eventType), 'VAULT.PAYMENT-TOKEN') !== 0) {
+            return $node;
+        }
+
+        if (isset($node['resource']) && is_array($node['resource'])) {
+            $node['resource'] = $this->maskVault($node['resource']);
+        }
+
+        if (isset($node['resourceId'])) {
+            $node['resourceId'] = $this->mask($node['resourceId']);
+        }
+
+        return $node;
+    }
+
+    /**
+     * Masks the rejected value echoed by a PayPal validation error (`details[].value`) when the rejected
+     * field is a payment identifier (e.g. `/payment_source/card/vault_id` with `VAULT_TOKEN_NOT_FOUND`).
+     *
+     * @param array<mixed> $node
+     *
+     * @return array<mixed>
+     */
+    private function maskRejectedIdentifierValue(array $node)
+    {
+        if (!isset($node['field'], $node['value']) || !is_string($node['field'])) {
+            return $node;
+        }
+
+        $field = strtolower($node['field']);
+
+        if (preg_match('#(vault_id|vaultid|customer_id|/customer/id|/vault/id)$#', $field) === 1) {
+            $node['value'] = $this->mask($node['value']);
+        }
+
+        return $node;
+    }
+
+    /**
      * Masks the vault and vault customer IDs of a PayPal `attributes.vault` node.
      *
      * @param array<mixed> $vault
@@ -218,7 +282,7 @@ class SensitiveDataProcessor
         }
 
         $masked = preg_replace_callback(
-            '#(/payment-token/[^/?\#"]+/|/vault/(?:payment|setup)-tokens/)([^/?\#"\s]+)#',
+            '#(/payment-token/[^/?\#"]+/|/vault/(?:payment|setup)-tokens/)([A-Za-z0-9_-]+)#',
             function (array $matches) {
                 return $matches[1] . $this->maskString($matches[2]);
             },
@@ -229,7 +293,50 @@ class SensitiveDataProcessor
     }
 
     /**
+     * Masks identifier pairs of a JSON fragment embedded in free text, e.g. the truncated body summary of a
+     * Guzzle exception message (`... response: {"name":"UNPROCESSABLE_ENTITY","details":[{"field":"/payment_source/card/vault_id","value":"8kk8451t5rbxwbvp" (truncated...)`),
+     * which `scrubJson()` cannot decode.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    private function maskEmbeddedJsonIdentifiers($value)
+    {
+        if (strpos($value, '"') === false) {
+            return $value;
+        }
+
+        $masked = preg_replace_callback(
+            '#"(vault_id|vaultId|customer_id|id_token)"\s*:\s*"([^"]*)"#i',
+            function (array $matches) {
+                if (strtolower($matches[1]) === 'id_token') {
+                    return '"' . $matches[1] . '":"[REDACTED]"';
+                }
+
+                return '"' . $matches[1] . '":"' . $this->maskString($matches[2]) . '"';
+            },
+            $value
+        );
+
+        if ($masked === null) {
+            return '[REDACTED]';
+        }
+
+        $masked = preg_replace_callback(
+            '#("field"\s*:\s*"[^"]*(?:vault_id|vaultId|customer_id|/customer/id|/vault/id)"\s*,\s*"value"\s*:\s*")([^"]*)"#i',
+            function (array $matches) {
+                return $matches[1] . $this->maskString($matches[2]) . '"';
+            },
+            $masked
+        );
+
+        return $masked === null ? '[REDACTED]' : $masked;
+    }
+
+    /**
      * Scrubs a JSON encoded string (e.g. an HTTP body). Returns it unchanged when it is not JSON or has nothing to scrub.
+     * A scrubbed body is re-encoded compact: zero fractions are kept, a big integer becomes a string and an empty object `[]`.
      *
      * @param string $value
      * @param int $depth
@@ -244,7 +351,7 @@ class SensitiveDataProcessor
             return $value;
         }
 
-        $decoded = json_decode($value, true);
+        $decoded = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
 
         if (!is_array($decoded)) {
             return $value;
@@ -256,7 +363,7 @@ class SensitiveDataProcessor
             return $value;
         }
 
-        $encoded = json_encode($scrubbed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $encoded = json_encode($scrubbed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
 
         return $encoded === false ? '[REDACTED]' : $encoded;
     }
