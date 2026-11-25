@@ -20,7 +20,7 @@
 
 namespace PsCheckout\Core\PayPal\Order\Validator;
 
-use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\PayPal\Order\Exception\CartAlreadyPaidException;
 
 interface PaidCartValidatorInterface
 {
@@ -29,7 +29,7 @@ interface PaidCartValidatorInterface
      *
      * @return void
      *
-     * @throws PsCheckoutException when the cart is already paid and must not get a new PayPal order
+     * @throws CartAlreadyPaidException when the cart is already paid and must not get a new PayPal order
      */
     public function validate(int $cartId);
 }

@@ -37,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **XO-3156** — Do not charge a customer twice for one cart
   - A `CHECKOUT.ORDER.APPROVED` webhook no longer captures a PayPal order when the cart already has a PrestaShop order. A warning is logged with the PayPal order ID and the cart ID
   - No new PayPal order is created for a cart that already has a PrestaShop order, or whose previous PayPal order is paid at PayPal (for example after a capture that timed out on the module side). A previous order with a declined or failed capture does not block a new payment
-  - In that last case the PrestaShop order is created right away, and the customer sees: *"Your payment for this cart was already received. Please check your order history before paying again."*
+  - In that last case the PrestaShop order is created right away, and the customer sees: *"Your payment for this cart was already received. Please check your order confirmation email before paying again."*
   - New `PsCheckoutException::CART_ALREADY_PAID` exception code (`83`)
 - Integration tests: create a fresh `test_prestashop` database automatically before each run (`make create-test-db`)
 - Integration tests: add `stderr="true"` to `phpunit-integration.xml` to prevent "headers already sent" errors caused by PHPUnit output conflicting with PHP session start

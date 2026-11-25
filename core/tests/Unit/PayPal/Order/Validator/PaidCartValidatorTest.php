@@ -23,9 +23,9 @@ namespace PsCheckout\Core\Tests\Unit\PayPal\Order\Validator;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
 use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrderCapture;
+use PsCheckout\Core\PayPal\Order\Exception\CartAlreadyPaidException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderCaptureRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -47,9 +47,6 @@ class PaidCartValidatorTest extends TestCase
     /** @var PayPalOrderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $payPalOrderProvider;
 
-    /** @var CreateOrderActionInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $createOrderAction;
-
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
@@ -59,11 +56,9 @@ class PaidCartValidatorTest extends TestCase
     protected function setUp(): void
     {
         $this->orderRepository = $this->createMock(ReadOnlyCollectionRepositoryInterface::class);
-        $this->orderRepository->method('getAllBy')->willReturn([]);
         $this->payPalOrderRepository = $this->createMock(PayPalOrderRepositoryInterface::class);
         $this->payPalOrderCaptureRepository = $this->createMock(PayPalOrderCaptureRepositoryInterface::class);
         $this->payPalOrderProvider = $this->createMock(PayPalOrderProviderInterface::class);
-        $this->createOrderAction = $this->createMock(CreateOrderActionInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->validator = new PaidCartValidator(
@@ -71,31 +66,19 @@ class PaidCartValidatorTest extends TestCase
             $this->payPalOrderRepository,
             $this->payPalOrderCaptureRepository,
             $this->payPalOrderProvider,
-            $this->createOrderAction,
             $this->logger
         );
     }
 
     public function testRefusesWhenCartAlreadyHasAnOrder(): void
     {
-        $orderRepository = $this->createMock(ReadOnlyCollectionRepositoryInterface::class);
-        $orderRepository->method('getAllBy')->with(['id_cart' => 42])->willReturn([new \stdClass()]);
-        $validator = new PaidCartValidator(
-            $orderRepository,
-            $this->payPalOrderRepository,
-            $this->payPalOrderCaptureRepository,
-            $this->payPalOrderProvider,
-            $this->createOrderAction,
-            $this->logger
-        );
+        $this->orderRepository->method('getAllBy')->with(['id_cart' => 42])->willReturn([new \stdClass()]);
 
         $this->payPalOrderProvider->expects($this->never())->method('getById');
-        $this->createOrderAction->expects($this->never())->method('execute');
-
         $this->expectException(PsCheckoutException::class);
         $this->expectExceptionCode(PsCheckoutException::CART_ALREADY_PAID);
 
-        $validator->validate(42);
+        $this->validator->validate(42);
     }
 
     public function testPassesWhenCartHasNoPreviousPayPalOrder(): void
@@ -103,8 +86,6 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->with(42)->willReturn(null);
 
         $this->payPalOrderProvider->expects($this->never())->method('getById');
-        $this->createOrderAction->expects($this->never())->method('execute');
-
         $this->validator->validate(42);
     }
 
@@ -116,8 +97,6 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock($status));
 
         $this->payPalOrderProvider->expects($this->never())->method('getById');
-        $this->createOrderAction->expects($this->never())->method('execute');
-
         $this->validator->validate(42);
     }
 
@@ -137,18 +116,18 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('CREATED'));
         $this->payPalOrderProvider->method('getById')->with('ORDER-A')->willReturn($this->createPayPalOrderResponseMock('APPROVED'));
 
-        $this->createOrderAction->expects($this->never())->method('execute');
+        // No refusal: nothing is logged about a paid cart.
+        $this->logger->expects($this->never())->method('warning');
 
         $this->validator->validate(42);
     }
 
-    public function testRefusesAndCreatesTheOrderWhenPreviousPayPalOrderIsCompletedAtPayPal(): void
+    public function testRefusesWithThePaidPayPalOrderWhenPreviousPayPalOrderIsCompletedAtPayPal(): void
     {
         $response = $this->createPayPalOrderResponseMock('COMPLETED');
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('APPROVED'));
         $this->payPalOrderProvider->method('getById')->with('ORDER-A')->willReturn($response);
 
-        $this->createOrderAction->expects($this->once())->method('execute')->with($response);
         $this->logger->expects($this->once())
             ->method('warning')
             ->with(
@@ -158,42 +137,13 @@ class PaidCartValidatorTest extends TestCase
                 })
             );
 
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ALREADY_PAID);
-
-        $this->validator->validate(42);
-    }
-
-    public function testStillRefusesWhenTheOrderCannotBeCreated(): void
-    {
-        $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('APPROVED'));
-        $this->payPalOrderProvider->method('getById')->willReturn($this->createPayPalOrderResponseMock('COMPLETED'));
-        $this->createOrderAction->method('execute')->willThrowException(
-            new PsCheckoutException('Order cannot be saved', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER)
-        );
-
-        $this->logger->expects($this->once())->method('error');
-
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ALREADY_PAID);
-
-        $this->validator->validate(42);
-    }
-
-    public function testDoesNotLogAnErrorWhenTheOrderWasCreatedInTheMeantime(): void
-    {
-        $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('APPROVED'));
-        $this->payPalOrderProvider->method('getById')->willReturn($this->createPayPalOrderResponseMock('COMPLETED'));
-        $this->createOrderAction->method('execute')->willThrowException(
-            new PsCheckoutException('Order already exist', PsCheckoutException::PRESTASHOP_ORDER_ALREADY_EXISTS)
-        );
-
-        $this->logger->expects($this->never())->method('error');
-
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ALREADY_PAID);
-
-        $this->validator->validate(42);
+        try {
+            $this->validator->validate(42);
+            $this->fail('The paid cart was not refused');
+        } catch (CartAlreadyPaidException $exception) {
+            $this->assertSame(PsCheckoutException::CART_ALREADY_PAID, $exception->getCode());
+            $this->assertSame($response, $exception->getPaidPayPalOrder());
+        }
     }
 
     public function testPassesAndLogsWhenPayPalCannotBeRead(): void
@@ -201,7 +151,6 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('CREATED'));
         $this->payPalOrderProvider->method('getById')->willThrowException(new \RuntimeException('cURL error 28'));
 
-        $this->createOrderAction->expects($this->never())->method('execute');
         $this->logger->expects($this->once())
             ->method('warning')
             ->with(
@@ -224,7 +173,8 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('COMPLETED'));
         $this->payPalOrderProvider->method('getById')->willReturn($this->createPayPalOrderResponseMock('COMPLETED', $captureStatus));
 
-        $this->createOrderAction->expects($this->never())->method('execute');
+        // No refusal: nothing is logged about a paid cart.
+        $this->logger->expects($this->never())->method('warning');
 
         $this->validator->validate(42);
     }
@@ -267,7 +217,8 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('COMPLETED'));
         $this->payPalOrderProvider->method('getById')->willReturn($this->createPayPalOrderResponseMock('COMPLETED', null, 'DENIED'));
 
-        $this->createOrderAction->expects($this->never())->method('execute');
+        // No refusal: nothing is logged about a paid cart.
+        $this->logger->expects($this->never())->method('warning');
 
         $this->validator->validate(42);
     }
@@ -278,12 +229,12 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderProvider->method('getById')->willThrowException(new \RuntimeException('cURL error 28'));
         $this->payPalOrderCaptureRepository->method('getByOrderId')->with('ORDER-A')->willReturn([$this->createPayPalOrderCaptureMock('COMPLETED')]);
 
-        $this->createOrderAction->expects($this->never())->method('execute');
-
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionCode(PsCheckoutException::CART_ALREADY_PAID);
-
-        $this->validator->validate(42);
+        try {
+            $this->validator->validate(42);
+            $this->fail('The paid cart was not refused');
+        } catch (CartAlreadyPaidException $exception) {
+            $this->assertNull($exception->getPaidPayPalOrder());
+        }
     }
 
     public function testPassesWhenPayPalCannotBeReadAndTheLocalCaptureWasDeclined(): void
@@ -292,7 +243,8 @@ class PaidCartValidatorTest extends TestCase
         $this->payPalOrderProvider->method('getById')->willThrowException(new \RuntimeException('cURL error 28'));
         $this->payPalOrderCaptureRepository->method('getByOrderId')->with('ORDER-A')->willReturn([$this->createPayPalOrderCaptureMock('DECLINED')]);
 
-        $this->createOrderAction->expects($this->never())->method('execute');
+        // Only the unreadable PayPal order is logged, the cart is not refused.
+        $this->logger->expects($this->once())->method('warning')->with($this->stringContains('could not be read'));
 
         $this->validator->validate(42);
     }

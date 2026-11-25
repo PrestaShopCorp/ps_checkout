@@ -26,7 +26,14 @@ services:
       - '@PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCache'
       - '@PsCheckout\Core\PaymentToken\Action\DeletePaymentTokenAction'
       - '@PsCheckout\Infrastructure\Repository\PaymentTokenRepository'
+      - '@PsCheckout\Core\PayPal\Order\Action\RefusePaidCartAction'
+
+  PsCheckout\Core\PayPal\Order\Action\RefusePaidCartAction:
+    class: PsCheckout\Core\PayPal\Order\Action\RefusePaidCartAction
+    arguments:
       - '@PsCheckout\Core\PayPal\Order\Validator\PaidCartValidator'
+      - '@PsCheckout\Core\Order\Action\CreateOrderAction'
+      - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Infrastructure\Action\AddProductToCartAction:
     class: PsCheckout\Infrastructure\Action\AddProductToCartAction

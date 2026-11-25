@@ -37,7 +37,6 @@ services:
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
       - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
       - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
-      - '@PsCheckout\Core\Order\Action\CreateOrderAction'
       - '@Psr\Log\LoggerInterface'
 
   PsCheckout\Core\Order\Validator\OrderAmountValidator:

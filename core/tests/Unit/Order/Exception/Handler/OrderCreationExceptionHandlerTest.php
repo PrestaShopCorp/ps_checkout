@@ -262,7 +262,7 @@ class OrderCreationExceptionHandlerTest extends TestCase
             'CART_ALREADY_PAID' => [
                 new PsCheckoutException('internal', PsCheckoutException::CART_ALREADY_PAID),
                 null,
-                'Your payment for this cart was already received. Please check your order history before paying again.',
+                'Your payment for this cart was already received. Please check your order confirmation email before paying again.',
             ],
             'CART_SHIPPING_ADDRESS_INVALID' => [
                 new PsCheckoutException('internal', PsCheckoutException::CART_SHIPPING_ADDRESS_INVALID),

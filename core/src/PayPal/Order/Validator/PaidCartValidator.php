@@ -22,11 +22,10 @@ namespace PsCheckout\Core\PayPal\Order\Validator;
 
 use Exception;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
-use PsCheckout\Core\Exception\PsCheckoutException;
-use PsCheckout\Core\Order\Action\CreateOrderActionInterface;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalAuthorizationStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalCaptureStatus;
 use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
+use PsCheckout\Core\PayPal\Order\Exception\CartAlreadyPaidException;
 use PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProviderInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderCaptureRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
@@ -56,11 +55,6 @@ class PaidCartValidator implements PaidCartValidatorInterface
     private $payPalOrderProvider;
 
     /**
-     * @var CreateOrderActionInterface
-     */
-    private $createOrderAction;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -70,14 +64,12 @@ class PaidCartValidator implements PaidCartValidatorInterface
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         PayPalOrderCaptureRepositoryInterface $payPalOrderCaptureRepository,
         PayPalOrderProviderInterface $payPalOrderProvider,
-        CreateOrderActionInterface $createOrderAction,
         LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->payPalOrderCaptureRepository = $payPalOrderCaptureRepository;
         $this->payPalOrderProvider = $payPalOrderProvider;
-        $this->createOrderAction = $createOrderAction;
         $this->logger = $logger;
     }
 
@@ -89,7 +81,7 @@ class PaidCartValidator implements PaidCartValidatorInterface
         if (!empty($this->orderRepository->getAllBy(['id_cart' => $cartId]))) {
             $this->logger->warning('PayPal order not created: the cart already has an order', ['cart_id' => $cartId]);
 
-            throw new PsCheckoutException('Cart already has an order', PsCheckoutException::CART_ALREADY_PAID);
+            throw new CartAlreadyPaidException('Cart already has an order');
         }
 
         $previousPayPalOrder = $this->payPalOrderRepository->getOneByCartId($cartId);
@@ -118,11 +110,7 @@ class PaidCartValidator implements PaidCartValidatorInterface
 
         $this->logger->warning('PayPal order not created: the previous PayPal order of the cart is already paid', $context);
 
-        if ($payPalOrderResponse) {
-            $this->createOrder($payPalOrderResponse, $context);
-        }
-
-        throw new PsCheckoutException('Previous PayPal order of the cart is already paid', PsCheckoutException::CART_ALREADY_PAID);
+        throw new CartAlreadyPaidException('Previous PayPal order of the cart is already paid', $payPalOrderResponse);
     }
 
     /**
@@ -169,26 +157,5 @@ class PaidCartValidator implements PaidCartValidatorInterface
         }
 
         return false;
-    }
-
-    /**
-     * The customer paid but has no order yet: create it now instead of waiting for the webhook.
-     *
-     * @param PayPalOrderResponse $payPalOrderResponse
-     * @param array{cart_id: int, paypal_order_id: string} $context
-     *
-     * @return void
-     */
-    private function createOrder(PayPalOrderResponse $payPalOrderResponse, array $context)
-    {
-        try {
-            $this->createOrderAction->execute($payPalOrderResponse);
-        } catch (Exception $exception) {
-            if ($exception->getCode() === PsCheckoutException::PRESTASHOP_ORDER_ALREADY_EXISTS) {
-                return;
-            }
-
-            $this->logger->error('Order could not be created for an already paid PayPal order', $context + ['exception' => $exception]);
-        }
     }
 }

@@ -30,11 +30,11 @@ use PsCheckout\Core\PaymentToken\Repository\PaymentTokenRepositoryInterface;
 use PsCheckout\Core\PaymentToken\ValueObject\PaymentToken;
 use PsCheckout\Core\PayPal\Customer\Repository\PayPalCustomerRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Action\RefusePaidCartActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
 use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
-use PsCheckout\Core\PayPal\Order\Validator\PaidCartValidatorInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
@@ -58,8 +58,8 @@ class CreatePayPalOrderActionTest extends TestCase
     /** @var PayPalOrderRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $payPalOrderRepository;
 
-    /** @var PaidCartValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paidCartValidator;
+    /** @var RefusePaidCartActionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $refusePaidCartAction;
 
     protected function setUp(): void
     {
@@ -70,7 +70,7 @@ class CreatePayPalOrderActionTest extends TestCase
         $this->payPalCustomerRepository = $this->createMock(PayPalCustomerRepositoryInterface::class);
         $this->paymentTokenRepository = $this->createMock(PaymentTokenRepositoryInterface::class);
         $this->payPalOrderRepository = $this->createMock(PayPalOrderRepositoryInterface::class);
-        $this->paidCartValidator = $this->createMock(PaidCartValidatorInterface::class);
+        $this->refusePaidCartAction = $this->createMock(RefusePaidCartActionInterface::class);
         $this->action = new CreatePayPalOrderAction(
             $this->context,
             $this->payPalCustomerRepository,
@@ -82,7 +82,7 @@ class CreatePayPalOrderActionTest extends TestCase
             $this->createMock(PayPalOrderCacheInterface::class),
             $this->createMock(DeletePaymentTokenActionInterface::class),
             $this->paymentTokenRepository,
-            $this->paidCartValidator
+            $this->refusePaidCartAction
         );
     }
 
@@ -183,7 +183,7 @@ class CreatePayPalOrderActionTest extends TestCase
     {
         $this->context->method('getCustomer')->willReturn((object) ['id' => 1]);
         $refusal = new PsCheckoutException('Cart is already paid', PsCheckoutException::CART_ALREADY_PAID);
-        $this->paidCartValidator->method('validate')->with(42)->willThrowException($refusal);
+        $this->refusePaidCartAction->method('execute')->with(42)->willThrowException($refusal);
 
         $this->orderHttpClient->expects($this->never())->method('createOrder');
         $this->payPalOrderRepository->expects($this->never())->method('softDelete');

@@ -453,7 +453,7 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     break;
                 case PsCheckoutException::CART_ALREADY_PAID:
                     $isClientError = true;
-                    $exceptionMessageForCustomer = $this->translator->trans('Your payment for this cart was already received. Please check your order history before paying again.');
+                    $exceptionMessageForCustomer = $this->translator->trans('Your payment for this cart was already received. Please check your order confirmation email before paying again.');
 
                     break;
                 case PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU:

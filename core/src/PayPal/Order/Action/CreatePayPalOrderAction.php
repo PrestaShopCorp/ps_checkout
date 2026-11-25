@@ -34,7 +34,6 @@ use PsCheckout\Core\PayPal\Order\Processor\CreatePayPalOrderProcessorInterface;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Core\PayPal\Order\Response\ValueObject\CreatePayPalOrderResponse;
-use PsCheckout\Core\PayPal\Order\Validator\PaidCartValidatorInterface;
 use PsCheckout\Infrastructure\Adapter\ContextInterface;
 use PsCheckout\Presentation\Presenter\PresenterInterface;
 
@@ -91,9 +90,9 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
     private $paymentTokenRepository;
 
     /**
-     * @var PaidCartValidatorInterface
+     * @var RefusePaidCartActionInterface
      */
-    private $paidCartValidator;
+    private $refusePaidCartAction;
 
     public function __construct(
         ContextInterface $context,
@@ -106,7 +105,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         PayPalOrderCacheInterface $payPalOrderCache,
         DeletePaymentTokenActionInterface $deletePaymentTokenAction,
         PaymentTokenRepositoryInterface $paymentTokenRepository,
-        PaidCartValidatorInterface $paidCartValidator
+        RefusePaidCartActionInterface $refusePaidCartAction
     ) {
         $this->context = $context;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
@@ -118,7 +117,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $this->payPalOrderCache = $payPalOrderCache;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
         $this->paymentTokenRepository = $paymentTokenRepository;
-        $this->paidCartValidator = $paidCartValidator;
+        $this->refusePaidCartAction = $refusePaidCartAction;
     }
 
     /**
@@ -138,7 +137,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
             $this->validatePaymentToken($request->getVaultId(), $payPalCustomerId);
         }
 
-        $this->paidCartValidator->validate($cartId);
+        $this->refusePaidCartAction->execute($cartId);
 
         $this->orderPayloadBuilder
             ->setCart($this->cartPresenter->present())
