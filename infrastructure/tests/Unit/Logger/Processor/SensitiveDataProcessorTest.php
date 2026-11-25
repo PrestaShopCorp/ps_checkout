@@ -255,6 +255,50 @@ class SensitiveDataProcessorTest extends TestCase
         ];
     }
 
+    public function testRedactsPayPalIdTokenInIdentityResponseBody(): void
+    {
+        $idToken = 'eyJraWQiOiJkMTA2ZTUwNzY5ZjNiOWY0.eyJpc3MiOiJodHRwczovL2FwaS5wYXlwYWwuY29tIn0.c2lnbmF0dXJl';
+        $body = json_encode(['id_token' => $idToken]);
+
+        $logged = $this->valueAt($this->process(['status_code' => 200, 'body' => $body]), 'body');
+        $this->assertIsString($logged);
+
+        $this->assertStringNotContainsString($idToken, $logged);
+        $this->assertSame('{"id_token":"[REDACTED]"}', $logged);
+    }
+
+    public function testMasksTokenUrlInRecordMessage(): void
+    {
+        $record = $this->processRecord([
+            'message' => 'VaultController exception 0 : cURL error 28: Operation timed out for https://api.example.com/v1/vault-merchant/payment-token/MERCHANT123/' . self::VAULT_ID,
+            'context' => [],
+        ]);
+
+        $this->assertSame('VaultController exception 0 : cURL error 28: Operation timed out for https://api.example.com/v1/vault-merchant/payment-token/MERCHANT123/****wbvp', $record['message']);
+    }
+
+    public function testMasksTokenUrlInExceptionChainOfContext(): void
+    {
+        $guzzleMessage = 'cURL error 28: Operation timed out after 30001 milliseconds with 0 bytes received (see https://curl.se/libcurl/c/libcurl-errors.html) for https://api.example.com/v1/vault-merchant/payment-token/MERCHANT123/' . self::VAULT_ID;
+        $exception = new \Exception('Failed to delete payment token', 0, new \RuntimeException($guzzleMessage, 28));
+
+        $context = $this->process(['controller' => 'VaultModuleFrontController', 'exception' => $exception]);
+
+        $this->assertStringNotContainsString(self::VAULT_ID, (string) json_encode($context));
+        $this->assertSame('Exception', $this->valueAt($context, 'exception.class'));
+        $this->assertSame('Failed to delete payment token', $this->valueAt($context, 'exception.message'));
+        $this->assertSame('RuntimeException', $this->valueAt($context, 'exception.previous.class'));
+        $this->assertSame(28, $this->valueAt($context, 'exception.previous.code'));
+        $previousMessage = $this->valueAt($context, 'exception.previous.message');
+        $this->assertIsString($previousMessage);
+        $this->assertStringEndsWith('/payment-token/MERCHANT123/****wbvp', $previousMessage);
+        $previousFile = $this->valueAt($context, 'exception.previous.file');
+        $this->assertIsString($previousFile);
+        $this->assertStringStartsWith(__FILE__ . ':', $previousFile);
+        $this->assertIsArray($this->valueAt($context, 'exception.previous.trace'));
+        $this->assertSame('VaultModuleFrontController', $context['controller']);
+    }
+
     public function testMasksVaultIdInPaymentTokenUrl(): void
     {
         $context = $this->process([
@@ -377,6 +421,20 @@ class SensitiveDataProcessorTest extends TestCase
         $this->assertIsArray($record['context']);
 
         return $record['context'];
+    }
+
+    /**
+     * @param array<string, mixed> $record
+     *
+     * @return array<string, mixed>
+     */
+    private function processRecord(array $record): array
+    {
+        $processor = new SensitiveDataProcessor();
+        $processed = $processor($record);
+        $this->assertIsString($processed['message']);
+
+        return ['message' => $processed['message'], 'context' => $processed['context']];
     }
 
     /**

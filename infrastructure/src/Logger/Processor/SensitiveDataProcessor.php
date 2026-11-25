@@ -35,6 +35,7 @@ class SensitiveDataProcessor
         'password',
         'secret',
         'bearer',
+        'id_token',
     ];
 
     /**
@@ -55,6 +56,10 @@ class SensitiveDataProcessor
      */
     public function __invoke(array $record)
     {
+        if (isset($record['message']) && is_string($record['message'])) {
+            $record['message'] = $this->maskTokenUrls($record['message']);
+        }
+
         $record['context'] = $this->scrub($record['context']);
 
         return $record;
@@ -111,7 +116,53 @@ class SensitiveDataProcessor
 
             if (is_array($value)) {
                 $data[$key] = $this->scrub($value, $depth + 1);
+
+                continue;
             }
+
+            if ($value instanceof \Throwable) {
+                $data[$key] = $this->normalizeException($value);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Converts an exception to the array shape Monolog would log, with token URLs masked in every message.
+     *
+     * Monolog formats exception objects itself, after the processors ran, so a message that embeds the
+     * request URL (e.g. Guzzle `cURL error 28: ... for https://.../payment-token/<merchant>/<vault id>`)
+     * would otherwise reach the log in clear, through the `previous` chain as well.
+     *
+     * @param \Throwable $exception
+     * @param int $depth
+     *
+     * @return array<string, mixed>
+     */
+    private function normalizeException(\Throwable $exception, $depth = 0)
+    {
+        $data = [
+            'class' => get_class($exception),
+            'message' => $this->maskTokenUrls($exception->getMessage()),
+            'code' => $exception->getCode(),
+            'file' => $exception->getFile() . ':' . $exception->getLine(),
+        ];
+
+        $trace = [];
+
+        foreach ($exception->getTrace() as $frame) {
+            if (isset($frame['file'], $frame['line'])) {
+                $trace[] = $frame['file'] . ':' . $frame['line'];
+            }
+        }
+
+        $data['trace'] = $trace;
+
+        $previous = $exception->getPrevious();
+
+        if ($previous !== null && $depth < 10) {
+            $data['previous'] = $this->normalizeException($previous, $depth + 1);
         }
 
         return $data;
