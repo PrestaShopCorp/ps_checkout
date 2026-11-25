@@ -73,7 +73,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $orderCancelRequest = new CancelPayPalOrderRequest($bodyValues, $this->context->cart->id);
 
             if ($orderCancelRequest->getOrderId()) {
-                $this->assertPayPalOrderBelongsToCurrentCustomer($orderCancelRequest->getOrderId());
+                $this->assertPayPalOrderBelongsToCurrentVisitor($orderCancelRequest->getOrderId());
 
                 /** @var CancelPayPalOrderAction $cancelPayPalOrderAction */
                 $cancelPayPalOrderAction = $this->module->getService(CancelPayPalOrderAction::class);
@@ -133,7 +133,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
      *
      * @return void
      */
-    private function assertPayPalOrderBelongsToCurrentCustomer($payPalOrderId)
+    private function assertPayPalOrderBelongsToCurrentVisitor($payPalOrderId)
     {
         /** @var PayPalOrderRepository $payPalOrderRepository */
         $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);

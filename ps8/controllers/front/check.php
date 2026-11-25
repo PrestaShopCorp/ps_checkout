@@ -75,7 +75,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 ]);
             }
 
-            $this->assertPayPalOrderBelongsToCurrentCustomer($checkOrderRequest->getOrderId());
+            $this->assertPayPalOrderBelongsToCurrentVisitor($checkOrderRequest->getOrderId());
 
             try {
                 /** @var UpdateExternalPayPalOrderProcessor $updateExternalPayPalOrderProcessor */
@@ -139,7 +139,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
      *
      * @return void
      */
-    private function assertPayPalOrderBelongsToCurrentCustomer($payPalOrderId)
+    private function assertPayPalOrderBelongsToCurrentVisitor($payPalOrderId)
     {
         /** @var PayPalOrderRepository $payPalOrderRepository */
         $payPalOrderRepository = $this->module->getService(PayPalOrderRepository::class);
