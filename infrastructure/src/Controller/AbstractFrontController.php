@@ -133,15 +133,27 @@ class AbstractFrontController extends ModuleFrontController
      *
      * @return void
      */
-    protected function assertPayPalOrderBelongsToCurrentVisitor($payPalOrderId)
+    protected function assertPayPalOrderBelongsToCurrentVisitor(string $payPalOrderId)
     {
         /** @var PayPalOrderOwnershipValidator $payPalOrderOwnershipValidator */
         $payPalOrderOwnershipValidator = $this->module->getService(PayPalOrderOwnershipValidator::class);
 
-        if ($payPalOrderOwnershipValidator->isOwnedByCurrentVisitor((string) $payPalOrderId)) {
-            return;
+        if (!$payPalOrderOwnershipValidator->isOwnedByCurrentVisitor($payPalOrderId)) {
+            $this->exitWithPayPalOrderNotFoundResponse();
         }
+    }
 
+    /**
+     * Answers 404 "PayPal Order not found": the response for an unknown PayPal Order and for a
+     * PayPal Order that does not belong to the current visitor, so that it does not tell whether
+     * the order exists. Exits directly instead of throwing: OrderCreationExceptionHandler would
+     * answer with a 500, tell the visitor they could have been charged and notify the customer
+     * service of the cart owner.
+     *
+     * @return void
+     */
+    protected function exitWithPayPalOrderNotFoundResponse()
+    {
         $this->exitWithResponse([
             'status' => false,
             'httpCode' => 404,
