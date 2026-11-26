@@ -23,6 +23,13 @@ services:
       - '@PsCheckout\Infrastructure\Adapter\Context'
       - '@PsCheckout\Infrastructure\Adapter\Cart'
 
+  PsCheckout\Core\PayPal\Order\Validator\PayPalOrderOwnershipValidator:
+    class: PsCheckout\Core\PayPal\Order\Validator\PayPalOrderOwnershipValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Core\Order\Validator\CartOwnershipValidator'
+      - '@Psr\Log\LoggerInterface'
+
   PsCheckout\Core\Order\Validator\CheckoutValidator:
     class: PsCheckout\Core\Order\Validator\CheckoutValidator
     arguments:
