@@ -132,7 +132,14 @@ class PaidCartValidator implements PaidCartValidatorInterface
             }
         }
 
-        foreach ($payPalOrderResponse->getAuthorizations() as $authorization) {
+        try {
+            $authorizations = $payPalOrderResponse->getAuthorizations();
+        } catch (Exception $exception) {
+            // getAuthorizations() throws when the response does not have exactly one purchase unit.
+            return false;
+        }
+
+        foreach ($authorizations as $authorization) {
             if (in_array($authorization['status'], [PayPalAuthorizationStatus::CREATED, PayPalAuthorizationStatus::PENDING, PayPalAuthorizationStatus::CAPTURED, PayPalAuthorizationStatus::PARTIALLY_CAPTURED], true)) {
                 return true;
             }

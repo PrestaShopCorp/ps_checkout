@@ -223,6 +223,22 @@ class PaidCartValidatorTest extends TestCase
         $this->validator->validate(42);
     }
 
+    public function testPassesWhenTheAuthorizationsOfThePreviousPayPalOrderCannotBeRead(): void
+    {
+        $response = $this->createMock(PayPalOrderResponse::class);
+        $response->method('getStatus')->willReturn('COMPLETED');
+        $response->method('getCaptures')->willReturn([]);
+        $response->method('getAuthorizations')->willThrowException(new \RuntimeException('No purchase units found in the order response.'));
+
+        $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('COMPLETED'));
+        $this->payPalOrderProvider->method('getById')->willReturn($response);
+
+        // No refusal: nothing is logged about a paid cart.
+        $this->logger->expects($this->never())->method('warning');
+
+        $this->validator->validate(42);
+    }
+
     public function testRefusesWhenPayPalCannotBeReadAndACaptureIsCompletedLocally(): void
     {
         $this->payPalOrderRepository->method('getOneByCartId')->willReturn($this->createPayPalOrderMock('COMPLETED'));
