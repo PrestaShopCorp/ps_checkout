@@ -25,6 +25,7 @@ use PsCheckout\Api\Http\Exception\PayPalException;
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Exception\Handler\OrderCreationExceptionHandler;
 use PsCheckout\Core\PayPal\Order\Action\CreatePayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Action\RefusePaidCartAction;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CreatePayPalOrderRequest;
 use PsCheckout\Infrastructure\Action\AddProductToCartAction;
 use PsCheckout\Infrastructure\Adapter\Context;
@@ -130,6 +131,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 $payPalOrder = $payPalOrderRepository->getOneByCartId((int) $cart->id);
 
                 if ($payPalOrder && $payPalOrder->isReusableForExpressCheckout()) {
+                    // The reused PayPal order skips CreatePayPalOrderAction: a paid cart must be refused here too.
+                    /** @var RefusePaidCartAction $refusePaidCartAction */
+                    $refusePaidCartAction = $this->module->getService(RefusePaidCartAction::class);
+                    $refusePaidCartAction->execute((int) $cart->id);
+
                     $this->exitWithResponse([
                         'status' => true,
                         'httpCode' => 200,

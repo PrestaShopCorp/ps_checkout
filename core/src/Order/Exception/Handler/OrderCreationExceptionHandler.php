@@ -451,6 +451,11 @@ class OrderCreationExceptionHandler implements OrderCreationExceptionHandlerInte
                     $exceptionMessageForCustomer = $this->translator->trans('Your date of birth is invalid or missing. Please check and try again.');
 
                     break;
+                case PsCheckoutException::CART_ALREADY_PAID:
+                    $isClientError = true;
+                    $exceptionMessageForCustomer = $this->translator->trans('Your payment for this cart was already received. Please check your order confirmation email before paying again.');
+
+                    break;
                 case PsCheckoutException::SHOP_NOT_REGISTERED_IN_MDU:
                     $exceptionMessageForCustomer = $this->translator->trans('This payment method is temporarily unavailable, please choose another one.');
 

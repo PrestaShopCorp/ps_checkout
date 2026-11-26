@@ -30,6 +30,15 @@ services:
       - '@PsCheckout\Infrastructure\Repository\OrderRepository'
       - '@PsCheckout\Infrastructure\Repository\CartRepository'
 
+  PsCheckout\Core\PayPal\Order\Validator\PaidCartValidator:
+    class: PsCheckout\Core\PayPal\Order\Validator\PaidCartValidator
+    arguments:
+      - '@PsCheckout\Infrastructure\Repository\OrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderRepository'
+      - '@PsCheckout\Infrastructure\Repository\PayPalOrderCaptureRepository'
+      - '@PsCheckout\Core\PayPal\Order\Provider\PayPalOrderProvider'
+      - '@Psr\Log\LoggerInterface'
+
   PsCheckout\Core\Order\Validator\OrderAmountValidator:
     class: PsCheckout\Core\Order\Validator\OrderAmountValidator
 

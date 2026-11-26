@@ -29,6 +29,7 @@ use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\OrderStatus\Action\PayPalCheckOrderStatusActionInterface;
+use PsCheckout\Infrastructure\Repository\ReadOnlyCollectionRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class OrderApprovedEventHandler implements EventHandlerInterface
@@ -63,13 +64,19 @@ class OrderApprovedEventHandler implements EventHandlerInterface
      */
     private $logger;
 
+    /**
+     * @var ReadOnlyCollectionRepositoryInterface
+     */
+    private $orderRepository;
+
     public function __construct(
         PayPalOrderRepositoryInterface $payPalOrderRepository,
         PayPalCheckOrderStatusActionInterface $checkPayPalOrderStatusAction,
         OrderAuthorizationValidatorInterface $orderAuthorizationValidator,
         CapturePayPalOrderActionInterface $capturePayPalOrderAction,
         UpdatePayPalOrderPurchaseUnitActionInterface $updatePayPalOrderPurchaseUnit,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ReadOnlyCollectionRepositoryInterface $orderRepository
     ) {
         $this->payPalOrderRepository = $payPalOrderRepository;
         $this->checkPayPalOrderStatusAction = $checkPayPalOrderStatusAction;
@@ -77,6 +84,7 @@ class OrderApprovedEventHandler implements EventHandlerInterface
         $this->capturePayPalOrderAction = $capturePayPalOrderAction;
         $this->updatePayPalOrderPurchaseUnit = $updatePayPalOrderPurchaseUnit;
         $this->logger = $logger;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -103,6 +111,19 @@ class OrderApprovedEventHandler implements EventHandlerInterface
             $payPalOrder->isExpressCheckout()
             || $payPalOrder->hasTag(PayPalOrder::DELETED)
             || in_array($payPalOrder->getStatus(), [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::CANCELED], true)) {
+            return;
+        }
+
+        // A second PayPal order approved for a cart that is already ordered must not be charged.
+        if (!empty($this->orderRepository->getAllBy(['id_cart' => $payPalOrder->getIdCart()]))) {
+            $this->logger->warning(
+                'PayPal order approved but not captured: the cart already has an order',
+                [
+                    'paypal_order_id' => $payPalOrderResponse->getId(),
+                    'cart_id' => $payPalOrder->getIdCart(),
+                ]
+            );
+
             return;
         }
 

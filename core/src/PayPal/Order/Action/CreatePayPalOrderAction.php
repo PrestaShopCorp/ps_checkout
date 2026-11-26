@@ -89,6 +89,11 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
      */
     private $paymentTokenRepository;
 
+    /**
+     * @var RefusePaidCartActionInterface
+     */
+    private $refusePaidCartAction;
+
     public function __construct(
         ContextInterface $context,
         PayPalCustomerRepositoryInterface $payPalCustomerRepository,
@@ -99,7 +104,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         CreatePayPalOrderProcessorInterface $createPayPalOrderProcessor,
         PayPalOrderCacheInterface $payPalOrderCache,
         DeletePaymentTokenActionInterface $deletePaymentTokenAction,
-        PaymentTokenRepositoryInterface $paymentTokenRepository
+        PaymentTokenRepositoryInterface $paymentTokenRepository,
+        RefusePaidCartActionInterface $refusePaidCartAction
     ) {
         $this->context = $context;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
@@ -111,6 +117,7 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         $this->payPalOrderCache = $payPalOrderCache;
         $this->deletePaymentTokenAction = $deletePaymentTokenAction;
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->refusePaidCartAction = $refusePaidCartAction;
     }
 
     /**
@@ -129,6 +136,8 @@ class CreatePayPalOrderAction implements CreatePayPalOrderActionInterface
         if ($request->getVaultId()) {
             $this->validatePaymentToken($request->getVaultId(), $payPalCustomerId);
         }
+
+        $this->refusePaidCartAction->execute($cartId);
 
         $this->orderPayloadBuilder
             ->setCart($this->cartPresenter->present())
