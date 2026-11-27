@@ -30,4 +30,20 @@ interface CartOwnershipValidatorInterface
      * @return bool
      */
     public function isOwnedByCurrentCustomer(int $cartId): bool;
+
+    /**
+     * Checks that the given cart is the cart of the current context, or belongs to the
+     * customer of the current context.
+     *
+     * The context cart comes from the visitor's signed cookie, so nobody else can present it.
+     * This is the rule for the controllers reachable before a customer exists: an anonymous
+     * visitor starting an express checkout from the product or cart page owns a PayPal Order
+     * linked to a cart with no customer, and the guest customer is only created after the
+     * PayPal approval.
+     *
+     * @param int $cartId
+     *
+     * @return bool
+     */
+    public function isOwnedByCurrentVisitor(int $cartId): bool;
 }

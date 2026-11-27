@@ -10479,7 +10479,7 @@ parameters:
 		-
 			message: '#^Call to method getService\(\) on an unknown class Ps_Checkout\.$#'
 			identifier: class.notFound
-			count: 1
+			count: 2
 			path: ../infrastructure/src/Controller/AbstractFrontController.php
 
 		-

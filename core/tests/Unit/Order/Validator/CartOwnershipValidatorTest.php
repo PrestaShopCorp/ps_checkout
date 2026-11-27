@@ -85,6 +85,66 @@ class CartOwnershipValidatorTest extends TestCase
         $this->assertFalse($this->validator->isOwnedByCurrentCustomer(10));
     }
 
+    public function testVisitorRuleAcceptsTheCartOfTheContextWithoutCustomer(): void
+    {
+        $this->context->method('getCustomer')->willReturn($this->createCustomer(0));
+        $this->context->method('getCart')->willReturn($this->createCart(0));
+        $this->cartAdapter->expects($this->never())->method('getCart');
+
+        $this->assertTrue($this->validator->isOwnedByCurrentVisitor(10));
+    }
+
+    public function testVisitorRuleAcceptsTheCartOfTheContextWithoutCustomerInContext(): void
+    {
+        $this->context->method('getCustomer')->willReturn(null);
+        $this->context->method('getCart')->willReturn($this->createCart(0));
+
+        $this->assertTrue($this->validator->isOwnedByCurrentVisitor(10));
+    }
+
+    public function testVisitorRuleRefusesAnotherCartForAnAnonymousVisitor(): void
+    {
+        $this->context->method('getCustomer')->willReturn($this->createCustomer(0));
+        $this->context->method('getCart')->willReturn($this->createCart(0));
+        $this->cartAdapter->method('getCart')->with(11)->willReturn($this->createCart(0, 11));
+
+        $this->assertFalse($this->validator->isOwnedByCurrentVisitor(11));
+    }
+
+    public function testVisitorRuleRefusesAnotherCartWithoutCartInContext(): void
+    {
+        $this->context->method('getCustomer')->willReturn(null);
+        $this->context->method('getCart')->willReturn(null);
+
+        $this->assertFalse($this->validator->isOwnedByCurrentVisitor(10));
+    }
+
+    public function testVisitorRuleIgnoresAnUnsavedContextCart(): void
+    {
+        $this->context->method('getCustomer')->willReturn(null);
+        $this->context->method('getCart')->willReturn($this->createCart(0, 0));
+
+        $this->assertFalse($this->validator->isOwnedByCurrentVisitor(0));
+    }
+
+    public function testVisitorRuleFallsBackToTheCustomerCheck(): void
+    {
+        $this->context->method('getCustomer')->willReturn($this->createCustomer(42));
+        $this->context->method('getCart')->willReturn($this->createCart(42, 20));
+        $this->cartAdapter->method('getCart')->with(10)->willReturn($this->createCart(42));
+
+        $this->assertTrue($this->validator->isOwnedByCurrentVisitor(10));
+    }
+
+    public function testVisitorRuleRefusesTheCartOfAnotherCustomer(): void
+    {
+        $this->context->method('getCustomer')->willReturn($this->createCustomer(42));
+        $this->context->method('getCart')->willReturn($this->createCart(42, 20));
+        $this->cartAdapter->method('getCart')->with(10)->willReturn($this->createCart(7));
+
+        $this->assertFalse($this->validator->isOwnedByCurrentVisitor(10));
+    }
+
     /**
      * @param int $customerId
      *
@@ -102,15 +162,16 @@ class CartOwnershipValidatorTest extends TestCase
 
     /**
      * @param int $customerId
+     * @param int $cartId
      *
      * @return \Cart|MockObject
      */
-    private function createCart(int $customerId)
+    private function createCart(int $customerId, int $cartId = 10)
     {
         $cart = $this->getMockBuilder(\Cart::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $cart->id = 10;
+        $cart->id = $cartId;
         $cart->id_customer = $customerId;
 
         return $cart;

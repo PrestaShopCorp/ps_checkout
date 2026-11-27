@@ -73,13 +73,14 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 ]);
             }
 
+            $this->assertPayPalOrderBelongsToCurrentVisitor($checkOrderRequest->getOrderId());
+
             try {
                 /** @var UpdateExternalPayPalOrderProcessor $updateExternalPayPalOrderProcessor */
                 $updateExternalPayPalOrderProcessor = $this->module->getService(UpdateExternalPayPalOrderProcessor::class);
 
                 $updateExternalPayPalOrderProcessor->execute($checkOrderRequest);
             } catch (Exception $exception) {
-
                 $logger->error(
                     'Failed to patch PayPal Order',
                     [
@@ -104,7 +105,6 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-
             $logger->error(
                 sprintf(
                     'CheckController - Exception %s : %s',

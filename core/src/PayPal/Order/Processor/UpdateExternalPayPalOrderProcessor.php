@@ -23,6 +23,7 @@ namespace PsCheckout\Core\PayPal\Order\Processor;
 use Exception;
 use PsCheckout\Api\Http\HttpClientInterface;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilderInterface;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
@@ -101,6 +102,15 @@ class UpdateExternalPayPalOrderProcessor implements UpdateExternalPayPalOrderPro
 
         if (!$payPalOrder) {
             return;
+        }
+
+        // NOTE: the PayPal Order must be linked to the cart of the request, otherwise another
+        // customer could rewrite the amount, items and shipping of a PayPal Order they do not own
+        if ($payPalOrder->getIdCart() !== $request->getCartId()) {
+            throw new PsCheckoutException(
+                sprintf('PayPal Order %s is not linked to cart #%d', $request->getOrderId(), $request->getCartId()),
+                PsCheckoutException::PAYPAL_ORDER_CART_MISMATCH
+            );
         }
 
         try {

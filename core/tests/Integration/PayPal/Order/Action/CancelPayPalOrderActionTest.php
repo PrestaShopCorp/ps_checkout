@@ -22,6 +22,7 @@ namespace PsCheckout\Core\Tests\Integration\PayPal\Order\Action;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\PayPal\Order\Action\CancelPayPalOrderAction;
+use PsCheckout\Core\PayPal\Order\Entity\PayPalOrder;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CancelPayPalOrderRequest;
 use PsCheckout\Core\Tests\Integration\BaseTestCase;
 use PsCheckout\Core\Tests\Integration\Factory\PayPalOrderFactory;
@@ -68,11 +69,63 @@ class CancelPayPalOrderActionTest extends BaseTestCase
         // Verify order was updated
         $updatedOrder = $this->payPalRepository->getOneBy(['id' => 'PAY-123']);
         $this->assertEquals(1, $updatedOrder->getIdCart());
-        $this->assertEquals('PAY-123', $updatedOrder->getPaymentTokenId());
+        $this->assertEmpty($updatedOrder->getPaymentTokenId(), 'The payment token must not be overwritten with the order id');
         $this->assertEquals('paypal', $updatedOrder->getFundingSource());
         $this->assertFalse($updatedOrder->isCardFields());
         $this->assertFalse($updatedOrder->isExpressCheckout());
         $this->assertEquals('CANCELED', $updatedOrder->getStatus());
+    }
+
+    public function testItRefusesToCancelAPayPalOrderLinkedToAnotherCart(): void
+    {
+        $payPalOrder = PayPalOrderFactory::create([
+            'id' => 'PAY-123',
+            'id_cart' => 1,
+            'status' => 'APPROVED',
+        ]);
+        $this->payPalRepository->savePayPalOrder($payPalOrder);
+
+        $request = new CancelPayPalOrderRequest([
+            'orderID' => 'PAY-123',
+            'orderStatus' => 'COMPLETED',
+            'fundingSource' => 'card',
+            'isHostedFields' => true,
+            'isExpressCheckout' => true,
+        ], 2);
+
+        try {
+            $this->cancelPayPalOrderAction->execute($request);
+            $this->fail('A PayPal Order linked to another cart must not be cancelled');
+        } catch (PsCheckoutException $exception) {
+            $this->assertSame(PsCheckoutException::PAYPAL_ORDER_CART_MISMATCH, $exception->getCode());
+        }
+
+        /** @var PayPalOrder $storedOrder */
+        $storedOrder = $this->payPalRepository->getOneBy(['id' => 'PAY-123']);
+        $this->assertEquals(1, $storedOrder->getIdCart());
+        $this->assertEquals('APPROVED', $storedOrder->getStatus());
+        $this->assertEquals('paypal', $storedOrder->getFundingSource());
+        $this->assertFalse($storedOrder->isCardFields());
+        $this->assertFalse($storedOrder->isExpressCheckout());
+    }
+
+    public function testItIgnoresTheStatusOfTheRequest(): void
+    {
+        $payPalOrder = PayPalOrderFactory::create([
+            'id' => 'PAY-123',
+            'id_cart' => 1,
+            'status' => 'APPROVED',
+        ]);
+        $this->payPalRepository->savePayPalOrder($payPalOrder);
+
+        $this->cancelPayPalOrderAction->execute(new CancelPayPalOrderRequest([
+            'orderID' => 'PAY-123',
+            'orderStatus' => 'COMPLETED',
+        ], 1));
+
+        /** @var PayPalOrder $storedOrder */
+        $storedOrder = $this->payPalRepository->getOneBy(['id' => 'PAY-123']);
+        $this->assertEquals('CANCELED', $storedOrder->getStatus());
     }
 
     public function testItThrowsExceptionWhenOrderNotFound(): void

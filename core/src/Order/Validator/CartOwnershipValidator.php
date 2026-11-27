@@ -61,4 +61,18 @@ class CartOwnershipValidator implements CartOwnershipValidatorInterface
 
         return (int) $cart->id_customer === (int) $customer->id;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isOwnedByCurrentVisitor(int $cartId): bool
+    {
+        $contextCart = $this->context->getCart();
+
+        if ($contextCart && (int) $contextCart->id > 0 && (int) $contextCart->id === $cartId) {
+            return true;
+        }
+
+        return $this->isOwnedByCurrentCustomer($cartId);
+    }
 }

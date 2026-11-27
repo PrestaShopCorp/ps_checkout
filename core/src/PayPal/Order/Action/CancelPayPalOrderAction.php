@@ -21,6 +21,7 @@
 namespace PsCheckout\Core\PayPal\Order\Action;
 
 use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\PayPal\Order\Configuration\PayPalOrderStatus;
 use PsCheckout\Core\PayPal\Order\Repository\PayPalOrderRepositoryInterface;
 use PsCheckout\Core\PayPal\Order\Request\ValueObject\CancelPayPalOrderRequest;
 
@@ -41,20 +42,31 @@ class CancelPayPalOrderAction implements CancelPayPalOrderActionInterface
      */
     public function execute(CancelPayPalOrderRequest $cancelOrderRequest)
     {
-        try {
-            $paypalOrder = $this->payPalOrderRepository->getOneBy(['id' => $cancelOrderRequest->getOrderId()]);
+        $paypalOrder = $this->payPalOrderRepository->getOneBy(['id' => $cancelOrderRequest->getOrderId()]);
 
-            if (!$paypalOrder) {
-                throw new PsCheckoutException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($cancelOrderRequest->getCartId(), true)), PsCheckoutException::UPDATE_FAILED);
+        if (!$paypalOrder) {
+            throw new PsCheckoutException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($cancelOrderRequest->getCartId(), true)), PsCheckoutException::UPDATE_FAILED);
+        }
+
+        // NOTE: the PayPal Order must be linked to the cart of the request, otherwise another
+        // customer could rebind a PayPal Order they do not own to their own cart
+        if ($paypalOrder->getIdCart() !== $cancelOrderRequest->getCartId()) {
+            throw new PsCheckoutException(
+                sprintf('PayPal Order %s is not linked to cart #%s', $cancelOrderRequest->getOrderId(), var_export($cancelOrderRequest->getCartId(), true)),
+                PsCheckoutException::PAYPAL_ORDER_CART_MISMATCH
+            );
+        }
+
+        try {
+            // NOTE: the status is never taken from the request: a cancel request always means CANCELED
+            if ($cancelOrderRequest->getFundingSource()) {
+                $paypalOrder->setFundingSource($cancelOrderRequest->getFundingSource());
             }
 
             $paypalOrder
-                ->setIdCart($cancelOrderRequest->getCartId())
-                ->setPaymentTokenId($cancelOrderRequest->getOrderId()) // Assuming PayPal order ID is a payment token
-                ->setFundingSource($cancelOrderRequest->getFundingSource())
-                ->setIsCardFields($cancelOrderRequest->isHostedFields()) // Assuming "isHostedFields" maps to "isCardFields"
+                ->setIsCardFields($cancelOrderRequest->isHostedFields())
                 ->setIsExpressCheckout($cancelOrderRequest->isExpressCheckout())
-                ->setStatus($cancelOrderRequest->getOrderStatus());
+                ->setStatus(PayPalOrderStatus::CANCELED);
 
             $this->payPalOrderRepository->save($paypalOrder);
         } catch (\Exception $exception) {

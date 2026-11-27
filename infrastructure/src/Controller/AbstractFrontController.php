@@ -24,6 +24,8 @@ use Connection;
 use Exception;
 use ModuleFrontController;
 use Ps_Checkout;
+use PsCheckout\Core\Exception\PsCheckoutException;
+use PsCheckout\Core\PayPal\Order\Validator\PayPalOrderOwnershipValidator;
 use Psr\Log\LoggerInterface;
 
 class AbstractFrontController extends ModuleFrontController
@@ -117,6 +119,48 @@ class AbstractFrontController extends ModuleFrontController
                 'error' => [
                     'code' => $exception->getCode(),
                     'message' => $exception->getMessage(),
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Stops the request with a 404 unless the PayPal Order exists and belongs to the current visitor,
+     * see PayPalOrderOwnershipValidatorInterface::isOwnedByCurrentVisitor(). Unknown and foreign orders
+     * get the same answer, so that the response does not tell whether the order exists.
+     *
+     * @param string $payPalOrderId
+     *
+     * @return void
+     */
+    protected function assertPayPalOrderBelongsToCurrentVisitor(string $payPalOrderId)
+    {
+        /** @var PayPalOrderOwnershipValidator $payPalOrderOwnershipValidator */
+        $payPalOrderOwnershipValidator = $this->module->getService(PayPalOrderOwnershipValidator::class);
+
+        if (!$payPalOrderOwnershipValidator->isOwnedByCurrentVisitor($payPalOrderId)) {
+            $this->exitWithPayPalOrderNotFoundResponse();
+        }
+    }
+
+    /**
+     * Answers 404 "PayPal Order not found": the response for an unknown PayPal Order and for a
+     * PayPal Order that does not belong to the current visitor, so that it does not tell whether
+     * the order exists. Exits directly instead of throwing: OrderCreationExceptionHandler would
+     * answer with a 500, tell the visitor they could have been charged and notify the customer
+     * service of the cart owner.
+     *
+     * @return void
+     */
+    protected function exitWithPayPalOrderNotFoundResponse()
+    {
+        $this->exitWithResponse([
+            'status' => false,
+            'httpCode' => 404,
+            'body' => [
+                'error' => [
+                    'code' => PsCheckoutException::PAYPAL_ORDER_NOT_FOUND,
+                    'message' => 'PayPal Order not found',
                 ],
             ],
         ]);

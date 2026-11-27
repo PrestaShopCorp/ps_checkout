@@ -71,6 +71,8 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $orderCancelRequest = new CancelPayPalOrderRequest($bodyValues, $this->context->cart->id);
 
             if ($orderCancelRequest->getOrderId()) {
+                $this->assertPayPalOrderBelongsToCurrentVisitor($orderCancelRequest->getOrderId());
+
                 /** @var CancelPayPalOrderAction $cancelPayPalOrderAction */
                 $cancelPayPalOrderAction = $this->module->getService(CancelPayPalOrderAction::class);
                 $cancelPayPalOrderAction->execute($orderCancelRequest);

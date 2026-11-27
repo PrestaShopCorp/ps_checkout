@@ -24,6 +24,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PsCheckout\Api\Http\OrderHttpClientInterface;
 use PsCheckout\Api\ValueObject\PayPalOrderResponse;
+use PsCheckout\Core\Exception\PsCheckoutException;
 use PsCheckout\Core\Order\Builder\OrderPayloadBuilder;
 use PsCheckout\Core\PayPal\Order\Action\UpdatePayPalOrderPurchaseUnitActionInterface;
 use PsCheckout\Core\PayPal\Order\Cache\PayPalOrderCacheInterface;
@@ -97,6 +98,30 @@ class UpdateExternalPayPalOrderProcessorTest extends TestCase
             ->willReturn(null);
 
         $this->paypalOrderProvider->expects($this->never())->method('getById');
+
+        $this->processor->execute($request);
+    }
+
+    public function testItRefusesWhenPayPalOrderIsLinkedToAnotherCart(): void
+    {
+        $request = $this->createMock(CheckPayPalOrderRequest::class);
+        $request->method('getOrderId')->willReturn('ORDER-123');
+        $request->method('getCartId')->willReturn(2);
+
+        $payPalOrder = $this->createMock(PayPalOrder::class);
+        $payPalOrder->method('getIdCart')->willReturn(1);
+
+        $this->paypalOrderRepository->expects($this->once())
+            ->method('getOneBy')
+            ->with(['id' => 'ORDER-123'])
+            ->willReturn($payPalOrder);
+
+        $this->paypalOrderProvider->expects($this->never())->method('getById');
+        $this->httpClient->expects($this->never())->method('updateOrder');
+        $this->paypalOrderRepository->expects($this->never())->method('save');
+
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::PAYPAL_ORDER_CART_MISMATCH);
 
         $this->processor->execute($request);
     }
